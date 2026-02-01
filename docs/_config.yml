@@ -35,7 +35,7 @@ plugins:
 # Navigation - explicitly set header pages (excludes 404)
 header_pages:
   - index.md
-  - lessons.md
+  - rag-query.html
   - reports.md
   - discoveries.md
   - tech-stack.md
