@@ -13,16 +13,16 @@ This is the unfiltered story of building an autonomous AI trading system—every
 
 ---
 
-## Where We Are Today (Day 88)
+## Where We Are Today (Day 92)
 
 | Metric | Value |
 |--------|-------|
-| Paper Account | $29,994.83 |
+| Paper Account | $100,000 |
 | Strategy | Iron Condors on SPY |
-| Open Positions | 3 |
+| Open Positions | 0 |
 | Status | Weekend - Markets Closed |
 
-**What's happening:** Fresh start with $30K. Validating our iron condor strategy in paper trading before scaling. Ralph Mode runs 24/7, automatically fixing issues and publishing what it learns.
+**What's happening:** Scaled to $100K paper account (Jan 30, 2026). No PDT restrictions. Validating iron condor strategy before going live. Target: 80%+ win rate over 90 days.
 
 ---
 
@@ -43,7 +43,10 @@ After getting burned on SOFI, we pivoted to SPY-only iron condors. The math:
 The system now heals itself. CI workflows detect issues, apply fixes, and document discoveries automatically. [See today's discoveries](/trading/2026/01/24/ralph-discovery.html).
 
 ### Fresh Start (Jan 22)
-Reset to $30K. Clean slate. No PDT restrictions. Now we prove the strategy works.
+Reset to $30K. Clean slate. No PDT restrictions.
+
+### Scaled to $100K (Jan 30)
+Upgraded to $100K paper account for more realistic position sizing. Target: prove 80%+ win rate before live trading.
 
 ---
 

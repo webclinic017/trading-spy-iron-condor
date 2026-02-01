@@ -38,8 +38,6 @@
       "Bash(git push -f:*)",
       "Bash(curl|bash:*)",
       "Bash(wget|bash:*)",
-      "Read(.env)",
-      "Edit(.env)",
       "Edit(.git/**)"
     ]
   },
@@ -141,6 +139,11 @@
           {
             "type": "command",
             "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/verify_vector_db.sh",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/verify_rag_completeness.sh",
             "timeout": 10
           },
           {
