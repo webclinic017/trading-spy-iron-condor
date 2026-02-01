@@ -235,6 +235,9 @@ jobs:
   # VERTEX AI RAG PRE-TRADE QUERY (Jan 7, 2026)
   # CEO Directive: "We need to LEARN from Vertex AI RAG BEFORE trades!"
   #
+  # DISABLED Feb 1, 2026 - Cost reduction ($98/month GCP bill, budget is $20/month)
+  # Vertex AI RAG queries cost too much. Using local lessons_learned for now.
+  #
   # This implements BIDIRECTIONAL learning:
   # - READ: Query RAG for lessons BEFORE trading (this job)
   # - WRITE: Sync trades to RAG after execution (post-trade sync)
@@ -245,11 +248,12 @@ jobs:
   # - Query-first decision making pattern
   # ========================================================================
   pretrade-rag-query:
-    name: Query Vertex AI RAG for Pre-Trade Advice
+    name: Query Vertex AI RAG for Pre-Trade Advice (DISABLED - Cost Savings)
     runs-on: ubuntu-latest
     timeout-minutes: 8
     needs: validate-and-test
-    if: needs.validate-and-test.outputs.secrets_valid == 'true'
+    # DISABLED Feb 1, 2026 - Cost reduction
+    if: false  # needs.validate-and-test.outputs.secrets_valid == 'true'
     outputs:
       has_warnings: ${{ steps.query.outputs.has_warnings }}
       advice_available: ${{ steps.query.outputs.advice_available }}
@@ -408,7 +412,8 @@ jobs:
   execute-trading:
     runs-on: ubuntu-22.04  # Pinned Ubuntu version
     timeout-minutes: 30  # Increased to handle retries
-    needs: [validate-and-test, pretrade-rag-query, protect-existing-positions]
+    # pretrade-rag-query disabled Feb 1, 2026 - cost reduction
+    needs: [validate-and-test, protect-existing-positions]
     if: needs.check-trading-halt.outputs.trading_halted != 'true'  # Uses TRADING_HALTED file + holiday check
     env:
       PYTHONPATH: ${{ github.workspace }}
@@ -858,12 +863,11 @@ jobs:
           echo "🚀 ========================================"
 
           # ========== PRE-FLIGHT: LEARN FROM PAST MISTAKES ==========
-          # Check for lessons but use --allow-warnings to only block on CRITICAL
-          # Documented lessons (HIGH) shouldn't block - they're already learned
-          echo "📚 Running pre-session RAG check - learning from past failures..."
-          echo "⚠️  This check will BLOCK trading only for CRITICAL unresolved issues"
-          python3 scripts/pre_session_rag_check.py --days 7 --allow-warnings || true
-          # If the above exits with code 1, the workflow will stop here
+          # DISABLED Feb 1, 2026 - Cost reduction ($98/month GCP bill, budget is $20/month)
+          # This called Vertex AI RAG - using local lessons instead
+          # echo "📚 Running pre-session RAG check - learning from past failures..."
+          # python3 scripts/pre_session_rag_check.py --days 7 --allow-warnings || true
+          echo "📚 Pre-session RAG check disabled - using local lessons (cost savings)"
           # ========================================================
 
           # ========== PRE-FLIGHT: VERIFY OBSERVABILITY ==========
@@ -1367,24 +1371,23 @@ jobs:
             echo "::warning::This is informational - Alpaca API is the source of truth."
           }
 
-      # CEO DIRECTIVE Jan 11, 2026: Record account balances to RAG ALWAYS
-      # This fixes the major operational breach where account values were not being recorded
-      # See: rag_knowledge/lessons_learned/ll_130_account_rag_recording_failure_jan11.md
-      - name: Record Account Balances to RAG (MANDATORY)
-        id: record_to_rag
-        if: always()  # Run even if trading failed - we NEED account history
-        continue-on-error: true  # Non-fatal but should be investigated if fails
-        env:
-          ALPACA_BROKERAGE_TRADING_API_KEY: ${{ secrets.ALPACA_BROKERAGE_TRADING_API_KEY }}
-          ALPACA_BROKERAGE_TRADING_API_SECRET: ${{ secrets.ALPACA_BROKERAGE_TRADING_API_SECRET }}
-          ALPACA_PAPER_TRADING_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
-          ALPACA_PAPER_TRADING_API_SECRET: ${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}
-        run: |
-          echo "📊 Recording account balances to RAG (CEO directive Jan 11, 2026)..."
-          python3 scripts/record_account_to_rag.py || {
-            echo "::warning::Account RAG recording failed - investigate immediately!"
-            echo "::warning::This is a CRITICAL operational requirement."
-          }
+      # DISABLED Feb 1, 2026 - Cost reduction ($98/month GCP bill, budget is $20/month)
+      # Account balances are already saved to system_state.json
+      # - name: Record Account Balances to RAG (MANDATORY)
+      #   id: record_to_rag
+      #   if: always()  # Run even if trading failed - we NEED account history
+      #   continue-on-error: true  # Non-fatal but should be investigated if fails
+      #   env:
+      #     ALPACA_BROKERAGE_TRADING_API_KEY: ${{ secrets.ALPACA_BROKERAGE_TRADING_API_KEY }}
+      #     ALPACA_BROKERAGE_TRADING_API_SECRET: ${{ secrets.ALPACA_BROKERAGE_TRADING_API_SECRET }}
+      #     ALPACA_PAPER_TRADING_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
+      #     ALPACA_PAPER_TRADING_API_SECRET: ${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}
+      #   run: |
+      #     echo "📊 Recording account balances to RAG (CEO directive Jan 11, 2026)..."
+      #     python3 scripts/record_account_to_rag.py || {
+      #       echo "::warning::Account RAG recording failed - investigate immediately!"
+      #       echo "::warning::This is a CRITICAL operational requirement."
+      #     }
 
       - name: P/L Sanity Check
         id: sanity_check
@@ -1770,24 +1773,26 @@ jobs:
           echo "📊 Running daily verification..."
           python3 scripts/daily_verification.py
 
-      - name: Sync Trades to RAG (Post-Execution)
-        # CRITICAL: Added Jan 7, 2026 - CEO mandate to record ALL trades to RAG
-        # Without this, we violate: "Record every trade in Vertex AI RAG"
-        if: always()
-        continue-on-error: true  # Non-blocking - JSON backup always exists
-        env:
-          GOOGLE_CLOUD_PROJECT: igor-trading-2025-v2
-          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-        run: |
-          echo "📚 ========================================"
-          echo "📚 POST-TRADE RAG SYNC"
-          echo "📚 ========================================"
-          echo ""
-          echo "Syncing today's trades to Vertex AI RAG..."
-          python3 scripts/sync_trades_to_rag.py || {
-            echo "⚠️ RAG sync failed - trades backed up in JSON"
-            echo "Manual sync needed: python3 scripts/sync_trades_to_rag.py"
-          }
+      # DISABLED Feb 1, 2026 - Cost reduction ($98/month GCP bill, budget is $20/month)
+      # Trades are already saved to system_state.json - no need for Vertex AI RAG
+      # - name: Sync Trades to RAG (Post-Execution)
+      #   # CRITICAL: Added Jan 7, 2026 - CEO mandate to record ALL trades to RAG
+      #   # Without this, we violate: "Record every trade in Vertex AI RAG"
+      #   if: always()
+      #   continue-on-error: true  # Non-blocking - JSON backup always exists
+      #   env:
+      #     GOOGLE_CLOUD_PROJECT: igor-trading-2025-v2
+      #     GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+      #   run: |
+      #     echo "📚 ========================================"
+      #     echo "📚 POST-TRADE RAG SYNC"
+      #     echo "📚 ========================================"
+      #     echo ""
+      #     echo "Syncing today's trades to Vertex AI RAG..."
+      #     python3 scripts/sync_trades_to_rag.py || {
+      #       echo "⚠️ RAG sync failed - trades backed up in JSON"
+      #       echo "Manual sync needed: python3 scripts/sync_trades_to_rag.py"
+      #     }
 
       # Phil Town Rule #1: DON'T LOSE MONEY
       # Set trailing stops immediately after any trading activity

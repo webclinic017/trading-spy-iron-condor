@@ -1,12 +1,15 @@
 name: Phil Town Knowledge Ingestion
 
+# DISABLED Feb 1, 2026 - Cost reduction ($98/month GCP bill, budget is $20/month)
+# This workflow ran daily on weekdays, ingesting YouTube + blog content
+# Re-enable only for manual backfills when needed
 on:
-  schedule:
-    # Run daily at 6:00 AM Eastern (before market open)
-    # EST (Nov-Mar): UTC-5 -> 11:00 UTC
-    # EDT (Mar-Nov): UTC-4 -> 10:00 UTC
-    # Weekdays only (markets closed weekends)
-    - cron: '0 10,11 * * 1-5'
+  # schedule:
+  #   # Run daily at 6:00 AM Eastern (before market open)
+  #   # EST (Nov-Mar): UTC-5 -> 11:00 UTC
+  #   # EDT (Mar-Nov): UTC-4 -> 10:00 UTC
+  #   # Weekdays only (markets closed weekends)
+  #   - cron: '0 10,11 * * 1-5'
   workflow_dispatch:
     inputs:
       mode:
