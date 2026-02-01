@@ -67,7 +67,8 @@ jobs:
   publish-blog:
     runs-on: ubuntu-latest
     needs: check-discoveries
-    if: needs.check-discoveries.outputs.should_publish == 'true'
+    # DISABLED: Dev.to auto-publishing disabled per CEO directive (Feb 1, 2026)
+    if: false
     steps:
       - uses: actions/checkout@v4
         with:
