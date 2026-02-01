@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "ℹ️ INFO Ralph Proactive Scan Findings (+2 more)"
-date: 2026-02-01 13:24:30
+title: "🟠 HIGH LL-298: Invalid Option Strikes Caus (+2 more)"
+date: 2026-02-01 13:52:55
 categories: [engineering, lessons-learned, ai-trading]
-tags: [code, dead, condor, success]
+tags: [critical, condor, history, backup]
 mermaid: true
 ---
 
@@ -17,17 +17,17 @@ mermaid: true
 ```mermaid
 flowchart LR
     subgraph Detection["🔍 Detection"]
-        D1["🟢 Ralph Proactive"]
-        D2["🟢 LL-309: Iron Co"]
-        D3["🟢 LL-277: Iron Co"]
+        D1["🟢 LL-309: Iron Co"]
+        D2["🟠 LL-298: Invalid"]
+        D3["🟢 LL-318: Claude "]
     end
     subgraph Analysis["🔬 Analysis"]
         A1["Root Cause Found"]
     end
     subgraph Fix["🔧 Fix Applied"]
-        F1["5bf968c"]
-        F2["056cf16"]
-        F3["3f06e30"]
+        F1["9c7ed6e"]
+        F2["5bf968c"]
+        F3["056cf16"]
     end
     subgraph Verify["✅ Verified"]
         V1["Tests Pass"]
@@ -51,24 +51,41 @@ flowchart LR
 |--------|-------|
 | Issues Detected | 3 |
 | 🔴 Critical | 0 |
-| 🟠 High | 0 |
+| 🟠 High | 1 |
 | 🟡 Medium | 0 |
-| 🟢 Low/Info | 3 |
+| 🟢 Low/Info | 2 |
 
 
 ---
 
 
-## ℹ️ INFO Ralph Proactive Scan Findings
+## 🟠 HIGH LL-298: Invalid Option Strikes Causing CALL Legs to Fail
 
 ### 🚨 What Went Wrong
 
 - Dead code detected: true
 
 
+### 🔬 Root Cause
+
+```python
+
+
 ### ✅ How We Fixed It
 
-Applied targeted fix based on root cause analysis.
+- Added `round_to_5()` function to `calculate_strikes()` - All strikes now rounded to nearest $5 multiple - Commit: `8b3e411` (PR pending merge) 1. Always round SPY strikes to $5 increments 2. Verify ALL 4 legs fill before considering trade complete 3. Add validation that option symbols exist before submitting orders 4. Log when any leg fails to fill - LL-297: Incomplete iron condor crisis (PUT-only positions) - LL-281: CALL leg pricing fallback iron_condor, options, strikes, call_legs, validati
+
+
+### 💻 The Fix
+
+```python
+# BROKEN CODE (before fix)
+short_call = round(price * 1.05)  # round(690*1.05) = $724 INVALID!
+
+# FIXED CODE
+def round_to_5(x): return round(x / 5) * 5
+short_call = round_to_5(price * 1.05)  # round_to_5(724.5) = $725 VALID!
+```
 
 
 ### 📈 Impact
@@ -100,21 +117,33 @@ Risk reduced and system resilience improved.
 
 ---
 
-## ℹ️ INFO LL-277: Iron Condor Optimization Research - 86% Win Rate Strategy
+## ℹ️ INFO LL-318: Claude Code Async Hooks for Performance
 
 ### 🚨 What Went Wrong
 
-**Date**: January 21, 2026 **Category**: strategy, research, optimization **Severity**: HIGH
+Session startup and prompt submission were slow due to many synchronous hooks running sequentially. Each hook blocked Claude's execution until completion.
 
 
 ### ✅ How We Fixed It
 
-- [Options Trading IQ: Iron Condor Success Rate](https://optionstradingiq.com/iron-condor-success-rate/) - [Project Finance: Iron Condor Management (71,417 trades)](https://www.projectfinance.com/iron-condor-management/) | Short Strike Delta | Win Rate |
+Add `"async": true` to hooks that are pure side-effects (logging, backups, notifications) and don't need to block execution. ```json { "type": "command", "command": "./my-hook.sh", "async": true, "timeout": 30 } ``` **YES - Make Async:** - Backup scripts (backup_critical_state.sh) - Feedback capture (capture_feedback.sh) - Blog generators (auto_blog_generator.sh) - Session learning capture (capture_session_learnings.sh) - Any pure logging/notification hook **NO - Keep Synchronous:** - Hooks that
+
+
+### 💻 The Fix
+
+```python
+{
+  "type": "command",
+  "command": "./my-hook.sh",
+  "async": true,
+  "timeout": 30
+}
+```
 
 
 ### 📈 Impact
 
-|-------------------|----------| | **10-15 delta** | **86%** |
+Reduced startup latency by ~15-20 seconds by making 5 hooks async. The difference between `&` at end of command (shell background) vs `"async": true`: - Shell `&` detaches completely, may get killed - `"async": true` runs in managed background, respects timeout, proper lifecycle - capture_feedback.s
 
 ---
 
@@ -124,11 +153,11 @@ These commits shipped today ([view on GitHub](https://github.com/IgorGanapolsky/
 
 | Severity | Commit | Description |
 |----------|--------|-------------|
+| ℹ️ INFO | [9c7ed6eb](https://github.com/IgorGanapolsky/trading/commit/9c7ed6eb) | docs(ralph): Auto-publish discovery blog post |
 | ℹ️ INFO | [5bf968cd](https://github.com/IgorGanapolsky/trading/commit/5bf968cd) | docs(ralph): Auto-publish discovery blog post |
 | ℹ️ INFO | [056cf16c](https://github.com/IgorGanapolsky/trading/commit/056cf16c) | docs(ralph): Auto-publish discovery blog post |
 | ℹ️ INFO | [3f06e307](https://github.com/IgorGanapolsky/trading/commit/3f06e307) | docs(ralph): Auto-publish discovery blog post |
 | ℹ️ INFO | [a8002eff](https://github.com/IgorGanapolsky/trading/commit/a8002eff) | feat(weekend): Learning pipeline update 21563 |
-| ℹ️ INFO | [92f567e5](https://github.com/IgorGanapolsky/trading/commit/92f567e5) | docs(ralph): Auto-publish discovery blog post |
 
 
 ## 🎯 Key Takeaways
