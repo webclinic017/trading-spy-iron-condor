@@ -194,6 +194,20 @@ See `docs/ARCHITECTURE.md` for detailed architecture documentation.
 Hooks provide: portfolio status, market hours, trade count, date verification.
 Trust the hooks. They work.
 
+## RAG Chat (Feb 1, 2026)
+Live at: https://igorganapolsky.github.io/trading/rag-query/
+- Cloudflare Worker: `cloudflare-workers/rag-chat/worker.js`
+- Worker URL: `https://trading-rag-chat.iganapolsky.workers.dev`
+- Features: Conversation memory, 10+ embedded lessons, Claude Haiku backend
+- API key configured in Cloudflare Workers dashboard
+
+## Date Verification (LL-324 Prevention)
+Hook: `.claude/hooks/verify_date_claims.sh`
+- Runs on every UserPromptSubmit
+- Reminds to verify dates before writing content
+- February 2026 key dates embedded (Super Bowl Feb 8, etc.)
+- Prevents hallucinations like "Super Bowl weekend" on wrong date
+
 ## $100K Paper Account (Jan 30, 2026)
 Account ID: PA3C5AG0CECQ - Primary trading account.
 Use `ALPACA_PAPER_TRADING_API_KEY` (points to $100K account).
