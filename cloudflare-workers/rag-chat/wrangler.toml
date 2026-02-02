@@ -1,0 +1,6 @@
+name = "trading-rag-chat"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# Set ANTHROPIC_API_KEY as a secret:
+# wrangler secret put ANTHROPIC_API_KEY

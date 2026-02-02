@@ -15,7 +15,7 @@ This is the unfiltered story of building an autonomous AI trading system—every
 
 ## Where We Are Today (Sunday, February 1, 2026)
 
-It's Super Bowl weekend, the markets are closed, and I'm sitting here with a $100K paper trading account wondering if this crazy idea will actually work.
+The markets are closed for the weekend, and I'm sitting here with a $100K paper trading account wondering if this crazy idea will actually work.
 
 Here's the setup: Iron condors on SPY. Sell both a put spread and a call spread, collect premium from both sides, and profit as long as SPY stays within a range. The math says 86% win rate at 15-delta strikes. We'll see if reality agrees.
 

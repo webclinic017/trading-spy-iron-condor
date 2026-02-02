@@ -404,6 +404,128 @@ layout: null
             text-decoration: underline;
         }
 
+        /* Chat Section */
+        .chat-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .chat-container {
+            padding: 20px;
+        }
+
+        .chat-messages {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+            padding: 10px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            min-height: 150px;
+        }
+
+        .chat-message {
+            margin-bottom: 12px;
+            display: flex;
+        }
+
+        .chat-message.user {
+            justify-content: flex-end;
+        }
+
+        .chat-message .message-content {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.5;
+        }
+
+        .chat-message.user .message-content {
+            background: var(--accent-blue);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-message.assistant .message-content {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-message.loading .message-content {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 12px;
+        }
+
+        #chatInput {
+            flex: 1;
+            padding: 14px 20px;
+            font-size: 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            transition: border-color 0.2s;
+        }
+
+        #chatInput:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        #chatSendBtn {
+            padding: 14px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-green), #2ea043);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #chatSendBtn:hover {
+            transform: translateY(-2px);
+        }
+
+        #chatSendBtn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .chat-examples {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .example-chip {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .example-chip:hover {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
+
         /* Scrollbar styling */
         ::-webkit-scrollbar {
             width: 8px;
@@ -482,6 +604,32 @@ layout: null
                 </div>
                 <div class="panel-content" id="recentLessons">
                     <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-section">
+            <div class="panel-header">
+                <span class="panel-icon">&#128172;</span>
+                <span>Ask the Knowledge Base</span>
+            </div>
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-message assistant">
+                        <div class="message-content">
+                            Hi! I'm your trading knowledge assistant. Ask me about iron condors, VIX entry rules, position management, or any lesson from the knowledge base.
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input-wrapper">
+                    <input type="text" id="chatInput" placeholder="Ask a question... (e.g., 'When should I close an iron condor?')">
+                    <button id="chatSendBtn">Send</button>
+                </div>
+                <div class="chat-examples">
+                    <span class="example-chip" data-question="What's the optimal exit strategy for iron condors?">Exit strategy</span>
+                    <span class="example-chip" data-question="When should I enter based on VIX?">VIX entry rules</span>
+                    <span class="example-chip" data-question="What's the North Star goal?">North Star</span>
+                    <span class="example-chip" data-question="What went wrong in the January 2026 crisis?">Jan 2026 crisis</span>
                 </div>
             </div>
         </div>
@@ -791,6 +939,124 @@ Tags: ${lesson.tags.join(', ')}`;
         function hideModal() {
             document.getElementById('lessonModal').classList.remove('active');
         }
+
+        // Chat functionality
+        const WORKER_URL = 'https://trading-rag-chat.igor-ganapolsky.workers.dev';
+
+        function setupChatListeners() {
+            const chatInput = document.getElementById('chatInput');
+            const chatSendBtn = document.getElementById('chatSendBtn');
+
+            chatSendBtn.addEventListener('click', sendChatMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendChatMessage();
+                }
+            });
+
+            // Example chips
+            document.querySelectorAll('.example-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    chatInput.value = chip.dataset.question;
+                    sendChatMessage();
+                });
+            });
+        }
+
+        async function sendChatMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const chatMessages = document.getElementById('chatMessages');
+            const chatSendBtn = document.getElementById('chatSendBtn');
+            const message = chatInput.value.trim();
+
+            if (!message) return;
+
+            // Add user message
+            chatMessages.innerHTML += `
+                <div class="chat-message user">
+                    <div class="message-content">${escapeHtml(message)}</div>
+                </div>
+            `;
+
+            // Clear input and disable button
+            chatInput.value = '';
+            chatSendBtn.disabled = true;
+
+            // Add loading message
+            const loadingId = 'loading-' + Date.now();
+            chatMessages.innerHTML += `
+                <div class="chat-message assistant loading" id="${loadingId}">
+                    <div class="message-content">Thinking...</div>
+                </div>
+            `;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const response = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message }),
+                });
+
+                const data = await response.json();
+
+                // Remove loading message
+                document.getElementById(loadingId)?.remove();
+
+                if (data.error) {
+                    chatMessages.innerHTML += `
+                        <div class="chat-message assistant">
+                            <div class="message-content" style="color: var(--accent-red);">
+                                Error: ${escapeHtml(data.error)}. The chat service may not be deployed yet.
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    chatMessages.innerHTML += `
+                        <div class="chat-message assistant">
+                            <div class="message-content">${formatResponse(data.reply)}</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById(loadingId)?.remove();
+                chatMessages.innerHTML += `
+                    <div class="chat-message assistant">
+                        <div class="message-content" style="color: var(--accent-yellow);">
+                            Chat service unavailable. Deploy the Cloudflare Worker first:<br><br>
+                            <code style="background: var(--bg-primary); padding: 8px; border-radius: 4px; display: block; margin-top: 8px;">
+                            cd cloudflare-workers/rag-chat<br>
+                            wrangler secret put ANTHROPIC_API_KEY<br>
+                            wrangler deploy
+                            </code>
+                        </div>
+                    </div>
+                `;
+            }
+
+            chatSendBtn.disabled = false;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatResponse(text) {
+            // Convert markdown-like formatting
+            return escapeHtml(text)
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>')
+                .replace(/`(.*?)`/g, '<code style="background: var(--bg-primary); padding: 2px 6px; border-radius: 3px;">$1</code>');
+        }
+
+        // Initialize chat on load
+        document.addEventListener('DOMContentLoaded', () => {
+            setupChatListeners();
+        });
     </script>
 </body>
 </html>
