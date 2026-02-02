@@ -940,8 +940,9 @@ Tags: ${lesson.tags.join(', ')}`;
             document.getElementById('lessonModal').classList.remove('active');
         }
 
-        // Chat functionality
+        // Chat functionality with conversation memory
         const WORKER_URL = 'https://trading-rag-chat.iganapolsky.workers.dev';
+        let conversationHistory = [];
 
         function setupChatListeners() {
             const chatInput = document.getElementById('chatInput');
@@ -972,7 +973,7 @@ Tags: ${lesson.tags.join(', ')}`;
 
             if (!message) return;
 
-            // Add user message
+            // Add user message to UI
             chatMessages.innerHTML += `
                 <div class="chat-message user">
                     <div class="message-content">${escapeHtml(message)}</div>
@@ -996,7 +997,10 @@ Tags: ${lesson.tags.join(', ')}`;
                 const response = await fetch(WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message }),
+                    body: JSON.stringify({
+                        message,
+                        history: conversationHistory
+                    }),
                 });
 
                 const data = await response.json();
@@ -1008,11 +1012,20 @@ Tags: ${lesson.tags.join(', ')}`;
                     chatMessages.innerHTML += `
                         <div class="chat-message assistant">
                             <div class="message-content" style="color: var(--accent-red);">
-                                Error: ${escapeHtml(data.error)}. The chat service may not be deployed yet.
+                                Error: ${escapeHtml(data.error)}
                             </div>
                         </div>
                     `;
                 } else {
+                    // Add to conversation history for context
+                    conversationHistory.push({ role: 'user', content: message });
+                    conversationHistory.push({ role: 'assistant', content: data.reply });
+
+                    // Keep only last 10 messages
+                    if (conversationHistory.length > 10) {
+                        conversationHistory = conversationHistory.slice(-10);
+                    }
+
                     chatMessages.innerHTML += `
                         <div class="chat-message assistant">
                             <div class="message-content">${formatResponse(data.reply)}</div>
@@ -1024,12 +1037,7 @@ Tags: ${lesson.tags.join(', ')}`;
                 chatMessages.innerHTML += `
                     <div class="chat-message assistant">
                         <div class="message-content" style="color: var(--accent-yellow);">
-                            Chat service unavailable. Deploy the Cloudflare Worker first:<br><br>
-                            <code style="background: var(--bg-primary); padding: 8px; border-radius: 4px; display: block; margin-top: 8px;">
-                            cd cloudflare-workers/rag-chat<br>
-                            wrangler secret put ANTHROPIC_API_KEY<br>
-                            wrangler deploy
-                            </code>
+                            Chat service unavailable. Please try again.
                         </div>
                     </div>
                 `;
