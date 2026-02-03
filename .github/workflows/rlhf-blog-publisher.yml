@@ -84,6 +84,28 @@ jobs:
             --intensity "$INTENSITY" \
             --context "$CONTEXT"
 
+      - name: Publish to LinkedIn
+        env:
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+        run: |
+          # Determine which input source to use
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            SIGNAL="${{ steps.manual.outputs.signal }}"
+            CONTEXT="${{ steps.manual.outputs.context }}"
+          else
+            SIGNAL="${{ steps.feedback.outputs.signal }}"
+            CONTEXT="${{ steps.feedback.outputs.context }}"
+          fi
+
+          # Post to LinkedIn (graceful skip if no token)
+          if [ -n "$LINKEDIN_ACCESS_TOKEN" ]; then
+            python scripts/publish_linkedin.py \
+              --signal "$SIGNAL" \
+              --context "$CONTEXT" || echo "LinkedIn post failed (non-blocking)"
+          else
+            echo "LINKEDIN_ACCESS_TOKEN not set, skipping LinkedIn post"
+          fi
+
       - name: Commit and push blog post
         run: |
           git config user.name "GitHub Actions Bot"

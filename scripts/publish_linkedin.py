@@ -20,9 +20,9 @@ import requests
 ET = ZoneInfo("America/New_York")
 
 # LinkedIn API endpoints
-LINKEDIN_API_BASE = "https://api.linkedin.com/v2"
-LINKEDIN_POST_URL = f"{LINKEDIN_API_BASE}/ugcPosts"
-LINKEDIN_ME_URL = f"{LINKEDIN_API_BASE}/me"
+LINKEDIN_API_BASE = "https://api.linkedin.com"
+LINKEDIN_POST_URL = f"{LINKEDIN_API_BASE}/v2/ugcPosts"  # UGC Posts API
+LINKEDIN_ME_URL = f"{LINKEDIN_API_BASE}/v2/userinfo"  # OpenID Connect endpoint
 
 
 def get_linkedin_credentials() -> dict:
@@ -35,19 +35,28 @@ def get_linkedin_credentials() -> dict:
 
 
 def get_user_urn(access_token: str) -> str | None:
-    """Get the user's LinkedIn URN (unique identifier)."""
+    """Get the user's LinkedIn URN (unique identifier) using OpenID Connect."""
     headers = {
         "Authorization": f"Bearer {access_token}",
-        "X-Restli-Protocol-Version": "2.0.0",
     }
 
     try:
         response = requests.get(LINKEDIN_ME_URL, headers=headers, timeout=30)
         if response.status_code == 200:
             data = response.json()
-            return f"urn:li:person:{data['id']}"
+            # OpenID Connect returns 'sub' as the user ID
+            user_id = data.get("sub")
+            if user_id:
+                print(f"Found user: {data.get('name', 'Unknown')}")
+                return f"urn:li:person:{user_id}"
+            print(f"No 'sub' field in response: {data}")
+            return None
         else:
             print(f"Failed to get user info: {response.status_code} - {response.text}")
+            if response.status_code == 403:
+                print(
+                    "Note: OpenID Connect permissions may take a few minutes to propagate after app setup"
+                )
             return None
     except Exception as e:
         print(f"Error getting user URN: {e}")
@@ -61,14 +70,14 @@ def create_linkedin_post(
     article_url: str | None = None,
     article_title: str | None = None,
 ) -> dict | None:
-    """Create a LinkedIn post."""
+    """Create a LinkedIn post using the UGC Posts API."""
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
         "X-Restli-Protocol-Version": "2.0.0",
     }
 
-    # Build the post payload
+    # Build the post payload for UGC Posts API
     payload = {
         "author": user_urn,
         "lifecycleState": "PUBLISHED",
@@ -104,7 +113,10 @@ def create_linkedin_post(
 
         if response.status_code == 201:
             print("✅ Posted to LinkedIn successfully!")
-            return response.json()
+            data = response.json()
+            post_id = data.get("id", "")
+            print(f"Post ID: {post_id}")
+            return data
         else:
             print(f"❌ LinkedIn post failed: {response.status_code}")
             print(f"Response: {response.text}")
