@@ -88,16 +88,16 @@ class BacktestResult:
 
 **Findings**: {self.findings}
 
-**Optimal Value**: {self.optimal_value or 'N/A'}
+**Optimal Value**: {self.optimal_value or "N/A"}
 
 **Metrics**:
-{chr(10).join(f'- {k}: {v}' for k, v in self.metrics.items())}
+{chr(10).join(f"- {k}: {v}" for k, v in self.metrics.items())}
 
 **Confidence**: {self.confidence:.0%}
 
-**Sources**: {', '.join(self.sources[:3]) if self.sources else 'Perplexity Deep Research'}
+**Sources**: {", ".join(self.sources[:3]) if self.sources else "Perplexity Deep Research"}
 
-**Date**: {self.timestamp.strftime('%Y-%m-%d')}
+**Date**: {self.timestamp.strftime("%Y-%m-%d")}
 """
 
 
@@ -171,9 +171,7 @@ class PerplexityResearchAgent:
         self.model = "sonar-pro"  # Deep research model
         self.results: list[BacktestResult] = []
 
-    async def research(
-        self, query: str, extract_metrics: bool = True
-    ) -> dict[str, Any]:
+    async def research(self, query: str, extract_metrics: bool = True) -> dict[str, Any]:
         """
         Execute a deep research query via Perplexity.
 
@@ -611,9 +609,7 @@ async def get_research_signal() -> dict[str, Any]:
         }
 
     # Calculate signal based on research confidence
-    avg_confidence = sum(p.get("confidence", 0.5) for p in params.values()) / max(
-        len(params), 1
-    )
+    avg_confidence = sum(p.get("confidence", 0.5) for p in params.values()) / max(len(params), 1)
 
     # Higher confidence in research = more favorable signal
     signal = 0.5 + (avg_confidence - 0.5) * 0.4
