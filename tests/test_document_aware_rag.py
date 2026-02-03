@@ -147,9 +147,7 @@ Always validate position limits before executing trades.
         assert metadata["market_condition"] == "high_volatility"
 
     @pytest.mark.skipif(
-        not Path(
-            "/Users/ganapolsky_i/workspace/git/igor/trading/.claude/memory/lancedb"
-        ).exists(),
+        not Path("/Users/ganapolsky_i/workspace/git/igor/trading/.claude/memory/lancedb").exists(),
         reason="LanceDB not available",
     )
     def test_search_integration(self):
@@ -166,9 +164,7 @@ Always validate position limits before executing trades.
         assert result["result_count"] >= 0
 
     @pytest.mark.skipif(
-        not Path(
-            "/Users/ganapolsky_i/workspace/git/igor/trading/.claude/memory/lancedb"
-        ).exists(),
+        not Path("/Users/ganapolsky_i/workspace/git/igor/trading/.claude/memory/lancedb").exists(),
         reason="LanceDB not available",
     )
     def test_complex_query(self):
