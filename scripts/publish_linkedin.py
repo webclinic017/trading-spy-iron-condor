@@ -92,9 +92,9 @@ def create_linkedin_post(
 
     # Add article if provided
     if article_url:
-        payload["specificContent"]["com.linkedin.ugc.ShareContent"][
-            "shareMediaCategory"
-        ] = "ARTICLE"
+        payload["specificContent"]["com.linkedin.ugc.ShareContent"]["shareMediaCategory"] = (
+            "ARTICLE"
+        )
         payload["specificContent"]["com.linkedin.ugc.ShareContent"]["media"] = [
             {
                 "status": "READY",
@@ -148,9 +148,7 @@ def generate_linkedin_text(signal: str, context: str, equity: float = 101638.61)
             rlhf_stats["alpha"] = model.get("alpha", 20.75)
             rlhf_stats["beta"] = model.get("beta", 4.0)
 
-    success_rate = (
-        rlhf_stats["alpha"] / (rlhf_stats["alpha"] + rlhf_stats["beta"]) * 100
-    )
+    success_rate = rlhf_stats["alpha"] / (rlhf_stats["alpha"] + rlhf_stats["beta"]) * 100
 
     if signal == "positive":
         emoji = "🎯"
@@ -213,9 +211,7 @@ def main():
     parser = argparse.ArgumentParser(description="Publish to LinkedIn")
     parser.add_argument("--signal", required=True, choices=["positive", "negative"])
     parser.add_argument("--context", required=True, help="Feedback context")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Don't post, just preview"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Don't post, just preview")
 
     args = parser.parse_args()
 
