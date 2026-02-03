@@ -43,6 +43,18 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+# Import agentic guardrails for review gates and architecture analysis
+try:
+    from src.orchestration.agentic_guardrails import (
+        ReviewGate,
+        analyze_before_change,
+        request_ceo_approval_if_needed,
+    )
+
+    GUARDRAILS_AVAILABLE = True
+except ImportError:
+    GUARDRAILS_AVAILABLE = False
+
 # Project paths
 PROJECT_DIR = Path(__file__).parent.parent.parent.parent
 DATA_DIR = PROJECT_DIR / "data"
@@ -770,6 +782,18 @@ class SwarmOrchestrator:
         print(f"[Swarm] Starting {mode} mode at {self.start_time.isoformat()}")
         print(f"[Swarm] Structured reasoning: {'ENABLED' if structured else 'DISABLED'}")
 
+        # Initialize review gates (GitHub Copilot Agentic best practice)
+        if GUARDRAILS_AVAILABLE:
+            gate_keeper_review = ReviewGate("gate_keeper_validation")
+            analysis_review = ReviewGate("analysis_validation")
+            execution_review = ReviewGate("execution_validation")
+            print("[Swarm] Review gates: ENABLED (agentic guardrails)")
+        else:
+            gate_keeper_review = None
+            analysis_review = None
+            execution_review = None
+            print("[Swarm] Review gates: DISABLED (guardrails not available)")
+
         match mode:
             case "analysis":
                 if structured:
@@ -795,6 +819,12 @@ class SwarmOrchestrator:
                         passed, reason = pipeline.check_gate_keeper(agent.agent_type, result)
                         pipeline.record_step("gate_keeper", agent.agent_type, result, passed)
 
+                        # Add to review gate if available
+                        if gate_keeper_review:
+                            gate_keeper_review.add_check(
+                                agent.agent_type, passed, reason if not passed else ""
+                            )
+
                         if not passed:
                             all_gates_passed = False
                             gate_failures.append(
@@ -807,6 +837,11 @@ class SwarmOrchestrator:
                             print(f"[Swarm] ❌ Gate-keeper {agent.agent_type} FAILED: {reason}")
                         else:
                             print(f"[Swarm] ✅ Gate-keeper {agent.agent_type} PASSED")
+
+                    # Evaluate review gate
+                    if gate_keeper_review:
+                        gate_open, gate_msg = gate_keeper_review.evaluate()
+                        print(f"[Swarm] Review Gate: {gate_msg}")
 
                     # If gate-keepers fail, STOP - don't run analysis agents
                     if not all_gates_passed:
@@ -842,6 +877,21 @@ class SwarmOrchestrator:
 
                     for agent, result in zip(analysis_agents, analysis_results, strict=False):
                         pipeline.record_step("analysis", agent.agent_type, result, True)
+                        # Add to analysis review gate
+                        if analysis_review:
+                            # Analysis passes if signal is valid (0-1 range)
+                            signal = result.get("signal", -1)
+                            valid = 0 <= signal <= 1
+                            analysis_review.add_check(
+                                agent.agent_type,
+                                valid,
+                                "" if valid else f"Invalid signal: {signal}",
+                            )
+
+                    # Evaluate analysis review gate
+                    if analysis_review:
+                        gate_open, gate_msg = analysis_review.evaluate()
+                        print(f"[Swarm] Analysis Review Gate: {gate_msg}")
 
                     # Stage 3: Final execution validation
                     print("[Swarm] Stage 3: Final validation (options-chain)...")
