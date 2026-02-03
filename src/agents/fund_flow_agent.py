@@ -88,6 +88,7 @@ class FundFlowAgent:
         if self._client is None and self.has_api_access:
             try:
                 from massive import Client
+
                 self._client = Client(api_key=self.api_key)
             except ImportError:
                 self.has_api_access = False
@@ -114,7 +115,9 @@ class FundFlowAgent:
         cache_file = CACHE_DIR / "spy_flows.json"
         if cache_file.exists():
             cached = json.loads(cache_file.read_text())
-            cache_age = datetime.now() - datetime.fromisoformat(cached.get("updated_at", "2020-01-01"))
+            cache_age = datetime.now() - datetime.fromisoformat(
+                cached.get("updated_at", "2020-01-01")
+            )
             if cache_age < timedelta(hours=24):
                 return cached.get("flows", [])[-days:]
 
@@ -136,20 +139,27 @@ class FundFlowAgent:
 
         flows = []
         for record in response.data:
-            flows.append({
-                "date": record.effective_date,
-                "net_flow": record.net_flow or 0,
-                "nav": record.nav or 0,
-                "volume": record.volume or 0,
-            })
+            flows.append(
+                {
+                    "date": record.effective_date,
+                    "net_flow": record.net_flow or 0,
+                    "nav": record.nav or 0,
+                    "volume": record.volume or 0,
+                }
+            )
 
         # Cache the response
         cache_file = CACHE_DIR / f"{ticker.lower()}_flows.json"
-        cache_file.write_text(json.dumps({
-            "ticker": ticker,
-            "updated_at": datetime.now().isoformat(),
-            "flows": flows,
-        }, indent=2))
+        cache_file.write_text(
+            json.dumps(
+                {
+                    "ticker": ticker,
+                    "updated_at": datetime.now().isoformat(),
+                    "flows": flows,
+                },
+                indent=2,
+            )
+        )
 
         return flows
 
@@ -185,12 +195,14 @@ class FundFlowAgent:
             noise = random.gauss(0, 0.3)
             flow = base_flow * (vix_factor + noise)
 
-            flows.append({
-                "date": date.strftime("%Y-%m-%d"),
-                "net_flow": flow,
-                "nav": 595.0 + random.gauss(0, 5),  # SPY ~$595
-                "volume": int(50_000_000 + random.gauss(0, 10_000_000)),
-            })
+            flows.append(
+                {
+                    "date": date.strftime("%Y-%m-%d"),
+                    "net_flow": flow,
+                    "nav": 595.0 + random.gauss(0, 5),  # SPY ~$595
+                    "volume": int(50_000_000 + random.gauss(0, 10_000_000)),
+                }
+            )
 
         return flows
 
@@ -323,9 +335,7 @@ async def get_fund_flow_signal() -> dict[str, Any]:
             "is_bullish": result.is_bullish,
             "is_bearish": result.is_bearish,
             "recommendation": (
-                "FAVORABLE" if result.is_bullish
-                else "CAUTION" if result.is_bearish
-                else "NEUTRAL"
+                "FAVORABLE" if result.is_bullish else "CAUTION" if result.is_bearish else "NEUTRAL"
             ),
         },
     }

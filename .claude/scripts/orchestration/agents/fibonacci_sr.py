@@ -139,9 +139,7 @@ class FibonacciSRCalculator:
 
         return levels
 
-    async def _fetch_daily_bars(
-        self, symbol: str, lookback_days: int
-    ) -> list[dict[str, Any]]:
+    async def _fetch_daily_bars(self, symbol: str, lookback_days: int) -> list[dict[str, Any]]:
         """Fetch daily OHLC bars from Alpaca."""
         if not self.api_key or not self.api_secret:
             # Return mock data if no API keys
@@ -198,14 +196,16 @@ class FibonacciSRCalculator:
             # Add realistic daily range
             daily_range = abs(major_cycle) * 0.1 + 2  # Higher vol during swings
 
-            bars.append({
-                "t": (datetime.now() - timedelta(days=252 - i)).isoformat(),
-                "o": price - daily_range * 0.3,
-                "h": price + daily_range * 0.5,
-                "l": price - daily_range * 0.5,
-                "c": price,
-                "v": 50000000 + int(abs(major_cycle) * 1000000),
-            })
+            bars.append(
+                {
+                    "t": (datetime.now() - timedelta(days=252 - i)).isoformat(),
+                    "o": price - daily_range * 0.3,
+                    "h": price + daily_range * 0.5,
+                    "l": price - daily_range * 0.5,
+                    "c": price,
+                    "v": 50000000 + int(abs(major_cycle) * 1000000),
+                }
+            )
         return bars
 
     def _identify_phases(

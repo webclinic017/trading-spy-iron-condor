@@ -13,11 +13,11 @@ This package contains specialized agents for the trading swarm:
 """
 
 from .base import BaseAgent
+from .news import NewsAgent
+from .options_chain import OptionsChainAgent
+from .risk import RiskAgent
 from .sentiment import SentimentAgent
 from .technicals import TechnicalsAgent
-from .risk import RiskAgent
-from .options_chain import OptionsChainAgent
-from .news import NewsAgent
 
 __all__ = [
     "BaseAgent",

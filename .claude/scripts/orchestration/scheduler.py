@@ -23,10 +23,8 @@ Usage:
 import argparse
 import asyncio
 import json
-import os
 import signal
 import sys
-import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -143,9 +141,7 @@ class Scheduler:
                 state = json.loads(STATE_FILE.read_text())
                 for task in self.tasks:
                     if task.name in state.get("last_runs", {}):
-                        task.last_run = datetime.fromisoformat(
-                            state["last_runs"][task.name]
-                        )
+                        task.last_run = datetime.fromisoformat(state["last_runs"][task.name])
             except (json.JSONDecodeError, KeyError):
                 pass
 
@@ -153,9 +149,7 @@ class Scheduler:
         """Save scheduler state to file."""
         state = {
             "last_runs": {
-                task.name: task.last_run.isoformat()
-                for task in self.tasks
-                if task.last_run
+                task.name: task.last_run.isoformat() for task in self.tasks if task.last_run
             },
             "updated": datetime.now(ET).isoformat(),
         }
@@ -237,7 +231,7 @@ class Scheduler:
         """Run scheduler as a daemon process."""
         self.running = True
         print(f"[Scheduler] Starting daemon (check every {check_interval}s)")
-        print(f"[Scheduler] Timezone: America/New_York")
+        print("[Scheduler] Timezone: America/New_York")
         print(f"[Scheduler] Tasks: {len(self.tasks)}")
 
         # Print schedule
@@ -290,21 +284,11 @@ def handle_signal(signum, frame):
 
 async def main():
     parser = argparse.ArgumentParser(description="Trading System Scheduler")
-    parser.add_argument(
-        "--daemon", action="store_true", help="Run as daemon"
-    )
-    parser.add_argument(
-        "--next", action="store_true", help="Show next scheduled task"
-    )
-    parser.add_argument(
-        "--status", action="store_true", help="Show scheduler status"
-    )
-    parser.add_argument(
-        "--trigger", type=str, help="Manually trigger a mode"
-    )
-    parser.add_argument(
-        "--interval", type=int, default=30, help="Check interval in seconds"
-    )
+    parser.add_argument("--daemon", action="store_true", help="Run as daemon")
+    parser.add_argument("--next", action="store_true", help="Show next scheduled task")
+    parser.add_argument("--status", action="store_true", help="Show scheduler status")
+    parser.add_argument("--trigger", type=str, help="Manually trigger a mode")
+    parser.add_argument("--interval", type=int, default=30, help="Check interval in seconds")
 
     args = parser.parse_args()
 

@@ -7,7 +7,6 @@ Analyzes market sentiment from various sources:
 - CNN Fear & Greed Index
 """
 
-import os
 from typing import Any
 
 from .base import BaseAgent

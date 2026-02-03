@@ -243,21 +243,21 @@ class PerplexityNewsAgent:
         """Get VIX forecast from Statista (premium source)."""
         return await self.search_premium(
             "What is the VIX volatility index forecast for the next week? Include historical context.",
-            "statista"
+            "statista",
         )
 
     async def get_market_trend_analysis(self) -> dict[str, Any]:
         """Get market trend analysis from Statista (premium source)."""
         return await self.search_premium(
             "Current US equity market trend analysis. Is the market trending bullish, bearish, or range-bound?",
-            "statista"
+            "statista",
         )
 
     async def get_fund_flow_analysis(self) -> dict[str, Any]:
         """Get SPY fund flow analysis from PitchBook (premium source)."""
         return await self.search_premium(
             "SPY ETF institutional fund flows analysis. Are institutions buying or selling?",
-            "pitchbook"
+            "pitchbook",
         )
 
     async def get_pre_trade_intel(self) -> dict[str, Any]:
@@ -277,8 +277,14 @@ class PerplexityNewsAgent:
         # Standard queries (unlimited)
         standard_queries = [
             ("fed_speakers", "Are there any Federal Reserve speakers or FOMC events today?"),
-            ("economic_data", "What economic data releases are scheduled today? GDP, jobs, CPI, etc."),
-            ("spy_earnings", "Are there any S&P 500 companies reporting earnings today that could move SPY?"),
+            (
+                "economic_data",
+                "What economic data releases are scheduled today? GDP, jobs, CPI, etc.",
+            ),
+            (
+                "spy_earnings",
+                "Are there any S&P 500 companies reporting earnings today that could move SPY?",
+            ),
             ("options_flow", "Is there any unusual options activity on SPY today?"),
         ]
 

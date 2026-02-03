@@ -134,15 +134,17 @@ class StructuredReasoningPipeline:
 
     def record_step(self, stage: str, agent: str, result: dict, passed: bool) -> None:
         """Record a reasoning step for audit trail."""
-        self.reasoning_chain.append({
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "stage": stage,
-            "agent": agent,
-            "signal": result.get("signal", 0),
-            "confidence": result.get("confidence", 0),
-            "passed": passed,
-            "data_summary": str(result.get("data", {}))[:200],
-        })
+        self.reasoning_chain.append(
+            {
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "stage": stage,
+                "agent": agent,
+                "signal": result.get("signal", 0),
+                "confidence": result.get("confidence", 0),
+                "passed": passed,
+                "data_summary": str(result.get("data", {}))[:200],
+            }
+        )
 
     def check_gate_keeper(self, agent_type: str, result: dict) -> tuple[bool, str]:
         """
@@ -175,8 +177,7 @@ class StructuredReasoningPipeline:
         return {
             "total_steps": len(self.reasoning_chain),
             "gate_keepers_passed": all(
-                step["passed"] for step in self.reasoning_chain
-                if step["stage"] == "gate_keeper"
+                step["passed"] for step in self.reasoning_chain if step["stage"] == "gate_keeper"
             ),
             "chain": self.reasoning_chain,
         }
@@ -199,12 +200,10 @@ class HybridModelRouter:
         # Critical agents - use Claude (highest accuracy)
         "risk": "claude-opus-4-5",
         "regime": "claude-opus-4-5",
-
         # Analysis agents - use Kimi K2.5 (4x cheaper)
         "sentiment": "kimi-k2.5",
         "news": "kimi-k2.5",
         "technicals": "kimi-k2.5",
-
         # Execution agents - use Claude (safety critical)
         "options-chain": "claude-opus-4-5",
     }
@@ -236,7 +235,8 @@ class HybridModelRouter:
             "calls_by_model": self.calls_by_model,
             "estimated_cost_usd": round(self.estimated_cost, 4),
             "savings_vs_all_claude": round(
-                self.estimated_cost * 0.75, 4  # ~75% savings with hybrid
+                self.estimated_cost * 0.75,
+                4,  # ~75% savings with hybrid
             ),
         }
 
@@ -260,9 +260,7 @@ class PARLConsensusBuilder:
         self.structured_pipeline = StructuredReasoningPipeline()
         self.model_router = HybridModelRouter()
 
-    async def add_signal(
-        self, agent_type: str, signal: float, confidence: float
-    ) -> dict[str, Any]:
+    async def add_signal(self, agent_type: str, signal: float, confidence: float) -> dict[str, Any]:
         """Add a signal and return current consensus state."""
         async with self._lock:
             self.signals[agent_type] = signal
@@ -326,9 +324,7 @@ class Agent:
             "status": self.status,
             "result": self.result,
             "started_at": self.started_at.isoformat() if self.started_at else None,
-            "completed_at": (
-                self.completed_at.isoformat() if self.completed_at else None
-            ),
+            "completed_at": (self.completed_at.isoformat() if self.completed_at else None),
         }
 
 
@@ -453,6 +449,7 @@ class SwarmOrchestrator:
         # Integrate ETF Global fund flows (institutional sentiment)
         try:
             import sys
+
             sys.path.insert(0, str(PROJECT_DIR))
             from src.agents.fund_flow_agent import get_fund_flow_signal
 
@@ -487,9 +484,7 @@ class SwarmOrchestrator:
             fib_levels = await fib_calc.get_spy_levels()
 
             # Get current SPY price from levels midpoint
-            current_price = (
-                fib_levels[len(fib_levels) // 2].price if fib_levels else 595.0
-            )
+            current_price = fib_levels[len(fib_levels) // 2].price if fib_levels else 595.0
 
             # Get optimal strike zones
             optimal_zones = fib_calc.get_optimal_strike_zones(current_price, fib_levels)
@@ -532,9 +527,7 @@ class SwarmOrchestrator:
         if state_file.exists():
             try:
                 state = json.loads(state_file.read_text())
-                account_equity = float(
-                    state.get("account", {}).get("current_equity", 100000)
-                )
+                account_equity = float(state.get("account", {}).get("current_equity", 100000))
             except (json.JSONDecodeError, KeyError):
                 pass
 
@@ -584,8 +577,7 @@ class SwarmOrchestrator:
                     "call_quality": validation["call"].quality_score,
                     "call_warning": validation["call"].warning,
                     "overall_quality": (
-                        validation["put"].quality_score
-                        + validation["call"].quality_score
+                        validation["put"].quality_score + validation["call"].quality_score
                     )
                     / 2,
                 }
@@ -777,11 +769,13 @@ class SwarmOrchestrator:
 
                         if not passed:
                             all_gates_passed = False
-                            gate_failures.append({
-                                "agent": agent.agent_type,
-                                "reason": reason,
-                                "signal": result.get("signal", 0),
-                            })
+                            gate_failures.append(
+                                {
+                                    "agent": agent.agent_type,
+                                    "reason": reason,
+                                    "signal": result.get("signal", 0),
+                                }
+                            )
                             print(f"[Swarm] ❌ Gate-keeper {agent.agent_type} FAILED: {reason}")
                         else:
                             print(f"[Swarm] ✅ Gate-keeper {agent.agent_type} PASSED")
@@ -803,7 +797,7 @@ class SwarmOrchestrator:
                             "signals": [a.to_dict() for a in self.agents],
                         }
                         self._save_analysis(result)
-                        print(f"[Swarm] HOLD: Gate-keepers blocked. No shortcuts allowed.")
+                        print("[Swarm] HOLD: Gate-keepers blocked. No shortcuts allowed.")
                         return result
 
                     # Stage 2: Analysis agents run in PARALLEL (after gates pass)
@@ -844,8 +838,7 @@ class SwarmOrchestrator:
             case "trade":
                 # Load pre-market analysis first
                 analysis_file = (
-                    ANALYSIS_DIR
-                    / f"pre_market_{datetime.now().strftime('%Y-%m-%d')}.json"
+                    ANALYSIS_DIR / f"pre_market_{datetime.now().strftime('%Y-%m-%d')}.json"
                 )
                 if analysis_file.exists():
                     analysis = json.loads(analysis_file.read_text())
@@ -908,9 +901,7 @@ class SwarmOrchestrator:
         result = self.aggregate_signals()
         result["mode"] = mode
         result["structured_reasoning"] = structured
-        result["duration_seconds"] = (
-            datetime.now(timezone.utc) - self.start_time
-        ).total_seconds()
+        result["duration_seconds"] = (datetime.now(timezone.utc) - self.start_time).total_seconds()
 
         if structured and mode == "analysis":
             result["reasoning_chain"] = pipeline.get_reasoning_summary()
@@ -924,9 +915,7 @@ class SwarmOrchestrator:
 
     def _save_analysis(self, result: dict[str, Any]) -> None:
         """Save analysis results to file."""
-        output_file = (
-            ANALYSIS_DIR / f"pre_market_{datetime.now().strftime('%Y-%m-%d')}.json"
-        )
+        output_file = ANALYSIS_DIR / f"pre_market_{datetime.now().strftime('%Y-%m-%d')}.json"
         output_file.write_text(json.dumps(result, indent=2))
         print(f"[Swarm] Analysis saved to {output_file}")
 

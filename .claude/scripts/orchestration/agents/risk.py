@@ -39,9 +39,7 @@ class RiskAgent(BaseAgent):
         if state_file.exists():
             try:
                 state = json.loads(state_file.read_text())
-                account_equity = float(
-                    state.get("account", {}).get("current_equity", 100000)
-                )
+                account_equity = float(state.get("account", {}).get("current_equity", 100000))
                 positions = state.get("positions", [])
             except (json.JSONDecodeError, KeyError):
                 pass
@@ -51,10 +49,7 @@ class RiskAgent(BaseAgent):
         max_total_exposure = account_equity * self.MAX_PORTFOLIO_HEAT
 
         # Calculate current exposure from positions
-        current_exposure = sum(
-            abs(float(p.get("market_value", 0)))
-            for p in positions
-        )
+        current_exposure = sum(abs(float(p.get("market_value", 0))) for p in positions)
         exposure_pct = current_exposure / account_equity if account_equity > 0 else 0
 
         # Check compliance
@@ -62,10 +57,9 @@ class RiskAgent(BaseAgent):
             "position_size_ok": True,  # Will be checked per trade
             "exposure_under_limit": exposure_pct <= self.MAX_PORTFOLIO_HEAT,
             "stop_loss_defined": True,  # Required for each trade
-            "spy_only": all(
-                p.get("symbol", "").startswith("SPY")
-                for p in positions
-            ) if positions else True,
+            "spy_only": all(p.get("symbol", "").startswith("SPY") for p in positions)
+            if positions
+            else True,
         }
 
         all_compliant = all(compliance_checks.values())

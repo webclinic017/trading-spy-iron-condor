@@ -54,12 +54,7 @@ class TechnicalsAgent(BaseAgent):
         trend_signal = 0.6 if sma_20_above_50 == sma_50_above_200 else 0.4
 
         # Composite signal
-        signal = (
-            rsi_signal * 0.30 +
-            macd_value * 0.25 +
-            bb_signal * 0.25 +
-            trend_signal * 0.20
-        )
+        signal = rsi_signal * 0.30 + macd_value * 0.25 + bb_signal * 0.25 + trend_signal * 0.20
 
         # Determine trend direction
         if sma_20_above_50 and sma_50_above_200:

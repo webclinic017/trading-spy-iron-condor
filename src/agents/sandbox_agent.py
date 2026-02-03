@@ -19,10 +19,8 @@ This enables our agents to:
 
 import asyncio
 import json
-import subprocess
-import tempfile
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -55,15 +53,30 @@ class SandboxCapabilities:
     can_fetch_urls: bool = True  # For external resources
     max_execution_time_seconds: float = 30.0
     max_file_size_mb: float = 10.0
-    allowed_imports: list[str] = field(default_factory=lambda: [
-        "json", "csv", "math", "statistics", "datetime", "pathlib",
-        "numpy", "pandas",  # Data analysis
-        "requests",  # External fetching (controlled)
-    ])
-    blocked_imports: list[str] = field(default_factory=lambda: [
-        "os.system", "subprocess", "eval", "exec",  # Security
-        "socket", "ftplib", "smtplib",  # Network (except requests)
-    ])
+    allowed_imports: list[str] = field(
+        default_factory=lambda: [
+            "json",
+            "csv",
+            "math",
+            "statistics",
+            "datetime",
+            "pathlib",
+            "numpy",
+            "pandas",  # Data analysis
+            "requests",  # External fetching (controlled)
+        ]
+    )
+    blocked_imports: list[str] = field(
+        default_factory=lambda: [
+            "os.system",
+            "subprocess",
+            "eval",
+            "exec",  # Security
+            "socket",
+            "ftplib",
+            "smtplib",  # Network (except requests)
+        ]
+    )
 
 
 class SandboxAgent:
@@ -162,7 +175,8 @@ print(json.dumps({{"output": _sandbox_output}}))
         try:
             # Execute with timeout
             proc = await asyncio.create_subprocess_exec(
-                "python3", str(script_file),
+                "python3",
+                str(script_file),
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
                 cwd=str(self.workspace),
@@ -190,8 +204,7 @@ print(json.dumps({{"output": _sandbox_output}}))
 
             # Check for files created
             files_created = [
-                f.name for f in self.workspace.glob("*")
-                if f.is_file() and f != script_file
+                f.name for f in self.workspace.glob("*") if f.is_file() and f != script_file
             ]
 
             result = SandboxResult(
@@ -306,7 +319,7 @@ print(f"Recommended IC: {result['recommended_put_strike']}/{result['recommended_
 
         is_allowed = any(domain in url for domain in allowed_domains)
         if not is_allowed:
-            return {"error": f"Domain not in allowlist"}
+            return {"error": "Domain not in allowlist"}
 
         fetch_code = f'''
 import requests
@@ -336,7 +349,9 @@ except Exception as e:
 
         return {"error": result.error or "Fetch failed"}
 
-    async def discover_pattern(self, historical_data: list[dict], hypothesis: str) -> dict[str, Any]:
+    async def discover_pattern(
+        self, historical_data: list[dict], hypothesis: str
+    ) -> dict[str, Any]:
         """
         Self-validating pattern discovery.
 
@@ -405,8 +420,10 @@ print(f"Win rate: {{win_rate:.1%}}, Profit factor: {{profit_factor:.2f}}")
             "successful": len(successful),
             "failed": len(failed),
             "avg_execution_time_ms": (
-                sum(r.execution_time_ms for r in self.execution_history) / len(self.execution_history)
-                if self.execution_history else 0
+                sum(r.execution_time_ms for r in self.execution_history)
+                / len(self.execution_history)
+                if self.execution_history
+                else 0
             ),
             "files_in_workspace": len(list(self.workspace.glob("*"))),
         }
@@ -421,7 +438,7 @@ async def get_sandbox_signal(task: str = "analysis") -> dict[str, Any]:
     agent = SandboxAgent("trading_analysis")
 
     # Example: Analyze current market conditions dynamically
-    analysis_code = '''
+    analysis_code = """
 import json
 from datetime import datetime
 from pathlib import Path
@@ -449,7 +466,7 @@ result_file = SANDBOX_DIR / "market_analysis.json"
 result_file.write_text(json.dumps(analysis, indent=2))
 
 print(f"Analysis complete: {analysis['recommendation']}")
-'''
+"""
 
     result = await agent.execute_code(analysis_code, "Market analysis")
 
@@ -480,10 +497,13 @@ if __name__ == "__main__":
         agent = SandboxAgent("demo")
 
         # Test code execution
-        result = await agent.execute_code('''
+        result = await agent.execute_code(
+            """
 x = 2 + 2
 print(f"Result: {x}")
-''', "Simple math")
+""",
+            "Simple math",
+        )
 
         print(f"Execution: {result.success}")
         print(f"Output: {result.output}")
