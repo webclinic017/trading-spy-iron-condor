@@ -21,7 +21,7 @@ def main():
         print(f"Entry for {today} already exists")
         return
 
-    initial_equity = 30000.0  # $30K paper account (Jan 22, 2026)
+    initial_equity = 100000.0  # $100K paper account (Jan 30, 2026)
     equity = initial_equity
     if state_file.exists():
         with open(state_file) as f:
