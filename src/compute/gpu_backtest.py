@@ -112,9 +112,7 @@ class GridSearchResult:
             "best_win_rate": self.best_win_rate,
             "top_10_results": [
                 r.to_dict()
-                for r in sorted(
-                    self.all_results, key=lambda x: x.sharpe_ratio, reverse=True
-                )[:10]
+                for r in sorted(self.all_results, key=lambda x: x.sharpe_ratio, reverse=True)[:10]
             ],
         }
 
@@ -342,20 +340,14 @@ class GPUBacktestEngine:
 
         n_sims = len(combinations)
         print(f"\nGrid Search: {n_sims} parameter combinations")
-        print(
-            f"GPU Acceleration: {'ENABLED' if self.use_gpu else 'DISABLED (CPU fallback)'}"
-        )
+        print(f"GPU Acceleration: {'ENABLED' if self.use_gpu else 'DISABLED (CPU fallback)'}")
 
         if self.use_gpu:
             results = self._run_gpu_grid_search(combinations, n_trades_per_sim)
         else:
-            results = _cpu_simulate_trades(
-                self.price_data, combinations, n_trades_per_sim
-            )
+            results = _cpu_simulate_trades(self.price_data, combinations, n_trades_per_sim)
 
-        execution_time = (
-            datetime.now(timezone.utc) - start_time
-        ).total_seconds() * 1000
+        execution_time = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
 
         # Process results
         all_results = []
@@ -430,9 +422,7 @@ class GPUBacktestEngine:
         print(f"\nCompleted in {execution_time:.0f}ms")
         print(f"Best Sharpe: {best_sharpe:.3f}")
         print(f"Best Win Rate: {best_result.win_rate:.1%}")
-        print(
-            f"Best Params: delta={best_result.params.delta}, dte={best_result.params.dte}"
-        )
+        print(f"Best Params: delta={best_result.params.delta}, dte={best_result.params.dte}")
 
         return grid_result
 
@@ -515,9 +505,7 @@ class GPUBacktestEngine:
         expected_return = np.mean(outcomes)
         worst_case = np.min(outcomes)
 
-        execution_time = (
-            datetime.now(timezone.utc) - start_time
-        ).total_seconds() * 1000
+        execution_time = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
 
         return {
             f"var_{int(confidence * 100)}": var,

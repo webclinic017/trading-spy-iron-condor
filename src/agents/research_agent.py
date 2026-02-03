@@ -173,9 +173,7 @@ class PerplexityResearchAgent:
         self.model = "sonar-pro"  # Deep research model
         self.results: list[BacktestResult] = []
 
-    async def research(
-        self, query: str, extract_metrics: bool = True
-    ) -> dict[str, Any]:
+    async def research(self, query: str, extract_metrics: bool = True) -> dict[str, Any]:
         """
         Execute a deep research query via Perplexity.
 
@@ -684,9 +682,7 @@ async def run_weekend_research() -> dict[str, Any]:
 
         insights = state["research_insights"]
         insights["last_updated"] = datetime.now(timezone.utc).isoformat()
-        insights["gpu_backtest"] = (
-            gpu_results if gpu_results.get("status") == "completed" else None
-        )
+        insights["gpu_backtest"] = gpu_results if gpu_results.get("status") == "completed" else None
         insights["combined_insights"] = results_summary["combined_insights"]
 
         # Update optimal parameters from GPU results (highest confidence)
@@ -761,9 +757,7 @@ async def get_research_signal() -> dict[str, Any]:
         }
 
     # Calculate signal based on research confidence
-    avg_confidence = sum(p.get("confidence", 0.5) for p in params.values()) / max(
-        len(params), 1
-    )
+    avg_confidence = sum(p.get("confidence", 0.5) for p in params.values()) / max(len(params), 1)
 
     # Higher confidence in research = more favorable signal
     signal = 0.5 + (avg_confidence - 0.5) * 0.4
