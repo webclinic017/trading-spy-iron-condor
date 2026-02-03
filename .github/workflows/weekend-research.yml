@@ -1,0 +1,123 @@
+name: Weekend Research
+
+on:
+  schedule:
+    # Run every Saturday at 6am UTC (1am EST / 10pm PST Friday)
+    - cron: 0 6 * * 6
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+env:
+  PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
+
+jobs:
+  research:
+    name: Run Backtest Research
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install httpx
+
+      - name: Check API key
+        run: |
+          if [ -z "$PERPLEXITY_API_KEY" ]; then
+            echo "::warning::PERPLEXITY_API_KEY not configured - research will be skipped"
+          else
+            echo "Perplexity API key configured"
+          fi
+
+      - name: Create data directories
+        run: |
+          mkdir -p data/research/backtests
+          mkdir -p rag_knowledge/backtests
+
+      - name: Run weekend research
+        id: research
+        run: |
+          python -c "
+          import asyncio
+          import sys
+          sys.path.insert(0, '.')
+          from src.agents.research_agent import run_weekend_research
+
+          result = asyncio.run(run_weekend_research())
+          print(f'Status: {result.get(\"status\")}')
+          print(f'Queries: {result.get(\"queries_run\", 0)}')
+          print(f'High confidence: {result.get(\"high_confidence_results\", 0)}')
+          print(f'RAG lessons: {result.get(\"rag_lessons_created\", 0)}')
+
+          # Output for GitHub Actions
+          with open('${{ github.output }}', 'a') as f:
+              f.write(f'status={result.get(\"status\")}\\n')
+              f.write(f'queries={result.get(\"queries_run\", 0)}\\n')
+          "
+
+      - name: Commit research results
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          # Add research outputs
+          git add data/research/ rag_knowledge/backtests/ data/system_state.json || true
+
+          # Check if there are changes
+          if git diff --staged --quiet; then
+            echo "No research changes to commit"
+          else
+            git commit -m "research: Weekend backtest analysis $(date +%Y-%m-%d)
+
+            Automated backtest research via Perplexity Deep Research.
+            Results feed into RAG system for continuous learning."
+
+            git push
+            echo "Research results committed and pushed"
+          fi
+
+      - name: Upload research artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: research-results-${{ github.run_number }}
+          path: |
+            data/research/
+            rag_knowledge/backtests/
+          retention-days: 30
+
+      - name: Summary
+        run: |
+          echo "## Weekend Research Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f data/research/latest_research_summary.json ]; then
+            echo "### Results" >> $GITHUB_STEP_SUMMARY
+            cat data/research/latest_research_summary.json | python -c "
+          import sys, json
+          data = json.load(sys.stdin)
+          print(f\"- **Status**: {data.get('status', 'unknown')}\")
+          print(f\"- **Queries Run**: {data.get('queries_run', 0)}\")
+          print(f\"- **High Confidence**: {data.get('high_confidence_results', 0)}\")
+          print(f\"- **RAG Lessons**: {data.get('rag_lessons_created', 0)}\")
+          if data.get('key_findings'):
+              print()
+              print('### Key Findings')
+              for f in data['key_findings']:
+                  print(f\"- **{f['parameter']}**: {f['optimal']} (confidence: {f['confidence']:.0%})\")
+          " >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No research summary available" >> $GITHUB_STEP_SUMMARY
+          fi

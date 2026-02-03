@@ -168,7 +168,10 @@ class StructuredReasoningPipeline:
 
         # Standard threshold check
         if signal < threshold:
-            return False, f"{agent_type} signal {signal:.2f} below threshold {threshold}"
+            return (
+                False,
+                f"{agent_type} signal {signal:.2f} below threshold {threshold}",
+            )
 
         return True, "passed"
 
@@ -670,20 +673,45 @@ class SwarmOrchestrator:
         }
 
     async def _run_research(self) -> dict[str, Any]:
-        """Research/learning agent for weekends."""
-        return {
-            "signal": 0.5,  # Research doesn't produce trading signals
-            "confidence": 1.0,
-            "data": {
-                "mode": "weekend_research",
-                "tasks": [
-                    "Phil Town content ingestion",
-                    "Strategy backtesting",
-                    "Parameter optimization",
-                ],
-                "status": "ready",
-            },
-        }
+        """Research/learning agent for weekends with Perplexity Deep Research."""
+        try:
+            from src.agents.research_agent import (
+                get_research_signal,
+                run_weekend_research,
+            )
+
+            # Get signal based on latest research insights
+            signal_result = await get_research_signal()
+
+            # If weekend and research insights are stale, run new research
+            from datetime import datetime
+
+            if datetime.now().weekday() >= 5:  # Saturday or Sunday
+                research_result = await run_weekend_research()
+                signal_result["data"]["weekend_research"] = research_result
+
+            return signal_result
+        except ImportError:
+            # Fallback to basic mode
+            return {
+                "signal": 0.5,  # Research doesn't produce trading signals
+                "confidence": 1.0,
+                "data": {
+                    "mode": "weekend_research",
+                    "tasks": [
+                        "Phil Town content ingestion",
+                        "Strategy backtesting",
+                        "Parameter optimization",
+                    ],
+                    "status": "ready",
+                },
+            }
+        except Exception as e:
+            return {
+                "signal": 0.5,
+                "confidence": 0.3,
+                "data": {"error": str(e), "mode": "weekend_research"},
+            }
 
     async def _run_backtest(self) -> dict[str, Any]:
         """Backtesting agent."""
