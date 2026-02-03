@@ -136,9 +136,7 @@ def generate_human_title(signal: str, context: str) -> str:
 def generate_narrative_intro(signal: str, context: str) -> str:
     """Generate an engaging narrative introduction."""
     now = datetime.now(ET)
-    time_of_day = (
-        "morning" if now.hour < 12 else "afternoon" if now.hour < 17 else "evening"
-    )
+    time_of_day = "morning" if now.hour < 12 else "afternoon" if now.hour < 17 else "evening"
 
     if signal == "positive":
         return f"""It's {now.strftime("%A")} {time_of_day}, and something just worked. In the world of building AI-powered trading systems, that's worth celebrating.
@@ -380,9 +378,7 @@ def main():
     parser.add_argument("--signal", required=True, choices=["positive", "negative"])
     parser.add_argument("--intensity", type=float, default=0.5)
     parser.add_argument("--context", required=True, help="Feedback context")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Don't publish, just preview"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Don't publish, just preview")
 
     args = parser.parse_args()
 
