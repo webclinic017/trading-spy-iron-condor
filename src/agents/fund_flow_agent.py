@@ -307,8 +307,6 @@ async def get_fund_flow_signal() -> dict[str, Any]:
     # Convert to trading signal (0-1 scale)
     # Bullish flows = higher signal (more favorable for IC)
     # Bearish flows = lower signal (less favorable)
-    base_signal = 0.5
-
     if result.is_bullish:
         signal = 0.7  # Positive rotation, favorable
     elif result.is_bearish:
@@ -335,7 +333,9 @@ async def get_fund_flow_signal() -> dict[str, Any]:
             "is_bullish": result.is_bullish,
             "is_bearish": result.is_bearish,
             "recommendation": (
-                "FAVORABLE" if result.is_bullish else "CAUTION" if result.is_bearish else "NEUTRAL"
+                "FAVORABLE"
+                if result.is_bullish
+                else "CAUTION" if result.is_bearish else "NEUTRAL"
             ),
         },
     }

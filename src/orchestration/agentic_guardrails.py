@@ -104,7 +104,10 @@ class ChangeRequest:
 
     def __post_init__(self):
         # Determine if CEO approval is required
-        if self.category in [ChangeCategory.TRADING_LOGIC, ChangeCategory.RISK_MANAGEMENT]:
+        if self.category in [
+            ChangeCategory.TRADING_LOGIC,
+            ChangeCategory.RISK_MANAGEMENT,
+        ]:
             self.ceo_approval_required = True
 
 
@@ -241,14 +244,20 @@ class ReviewGate:
         """Evaluate if the gate should open."""
         if self.checks_failed:
             self.is_open = False
-            return False, f"Gate {self.gate_name} BLOCKED: {', '.join(self.checks_failed)}"
+            return (
+                False,
+                f"Gate {self.gate_name} BLOCKED: {', '.join(self.checks_failed)}",
+            )
 
         if not self.checks_passed:
             self.is_open = False
             return False, f"Gate {self.gate_name} BLOCKED: No checks passed"
 
         self.is_open = True
-        return True, f"Gate {self.gate_name} OPEN: {len(self.checks_passed)} checks passed"
+        return (
+            True,
+            f"Gate {self.gate_name} OPEN: {len(self.checks_passed)} checks passed",
+        )
 
 
 class DualReadMigration:
@@ -372,15 +381,12 @@ class CEOApprovalGate:
     def __init__(self):
         self.pending_approvals: list[ChangeRequest] = []
 
-    def check_requires_approval(self, change_description: str, affected_code: str) -> bool:
+    def check_requires_approval(
+        self, change_description: str, affected_code: str
+    ) -> bool:
         """Check if a change requires CEO approval."""
         combined = (change_description + affected_code).lower()
-
-        for pattern in self.PROTECTED_PATTERNS:
-            if pattern in combined:
-                return True
-
-        return False
+        return any(pattern in combined for pattern in self.PROTECTED_PATTERNS)
 
     def request_approval(self, change: ChangeRequest) -> str:
         """
@@ -413,7 +419,9 @@ Please review and respond with:
 ═══════════════════════════════════════════════════════════
 """
 
-    def process_approval(self, change_id: str, approved: bool, approver: str = "CEO") -> bool:
+    def process_approval(
+        self, change_id: str, approved: bool, approver: str = "CEO"
+    ) -> bool:
         """Process an approval decision."""
         for change in self.pending_approvals:
             if change.change_id == change_id:
@@ -611,5 +619,7 @@ if __name__ == "__main__":
 
     # Demo architecture analysis
     print("\n--- Architecture Analysis Demo ---")
-    analysis = analyze_before_change(["src/trading/order_executor.py", "src/agents/risk_agent.py"])
+    analysis = analyze_before_change(
+        ["src/trading/order_executor.py", "src/agents/risk_agent.py"]
+    )
     print(json.dumps(analysis, indent=2))
