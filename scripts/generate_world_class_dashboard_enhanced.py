@@ -57,9 +57,7 @@ def calculate_basic_metrics():
     live_starting = live_account.get("starting_balance", 20.0)
     live_pl = live_account.get("total_pl", 0.0)
     live_pl_pct = live_account.get("total_pl_pct", 0.0)
-    live_todays_pl = live_account.get("daily_change") or live_account.get(
-        "todays_pl", 0.0
-    )
+    live_todays_pl = live_account.get("daily_change") or live_account.get("todays_pl", 0.0)
     live_todays_pl_pct = live_account.get("todays_pl_pct", 0.0)
     if live_todays_pl != 0 and live_todays_pl_pct == 0 and live_equity > 0:
         live_todays_pl_pct = (live_todays_pl / (live_equity - live_todays_pl)) * 100
@@ -69,9 +67,7 @@ def calculate_basic_metrics():
     # FIX Jan 15, 2026: Check both current_equity AND equity before fallback
     # ROOT CAUSE: system_state.json has "equity" but dashboard read "current_equity"
     # UPDATE Jan 30, 2026: Changed to $100K account (PA3C5AG0CECQ)
-    paper_equity = paper_account.get("current_equity") or paper_account.get(
-        "equity", 100000.0
-    )
+    paper_equity = paper_account.get("current_equity") or paper_account.get("equity", 100000.0)
     # FIX Jan 30, 2026: $100K starting balance - switched from $30K account
     paper_starting = paper_account.get("starting_balance", 100000.0)
     paper_pl = paper_account.get("total_pl", 0.0)
@@ -81,13 +77,9 @@ def calculate_basic_metrics():
     # The actual win rate is calculated in trades.json by calculate_win_rate.py
     trades_data = load_json_file(DATA_DIR / "trades.json")
     trades_stats = trades_data.get("stats", {}) if isinstance(trades_data, dict) else {}
-    paper_win_rate = trades_stats.get("win_rate_pct") or paper_account.get(
-        "win_rate", 0.0
-    )
+    paper_win_rate = trades_stats.get("win_rate_pct") or paper_account.get("win_rate", 0.0)
     # FIX Jan 16, 2026: system_state.json uses "daily_change" not "todays_pl"
-    paper_todays_pl = paper_account.get("daily_change") or paper_account.get(
-        "todays_pl", 0.0
-    )
+    paper_todays_pl = paper_account.get("daily_change") or paper_account.get("todays_pl", 0.0)
     # Calculate today's P/L percentage from equity if not provided
     paper_todays_pl_pct = paper_account.get("todays_pl_pct", 0.0)
     if paper_todays_pl != 0 and paper_todays_pl_pct == 0 and paper_equity > 0:
@@ -102,18 +94,14 @@ def calculate_basic_metrics():
     total_pl_pct = live_pl_pct
     starting_balance = live_starting
 
-    trading_days = (
-        len(perf_log) if isinstance(perf_log, list) and perf_log else days_elapsed
-    )
+    trading_days = len(perf_log) if isinstance(perf_log, list) and perf_log else days_elapsed
     trading_days = max(trading_days, 1)
 
     avg_daily_profit = total_pl / trading_days if trading_days > 0 else 0.0
     # North Star: $6,000/month after-tax = ~$200/day after-tax = ~$286/day pre-tax
     # Updated Jan 22, 2026 per CLAUDE.md Financial Independence Framework
     north_star_target = 200.0  # Daily after-tax target
-    progress_pct = (
-        (avg_daily_profit / north_star_target * 100) if north_star_target > 0 else 0.0
-    )
+    progress_pct = (avg_daily_profit / north_star_target * 100) if north_star_target > 0 else 0.0
 
     if total_pl > 0 and progress_pct < 0.01:
         progress_pct = max(0.01, (total_pl / north_star_target) * 100)
@@ -121,9 +109,7 @@ def calculate_basic_metrics():
     performance = system_state.get("performance", {})
     # FIX Jan 18, 2026: Use trades.json stats for win_rate, fallback to performance
     win_rate = trades_stats.get("win_rate_pct") or performance.get("win_rate", 0.0)
-    total_trades = trades_stats.get("total_trades") or performance.get(
-        "total_trades", 0
-    )
+    total_trades = trades_stats.get("total_trades") or performance.get("total_trades", 0)
 
     challenge = system_state.get("challenge", {})
     # Always calculate current_day dynamically from start_date
@@ -170,9 +156,7 @@ def calculate_basic_metrics():
             if yesterday_account_type == "live":
                 today_equity = current_equity
                 # Avoid negative P/L from deposits - use stored P/L or 0
-                today_pl = (
-                    live_pl  # Use stored P/L from system_state instead of calculating
-                )
+                today_pl = live_pl  # Use stored P/L from system_state instead of calculating
                 today_pl_pct = live_pl_pct
             else:
                 # Different account type - don't compare, use 0
@@ -246,9 +230,7 @@ def get_recent_trades(days: int = 7) -> list[dict]:
                     recent_trades.append(trade)
 
     # Sort by timestamp descending (most recent first)
-    recent_trades.sort(
-        key=lambda x: x.get("timestamp", x.get("trade_date", "")), reverse=True
-    )
+    recent_trades.sort(key=lambda x: x.get("timestamp", x.get("trade_date", "")), reverse=True)
     return recent_trades
 
 
@@ -269,11 +251,7 @@ def calculate_simple_risk_metrics(perf_log: list, all_trades: list) -> dict:
 
     # Calculate metrics
     avg_return = sum(returns) / len(returns)
-    variance = (
-        sum((r - avg_return) ** 2 for r in returns) / len(returns)
-        if len(returns) > 1
-        else 0
-    )
+    variance = sum((r - avg_return) ** 2 for r in returns) / len(returns) if len(returns) > 1 else 0
     std_dev = variance**0.5
 
     # Annualized metrics (assuming daily data)
@@ -351,9 +329,7 @@ def generate_world_class_dashboard() -> str:
     # Count orders from today's trades file (not telemetry)
     order_count = 0
     stop_count = 0
-    today_trades_for_funnel = load_json_file(
-        DATA_DIR / f"trades_{date.today().isoformat()}.json"
-    )
+    today_trades_for_funnel = load_json_file(DATA_DIR / f"trades_{date.today().isoformat()}.json")
     if isinstance(today_trades_for_funnel, list):
         for trade in today_trades_for_funnel:
             # Count all orders (BUY/SELL)
@@ -367,9 +343,7 @@ def generate_world_class_dashboard() -> str:
     tax_recommendations = []
     pdt_status = {}
     system_state = load_json_file(DATA_DIR / "system_state.json")
-    current_equity = basic_metrics.get(
-        "current_equity", 100000.0
-    )  # $100K default (Jan 30, 2026)
+    current_equity = basic_metrics.get("current_equity", 100000.0)  # $100K default (Jan 30, 2026)
 
     if TaxOptimizer and all_trades:
         try:
@@ -385,12 +359,8 @@ def generate_world_class_dashboard() -> str:
                     and trade.get("pl") is not None
                 ):
                     try:
-                        entry_date = dt.fromisoformat(
-                            trade["entry_date"].replace("Z", "+00:00")
-                        )
-                        exit_date = dt.fromisoformat(
-                            trade["exit_date"].replace("Z", "+00:00")
-                        )
+                        entry_date = dt.fromisoformat(trade["entry_date"].replace("Z", "+00:00"))
+                        exit_date = dt.fromisoformat(trade["exit_date"].replace("Z", "+00:00"))
                         entry_price = trade.get("entry_price", 0.0)
                         exit_price = trade.get("exit_price", 0.0)
                         quantity = trade.get("quantity", 0.0)
@@ -427,9 +397,7 @@ def generate_world_class_dashboard() -> str:
             pdt_status = tax_optimizer.check_pdt_status(current_equity)
 
             # Get recommendations
-            open_positions = system_state.get("performance", {}).get(
-                "open_positions", []
-            )
+            open_positions = system_state.get("performance", {}).get("open_positions", [])
             tax_recommendations = tax_optimizer.get_tax_optimization_recommendations(
                 current_equity, open_positions
             )
@@ -481,9 +449,7 @@ def generate_world_class_dashboard() -> str:
         "_note": "Execution metrics not currently tracked - values would be misleading",
     }
     data_completeness = {
-        "performance_log_completeness": (
-            len(perf_log) if perf_log else 0
-        ),  # Actual count
+        "performance_log_completeness": (len(perf_log) if perf_log else 0),  # Actual count
         "missing_dates_count": None,  # Would need calendar analysis
         "data_freshness_days": None,  # Calculated below if possible
         "missing_candle_pct": None,  # NOT MEASURED
@@ -580,9 +546,7 @@ def generate_world_class_dashboard() -> str:
                 else:
                     qty_display = str(qty)
 
-            price = trade.get(
-                "filled_avg_price", trade.get("price", trade.get("credit", 0))
-            )
+            price = trade.get("filled_avg_price", trade.get("price", trade.get("credit", 0)))
 
             # Format price
             if isinstance(price, int | float) and price > 0:
@@ -593,7 +557,9 @@ def generate_world_class_dashboard() -> str:
             status_icon = (
                 "✅"
                 if status in ["FILLED", "COMPLETED", "SUCCESS"]
-                else "⏳" if status == "PENDING" else "❌"
+                else "⏳"
+                if status == "PENDING"
+                else "❌"
             )
 
             # Determine account type - check trade record for account or mode field
@@ -713,9 +679,7 @@ def generate_world_class_dashboard() -> str:
         allocations = profit_target_data.get("recommended_allocations", {})
 
         # Calculate progress percentage
-        progress_to_target = (
-            (projected_profit / target_profit * 100) if target_profit > 0 else 0.0
-        )
+        progress_to_target = (projected_profit / target_profit * 100) if target_profit > 0 else 0.0
 
         # Progress bar for $200/day (after-tax) target = $6K/month
         progress_bars_100 = max(0, min(int(progress_to_target / 5), 20))
@@ -885,11 +849,11 @@ def generate_world_class_dashboard() -> str:
         if chart_paths.get("equity_curve"):
             dashboard += f"### Equity Curve\n\n![Equity Curve]({chart_paths['equity_curve']})\n\n"
         if chart_paths.get("drawdown"):
-            dashboard += (
-                f"### Drawdown Chart\n\n![Drawdown]({chart_paths['drawdown']})\n\n"
-            )
+            dashboard += f"### Drawdown Chart\n\n![Drawdown]({chart_paths['drawdown']})\n\n"
         if chart_paths.get("daily_pl"):
-            dashboard += f"### Daily P/L Distribution\n\n![Daily P/L]({chart_paths['daily_pl']})\n\n"
+            dashboard += (
+                f"### Daily P/L Distribution\n\n![Daily P/L]({chart_paths['daily_pl']})\n\n"
+            )
         if chart_paths.get("rolling_sharpe_7d"):
             dashboard += f"### Rolling Sharpe Ratio (7-Day)\n\n![Rolling Sharpe]({chart_paths['rolling_sharpe_7d']})\n\n"
     else:
@@ -957,9 +921,7 @@ def generate_world_class_dashboard() -> str:
     bench_data_available = benchmark.get("data_available", False)
 
     # Extract AI insights with None handling
-    ai_summary = (
-        ai_insights.get("summary", "No summary available.") or "No summary available."
-    )
+    ai_summary = ai_insights.get("summary", "No summary available.") or "No summary available."
     ai_health = ai_insights.get("strategy_health", {}) or {}
     ai_emoji = ai_health.get("emoji", "❓") or "❓"
     ai_status = ai_health.get("status", "UNKNOWN") or "UNKNOWN"
@@ -1187,9 +1149,7 @@ def generate_world_class_dashboard() -> str:
                             options_activity = []  # Reset on new execution start
                         if "Proposed: Sell" in line:
                             parts = line.split("Proposed: Sell ")[1].strip()
-                            options_activity.append(
-                                f"- 🎯 **Opportunity**: Sell {parts}"
-                            )
+                            options_activity.append(f"- 🎯 **Opportunity**: Sell {parts}")
                         if "Options Strategy: No opportunities found" in line:
                             options_activity = [
                                 "- ℹ️ No covered call opportunities found today (need 100+ shares)"
@@ -1226,27 +1186,23 @@ def generate_world_class_dashboard() -> str:
                 if j.get("status") in ["submitted", "running", "in_progress"]
             )
             completed_jobs = sum(
-                1
-                for j in cloud_jobs.values()
-                if j.get("status") in ["completed", "success"]
+                1 for j in cloud_jobs.values() if j.get("status") in ["completed", "success"]
             )
 
             dashboard += f"| **Cloud RL Jobs** | {len(cloud_jobs)} total ({active_jobs} active, {completed_jobs} completed) |\n"
-            dashboard += (
-                f"| **Last Training** | {len(last_training)} symbols trained |\n"
-            )
+            dashboard += f"| **Last Training** | {len(last_training)} symbols trained |\n"
 
             # Show recent training times
             if last_training:
                 recent_symbols = list(last_training.items())[:5]
-                dashboard += f"| **Recent Training** | {', '.join([f'{s}' for s, _ in recent_symbols])} |\n"
+                dashboard += (
+                    f"| **Recent Training** | {', '.join([f'{s}' for s, _ in recent_symbols])} |\n"
+                )
 
             # Add Vertex AI console link
             dashboard += "| **Vertex AI Console** | [View Jobs →](https://console.cloud.google.com/vertex-ai/training/custom-jobs?project=email-outreach-ai-460404) |\n"
         except Exception as e:
-            dashboard += (
-                f"| **Status** | ⚠️ Unable to load training status ({str(e)[:50]}) |\n"
-            )
+            dashboard += f"| **Status** | ⚠️ Unable to load training status ({str(e)[:50]}) |\n"
     else:
         dashboard += "| **Status** | ⚠️ No training data available |\n"
         dashboard += "| **Vertex AI Console** | [View Jobs →](https://console.cloud.google.com/vertex-ai/training/custom-jobs?project=email-outreach-ai-460404) |\n"
@@ -1281,24 +1237,20 @@ def generate_world_class_dashboard() -> str:
             if stats.get("success"):
                 dashboard += "| **Status** | ✅ Healthy |\n"
                 dashboard += f"| **Total Runs** (7d) | {stats.get('total_runs', 0)} |\n"
+                dashboard += f"| **Success Rate** | {stats.get('success_rate', 0):.1f}% |\n"
                 dashboard += (
-                    f"| **Success Rate** | {stats.get('success_rate', 0):.1f}% |\n"
+                    f"| **Avg Duration** | {stats.get('average_duration_seconds', 0):.1f}s |\n"
                 )
-                dashboard += f"| **Avg Duration** | {stats.get('average_duration_seconds', 0):.1f}s |\n"
                 dashboard += f"| **Project Dashboard** | [trading-rl-training →]({project_url}) |\n"
             else:
                 dashboard += "| **Status** | ✅ Healthy (no stats available) |\n"
                 dashboard += f"| **Project Dashboard** | [trading-rl-training →]({project_url}) |\n"
         else:
             dashboard += f"| **Status** | ⚠️ {health.get('error', 'Unknown error')} |\n"
-            dashboard += (
-                f"| **Project Dashboard** | [trading-rl-training →]({project_url}) |\n"
-            )
+            dashboard += f"| **Project Dashboard** | [trading-rl-training →]({project_url}) |\n"
     except Exception:
         dashboard += "| **Status** | ⚠️ LangSmith monitor unavailable |\n"
-        dashboard += (
-            f"| **Project Dashboard** | [trading-rl-training →]({project_url}) |\n"
-        )
+        dashboard += f"| **Project Dashboard** | [trading-rl-training →]({project_url}) |\n"
 
     dashboard += f"""
 ---
@@ -1406,9 +1358,7 @@ def generate_world_class_dashboard() -> str:
 
     except ImportError:
         verification_status = "⚠️ Verification module not available"
-        verification_details.append(
-            "Verification tests require alpaca-py (available in CI)"
-        )
+        verification_details.append("Verification tests require alpaca-py (available in CI)")
     except Exception as e:
         verification_status = f"❌ Verification failed: {str(e)[:50]}"
         verification_details.append(f"Error running verification: {str(e)}")
@@ -1449,7 +1399,9 @@ def generate_world_class_dashboard() -> str:
 ### LangSmith Observability
 - **[LangSmith Dashboard](https://smith.langchain.com)** - Main dashboard
 """
-    dashboard += f"- **[Trading RL Training Project]({project_url})** - RL training runs and traces\n"
+    dashboard += (
+        f"- **[Trading RL Training Project]({project_url})** - RL training runs and traces\n"
+    )
     dashboard += f"  *Project ID: `{project_id}`*\n"
     dashboard += r"""- **[All Projects](https://smith.langchain.com/o/default/projects)** - View all LangSmith projects
 
