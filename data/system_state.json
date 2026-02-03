@@ -723,11 +723,11 @@
     "buying_power": 123425.38
   },
   "meta": {
-    "last_updated": "2026-02-02T09:35:11.390767",
+    "last_updated": "2026-02-02T21:45:31.132631",
     "trade_sync": "alpaca_api",
     "sync_frequency_minutes": 5,
-    "last_sync": "2026-02-02T09:35:11.390780",
-    "sync_mode": "paper_account"
+    "last_sync": "2026-02-02T21:45:31.132639",
+    "sync_mode": "skipped_no_keys"
   },
   "paper_trading": {
     "start_date": "2026-01-30",
@@ -737,7 +737,7 @@
     "notes": "RESET Jan 30, 2026 - Fresh 90-day validation. Goal: $6K/month by age 50."
   },
   "trailing_stops": {
-    "last_set": "2026-02-02T14:54:27.167945",
+    "last_set": "2026-02-02T21:13:30.252084",
     "stops_active": 1,
     "positions_skipped": 0,
     "value_protected": 500.0,
