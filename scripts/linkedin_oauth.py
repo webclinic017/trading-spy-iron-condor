@@ -49,9 +49,7 @@ def exchange_code_for_token(code: str) -> dict | None:
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
     try:
-        response = requests.post(
-            LINKEDIN_TOKEN_URL, data=data, headers=headers, timeout=30
-        )
+        response = requests.post(LINKEDIN_TOKEN_URL, data=data, headers=headers, timeout=30)
         if response.status_code == 200:
             return response.json()
         else:

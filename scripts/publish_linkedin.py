@@ -83,9 +83,9 @@ def create_linkedin_post(
 
     # Add article if provided
     if article_url:
-        payload["specificContent"]["com.linkedin.ugc.ShareContent"][
-            "shareMediaCategory"
-        ] = "ARTICLE"
+        payload["specificContent"]["com.linkedin.ugc.ShareContent"]["shareMediaCategory"] = (
+            "ARTICLE"
+        )
         payload["specificContent"]["com.linkedin.ugc.ShareContent"]["media"] = [
             {
                 "status": "READY",
@@ -158,9 +158,7 @@ def main():
     parser = argparse.ArgumentParser(description="Publish to LinkedIn")
     parser.add_argument("--signal", required=True, choices=["positive", "negative"])
     parser.add_argument("--context", required=True, help="Feedback context")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Don't post, just preview"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Don't post, just preview")
 
     args = parser.parse_args()
 
