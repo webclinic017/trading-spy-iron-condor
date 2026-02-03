@@ -1,0 +1,219 @@
+#!/usr/bin/env python3
+"""
+LinkedIn Blog Publisher
+
+Publishes RLHF blog posts to LinkedIn profile.
+Uses LinkedIn API v2 with OAuth 2.0.
+
+Setup:
+1. Get access token via OAuth flow (one-time)
+2. Store in LINKEDIN_ACCESS_TOKEN environment variable
+3. Script posts to profile automatically
+"""
+
+import os
+import sys
+from zoneinfo import ZoneInfo
+
+import requests
+
+ET = ZoneInfo("America/New_York")
+
+# LinkedIn API endpoints
+LINKEDIN_API_BASE = "https://api.linkedin.com/v2"
+LINKEDIN_POST_URL = f"{LINKEDIN_API_BASE}/ugcPosts"
+LINKEDIN_ME_URL = f"{LINKEDIN_API_BASE}/me"
+
+
+def get_linkedin_credentials() -> dict:
+    """Get LinkedIn credentials from environment."""
+    return {
+        "client_id": os.environ.get("LINKEDIN_CLIENT_ID"),
+        "client_secret": os.environ.get("LINKEDIN_CLIENT_SECRET"),
+        "access_token": os.environ.get("LINKEDIN_ACCESS_TOKEN"),
+    }
+
+
+def get_user_urn(access_token: str) -> str | None:
+    """Get the user's LinkedIn URN (unique identifier)."""
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "X-Restli-Protocol-Version": "2.0.0",
+    }
+
+    try:
+        response = requests.get(LINKEDIN_ME_URL, headers=headers, timeout=30)
+        if response.status_code == 200:
+            data = response.json()
+            return f"urn:li:person:{data['id']}"
+        else:
+            print(f"Failed to get user info: {response.status_code} - {response.text}")
+            return None
+    except Exception as e:
+        print(f"Error getting user URN: {e}")
+        return None
+
+
+def create_linkedin_post(
+    access_token: str,
+    user_urn: str,
+    text: str,
+    article_url: str | None = None,
+    article_title: str | None = None,
+) -> dict | None:
+    """Create a LinkedIn post."""
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
+        "X-Restli-Protocol-Version": "2.0.0",
+    }
+
+    # Build the post payload
+    payload = {
+        "author": user_urn,
+        "lifecycleState": "PUBLISHED",
+        "specificContent": {
+            "com.linkedin.ugc.ShareContent": {
+                "shareCommentary": {"text": text},
+                "shareMediaCategory": "NONE",
+            }
+        },
+        "visibility": {"com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"},
+    }
+
+    # Add article if provided
+    if article_url:
+        payload["specificContent"]["com.linkedin.ugc.ShareContent"][
+            "shareMediaCategory"
+        ] = "ARTICLE"
+        payload["specificContent"]["com.linkedin.ugc.ShareContent"]["media"] = [
+            {
+                "status": "READY",
+                "originalUrl": article_url,
+                "title": {"text": article_title or "Read more"},
+            }
+        ]
+
+    try:
+        response = requests.post(
+            LINKEDIN_POST_URL,
+            headers=headers,
+            json=payload,
+            timeout=30,
+        )
+
+        if response.status_code == 201:
+            print("✅ Posted to LinkedIn successfully!")
+            return response.json()
+        else:
+            print(f"❌ LinkedIn post failed: {response.status_code}")
+            print(f"Response: {response.text}")
+            return None
+    except Exception as e:
+        print(f"❌ Error posting to LinkedIn: {e}")
+        return None
+
+
+def generate_linkedin_text(signal: str, context: str, equity: float = 101638.61) -> str:
+    """Generate engaging LinkedIn post text from RLHF feedback."""
+    gain = equity - 100000
+    gain_pct = (gain / 100000) * 100
+
+    if signal == "positive":
+        emoji = "🎯"
+        intro = "Small win today in the AI trading journey."
+    else:
+        emoji = "📚"
+        intro = "Lesson learned today in the AI trading journey."
+
+    # Keep it concise for LinkedIn (under 3000 chars, ideally ~1000)
+    text = f"""{emoji} {intro}
+
+{context[:200]}
+
+📊 Current Status:
+• Account: ${equity:,.2f} ({gain_pct:+.1f}% since Jan 30)
+• Strategy: Iron Condors on SPY
+• Goal: $6K/month passive income
+
+Building an AI-powered trading system in public. Every thumbs up and thumbs down triggers a blog post - accountability through transparency.
+
+The system now has:
+✅ 1300+ automated tests
+✅ RLHF feedback loop with Thompson Sampling
+✅ Self-healing CI/CD pipelines
+✅ Phil Town Rule #1 automation
+
+Follow along: https://igorganapolsky.github.io/trading/
+
+#AITrading #FinancialIndependence #BuildingInPublic #MachineLearning #OptionsTrading #RLHF"""
+
+    return text
+
+
+def main():
+    """Main entry point."""
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Publish to LinkedIn")
+    parser.add_argument("--signal", required=True, choices=["positive", "negative"])
+    parser.add_argument("--context", required=True, help="Feedback context")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Don't post, just preview"
+    )
+
+    args = parser.parse_args()
+
+    print("=" * 60)
+    print("LINKEDIN PUBLISHER")
+    print("=" * 60)
+
+    # Get credentials
+    creds = get_linkedin_credentials()
+
+    if not creds["access_token"]:
+        print("❌ LINKEDIN_ACCESS_TOKEN not set")
+        print("\nTo get an access token:")
+        print("1. Go to LinkedIn Developer Portal")
+        print("2. Create an app and get OAuth 2.0 credentials")
+        print("3. Complete the OAuth flow to get an access token")
+        print("4. Set LINKEDIN_ACCESS_TOKEN environment variable")
+        return 1
+
+    # Generate post text
+    text = generate_linkedin_text(args.signal, args.context)
+    print(f"\n📝 Generated post ({len(text)} chars):\n")
+    print(text)
+    print()
+
+    if args.dry_run:
+        print("--- DRY RUN (not posting) ---")
+        return 0
+
+    # Get user URN
+    user_urn = get_user_urn(creds["access_token"])
+    if not user_urn:
+        print("❌ Could not get LinkedIn user info")
+        return 1
+
+    print(f"User URN: {user_urn}")
+
+    # Post to LinkedIn
+    result = create_linkedin_post(
+        access_token=creds["access_token"],
+        user_urn=user_urn,
+        text=text,
+        article_url="https://igorganapolsky.github.io/trading/",
+        article_title="AI Trading System - Building in Public",
+    )
+
+    if result:
+        print("\n✅ LinkedIn post published!")
+        return 0
+    else:
+        print("\n❌ Failed to publish to LinkedIn")
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
