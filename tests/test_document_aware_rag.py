@@ -148,9 +148,7 @@ Always validate position limits before executing trades.
         assert metadata["market_condition"] == "high_volatility"
 
     @pytest.mark.skipif(
-        not Path(
-            "/Users/ganapolsky_i/workspace/git/igor/trading/.claude/memory/lancedb"
-        ).exists(),
+        not Path("/Users/ganapolsky_i/workspace/git/igor/trading/.claude/memory/lancedb").exists(),
         reason="LanceDB not available",
     )
     def test_search_integration(self):
@@ -167,9 +165,7 @@ Always validate position limits before executing trades.
         assert result["result_count"] >= 0
 
     @pytest.mark.skipif(
-        not Path(
-            "/Users/ganapolsky_i/workspace/git/igor/trading/.claude/memory/lancedb"
-        ).exists(),
+        not Path("/Users/ganapolsky_i/workspace/git/igor/trading/.claude/memory/lancedb").exists(),
         reason="LanceDB not available",
     )
     def test_complex_query(self):
@@ -276,9 +272,7 @@ class TestVectorFlattening:
             "primary_category": "risk_management",
         }
 
-        flattened = rag._generate_flattened_text(
-            section_title, section_content, metadata
-        )
+        flattened = rag._generate_flattened_text(section_title, section_content, metadata)
 
         # Should have section title and content
         assert "Root Cause Analysis" in flattened
@@ -350,17 +344,13 @@ class TestVectorFlatteningBenchmark:
             "volatility",
         ]
 
-        original_matches = sum(
-            1 for term in search_terms if term.lower() in original.lower()
-        )
-        flattened_matches = sum(
-            1 for term in search_terms if term.lower() in flattened.lower()
-        )
+        original_matches = sum(1 for term in search_terms if term.lower() in original.lower())
+        flattened_matches = sum(1 for term in search_terms if term.lower() in flattened.lower())
 
         # Flattened should have more searchable terms
-        assert (
-            flattened_matches > original_matches
-        ), f"Flattened ({flattened_matches}) should have more terms than original ({original_matches})"
+        assert flattened_matches > original_matches, (
+            f"Flattened ({flattened_matches}) should have more terms than original ({original_matches})"
+        )
         # Specifically, flattened should match at least 4 of 5 terms
         assert flattened_matches >= 4
 
@@ -395,9 +385,7 @@ class TestVectorFlatteningBenchmark:
         assert "CRITICAL" in flattened
 
     @pytest.mark.skipif(
-        not Path(
-            "/Users/ganapolsky_i/workspace/git/igor/trading/.claude/memory/lancedb"
-        ).exists(),
+        not Path("/Users/ganapolsky_i/workspace/git/igor/trading/.claude/memory/lancedb").exists(),
         reason="LanceDB not available",
     )
     def test_benchmark_query_relevance(self):
@@ -429,9 +417,7 @@ class TestVectorFlatteningBenchmark:
         # With flattening, we expect at least 50% relevance
         # (This is a baseline - real improvement measurement needs before/after comparison)
         relevance_rate = relevant_results / total_queries if total_queries > 0 else 0
-        assert (
-            relevance_rate >= 0.5
-        ), f"Relevance rate {relevance_rate:.0%} below 50% threshold"
+        assert relevance_rate >= 0.5, f"Relevance rate {relevance_rate:.0%} below 50% threshold"
 
 
 if __name__ == "__main__":

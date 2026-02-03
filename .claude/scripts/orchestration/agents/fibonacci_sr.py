@@ -139,18 +139,14 @@ class FibonacciSRCalculator:
 
         return levels
 
-    async def _fetch_daily_bars(
-        self, symbol: str, lookback_days: int
-    ) -> list[dict[str, Any]]:
+    async def _fetch_daily_bars(self, symbol: str, lookback_days: int) -> list[dict[str, Any]]:
         """Fetch daily OHLC bars from Alpaca."""
         if not self.api_key or not self.api_secret:
             # Return mock data if no API keys
             return self._get_mock_bars()
 
         end_date = datetime.now()
-        start_date = end_date - timedelta(
-            days=int(lookback_days * 1.5)
-        )  # Account for weekends
+        start_date = end_date - timedelta(days=int(lookback_days * 1.5))  # Account for weekends
 
         headers = {
             "APCA-API-KEY-ID": self.api_key,
@@ -391,9 +387,7 @@ class FibonacciSRCalculator:
             else:
                 is_valid = True
                 # Quality increases with distance from S/R
-                quality_score = min(
-                    distance_pct / 5, 1.0
-                )  # Max quality at 5%+ distance
+                quality_score = min(distance_pct / 5, 1.0)  # Max quality at 5%+ distance
 
             results[strike_type] = StrikeValidation(
                 strike=strike,
@@ -466,9 +460,7 @@ async def main():
         status = "✅ VALID" if result.is_valid else "❌ INVALID"
         print(f"\n{strike_type.upper()} ${result.strike}: {status}")
         print(f"  Quality Score: {result.quality_score:.2f}")
-        print(
-            f"  Nearest S/R: ${result.nearest_sr_level} ({result.distance_pct:.1f}% away)"
-        )
+        print(f"  Nearest S/R: ${result.nearest_sr_level} ({result.distance_pct:.1f}% away)")
         if result.warning:
             print(f"  ⚠️  {result.warning}")
 
