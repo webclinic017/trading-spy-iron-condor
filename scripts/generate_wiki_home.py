@@ -102,9 +102,7 @@ def generate_wiki_home(data: dict) -> str:
     if iron_condors:
         ic_table = "| Expiry | Put Spread | Call Spread |\n|--------|------------|-------------|\n"
         for ic in iron_condors:
-            ic_table += (
-                f"| {ic['expiry']} | {ic['put_spread']} | {ic['call_spread']} |\n"
-            )
+            ic_table += f"| {ic['expiry']} | {ic['put_spread']} | {ic['call_spread']} |\n"
     else:
         ic_table = "*No open iron condor positions*\n"
 
@@ -163,7 +161,7 @@ The system tracks progress toward Financial Independence:
 
 | Phase | Capital | Monthly Income | Timeline |
 |-------|---------|----------------|----------|
-| **NOW** | ${equity:,.0f} | ~$1,100 | {now.strftime('%b %Y')} |
+| **NOW** | ${equity:,.0f} | ~$1,100 | {now.strftime("%b %Y")} |
 | Phase 2 | $250,000 | ~$2,800 | Jan 2027 |
 | Phase 3 | $400,000 | ~$4,500 | Jul 2027 |
 | **GOAL** | $600,000 | **$6,700** | Jan 2028 🎯 |
@@ -188,7 +186,7 @@ The **Iron Condor Guardian** runs every 30 minutes during market hours to enforc
 
 ---
 
-*Last updated: {now.strftime('%Y-%m-%d %H:%M ET')} by GitHub Actions*
+*Last updated: {now.strftime("%Y-%m-%d %H:%M ET")} by GitHub Actions*
 """
     return wiki
 
