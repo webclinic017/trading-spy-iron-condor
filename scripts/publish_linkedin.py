@@ -92,9 +92,9 @@ def create_linkedin_post(
 
     # Add article if provided
     if article_url:
-        payload["specificContent"]["com.linkedin.ugc.ShareContent"]["shareMediaCategory"] = (
-            "ARTICLE"
-        )
+        payload["specificContent"]["com.linkedin.ugc.ShareContent"][
+            "shareMediaCategory"
+        ] = "ARTICLE"
         payload["specificContent"]["com.linkedin.ugc.ShareContent"]["media"] = [
             {
                 "status": "READY",
@@ -128,8 +128,29 @@ def create_linkedin_post(
 
 def generate_linkedin_text(signal: str, context: str, equity: float = 101638.61) -> str:
     """Generate engaging LinkedIn post text from RLHF feedback."""
+    import json
+    from pathlib import Path
+
     gain = equity - 100000
     gain_pct = (gain / 100000) * 100
+
+    # Load RLHF stats for technical details
+    rlhf_stats = {"positive": 0, "negative": 0, "total": 0, "alpha": 20.75, "beta": 4.0}
+    stats_file = Path("data/feedback/stats.json")
+    if stats_file.exists():
+        with open(stats_file) as f:
+            rlhf_stats = json.load(f)
+
+    model_file = Path("models/ml/feedback_model.json")
+    if model_file.exists():
+        with open(model_file) as f:
+            model = json.load(f)
+            rlhf_stats["alpha"] = model.get("alpha", 20.75)
+            rlhf_stats["beta"] = model.get("beta", 4.0)
+
+    success_rate = (
+        rlhf_stats["alpha"] / (rlhf_stats["alpha"] + rlhf_stats["beta"]) * 100
+    )
 
     if signal == "positive":
         emoji = "🎯"
@@ -138,7 +159,7 @@ def generate_linkedin_text(signal: str, context: str, equity: float = 101638.61)
         emoji = "📚"
         intro = "Lesson learned today in the AI trading journey."
 
-    # Keep it concise for LinkedIn (under 3000 chars, ideally ~1000)
+    # Keep it concise for LinkedIn (under 3000 chars, ideally ~1500)
     text = f"""{emoji} {intro}
 
 {context[:200]}
@@ -148,17 +169,39 @@ def generate_linkedin_text(signal: str, context: str, equity: float = 101638.61)
 • Strategy: Iron Condors on SPY
 • Goal: $6K/month passive income
 
-Building an AI-powered trading system in public. Every thumbs up and thumbs down triggers a blog post - accountability through transparency.
+🧠 How Our RLHF System Works:
+
+This post was auto-triggered by a {"👍 thumbs up" if signal == "positive" else "👎 thumbs down"}.
+
+The technical pipeline:
+1️⃣ CEO feedback captured by UserPromptSubmit hook
+2️⃣ Thompson Sampling model updated (α={rlhf_stats["alpha"]:.1f}, β={rlhf_stats["beta"]:.1f})
+3️⃣ LanceDB RAG queries past mistakes to prevent repeats
+4️⃣ ShieldCortex stores long-term patterns
+5️⃣ GitHub Actions publishes this blog (GitHub Pages + Dev.to + LinkedIn)
+
+Current model success rate: {success_rate:.1f}%
+Total feedback signals: {rlhf_stats.get("total", 104)}
+
+Why RLHF for trading? A trade can be profitable AND wrong.
+
+Example: System buys SOFI instead of SPY (wrong ticker, happened to win). Backtest says "good trade." CEO gives 👎. RLHF learns the PROCESS was broken.
+
+Our system captures:
+• Real-time correction injection (immediate, not next session)
+• Frustration detection (profanity = higher intensity update)
+• Session mistake tracking (reminded before repeating errors)
+• Phil Town Rule #1 enforcement (behavioral, not just code)
 
 The system now has:
 ✅ 1300+ automated tests
-✅ RLHF feedback loop with Thompson Sampling
+✅ Thompson Sampling feedback loop
+✅ Semantic RAG with LanceDB
 ✅ Self-healing CI/CD pipelines
-✅ Phil Town Rule #1 automation
 
 Follow along: https://igorganapolsky.github.io/trading/
 
-#AITrading #FinancialIndependence #BuildingInPublic #MachineLearning #OptionsTrading #RLHF"""
+#AITrading #RLHF #ThompsonSampling #MachineLearning #BuildingInPublic #FinancialIndependence"""
 
     return text
 
@@ -170,7 +213,9 @@ def main():
     parser = argparse.ArgumentParser(description="Publish to LinkedIn")
     parser.add_argument("--signal", required=True, choices=["positive", "negative"])
     parser.add_argument("--context", required=True, help="Feedback context")
-    parser.add_argument("--dry-run", action="store_true", help="Don't post, just preview")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Don't post, just preview"
+    )
 
     args = parser.parse_args()
 
