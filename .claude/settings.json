@@ -42,77 +42,13 @@
     ]
   },
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/protect_critical_files.sh",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/format_python.sh",
-            "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/auto_run_tests.sh",
-            "timeout": 35
-          }
-        ]
-      }
-    ],
     "UserPromptSubmit": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/ralph_inject_prompt.sh",
-            "timeout": 3
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/enforce_verification.sh",
-            "timeout": 2
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/detect_task_requests.sh",
-            "timeout": 3
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/inject_trading_context.sh",
-            "timeout": 3
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/mandatory_rag_check.sh",
-            "timeout": 3
-          },
-          {
-            "type": "command",
             "command": "bash \"$CLAUDE_PROJECT_DIR\"/../.claude/hooks/semantic_rag_context.sh",
             "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/advise_before_task.sh",
-            "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/verify_date_claims.sh",
-            "timeout": 2
           },
           {
             "type": "command",
@@ -128,109 +64,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/load_env_file.sh",
-            "timeout": 3
-          },
-          {
-            "type": "command",
             "command": "bash \"$CLAUDE_PROJECT_DIR\"/../.claude/hooks/session-start.sh",
             "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/sandbox_reminder.sh",
-            "timeout": 2
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/verify_vector_db.sh",
-            "timeout": 10
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/verify_rag_completeness.sh",
-            "timeout": 10
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/load_trading_state.sh",
-            "timeout": 3
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/process_pending_feedback.sh",
-            "timeout": 5,
-            "async": true
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/staleness_circuit_breaker.sh",
-            "timeout": 3
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/backup_critical_state.sh",
-            "timeout": 5,
-            "async": true
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/cost_circuit_breaker.sh",
-            "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/github_secrets_reminder.sh",
-            "timeout": 2
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/auto_blog_generator.sh",
-            "timeout": 3,
-            "async": true
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/ralph_check_resume.sh",
-            "timeout": 3
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/autonomous_orchestrator.sh",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/capture_session_learnings.sh",
-            "timeout": 5,
-            "async": true
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/auto_review_code.sh",
-            "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/ralph_stop_hook.sh",
-            "timeout": 5000
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/lesson_capture_stop_hook.sh",
-            "timeout": 10
           }
         ]
       }
