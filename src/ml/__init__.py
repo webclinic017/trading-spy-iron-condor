@@ -1,6 +1,10 @@
-"""ML Module - Gemini/GenAI Integration.
+"""ML Module - Gemini/GenAI Integration and GRPO Trade Learning.
 
-Provides GENAI_AVAILABLE flag for health checks.
+Provides:
+- GENAI_AVAILABLE flag for health checks
+- GRPOTradeLearner for verifiable reward-based policy learning
+- TradeConfidenceModel for Thompson Sampling-based confidence
+- MarketRegimeClassifier for unsupervised regime detection
 """
 
 try:
@@ -10,4 +14,46 @@ try:
 except ImportError:
     GENAI_AVAILABLE = False
 
-__all__ = ["GENAI_AVAILABLE"]
+# GRPO Trade Learning
+from src.ml.grpo_trade_learner import (
+    GRPOTradeLearner,
+    TradeFeatures,
+    TradeParams,
+    get_optimal_trade_params,
+    train_grpo_model,
+    TORCH_AVAILABLE,
+)
+
+# Trade Confidence (Thompson Sampling)
+from src.ml.trade_confidence import (
+    TradeConfidenceModel,
+    get_trade_confidence_model,
+    sample_trade_confidence,
+)
+
+# Market Regime Classification
+from src.ml.market_regime import (
+    MarketRegimeClassifier,
+    MarketRegime,
+    get_regime_signal,
+)
+
+__all__ = [
+    # Availability flags
+    "GENAI_AVAILABLE",
+    "TORCH_AVAILABLE",
+    # GRPO
+    "GRPOTradeLearner",
+    "TradeFeatures",
+    "TradeParams",
+    "get_optimal_trade_params",
+    "train_grpo_model",
+    # Trade Confidence
+    "TradeConfidenceModel",
+    "get_trade_confidence_model",
+    "sample_trade_confidence",
+    # Market Regime
+    "MarketRegimeClassifier",
+    "MarketRegime",
+    "get_regime_signal",
+]

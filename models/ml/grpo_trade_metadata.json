@@ -1,0 +1,24 @@
+{
+  "updated_at": "2026-02-02T21:20:16.175470",
+  "torch_available": true,
+  "trades_trained_on": 4,
+  "training_stats": {
+    "epoch": [],
+    "loss": [],
+    "avg_reward": [],
+    "win_rate": []
+  },
+  "fallback_params": {
+    "delta": 0.15,
+    "dte": 30,
+    "entry_hour": 0.5,
+    "exit_profit_pct": 0.5,
+    "confidence": 0.5
+  },
+  "config": {
+    "learning_rate": 0.001,
+    "batch_size": 16,
+    "gamma": 0.99,
+    "group_size": 8
+  }
+}

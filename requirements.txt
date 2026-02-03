@@ -189,3 +189,5 @@ lancedb>=0.4.0
 sentence-transformers>=2.2.0
 daggr>=0.1.0  # Visual workflow debugging (Feb 2026)
 numba>=0.59.0  # GPU-accelerated backtesting (Feb 2026)
+docling>=2.70.0  # IBM document parsing for financial documents (Feb 2026)
+mirascope>=1.0.0  # Unified LLM interface (Feb 2026)
