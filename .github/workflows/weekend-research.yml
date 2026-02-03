@@ -14,7 +14,7 @@ env:
 
 jobs:
   research:
-    name: Run Backtest Research
+    name: Run GPU Backtest + Perplexity Research
     runs-on: ubuntu-latest
 
     steps:
@@ -26,27 +26,28 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: "3.11"
           cache: pip
 
       - name: Install dependencies
         run: |
-          pip install httpx
+          pip install httpx numba numpy yfinance pandas
 
-      - name: Check API key
+      - name: Check API keys
         run: |
           if [ -z "$PERPLEXITY_API_KEY" ]; then
-            echo "::warning::PERPLEXITY_API_KEY not configured - research will be skipped"
+            echo "::warning::PERPLEXITY_API_KEY not configured - Perplexity research will be skipped"
           else
-            echo "Perplexity API key configured"
+            echo "✅ Perplexity API key configured"
           fi
+          echo "✅ GPU backtest will run (CPU fallback if no CUDA)"
 
       - name: Create data directories
         run: |
           mkdir -p data/research/backtests
           mkdir -p rag_knowledge/backtests
 
-      - name: Run weekend research
+      - name: Run weekend research (GPU + Perplexity)
         id: research
         run: |
           python -c "
@@ -56,15 +57,32 @@ jobs:
           from src.agents.research_agent import run_weekend_research
 
           result = asyncio.run(run_weekend_research())
-          print(f'Status: {result.get(\"status\")}')
-          print(f'Queries: {result.get(\"queries_run\", 0)}')
-          print(f'High confidence: {result.get(\"high_confidence_results\", 0)}')
-          print(f'RAG lessons: {result.get(\"rag_lessons_created\", 0)}')
+
+          # Parse combined results
+          gpu = result.get('gpu_backtest', {})
+          ppl = result.get('perplexity_research', {})
+          insights = result.get('combined_insights', [])
+
+          print(f'GPU Backtest: {gpu.get(\"status\", \"N/A\")}')
+          if gpu.get('status') == 'completed':
+              print(f'  - Parameters tested: {gpu.get(\"parameters_tested\", 0)}')
+              print(f'  - Best win rate: {gpu.get(\"best_win_rate\", 0):.1f}%')
+              bp = gpu.get('best_params', {})
+              print(f'  - Best setup: {bp.get(\"delta\")}-delta, {bp.get(\"dte\")} DTE')
+
+          print(f'Perplexity Research: {ppl.get(\"status\", \"N/A\") if ppl else \"N/A\"}')
+          if ppl and ppl.get('status') == 'completed':
+              print(f'  - Queries run: {ppl.get(\"queries_run\", 0)}')
+              print(f'  - RAG lessons: {ppl.get(\"rag_lessons_created\", 0)}')
+
+          print(f'Combined Insights: {len(insights)}')
 
           # Output for GitHub Actions
-          with open('${{ github.output }}', 'a') as f:
-              f.write(f'status={result.get(\"status\")}\\n')
-              f.write(f'queries={result.get(\"queries_run\", 0)}\\n')
+          import os
+          with open(os.environ.get('GITHUB_OUTPUT', '/dev/null'), 'a') as f:
+              f.write(f'gpu_status={gpu.get(\"status\", \"unknown\")}\\n')
+              f.write(f'perplexity_status={ppl.get(\"status\", \"unknown\") if ppl else \"skipped\"}\\n')
+              f.write(f'insights_count={len(insights)}\\n')
           "
 
       - name: Commit research results
@@ -79,9 +97,12 @@ jobs:
           if git diff --staged --quiet; then
             echo "No research changes to commit"
           else
-            git commit -m "research: Weekend backtest analysis $(date +%Y-%m-%d)
+            git commit -m "research: GPU backtest + Perplexity analysis $(date +%Y-%m-%d)
 
-            Automated backtest research via Perplexity Deep Research.
+            Phase 1: GPU-accelerated parameter grid search (360+ combinations)
+            Phase 2: Perplexity Deep Research for market context
+            Phase 3: Combined insights → system_state.json
+
             Results feed into RAG system for continuous learning."
 
             git push
@@ -100,23 +121,46 @@ jobs:
 
       - name: Summary
         run: |
-          echo "## Weekend Research Complete" >> $GITHUB_STEP_SUMMARY
+          echo "## 🧪 Weekend Research Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           if [ -f data/research/latest_research_summary.json ]; then
-            echo "### Results" >> $GITHUB_STEP_SUMMARY
             cat data/research/latest_research_summary.json | python -c "
           import sys, json
           data = json.load(sys.stdin)
-          print(f\"- **Status**: {data.get('status', 'unknown')}\")
-          print(f\"- **Queries Run**: {data.get('queries_run', 0)}\")
-          print(f\"- **High Confidence**: {data.get('high_confidence_results', 0)}\")
-          print(f\"- **RAG Lessons**: {data.get('rag_lessons_created', 0)}\")
-          if data.get('key_findings'):
-              print()
-              print('### Key Findings')
-              for f in data['key_findings']:
-                  print(f\"- **{f['parameter']}**: {f['optimal']} (confidence: {f['confidence']:.0%})\")
+
+          # GPU Backtest section
+          gpu = data.get('gpu_backtest', {})
+          print('### 🚀 GPU Backtest')
+          if gpu.get('status') == 'completed':
+              bp = gpu.get('best_params', {})
+              print(f'- **Compute**: {gpu.get(\"compute\", \"CPU\")} mode')
+              print(f'- **Parameters Tested**: {gpu.get(\"parameters_tested\", 0)}')
+              print(f'- **Best Win Rate**: {gpu.get(\"best_win_rate\", 0):.1f}%')
+              print(f'- **Recommended Setup**: {bp.get(\"delta\")}-delta, {bp.get(\"dte\")} DTE, \${bp.get(\"width\")} wide')
+              print(f'- **VaR 95%**: \${gpu.get(\"var_95\", 0):.2f}')
+          else:
+              print(f'- Status: {gpu.get(\"status\", \"N/A\")}')
+          print()
+
+          # Perplexity section
+          ppl = data.get('perplexity_research', {})
+          print('### 🔍 Perplexity Research')
+          if ppl and ppl.get('status') == 'completed':
+              print(f'- **Queries Run**: {ppl.get(\"queries_run\", 0)}')
+              print(f'- **High Confidence**: {ppl.get(\"high_confidence_results\", 0)}')
+              print(f'- **RAG Lessons**: {ppl.get(\"rag_lessons_created\", 0)}')
+          else:
+              print(f'- Status: {ppl.get(\"status\", \"skipped\") if ppl else \"skipped\"}')
+          print()
+
+          # Combined insights
+          insights = data.get('combined_insights', [])
+          if insights:
+              print('### 💡 Combined Insights')
+              for i in insights:
+                  wr = f' ({i.get(\"win_rate\", 0):.0f}% win rate)' if i.get('win_rate') else ''
+                  print(f'- **{i[\"parameter\"]}**: {i[\"value\"]} (confidence: {i[\"confidence\"]:.0%}){wr}')
           " >> $GITHUB_STEP_SUMMARY
           else
             echo "No research summary available" >> $GITHUB_STEP_SUMMARY

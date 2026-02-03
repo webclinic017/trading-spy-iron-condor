@@ -1,16 +1,18 @@
 """
 Perplexity Research Agent - Autonomous Weekend Backtesting & Strategy Optimization.
 
-Based on: Perplexity Deep Research (Jan 2026)
+Based on: Perplexity Deep Research (Jan 2026) + GPU Acceleration (Feb 2026)
 - Natural language → automated backtesting
+- GPU-accelerated parameter grid search (Numba/CUDA)
 - CSV export for RAG integration
 - Parameter optimization for iron condors
 
 Runs autonomously on weekends via GitHub Actions to:
-1. Test iron condor parameters (delta, DTE, width)
-2. Analyze event-based performance (FOMC, earnings, VIX)
-3. Feed results to RAG for continuous learning
-4. Update optimal parameters in system_state.json
+1. Test iron condor parameters (delta, DTE, width) via GPU grid search
+2. Validate with Perplexity research for market context
+3. Analyze event-based performance (FOMC, earnings, VIX)
+4. Feed results to RAG for continuous learning
+5. Update optimal parameters in system_state.json
 """
 
 import asyncio
@@ -171,7 +173,9 @@ class PerplexityResearchAgent:
         self.model = "sonar-pro"  # Deep research model
         self.results: list[BacktestResult] = []
 
-    async def research(self, query: str, extract_metrics: bool = True) -> dict[str, Any]:
+    async def research(
+        self, query: str, extract_metrics: bool = True
+    ) -> dict[str, Any]:
         """
         Execute a deep research query via Perplexity.
 
@@ -524,62 +528,210 @@ If exact numbers aren't available, provide reasonable estimates with confidence 
         print(f"Updated system_state.json with {len(results)} research insights")
 
 
+async def run_gpu_backtest() -> dict[str, Any]:
+    """
+    Run GPU-accelerated parameter grid search.
+
+    Uses Numba/CUDA for parallel backtesting across 360+ parameter combinations.
+    Falls back to NumPy if CUDA unavailable.
+    """
+    try:
+        from src.compute.gpu_backtest import GPUBacktestEngine
+
+        print("=== Starting GPU-Accelerated Backtest ===")
+        engine = GPUBacktestEngine()
+
+        # Load historical SPY data for backtesting
+        engine.load_price_data(ticker="SPY", years=5)
+
+        # Run grid search across all parameter combinations
+        print("Running parameter grid search...")
+        grid_result = engine.grid_search(n_trades_per_sim=252)
+
+        # Get best parameters from result
+        best_params = grid_result.best_params
+
+        # Run Monte Carlo VaR on best params
+        print("Running Monte Carlo VaR simulation...")
+        var_95, var_99 = engine.monte_carlo_var(best_params, n_simulations=1000)
+
+        return {
+            "status": "completed",
+            "compute": "GPU" if grid_result.gpu_accelerated else "CPU",
+            "parameters_tested": grid_result.total_combinations,
+            "best_params": {
+                "delta": best_params.delta,
+                "dte": best_params.dte,
+                "width": best_params.width,
+                "exit_pct": best_params.exit_profit_pct,
+                "stop_pct": best_params.stop_loss_pct,
+            },
+            "best_win_rate": grid_result.best_win_rate * 100,  # Convert to percentage
+            "best_sharpe": grid_result.best_sharpe,
+            "var_95": var_95,
+            "var_99": var_99,
+            "execution_time_ms": grid_result.execution_time_ms,
+        }
+
+    except ImportError as e:
+        print(f"GPU backtest not available: {e}")
+        return {"status": "skipped", "reason": str(e)}
+    except Exception as e:
+        import traceback
+
+        print(f"GPU backtest error: {e}")
+        traceback.print_exc()
+        return {"status": "error", "error": str(e)}
+
+
 async def run_weekend_research() -> dict[str, Any]:
     """
     Autonomous weekend research job.
 
     Called by GitHub Actions on Saturday mornings.
+    Combines GPU-accelerated backtesting with Perplexity research.
     """
+    print("=" * 60)
+    print("AUTONOMOUS WEEKEND RESEARCH")
+    print(f"Time: {datetime.now(timezone.utc).isoformat()}")
+    print("=" * 60)
+
+    results_summary = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "gpu_backtest": None,
+        "perplexity_research": None,
+        "combined_insights": [],
+    }
+
+    # Phase 1: GPU-accelerated parameter optimization
+    print("\n[Phase 1] GPU-Accelerated Backtesting")
+    print("-" * 40)
+    gpu_results = await run_gpu_backtest()
+    results_summary["gpu_backtest"] = gpu_results
+
+    if gpu_results.get("status") == "completed":
+        best = gpu_results.get("best_params", {})
+        print(f"✅ GPU Backtest Complete ({gpu_results.get('compute', 'CPU')} mode)")
+        print(
+            f"   Best: {best.get('delta')}-delta, {best.get('dte')} DTE, ${best.get('width')} wide"
+        )
+        print(f"   Win Rate: {gpu_results.get('best_win_rate', 0):.1f}%")
+        print(f"   VaR 95%: ${gpu_results.get('var_95', 0):.2f}")
+
+        # Add GPU findings to insights
+        results_summary["combined_insights"].append(
+            {
+                "source": "gpu_backtest",
+                "parameter": "optimal_setup",
+                "value": f"{best.get('delta')}-delta, {best.get('dte')} DTE, ${best.get('width')} wide",
+                "confidence": 0.85,  # High confidence from actual simulation
+                "win_rate": gpu_results.get("best_win_rate"),
+            }
+        )
+
+    # Phase 2: Perplexity research for market context
+    print("\n[Phase 2] Perplexity Deep Research")
+    print("-" * 40)
+
     agent = PerplexityResearchAgent()
 
     if not agent.api_key:
-        return {
+        print("⚠️  PERPLEXITY_API_KEY not configured - skipping research phase")
+        results_summary["perplexity_research"] = {
             "status": "skipped",
-            "reason": "PERPLEXITY_API_KEY not configured",
+            "reason": "API key not configured",
+        }
+    else:
+        # Run high-priority queries
+        results = await agent.run_backtest_suite(priority_filter=1)
+
+        # Export results
+        csv_path = agent.export_to_csv(results)
+        rag_paths = agent.export_to_rag(results)
+
+        results_summary["perplexity_research"] = {
+            "status": "completed",
+            "queries_run": len(results),
+            "high_confidence_results": sum(1 for r in results if r.confidence >= 0.7),
+            "csv_export": str(csv_path),
+            "rag_lessons_created": len(rag_paths),
         }
 
-    print("=== Starting Weekend Backtest Research ===")
-    print(f"Time: {datetime.now(timezone.utc).isoformat()}")
+        # Add Perplexity findings to insights
+        for r in results:
+            if r.optimal_value and r.confidence >= 0.6:
+                results_summary["combined_insights"].append(
+                    {
+                        "source": "perplexity",
+                        "parameter": r.parameter_type,
+                        "value": r.optimal_value,
+                        "confidence": r.confidence,
+                        "win_rate": r.metrics.get("win_rate"),
+                    }
+                )
 
-    # Run high-priority queries first
-    results = await agent.run_backtest_suite(priority_filter=1)
+    # Phase 3: Update system state with combined insights
+    print("\n[Phase 3] Updating System State")
+    print("-" * 40)
 
-    # Export results
-    csv_path = agent.export_to_csv(results)
-    rag_paths = agent.export_to_rag(results)
+    state_file = DATA_DIR / "system_state.json"
+    if state_file.exists():
+        state = json.loads(state_file.read_text())
 
-    # Update system state
-    agent.update_system_state(results)
+        # Initialize research section
+        if "research_insights" not in state:
+            state["research_insights"] = {}
 
-    # Summary
-    summary = {
-        "status": "completed",
-        "queries_run": len(results),
-        "high_confidence_results": sum(1 for r in results if r.confidence >= 0.7),
-        "csv_export": str(csv_path),
-        "rag_lessons_created": len(rag_paths),
-        "key_findings": [
-            {
-                "parameter": r.parameter_type,
-                "optimal": r.optimal_value,
-                "confidence": r.confidence,
+        insights = state["research_insights"]
+        insights["last_updated"] = datetime.now(timezone.utc).isoformat()
+        insights["gpu_backtest"] = (
+            gpu_results if gpu_results.get("status") == "completed" else None
+        )
+        insights["combined_insights"] = results_summary["combined_insights"]
+
+        # Update optimal parameters from GPU results (highest confidence)
+        if gpu_results.get("status") == "completed":
+            best = gpu_results.get("best_params", {})
+            insights["recommended_params"] = {
+                "delta": best.get("delta", 15),
+                "dte": best.get("dte", 30),
+                "width": best.get("width", 5),
+                "exit_pct": best.get("exit_pct", 50),
+                "stop_pct": best.get("stop_pct", 200),
+                "source": "gpu_grid_search",
+                "win_rate": gpu_results.get("best_win_rate"),
+                "var_95": gpu_results.get("var_95"),
             }
-            for r in results
-            if r.optimal_value and r.confidence >= 0.6
-        ],
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-    }
 
-    # Save summary
+        state_file.write_text(json.dumps(state, indent=2))
+        print("✅ system_state.json updated")
+
+    # Save full summary
     summary_file = RESEARCH_DIR / "latest_research_summary.json"
-    summary_file.write_text(json.dumps(summary, indent=2))
+    summary_file.write_text(json.dumps(results_summary, indent=2))
+    print(f"✅ Summary saved to {summary_file.name}")
 
-    print("\n=== Research Complete ===")
-    print(f"Results: {len(results)} queries processed")
-    print(f"High confidence: {summary['high_confidence_results']}")
-    print(f"RAG lessons: {len(rag_paths)}")
+    # Final report
+    print("\n" + "=" * 60)
+    print("RESEARCH COMPLETE")
+    print("=" * 60)
+    print(f"GPU Backtest: {gpu_results.get('status', 'N/A')}")
+    print(
+        f"Perplexity: {results_summary['perplexity_research'].get('status', 'N/A') if results_summary['perplexity_research'] else 'N/A'}"
+    )
+    print(f"Combined Insights: {len(results_summary['combined_insights'])}")
 
-    return summary
+    if gpu_results.get("status") == "completed":
+        best = gpu_results.get("best_params", {})
+        print("\n🎯 RECOMMENDED SETUP:")
+        print(f"   Delta: {best.get('delta')}")
+        print(f"   DTE: {best.get('dte')} days")
+        print(f"   Width: ${best.get('width')}")
+        print(f"   Exit: {best.get('exit_pct')}% profit")
+        print(f"   Stop: {best.get('stop_pct')}% loss")
+        print(f"   Expected Win Rate: {gpu_results.get('best_win_rate', 0):.1f}%")
+
+    return results_summary
 
 
 async def get_research_signal() -> dict[str, Any]:
@@ -609,7 +761,9 @@ async def get_research_signal() -> dict[str, Any]:
         }
 
     # Calculate signal based on research confidence
-    avg_confidence = sum(p.get("confidence", 0.5) for p in params.values()) / max(len(params), 1)
+    avg_confidence = sum(p.get("confidence", 0.5) for p in params.values()) / max(
+        len(params), 1
+    )
 
     # Higher confidence in research = more favorable signal
     signal = 0.5 + (avg_confidence - 0.5) * 0.4

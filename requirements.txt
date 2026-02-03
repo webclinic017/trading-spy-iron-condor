@@ -188,3 +188,4 @@ ragas==0.2.14
 lancedb>=0.4.0
 sentence-transformers>=2.2.0
 daggr>=0.1.0  # Visual workflow debugging (Feb 2026)
+numba>=0.59.0  # GPU-accelerated backtesting (Feb 2026)
