@@ -139,14 +139,18 @@ class FibonacciSRCalculator:
 
         return levels
 
-    async def _fetch_daily_bars(self, symbol: str, lookback_days: int) -> list[dict[str, Any]]:
+    async def _fetch_daily_bars(
+        self, symbol: str, lookback_days: int
+    ) -> list[dict[str, Any]]:
         """Fetch daily OHLC bars from Alpaca."""
         if not self.api_key or not self.api_secret:
             # Return mock data if no API keys
             return self._get_mock_bars()
 
         end_date = datetime.now()
-        start_date = end_date - timedelta(days=int(lookback_days * 1.5))  # Account for weekends
+        start_date = end_date - timedelta(
+            days=int(lookback_days * 1.5)
+        )  # Account for weekends
 
         headers = {
             "APCA-API-KEY-ID": self.api_key,
@@ -220,7 +224,6 @@ class FibonacciSRCalculator:
             return []
 
         phases = []
-        closes = [b["c"] for b in bars]
         highs = [b["h"] for b in bars]
         lows = [b["l"] for b in bars]
         dates = [datetime.fromisoformat(b["t"].replace("Z", "+00:00")) for b in bars]
@@ -371,7 +374,7 @@ class FibonacciSRCalculator:
 
         for strike, strike_type in [(put_short, "put"), (call_short, "call")]:
             # Find nearest S/R level
-            nearest_level = min(levels, key=lambda l: abs(l.price - strike))
+            nearest_level = min(levels, key=lambda level: abs(level.price - strike))
             distance = abs(nearest_level.price - strike)
             distance_pct = distance / strike * 100
 
@@ -388,7 +391,9 @@ class FibonacciSRCalculator:
             else:
                 is_valid = True
                 # Quality increases with distance from S/R
-                quality_score = min(distance_pct / 5, 1.0)  # Max quality at 5%+ distance
+                quality_score = min(
+                    distance_pct / 5, 1.0
+                )  # Max quality at 5%+ distance
 
             results[strike_type] = StrikeValidation(
                 strike=strike,
@@ -411,12 +416,12 @@ class FibonacciSRCalculator:
         (between S/R levels, not on them).
         """
         # Sort levels by price
-        sorted_levels = sorted(levels, key=lambda l: l.price)
+        sorted_levels = sorted(levels, key=lambda level: level.price)
 
         # Find support levels below current price
-        supports = [l for l in sorted_levels if l.price < current_price]
+        supports = [lvl for lvl in sorted_levels if lvl.price < current_price]
         # Find resistance levels above current price
-        resistances = [l for l in sorted_levels if l.price > current_price]
+        resistances = [lvl for lvl in sorted_levels if lvl.price > current_price]
 
         put_zone = (0.0, 0.0)
         call_zone = (0.0, 0.0)
@@ -461,7 +466,9 @@ async def main():
         status = "✅ VALID" if result.is_valid else "❌ INVALID"
         print(f"\n{strike_type.upper()} ${result.strike}: {status}")
         print(f"  Quality Score: {result.quality_score:.2f}")
-        print(f"  Nearest S/R: ${result.nearest_sr_level} ({result.distance_pct:.1f}% away)")
+        print(
+            f"  Nearest S/R: ${result.nearest_sr_level} ({result.distance_pct:.1f}% away)"
+        )
         if result.warning:
             print(f"  ⚠️  {result.warning}")
 
