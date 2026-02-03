@@ -38,6 +38,7 @@ Alpaca silently rejected the invalid symbols. No error logs. No warning. Just...
 **The cause:** A "crisis recovery" workflow kicked in when the main trading workflow hit credential issues. Instead of alerting us, it started buying and selling SPY shares repeatedly.
 
 **Why this happened:**
+
 1. GitHub secrets had wrong names (5K vs 30K accounts)
 2. Iron condor workflow failed silently
 3. Crisis workflow assumed "no positions = emergency" and started trading shares
@@ -51,11 +52,11 @@ Alpaca silently rejected the invalid symbols. No error logs. No warning. Just...
 
 ## The Math
 
-| Issue | Loss |
-|-------|------|
-| Invalid strikes (PUT-only positions) | ~$70 |
-| Share churning (crisis workflow) | $22.61 |
-| **Total** | **~$93** |
+| Issue                                | Loss     |
+| ------------------------------------ | -------- |
+| Invalid strikes (PUT-only positions) | ~$70     |
+| Share churning (crisis workflow)     | $22.61   |
+| **Total**                            | **~$93** |
 
 Small in absolute terms, but these are the bugs that compound into real losses at scale.
 
@@ -72,11 +73,11 @@ Small in absolute terms, but these are the bugs that compound into real losses a
 
 ## Code Changes
 
-| Commit | Description |
-|--------|-------------|
+| Commit                                                              | Description                             |
+| ------------------------------------------------------------------- | --------------------------------------- |
 | [8b3e411](https://github.com/IgorGanapolsky/trading/commit/8b3e411) | Add round_to_5() for strike calculation |
-| [fec427d](https://github.com/IgorGanapolsky/trading/commit/fec427d) | Disable crisis workflows |
+| [fec427d](https://github.com/IgorGanapolsky/trading/commit/fec427d) | Disable crisis workflows                |
 
 ---
 
-*Day 87. Every bug we find in paper trading is a bug that won't cost us real money later.*
+_Day 87. Every bug we find in paper trading is a bug that won't cost us real money later._

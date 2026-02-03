@@ -1,0 +1,66 @@
+<!-- FAQPage Schema for AI/Search Discovery -->
+<!-- Use by adding front matter: faq: true and defining questions in page -->
+{% if page.faq or page.questions %}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": "{{ page.url | absolute_url }}#faq",
+    "mainEntity": [
+      {% if page.questions %}
+        {% for q in page.questions %}
+      {
+        "@type": "Question",
+        "name": {{ q.question | jsonify }},
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": {{ q.answer | jsonify }}
+        }
+      }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      {% else %}
+      {
+        "@type": "Question",
+        "name": "What is Ralph Mode?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ralph Mode is an autonomous AI coding technique where Claude iterates on code changes until all tests pass and the solution is verified. Named after Ralph Wiggum's persistent nature, it enables self-healing CI pipelines and automated bug fixes."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the AI Trading System?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "An open-source autonomous trading system built with Claude Opus 4.5 that uses iron condor options strategy on SPY. It features self-healing CI, Thompson Sampling for decision making, and 122+ documented lessons learned."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who built this trading system?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Igor Ganapolsky, a Senior Mobile Engineer specializing in React Native, AI/ML, and RLHF systems, built this system in collaboration with Claude AI as CTO."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What trading strategy does this system use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The system uses iron condor options strategy on SPY with 15-20 delta short strikes, 30-45 DTE expiration, and $5-wide wings. This provides an ~86% win rate with defined risk on both sides."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is RLHF in this context?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "RLHF (Reinforcement Learning from Human Feedback) is used to capture coding feedback and improve Claude's responses over time. The system uses Thompson Sampling to learn from past mistakes stored in LanceDB vector database."
+        }
+      }
+      {% endif %}
+    ]
+  }
+</script>
+{% endif %}

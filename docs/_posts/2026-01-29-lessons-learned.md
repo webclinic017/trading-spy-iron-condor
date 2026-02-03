@@ -18,7 +18,7 @@ Another day in the 90-day journey to build a profitable AI trading system. Here'
 
 ## Important Discoveries
 
-*Not emergencies, but insights that will shape how we trade going forward.*
+_Not emergencies, but insights that will shape how we trade going forward._
 
 ### Portfolio sync failed - blind trading risk
 
@@ -31,18 +31,17 @@ Cannot verify account state. Error: API Error
 ### Portfolio sync failed - blind trading risk
 
 Cannot verify account state. Error: API Error
-
 
 ---
 
 ## Today's Numbers
 
-| What | Count |
-|------|-------|
+| What            | Count |
+| --------------- | ----- |
 | Lessons Learned | **3** |
-| Critical Issues | 0 |
-| High Priority | 3 |
-| Improvements | 0 |
+| Critical Issues | 0     |
+| High Priority   | 3     |
+| Improvements    | 0     |
 
 ---
 
@@ -62,12 +61,12 @@ flowchart LR
 
 ### How We Learn Autonomously
 
-| Component | Role in Learning |
-|-----------|------------------|
-| **Claude Opus 4.5** | Analyzes errors, extracts insights, determines severity |
-| **Vertex AI RAG** | Stores lessons with 768D embeddings for semantic search |
-| **Gemini 2.0 Flash** | Retrieves relevant past lessons before new trades |
-| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research |
+| Component                 | Role in Learning                                        |
+| ------------------------- | ------------------------------------------------------- |
+| **Claude Opus 4.5**       | Analyzes errors, extracts insights, determines severity |
+| **Vertex AI RAG**         | Stores lessons with 768D embeddings for semantic search |
+| **Gemini 2.0 Flash**      | Retrieves relevant past lessons before new trades       |
+| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research          |
 
 ### Why This Matters
 
@@ -76,7 +75,7 @@ flowchart LR
 3. **Continuous Improvement**: 200+ lessons shape every decision
 4. **Transparent Journey**: All learnings published publicly
 
-*[Full Tech Stack Documentation](/trading/tech-stack/)*
+_[Full Tech Stack Documentation](/trading/tech-stack/)_
 
 ---
 
@@ -85,6 +84,7 @@ flowchart LR
 We're building an autonomous AI trading system that learns from every mistake. This isn't about getting rich quick - it's about building a system that can consistently generate income through disciplined options trading.
 
 **Our approach:**
+
 - Paper trade for 90 days to validate the strategy
 - Document every lesson, every failure, every win
 - Use AI (Claude) as CTO to automate and improve
@@ -94,4 +94,4 @@ Want to follow along? Check out the [full project on GitHub](https://github.com/
 
 ---
 
-*Day 93/90 complete. 0 to go.*
+_Day 93/90 complete. 0 to go._

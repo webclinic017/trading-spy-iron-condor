@@ -10,7 +10,6 @@ tags: [between, iron, condor, constraints]
 
 Building an autonomous AI trading system means things break. Here's what we discovered, fixed, and learned today.
 
-
 ## LL-262: Data Sync Infrastructure Improvements
 
 **The Problem:** - Max staleness during market hours: 15 min (was 30 min) - Data integrity check: Passes on every health check - Sync health visibility: Full history available
@@ -45,14 +44,13 @@ Building an autonomous AI trading system means things break. Here's what we disc
 
 These commits shipped today ([view on GitHub](https://github.com/IgorGanapolsky/trading/commits/main)):
 
-| Commit | Description |
-|--------|-------------|
-| [b3836675](https://github.com/IgorGanapolsky/trading/commit/b3836675) | chore(ralph): CI iteration ✅ |
-| [bc1220d7](https://github.com/IgorGanapolsky/trading/commit/bc1220d7) | docs(ralph): Auto-publish discovery blog post |
+| Commit                                                                | Description                                             |
+| --------------------------------------------------------------------- | ------------------------------------------------------- |
+| [b3836675](https://github.com/IgorGanapolsky/trading/commit/b3836675) | chore(ralph): CI iteration ✅                           |
+| [bc1220d7](https://github.com/IgorGanapolsky/trading/commit/bc1220d7) | docs(ralph): Auto-publish discovery blog post           |
 | [348dfb6e](https://github.com/IgorGanapolsky/trading/commit/348dfb6e) | docs(blog): Ralph discovery - docs(ralph): Auto-publish |
-| [6e53d660](https://github.com/IgorGanapolsky/trading/commit/6e53d660) | docs(ralph): Auto-publish discovery blog post |
-| [3a21ecf0](https://github.com/IgorGanapolsky/trading/commit/3a21ecf0) | chore(ralph): Record proactive scan findings |
-
+| [6e53d660](https://github.com/IgorGanapolsky/trading/commit/6e53d660) | docs(ralph): Auto-publish discovery blog post           |
+| [3a21ecf0](https://github.com/IgorGanapolsky/trading/commit/3a21ecf0) | chore(ralph): Record proactive scan findings            |
 
 ## Why We Share This
 
@@ -64,9 +62,10 @@ Every bug is a lesson. Every fix makes the system stronger. We're building in pu
 
 ---
 
-*This is part of our journey building an AI-powered iron condor trading system targeting financial independence.*
+_This is part of our journey building an AI-powered iron condor trading system targeting financial independence._
 
 **Resources:**
+
 - [Source Code](https://github.com/IgorGanapolsky/trading)
 - [Strategy Guide](https://igorganapolsky.github.io/trading/2026/01/21/iron-condors-ai-trading-complete-guide.html)
 - [The Silent 74 Days](https://igorganapolsky.github.io/trading/2026/01/07/the-silent-74-days.html) - How we built a system that did nothing

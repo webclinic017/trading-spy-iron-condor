@@ -16,13 +16,13 @@ day_number: 87
 
 ## Executive Summary
 
-| Metric | Value |
-|--------|-------|
-| **Daily P/L** | **$+25,013.61** (+501.64%) |
-| **Total P/L** | $+0.00 (0.00%) |
-| **Portfolio Value** | $30,000.00 |
-| **Cash** | $30,000.00 |
-| **Buying Power** | $60,000.00 |
+| Metric              | Value                      |
+| ------------------- | -------------------------- |
+| **Daily P/L**       | **$+25,013.61** (+501.64%) |
+| **Total P/L**       | $+0.00 (0.00%)             |
+| **Portfolio Value** | $30,000.00                 |
+| **Cash**            | $30,000.00                 |
+| **Buying Power**    | $60,000.00                 |
 
 ---
 
@@ -35,6 +35,7 @@ No trades executed today (market closed or no signals).
 ## Portfolio Allocation
 
 Our current strategy focuses on:
+
 - **US Equities**: SPY, sector ETFs
 - **Options**: Cash-secured puts, covered calls
 - **Fixed Income**: Treasury ETFs (SHY, IEF, TLT)
@@ -46,17 +47,17 @@ Our current strategy focuses on:
 **Live Treasury Yields (FRED API):**
 
 | Maturity | Yield |
-|----------|-------|
-| 2-Year | 4.30% |
-| 5-Year | 4.35% |
-| 10-Year | 4.50% |
-| 30-Year | 4.70% |
+| -------- | ----- |
+| 2-Year   | 4.30% |
+| 5-Year   | 4.35% |
+| 10-Year  | 4.50% |
+| 30-Year  | 4.70% |
 
 **Yield Curve Spread (10Y-2Y)**: +0.20%
 
 **Curve Status**: Normal (positive slope)
 
-*Data source: Federal Reserve Economic Data (FRED) API*
+_Data source: Federal Reserve Economic Data (FRED) API_
 
 ---
 
@@ -74,20 +75,20 @@ Our current strategy focuses on:
 
 The **Sharpe Ratio** measures risk-adjusted return: how much excess return we get per unit of risk.
 
-| Metric | Value | Interpretation |
-|--------|-------|----------------|
-| **Sharpe Ratio** | **2.00** | Excellent (institutional quality) |
-| **Sortino Ratio** | 3.74 | Downside risk-adjusted |
-| **Profit Factor** | 1.60 | Gross profit / Gross loss |
-| **Max Drawdown** | 4.6% | Worst peak-to-trough decline |
+| Metric            | Value    | Interpretation                    |
+| ----------------- | -------- | --------------------------------- |
+| **Sharpe Ratio**  | **2.00** | Excellent (institutional quality) |
+| **Sortino Ratio** | 3.74     | Downside risk-adjusted            |
+| **Profit Factor** | 1.60     | Gross profit / Gross loss         |
+| **Max Drawdown**  | 4.6%     | Worst peak-to-trough decline      |
 
 ### Backtest Performance
 
-| Metric | Value |
-|--------|-------|
-| **Total Trades** | 6 |
-| **Win Rate** | 33.3% |
-| **Strategy** | Iron Condors on SPY |
+| Metric           | Value               |
+| ---------------- | ------------------- |
+| **Total Trades** | 6                   |
+| **Win Rate**     | 33.3%               |
+| **Strategy**     | Iron Condors on SPY |
 
 ### Our Backtesting Methodology
 
@@ -111,17 +112,19 @@ Bear Call Spread (upside protection)
 ```
 
 **Why Iron Condors?**
+
 - Collect premium from BOTH sides
 - 15-delta = ~85% probability of profit
 - Defined risk on both directions
 - Profit when SPY stays within range
 
 **Risk Management:**
+
 - Max 5% of capital per trade ($248 on $5K account)
 - Stop loss at 200% of credit received
 - Close at 7 DTE to avoid gamma risk (LL-268: improves win rate to 80%+)
 
-*Sharpe ratio calculated using annualized returns with 4.5% risk-free rate (current 3-month T-bill).*
+_Sharpe ratio calculated using annualized returns with 4.5% risk-free rate (current 3-month T-bill)._
 
 ---
 
@@ -142,14 +145,14 @@ flowchart LR
 
 ### Technologies Used Today
 
-| Component | Technology | Role |
-|-----------|------------|------|
-| **Decision Engine** | Claude Opus 4.5 | Final trade approval, risk assessment |
-| **Cost-Optimized LLM** | OpenRouter (DeepSeek/Kimi) | Sentiment analysis, market research |
-| **Knowledge Base** | Vertex AI RAG | Query 200+ lessons learned |
-| **Retrieval** | Gemini 2.0 Flash | Semantic search over trade history |
-| **Broker** | Alpaca API | Paper trading execution |
-| **Data** | FRED API | Treasury yields, macro indicators |
+| Component              | Technology                 | Role                                  |
+| ---------------------- | -------------------------- | ------------------------------------- |
+| **Decision Engine**    | Claude Opus 4.5            | Final trade approval, risk assessment |
+| **Cost-Optimized LLM** | OpenRouter (DeepSeek/Kimi) | Sentiment analysis, market research   |
+| **Knowledge Base**     | Vertex AI RAG              | Query 200+ lessons learned            |
+| **Retrieval**          | Gemini 2.0 Flash           | Semantic search over trade history    |
+| **Broker**             | Alpaca API                 | Paper trading execution               |
+| **Data**               | FRED API                   | Treasury yields, macro indicators     |
 
 ### How It Works
 
@@ -159,25 +162,26 @@ flowchart LR
 4. **Claude Decision**: Final approval with full context (86% accuracy)
 5. **Execution**: Order submitted to Alpaca if all gates pass
 
-*[Full Tech Stack Documentation](/trading/tech-stack/)*
+_[Full Tech Stack Documentation](/trading/tech-stack/)_
 
 ---
 
 ## Market Context
 
-*US equity markets trade Monday-Friday, 9:30 AM - 4:00 PM ET.*
+_US equity markets trade Monday-Friday, 9:30 AM - 4:00 PM ET._
 
 ---
 
 ## What's Next
 
 Day 88 focus:
+
 - Continue systematic strategy execution
 - Monitor open positions
 - Refine ML signals based on today's data
 
 ---
 
-*Auto-generated by AI Trading System | [View Source](https://github.com/IgorGanapolsky/trading)*
+_Auto-generated by AI Trading System | [View Source](https://github.com/IgorGanapolsky/trading)_
 
-*Not financial advice. Paper trading only.*
+_Not financial advice. Paper trading only._

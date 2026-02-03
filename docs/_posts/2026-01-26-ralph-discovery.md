@@ -10,7 +10,6 @@ tags: [options, trading, issues, dead]
 
 Building an autonomous AI trading system means things break. Here's what we discovered, fixed, and learned today.
 
-
 ## Ralph Proactive Scan Findings
 
 **The Problem:** - Dead code detected: true
@@ -45,14 +44,13 @@ Building an autonomous AI trading system means things break. Here's what we disc
 
 These commits shipped today ([view on GitHub](https://github.com/IgorGanapolsky/trading/commits/main)):
 
-| Commit | Description |
-|--------|-------------|
-| [62de4992](https://github.com/IgorGanapolsky/trading/commit/62de4992) | docs(ralph): Auto-publish discovery blog post |
+| Commit                                                                | Description                                             |
+| --------------------------------------------------------------------- | ------------------------------------------------------- |
+| [62de4992](https://github.com/IgorGanapolsky/trading/commit/62de4992) | docs(ralph): Auto-publish discovery blog post           |
 | [9a4f693f](https://github.com/IgorGanapolsky/trading/commit/9a4f693f) | docs(blog): Ralph discovery - docs(ralph): Auto-publish |
-| [39f747eb](https://github.com/IgorGanapolsky/trading/commit/39f747eb) | docs(ralph): Auto-publish discovery blog post |
-| [c9f75a25](https://github.com/IgorGanapolsky/trading/commit/c9f75a25) | chore(ralph): Record proactive scan findings |
-| [54d30e03](https://github.com/IgorGanapolsky/trading/commit/54d30e03) | chore(ralph): Update workflow health dashboard |
-
+| [39f747eb](https://github.com/IgorGanapolsky/trading/commit/39f747eb) | docs(ralph): Auto-publish discovery blog post           |
+| [c9f75a25](https://github.com/IgorGanapolsky/trading/commit/c9f75a25) | chore(ralph): Record proactive scan findings            |
+| [54d30e03](https://github.com/IgorGanapolsky/trading/commit/54d30e03) | chore(ralph): Update workflow health dashboard          |
 
 ## Why We Share This
 
@@ -64,9 +62,10 @@ Every bug is a lesson. Every fix makes the system stronger. We're building in pu
 
 ---
 
-*This is part of our journey building an AI-powered iron condor trading system targeting financial independence.*
+_This is part of our journey building an AI-powered iron condor trading system targeting financial independence._
 
 **Resources:**
+
 - [Source Code](https://github.com/IgorGanapolsky/trading)
 - [Strategy Guide](https://igorganapolsky.github.io/trading/2026/01/21/iron-condors-ai-trading-complete-guide.html)
 - [The Silent 74 Days](https://igorganapolsky.github.io/trading/2026/01/07/the-silent-74-days.html) - How we built a system that did nothing

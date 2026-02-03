@@ -4,13 +4,21 @@ title: "From $5K to $100K: My Journey to $6,000/Month Passive Income Through Opt
 date: 2026-02-01
 author: Igor Ganapolsky
 categories: [trading, personal-finance, options, journey]
-tags: [iron-condors, SPY, passive-income, financial-independence, options-trading, lessons-learned]
+tags:
+  [
+    iron-condors,
+    SPY,
+    passive-income,
+    financial-independence,
+    options-trading,
+    lessons-learned,
+  ]
 description: "The honest story of building an AI-powered trading system - 74 days of silence, a painful SOFI loss, and the pivot to iron condors that finally made the math work."
 ---
 
 # From $5K to $100K: My Journey to $6,000/Month Passive Income
 
-*February 1, 2026*
+_February 1, 2026_
 
 I was born in Kiev, Ukraine, on November 14th, 1979. By the time I turn 50 - November 14th, 2029 - I want to achieve something that felt impossible for most of my life: **financial independence**.
 
@@ -25,6 +33,7 @@ This is the story of how I'm getting there.
 In late 2025, I started building an AI-powered options trading system with a bold target: **$100 per day** from a $5,000 paper trading account.
 
 The math seemed simple enough:
+
 - Sell 2 options contracts per week
 - Collect $50 premium each
 - Profit: $100/week = $5,200/year
@@ -53,6 +62,7 @@ For 74 days, I had built an elaborate system that did absolutely nothing.
 When I finally audited the code, I found the bugs that had been silently killing every trade:
 
 **Bug #1: Timezone Confusion**
+
 ```python
 def is_market_open():
     now = datetime.utcnow()  # Checking UTC, not Eastern Time
@@ -62,6 +72,7 @@ def is_market_open():
 When it was 9:35 AM in New York, the code thought it was 2:35 PM. Market "closed."
 
 **Bug #2: Hardcoded Price**
+
 ```python
 def should_open_position(symbol):
     price = 600.00  # Hardcoded SPY price!
@@ -71,10 +82,11 @@ def should_open_position(symbol):
 My config said trade SOFI at $15/share. The code checked if I could afford SPY at $600/share. Required capital: $60,000. My account: $5,000. Every trade blocked.
 
 **Bug #3: Error Swallowing**
+
 ```yaml
 steps:
   - name: Run analysis
-    continue-on-error: true  # The silent killer
+    continue-on-error: true # The silent killer
 ```
 
 Every failure was swallowed. CI showed green. Nothing actually worked.
@@ -94,6 +106,7 @@ I put **96% of my account** into SOFI positions. Stock shares. Naked puts. No pr
 Within 24 hours, I was underwater and panic-averaging down.
 
 On January 14, I triggered an emergency exit:
+
 - Closed all SOFI positions
 - **Realized loss: $40.74**
 - **Avoided potential loss: $4,800** (if SOFI crashed after earnings)
@@ -104,12 +117,12 @@ The $40.74 was tuition. The lesson was permanent.
 
 After that loss, I did deep research on traders who started with $500-5,000 accounts:
 
-| What They Said | What I Was Doing |
-|----------------|------------------|
-| "3-5% monthly is realistic" | Targeting 40% monthly |
-| "6+ months simulation first" | Skipped it |
-| "95% of traders fail" | Thought I was different |
-| "Process over money" | Focused on money |
+| What They Said               | What I Was Doing        |
+| ---------------------------- | ----------------------- |
+| "3-5% monthly is realistic"  | Targeting 40% monthly   |
+| "6+ months simulation first" | Skipped it              |
+| "95% of traders fail"        | Thought I was different |
+| "Process over money"         | Focused on money        |
 
 The hardest part wasn't the $40 loss. It was admitting I had repeated every mistake that beginners make.
 
@@ -120,6 +133,7 @@ The hardest part wasn't the $40 loss. It was admitting I had repeated every mist
 Here's the brutal reality I finally accepted:
 
 With a $5,000 account trading credit spreads:
+
 - Win: Make $80
 - Loss: Lose $420
 - Risk/reward: 5:1 against me
@@ -163,11 +177,11 @@ If SPY stays between $580 and $600 until expiration, you keep all the premium yo
 
 ### Why Iron Condors Beat Credit Spreads
 
-| Metric | Credit Spreads | Iron Condors (15-delta) |
-|--------|----------------|------------------------|
-| Win Rate | 65-70% | **86%** |
-| Risk/Reward | 0.5:1 | **1.5:1** |
-| TastyTrade Backtest | Lost money over 11 years | Profitable |
+| Metric              | Credit Spreads           | Iron Condors (15-delta) |
+| ------------------- | ------------------------ | ----------------------- |
+| Win Rate            | 65-70%                   | **86%**                 |
+| Risk/Reward         | 0.5:1                    | **1.5:1**               |
+| TastyTrade Backtest | Lost money over 11 years | Profitable              |
 
 The 15-delta part is important. It means you're selling options with only a 15% chance of being "in the money" at expiration. That gives you an 85%+ probability of profit before you even consider the premium you collect.
 
@@ -176,6 +190,7 @@ The 15-delta part is important. It means you're selling options with only a 15% 
 After the SOFI disaster, I made a hard rule: **SPY only**.
 
 Why?
+
 - Best liquidity in the options market
 - Tightest bid-ask spreads (less money lost to market makers)
 - No earnings surprises (it's an index, not a company)
@@ -191,10 +206,10 @@ On January 30, 2026, I made a decision that felt counterintuitive: I switched fr
 
 Why? The math:
 
-| Account Size | Position Limit (5%) | Monthly Income Potential |
-|--------------|--------------------|-----------------------|
-| $5,000 | $250 risk per trade | ~$150/month |
-| $100,000 | $5,000 risk per trade | ~$1,600/month |
+| Account Size | Position Limit (5%)   | Monthly Income Potential |
+| ------------ | --------------------- | ------------------------ |
+| $5,000       | $250 risk per trade   | ~$150/month              |
+| $100,000     | $5,000 risk per trade | ~$1,600/month            |
 
 With $100K, I could run 2-3 iron condors simultaneously without concentrating too much in any single position. The 5% position limit still applies - I just have more capital to work with.
 
@@ -206,12 +221,12 @@ More importantly, **$100,000 means no Pattern Day Trader restrictions**. With th
 
 Here's the honest timeline:
 
-| Phase | Capital | Monthly Income | After Tax | When |
-|-------|---------|----------------|-----------|------|
-| Now | $100,000 | ~$1,600 | ~$1,100 | Feb 2026 |
-| +12 months | $250,000 | ~$4,000 | ~$2,800 | Feb 2027 |
-| +18 months | $400,000 | ~$6,400 | ~$4,500 | Aug 2027 |
-| +24 months | $600,000 | ~$9,600 | **$6,700** | Feb 2028 |
+| Phase      | Capital  | Monthly Income | After Tax  | When     |
+| ---------- | -------- | -------------- | ---------- | -------- |
+| Now        | $100,000 | ~$1,600        | ~$1,100    | Feb 2026 |
+| +12 months | $250,000 | ~$4,000        | ~$2,800    | Feb 2027 |
+| +18 months | $400,000 | ~$6,400        | ~$4,500    | Aug 2027 |
+| +24 months | $600,000 | ~$9,600        | **$6,700** | Feb 2028 |
 
 The key is compounding. I'm not withdrawing profits during the growth phase. Every dollar earned gets reinvested. At 8% monthly (conservative for iron condors), $100K becomes $600K in about 2 years.
 
@@ -228,6 +243,7 @@ After 90 days of building, breaking, and rebuilding this system, I have rules I 
 ### Pre-Trade Checklist
 
 Before any trade executes:
+
 1. Is it SPY? (No individual stocks)
 2. Is position size 5% or less of account?
 3. Is it an iron condor with defined risk on both sides?
@@ -243,6 +259,7 @@ Every box must be checked. No exceptions.
 Phil Town wrote a book called "Rule #1" with one central message: **Don't lose money.**
 
 It sounds obvious, but it's not. It means:
+
 - Never risk more than you can afford to lose
 - Have a stop-loss before entering any trade
 - Protect capital first, seek profits second
@@ -283,14 +300,14 @@ I can't predict where SPY will be next month. Nobody can. But I can build a syst
 
 **Date:** February 1, 2026
 
-| Metric | Value |
-|--------|-------|
-| Paper Account | $100,000 |
-| Strategy | Iron Condors on SPY |
-| Position Limit | 5% ($5,000 max risk per trade) |
-| Win Rate Target | 80%+ |
-| Monthly Income Target | $1,600 |
-| Days Until North Star | ~1,020 (November 14, 2029) |
+| Metric                | Value                          |
+| --------------------- | ------------------------------ |
+| Paper Account         | $100,000                       |
+| Strategy              | Iron Condors on SPY            |
+| Position Limit        | 5% ($5,000 max risk per trade) |
+| Win Rate Target       | 80%+                           |
+| Monthly Income Target | $1,600                         |
+| Days Until North Star | ~1,020 (November 14, 2029)     |
 
 The system is built. The strategy is proven. The math works.
 
@@ -314,6 +331,6 @@ And that's worth the wait.
 
 ---
 
-*This is my journey building an AI-powered options trading system. I'm documenting everything - the failures, the lessons, and (hopefully) the eventual success. All trades are currently paper trades during the validation phase. This is not financial advice.*
+_This is my journey building an AI-powered options trading system. I'm documenting everything - the failures, the lessons, and (hopefully) the eventual success. All trades are currently paper trades during the validation phase. This is not financial advice._
 
-*Follow the journey: [GitHub](https://github.com/IgorGanapolsky/trading)*
+_Follow the journey: [GitHub](https://github.com/IgorGanapolsky/trading)_

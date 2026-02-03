@@ -18,7 +18,7 @@ Today was a wake-up call. Two critical issues surfaced that could have derailed 
 
 ## The Hard Lessons
 
-*These are the moments that test us. Critical issues that demanded immediate attention.*
+_These are the moments that test us. Critical issues that demanded immediate attention._
 
 ### Multiple Scripts Had Hardcoded Position Size Violations
 
@@ -32,7 +32,7 @@ The `execute-credit-spread.yml` workflow checked 15% total exposure but did NOT 
 
 ### % Position Limit Check Missing from execute credit spread.py
 
-The `execute-credit-spread.yml` workflow has a compliance check for the 5% per-position limit. However, `daily-trading.yml` calls `execute_credit_spread.py` DIRECTLY (line 1088), completely bypassing 
+The `execute-credit-spread.yml` workflow has a compliance check for the 5% per-position limit. However, `daily-trading.yml` calls `execute_credit_spread.py` DIRECTLY (line 1088), completely bypassing
 
 **Key takeaway:** Step calls `python3 scripts/execute_credit_spread.
 
@@ -78,10 +78,9 @@ The $5K paper account has ZERO call spreads despite CLAUDE.md mandating iron con
 
 **Key takeaway:** Violates CLAUDE.
 
-
 ## Important Discoveries
 
-*Not emergencies, but insights that will shape how we trade going forward.*
+_Not emergencies, but insights that will shape how we trade going forward._
 
 ### Position Sizing & Kelly Criterion for Small Options Accounts
 
@@ -95,24 +94,22 @@ Weekend research synthesized best practices for credit spread exit strategies. K
 
 The `inject_trading_context.sh` hook reported "Markets: OPEN" on Martin Luther King Jr. Day (Jan 19, 2026) when markets were actually **CLOSED**.
 
-
 ## Quick Wins & Refinements
 
 - **Resource Evaluation - "Better Context Will Always Beat a ...** - LL-245: Resource Evaluation - "Better Context Will Always Beat a Better Model"
 
 Date: January 19, 20...
 
-
 ---
 
 ## Today's Numbers
 
-| What | Count |
-|------|-------|
+| What            | Count  |
+| --------------- | ------ |
 | Lessons Learned | **14** |
-| Critical Issues | 10 |
-| High Priority | 3 |
-| Improvements | 1 |
+| Critical Issues | 10     |
+| High Priority   | 3      |
+| Improvements    | 1      |
 
 ---
 
@@ -121,6 +118,7 @@ Date: January 19, 20...
 We're building an autonomous AI trading system that learns from every mistake. This isn't about getting rich quick - it's about building a system that can consistently generate income through disciplined options trading.
 
 **Our approach:**
+
 - Paper trade for 90 days to validate the strategy
 - Document every lesson, every failure, every win
 - Use AI (Claude) as CTO to automate and improve
@@ -130,4 +128,4 @@ Want to follow along? Check out the [full project on GitHub](https://github.com/
 
 ---
 
-*Day 83/90 complete. 7 to go.*
+_Day 83/90 complete. 7 to go._

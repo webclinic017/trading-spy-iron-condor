@@ -18,16 +18,18 @@ Today was crisis mode. We discovered a critical Alpaca API bug that prevented us
 
 ## The Hard Lessons
 
-*These are the moments that test us. Critical issues that demanded immediate attention.*
+_These are the moments that test us. Critical issues that demanded immediate attention._
 
 ### LL-291: Alpaca API Bug - Close Position Treated as New Short (CRITICAL)
 
 When attempting to close a LONG put position (SPY260220P00658000, 8 contracts), Alpaca's API returned:
+
 - Error: "insufficient options buying power for cash-secured put (required: $113,000, available: $2,607)"
 
 **The bug:** Alpaca incorrectly treats SELL-to-close as a NEW short (cash-secured put), requiring massive collateral instead of simply closing the existing long position.
 
 **What we tried (ALL FAILED):**
+
 1. Market order via Python SDK
 2. Limit order
 3. close_position() endpoint
@@ -39,6 +41,7 @@ When attempting to close a LONG put position (SPY260220P00658000, 8 contracts), 
 9. Account config: pdt_check='exit'
 
 **Resolution:** Pivoted to $100K paper account (PDT-enabled, $268K buying power) and successfully placed iron condor:
+
 - Put spread: Sell 660, Buy 655 @ $0.43 credit
 - Call spread: Sell 720, Buy 725 @ $0.38 credit
 - Total credit: $81/contract, Max risk: $419
@@ -57,10 +60,9 @@ SOFI CSP (Feb 6 expiration) was held despite Jan 30 earnings date approaching.
 
 **Key takeaway:** Put option loss: -$13.
 
-
 ## Important Discoveries
 
-*Not emergencies, but insights that will shape how we trade going forward.*
+_Not emergencies, but insights that will shape how we trade going forward._
 
 ### Trade Data Source Priority Bug - Webhook Missing Alpaca Data
 
@@ -74,33 +76,34 @@ Current win rate is 33.3% (2/6 trades) vs target 80%+. Need to improve.
 
 System not generating enough trade signals. Need clear entry criteria.
 
-
 ## Quick Wins & Refinements
 
 - **Memgraph Graph Database Evaluation - FLUFF** - LL-267: Memgraph Graph Database Evaluation - FLUFF
 
 Date: January 21, 2026
 Category: RAG / Resource ...
+
 - **Deep Operational Integrity Audit - 14 Issues Found** - LL-240: Deep Operational Integrity Audit - 14 Issues Found
 
- Date
+Date
 January 16, 2026 (Friday, 6:00 PM ...
+
 - **Phil Town Valuations - December 2025** - This lesson documents Phil Town valuations generated on December 4, 2025 during the $100K paper trad...
 - **Theta Scaling Plan - December 2025** - This lesson documents the theta scaling strategy from December 2, 2025 when account equity was $6,00...
-
 
 ---
 
 ## Today's Numbers
 
-| What | Count |
-|------|-------|
+| What            | Count  |
+| --------------- | ------ |
 | Lessons Learned | **10** |
-| Critical Issues | 3 |
-| High Priority | 3 |
-| Improvements | 4 |
+| Critical Issues | 3      |
+| High Priority   | 3      |
+| Improvements    | 4      |
 
 ### Crisis Summary
+
 - **$5K Account:** LOCKED (PDT + API bug) - 4 positions trapped
 - **$100K Account:** Active - Iron condor placed, $81 credit collected
 - **Lesson:** PDT-enabled accounts (>$25K) are essential for options trading
@@ -123,12 +126,12 @@ flowchart LR
 
 ### How We Learn Autonomously
 
-| Component | Role in Learning |
-|-----------|------------------|
-| **Claude Opus 4.5** | Analyzes errors, extracts insights, determines severity |
-| **Vertex AI RAG** | Stores lessons with 768D embeddings for semantic search |
-| **Gemini 2.0 Flash** | Retrieves relevant past lessons before new trades |
-| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research |
+| Component                 | Role in Learning                                        |
+| ------------------------- | ------------------------------------------------------- |
+| **Claude Opus 4.5**       | Analyzes errors, extracts insights, determines severity |
+| **Vertex AI RAG**         | Stores lessons with 768D embeddings for semantic search |
+| **Gemini 2.0 Flash**      | Retrieves relevant past lessons before new trades       |
+| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research          |
 
 ### Why This Matters
 
@@ -137,7 +140,7 @@ flowchart LR
 3. **Continuous Improvement**: 200+ lessons shape every decision
 4. **Transparent Journey**: All learnings published publicly
 
-*[Full Tech Stack Documentation](/trading/tech-stack/)*
+_[Full Tech Stack Documentation](/trading/tech-stack/)_
 
 ---
 
@@ -146,6 +149,7 @@ flowchart LR
 We're building an autonomous AI trading system that learns from every mistake. This isn't about getting rich quick - it's about building a system that can consistently generate income through disciplined options trading.
 
 **Our approach:**
+
 - Paper trade for 90 days to validate the strategy
 - Document every lesson, every failure, every win
 - Use AI (Claude) as CTO to automate and improve
@@ -155,4 +159,4 @@ Want to follow along? Check out the [full project on GitHub](https://github.com/
 
 ---
 
-*Day 86/90 complete. 4 to go.*
+_Day 86/90 complete. 4 to go._

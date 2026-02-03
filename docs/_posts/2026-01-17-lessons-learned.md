@@ -18,28 +18,27 @@ Markets are closed, but the learning never stops. While other traders take the w
 
 ## Important Discoveries
 
-*Not emergencies, but insights that will shape how we trade going forward.*
+_Not emergencies, but insights that will shape how we trade going forward._
 
 ### Webhook Trade Data Source Mismatch
 
 LL-230: Webhook Trade Data Source Mismatch (Jan 17, 2026)
 
- Severity: HIGH
+Severity: HIGH
 
- Summary
-The Dialogflow webhook was showing trades_loaded=0 on Cloud Run because it looked for local trades_.json files fir
-
+Summary
+The Dialogflow webhook was showing trades*loaded=0 on Cloud Run because it looked for local trades*.json files fir
 
 ---
 
 ## Today's Numbers
 
-| What | Count |
-|------|-------|
+| What            | Count |
+| --------------- | ----- |
 | Lessons Learned | **1** |
-| Critical Issues | 0 |
-| High Priority | 1 |
-| Improvements | 0 |
+| Critical Issues | 0     |
+| High Priority   | 1     |
+| Improvements    | 0     |
 
 ---
 
@@ -48,6 +47,7 @@ The Dialogflow webhook was showing trades_loaded=0 on Cloud Run because it looke
 We're building an autonomous AI trading system that learns from every mistake. This isn't about getting rich quick - it's about building a system that can consistently generate income through disciplined options trading.
 
 **Our approach:**
+
 - Paper trade for 90 days to validate the strategy
 - Document every lesson, every failure, every win
 - Use AI (Claude) as CTO to automate and improve
@@ -57,4 +57,4 @@ Want to follow along? Check out the [full project on GitHub](https://github.com/
 
 ---
 
-*Day 81/90 complete. 9 to go.*
+_Day 81/90 complete. 9 to go._

@@ -7,7 +7,7 @@ description: "Complete technical architecture of our AI Trading System - Claude 
 
 # AI Trading System Tech Stack
 
-*Last updated: January 21, 2026*
+_Last updated: January 21, 2026_
 
 Our autonomous AI trading system leverages cutting-edge AI/ML technologies to execute options trades. This page documents the complete technical architecture powering our 86% win rate iron condor strategy.
 
@@ -60,6 +60,7 @@ flowchart TB
     MCP --> WEBHOOK
     ORCH --> BLOG
     ORCH --> DEVTO
+
 </div>
 
 ---
@@ -82,11 +83,13 @@ flowchart LR
 </div>
 
 **Key Integration Points:**
+
 - `src/agents/base_agent.py` - All agents inherit Claude reasoning
 - `src/utils/self_healing.py` - Autonomous error recovery
 - `src/orchestrator/gates.py` - Trade gate decisions
 
 **Why Claude for Trading:**
+
 - Highest reasoning accuracy for financial decisions
 - Strong instruction following (critical for risk rules)
 - Low hallucination rate on numerical data
@@ -135,17 +138,19 @@ flowchart TB
     end
 
     API --> Models
+
 </div>
 
 **Model Selection (from StockBench benchmarks):**
 
-| Model | Cost (In/Out) | Trading Sortino | Use Case |
-|-------|---------------|-----------------|----------|
-| DeepSeek | $0.14/$0.28 | 0.021 | Sentiment, News |
-| Mistral Medium 3 | $0.40/$2.00 | - | Research, Analysis |
-| Kimi K2 | $0.39/$1.90 | **0.042** | Trade Signals |
+| Model            | Cost (In/Out) | Trading Sortino | Use Case           |
+| ---------------- | ------------- | --------------- | ------------------ |
+| DeepSeek         | $0.14/$0.28   | 0.021           | Sentiment, News    |
+| Mistral Medium 3 | $0.40/$2.00   | -               | Research, Analysis |
+| Kimi K2          | $0.39/$1.90   | **0.042**       | Trade Signals      |
 
 **MCP Server Integration:**
+
 ```python
 # mcp/servers/openrouter/sentiment.py
 class SentimentAnalyzer:
@@ -185,15 +190,18 @@ flowchart TB
         RERANK --> GEMINI["Gemini 2.0 Flash<br/>Generation"]
         GEMINI --> RESPONSE["Contextual Response"]
     end
+
 </div>
 
 **Architecture Decisions:**
+
 - **768D Embeddings**: Google's text-embedding-004 (best price/performance)
 - **Hybrid Search**: Combines semantic similarity with keyword matching
 - **Chunking Strategy**: 512 tokens with 100 overlap (optimal for financial docs)
 - **Top-K**: Returns 5 most relevant chunks per query
 
 **Key Files:**
+
 - `src/rag/vertex_rag.py` - Core RAG implementation
 - `rag_knowledge/lessons_learned/` - 200+ documented lessons
 - `scripts/query_vertex_rag.py` - CLI query interface
@@ -254,9 +262,11 @@ flowchart LR
     CLIENT --> Servers
     ALPACA_MCP --> ALPACA_API
     OPENROUTER_MCP --> OR_API
+
 </div>
 
 **Server Implementations:**
+
 - `mcp/servers/alpaca/` - Market data, order execution
 - `mcp/servers/openrouter/` - Sentiment, stock analysis, IPO research
 - `mcp/servers/trade_agent.py` - High-level trade coordination
@@ -283,9 +293,11 @@ flowchart LR
     end
 
     G2 -.-> FAIL
+
 </div>
 
 **Implementation:**
+
 ```python
 @dataclass
 class PipelineCheckpoint:
@@ -319,6 +331,7 @@ sequenceDiagram
     O->>A: Submit iron condor order
     A-->>O: Order filled
     O->>R: Store trade + outcome
+
 </div>
 
 ### Blog Generation Flow
@@ -342,6 +355,7 @@ flowchart LR
         SCRIPT --> DEVTO["Dev.to"]
         SYNC --> GH
     end
+
 </div>
 
 ---
@@ -350,13 +364,13 @@ flowchart LR
 
 ### Cloud Services
 
-| Service | Provider | Purpose |
-|---------|----------|---------|
-| **RAG Corpus** | Google Cloud (Vertex AI) | Vector search, embeddings |
-| **Webhook** | Google Cloud Run | Dialogflow integration |
-| **CI/CD** | GitHub Actions | Automated testing, deployment |
-| **Blog Hosting** | GitHub Pages | Static site hosting |
-| **Broker** | Alpaca | Paper/Live trading |
+| Service          | Provider                 | Purpose                       |
+| ---------------- | ------------------------ | ----------------------------- |
+| **RAG Corpus**   | Google Cloud (Vertex AI) | Vector search, embeddings     |
+| **Webhook**      | Google Cloud Run         | Dialogflow integration        |
+| **CI/CD**        | GitHub Actions           | Automated testing, deployment |
+| **Blog Hosting** | GitHub Pages             | Static site hosting           |
+| **Broker**       | Alpaca                   | Paper/Live trading            |
 
 ### Cost Optimization
 
@@ -369,6 +383,7 @@ pie title Monthly AI Cost Distribution (Target: $50/month)
 </div>
 
 **Budget Controls:**
+
 - BATS framework routes 80% of queries to cost-effective models
 - RAG reduces repeated LLM calls via cached knowledge
 - Batch processing during off-peak hours
@@ -377,41 +392,45 @@ pie title Monthly AI Cost Distribution (Target: $50/month)
 
 ## Technology Status
 
-| Technology | Status | Notes |
-|------------|--------|-------|
-| Claude (Anthropic) | <span class="tech-badge active">ACTIVE</span> | Primary reasoning engine |
-| OpenRouter | <span class="tech-badge active">ACTIVE</span> | Multi-LLM gateway |
-| Vertex AI RAG | <span class="tech-badge active">ACTIVE</span> | Cloud semantic search |
-| MCP Protocol | <span class="tech-badge active">ACTIVE</span> | Tool integration layer |
-| LangGraph | <span class="tech-badge active">ACTIVE</span> | Pipeline checkpointing |
-| Gemini 2.0 Flash | <span class="tech-badge active">ACTIVE</span> | RAG retrieval |
-| LangSmith | <span class="tech-badge deprecated">DEPRECATED</span> | Removed Jan 2026, replaced by RAG |
-| LangChain | <span class="tech-badge deprecated">DEPRECATED</span> | Migrated to direct SDK |
+| Technology         | Status                                                | Notes                             |
+| ------------------ | ----------------------------------------------------- | --------------------------------- |
+| Claude (Anthropic) | <span class="tech-badge active">ACTIVE</span>         | Primary reasoning engine          |
+| OpenRouter         | <span class="tech-badge active">ACTIVE</span>         | Multi-LLM gateway                 |
+| Vertex AI RAG      | <span class="tech-badge active">ACTIVE</span>         | Cloud semantic search             |
+| MCP Protocol       | <span class="tech-badge active">ACTIVE</span>         | Tool integration layer            |
+| LangGraph          | <span class="tech-badge active">ACTIVE</span>         | Pipeline checkpointing            |
+| Gemini 2.0 Flash   | <span class="tech-badge active">ACTIVE</span>         | RAG retrieval                     |
+| LangSmith          | <span class="tech-badge deprecated">DEPRECATED</span> | Removed Jan 2026, replaced by RAG |
+| LangChain          | <span class="tech-badge deprecated">DEPRECATED</span> | Migrated to direct SDK            |
 
 ---
 
 ## How Tech Stack Affects Trading
 
 ### 1. Decision Quality
+
 - **Claude Opus 4.5** provides highest reasoning accuracy for trade decisions
 - **RAG** enables learning from 200+ documented mistakes
 - Result: 86% win rate on iron condors
 
 ### 2. Cost Efficiency
+
 - **OpenRouter routing** reduces LLM costs by 70%
 - **BATS framework** matches task complexity to model cost
 - Result: <$50/month AI costs for full system
 
 ### 3. Reliability
+
 - **LangGraph checkpoints** enable recovery from failures
 - **MCP protocol** standardizes tool interactions
 - Result: Zero trade execution failures in 90 days
 
 ### 4. Continuous Learning
+
 - **Vertex AI RAG** captures every lesson automatically
 - **Blog sync** shares learnings publicly
 - Result: System improves with every trade
 
 ---
 
-*This tech stack documentation is auto-updated. View source at [GitHub](https://github.com/IgorGanapolsky/trading).*
+_This tech stack documentation is auto-updated. View source at [GitHub](https://github.com/IgorGanapolsky/trading)._

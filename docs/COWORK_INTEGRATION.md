@@ -5,12 +5,14 @@
 This guide explains how to use **Anthropic Cowork** to automate screenshots of your trading dashboards and query DialogFlow about your trading performance.
 
 **What is Cowork?**
+
 - Desktop agent built into Claude macOS app
 - Automates file-based tasks (organize, analyze, create reports)
 - Requires Claude Max subscription ($100-200/month)
 - Works with designated folders for security
 
 **What This System Does:**
+
 1. 📸 **Captures screenshots** of Alpaca and Progress dashboards automatically
 2. 💾 **Saves to** `data/screenshots/` with timestamps
 3. 🤖 **Cowork analyzes** screenshots via Claude Desktop
@@ -23,11 +25,13 @@ This guide explains how to use **Anthropic Cowork** to automate screenshots of y
 ### 1. Screenshot Automation (GitHub Actions)
 
 Screenshots are captured automatically:
+
 - **Daily at 4:15 PM ET** (market close) via GitHub Actions
 - **Manual trigger** via workflow_dispatch
 - **Saved to** `data/screenshots/{alpaca,dashboard,daily}/`
 
 **Manual capture:**
+
 ```bash
 # Install dependencies
 pip install playwright
@@ -44,6 +48,7 @@ python3 scripts/capture_trading_screenshots.py --dashboard progress
 ### 2. Cowork Setup (Local macOS)
 
 **Requirements:**
+
 - macOS with Claude Desktop app
 - Claude Max subscription
 - Local clone of trading repo
@@ -51,6 +56,7 @@ python3 scripts/capture_trading_screenshots.py --dashboard progress
 **Steps:**
 
 1. **Clone repo locally:**
+
    ```bash
    git clone https://github.com/IgorGanapolsky/trading.git ~/trading
    cd ~/trading
@@ -76,11 +82,13 @@ python3 scripts/capture_trading_screenshots.py --dashboard progress
 **Query trading data via voice/chat:**
 
 DialogFlow webhook is deployed at:
+
 ```
 https://trading-dialogflow-webhook-cqlewkvzdq-uc.a.run.app
 ```
 
 **Supported queries:**
+
 - **Portfolio status:** "How much money did we make today?"
 - **Readiness check:** "Are we ready to trade tomorrow?"
 - **Analytical queries:** "Why did we lose money yesterday?"
@@ -88,6 +96,7 @@ https://trading-dialogflow-webhook-cqlewkvzdq-uc.a.run.app
 - **Trade history:** "Show me recent SPY trades"
 
 **Example DialogFlow conversation:**
+
 ```
 You: "How's my paper trading account?"
 
@@ -124,6 +133,7 @@ data/screenshots/
 ```
 
 **Naming convention:**
+
 - `{type}_dashboard_{YYYYMMDD_HHMMSS}.png`
 - Timestamps in Eastern Time (market hours)
 - Full-page screenshots (1920x1080)
@@ -135,11 +145,13 @@ data/screenshots/
 ### 1. Daily Portfolio Review (Cowork)
 
 **Ask Claude:**
+
 ```
 "Analyze all screenshots from today and create a trading summary"
 ```
 
 **Claude will:**
+
 - Read all PNG files from today
 - Extract portfolio values, P/L, positions
 - Generate markdown summary
@@ -149,12 +161,14 @@ data/screenshots/
 ### 2. Weekly Performance Report (Cowork)
 
 **Ask Claude:**
+
 ```
 "Create a weekly report from this week's daily summaries"
 ```
 
 **Claude will:**
-- Aggregate all daily_summary_*.png files
+
+- Aggregate all daily*summary*\*.png files
 - Calculate weekly P/L trend
 - Identify best/worst trading days
 - Export as PDF or markdown
@@ -162,6 +176,7 @@ data/screenshots/
 ### 3. Voice Trading Assistant (DialogFlow)
 
 **Integration with Google Assistant:**
+
 ```
 You: "Hey Google, ask Trading Bot how I'm doing"
 
@@ -177,11 +192,13 @@ Capital sufficient, backtests passing, CI green."
 ### 4. Screenshot-Based Alerts (Cowork)
 
 **Ask Claude:**
+
 ```
 "Monitor screenshots folder and alert me if portfolio drops >5%"
 ```
 
 **Claude will:**
+
 - Watch `data/screenshots/` folder
 - Parse new screenshots as they arrive
 - Calculate daily P/L changes
@@ -191,17 +208,18 @@ Capital sufficient, backtests passing, CI green."
 
 ## Cowork vs DialogFlow
 
-| Feature | Cowork (Local) | DialogFlow (Cloud) |
-|---------|----------------|-------------------|
-| **Screenshot analysis** | ✅ Visual analysis | ❌ No image input |
-| **File organization** | ✅ Rename, sort, organize | ❌ No file access |
-| **Report generation** | ✅ Create docs, spreadsheets | ❌ Text only |
-| **Real-time data** | ❌ Uses screenshots | ✅ Alpaca API direct |
-| **Voice interface** | ❌ Desktop only | ✅ Google Assistant |
-| **RAG queries** | ❌ No RAG | ✅ Vertex AI RAG |
-| **Trading questions** | 🟡 Via screenshots | ✅ Semantic search |
+| Feature                 | Cowork (Local)               | DialogFlow (Cloud)   |
+| ----------------------- | ---------------------------- | -------------------- |
+| **Screenshot analysis** | ✅ Visual analysis           | ❌ No image input    |
+| **File organization**   | ✅ Rename, sort, organize    | ❌ No file access    |
+| **Report generation**   | ✅ Create docs, spreadsheets | ❌ Text only         |
+| **Real-time data**      | ❌ Uses screenshots          | ✅ Alpaca API direct |
+| **Voice interface**     | ❌ Desktop only              | ✅ Google Assistant  |
+| **RAG queries**         | ❌ No RAG                    | ✅ Vertex AI RAG     |
+| **Trading questions**   | 🟡 Via screenshots           | ✅ Semantic search   |
 
 **Recommendation:** Use both!
+
 - **Cowork:** Visual analysis, reports, file management
 - **DialogFlow:** Live data, voice queries, lessons learned
 
@@ -216,6 +234,7 @@ Capital sufficient, backtests passing, CI green."
 3. **DialogFlow** answers questions about trends/patterns
 
 **Example workflow:**
+
 ```bash
 # GitHub Actions runs at 4:15 PM ET
 # Captures: data/screenshots/daily/daily_summary_20260115_211500.png
@@ -243,18 +262,21 @@ LL-189 explains settlement timing for options trades."
 ## Security & Privacy
 
 **Cowork Security:**
+
 - Only accesses designated folder (`data/screenshots/`)
 - No internet access (analyzes locally)
 - Cannot execute trades or access Alpaca API
 - Read-only recommended for production use
 
 **DialogFlow Security:**
+
 - Webhook requires bearer token authentication
 - Rate limited (100 req/min)
 - Queries Alpaca API with read-only credentials
 - Logs redacted (no sensitive data in logs)
 
 **Best Practices:**
+
 1. Use separate Alpaca API keys for read-only access
 2. Never share screenshots containing account numbers
 3. Review Cowork folder permissions regularly
@@ -267,6 +289,7 @@ LL-189 explains settlement timing for options trades."
 ### Screenshots not capturing
 
 **Check:**
+
 ```bash
 # Test locally
 python3 scripts/capture_trading_screenshots.py --dashboard progress
@@ -276,6 +299,7 @@ python3 scripts/capture_trading_screenshots.py --dashboard progress
 ```
 
 **Common issues:**
+
 - Playwright not installed: `playwright install chromium`
 - Missing credentials: Check `ALPACA_PAPER_TRADING_5K_API_KEY`
 - Network timeout: Increase timeout in script
@@ -283,6 +307,7 @@ python3 scripts/capture_trading_screenshots.py --dashboard progress
 ### Cowork not analyzing screenshots
 
 **Check:**
+
 1. Folder path correct in Cowork settings
 2. Screenshots exist: `ls -la data/screenshots/alpaca/`
 3. File permissions: `chmod 644 data/screenshots/**/*.png`
@@ -291,6 +316,7 @@ python3 scripts/capture_trading_screenshots.py --dashboard progress
 ### DialogFlow not responding
 
 **Check webhook health:**
+
 ```bash
 curl https://trading-dialogflow-webhook-cqlewkvzdq-uc.a.run.app/health
 
@@ -299,6 +325,7 @@ curl https://trading-dialogflow-webhook-cqlewkvzdq-uc.a.run.app/health
 ```
 
 **Test queries:**
+
 ```bash
 curl -X POST https://trading-dialogflow-webhook-cqlewkvzdq-uc.a.run.app/webhook \
   -H "Content-Type: application/json" \
@@ -310,14 +337,17 @@ curl -X POST https://trading-dialogflow-webhook-cqlewkvzdq-uc.a.run.app/webhook 
 ## Cost Optimization
 
 **GitHub Actions:** Free (2,000 min/month)
+
 - Screenshot workflow: ~2 min/day = 40 min/month
 - Well within free tier
 
 **Cowork:** $100-200/month (Claude Max subscription)
+
 - Unlimited local analysis
 - No usage fees beyond subscription
 
 **DialogFlow:** Free tier (1,000 requests/month)
+
 - Webhook hosting: Free (Cloud Run free tier)
 - Vertex AI RAG: $0.30/1K queries (≈$15/month for 50K queries)
 
@@ -334,6 +364,7 @@ curl -X POST https://trading-dialogflow-webhook-cqlewkvzdq-uc.a.run.app/webhook 
 5. 📊 **Review first daily summary** tomorrow at 4:15 PM ET
 
 **Questions? Ask DialogFlow:**
+
 ```
 "Explain the Cowork integration for trading screenshots"
 "How do I analyze my portfolio with Claude?"

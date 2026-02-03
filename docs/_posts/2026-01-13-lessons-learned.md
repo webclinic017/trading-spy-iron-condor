@@ -18,7 +18,7 @@ Today was a wake-up call. Two critical issues surfaced that could have derailed 
 
 ## The Hard Lessons
 
-*These are the moments that test us. Critical issues that demanded immediate attention.*
+_These are the moments that test us. Critical issues that demanded immediate attention._
 
 ### Alpaca Does NOT Support Trailing Stops for Options
 
@@ -77,6 +77,7 @@ Daily Trading workflow failing because `tests/test_telemetry_summary.py` and `te
 ### Critical Math Reality Check - Credit Spread Risk/Reward
 
 ---
+
 id: ll_182
 title: Critical Math Reality Check - Credit Spread Risk/Reward
 severity: CRITICAL
@@ -87,6 +88,7 @@ tags: math, credit-spreads, risk-reward, north-star, win-rate
 ### CEO Review Session - Critical Honest Assessment
 
 ---
+
 id: ll_181
 title: CEO Review Session - Critical Honest Assessment (Jan 13, 2026)
 severity: CRITICAL
@@ -96,10 +98,9 @@ tags: north-star, phil-town, rule-1, honest-assessmen
 
 **Key takeaway:** **Verify tomorrow's credit spread execution (Jan 14, 9:35 AM ET)**
 
-
 ## Important Discoveries
 
-*Not emergencies, but insights that will shape how we trade going forward.*
+_Not emergencies, but insights that will shape how we trade going forward._
 
 ### Placeholder Tests Removed for Honesty
 
@@ -113,7 +114,6 @@ Dialogflow webhook was falling back to local keyword search instead of using Ver
 
 CEO requested comprehensive review of system health, strategy math, and technical debt.
 
-
 ## Quick Wins & Refinements
 
 - **North Star Revision - From $100/day to $25/day (Data-Driven)** - Original target: **$100/day with $5K capital = 2% daily return**...
@@ -122,23 +122,23 @@ CEO requested comprehensive review of system health, strategy math, and technica
 ID: ll_162
 Date: 2026-01-13
 Severity: ME...
+
 - **Lesson ll 176: Pattern Day Trading (PDT) Protection Block...** - Attempted to close a profitable short put position (+$5 unrealized P/L) to lock in gains per Phil To...
 - **Git Workflows Video Evaluation** - LL-198: Git Workflows Video Evaluation
 
 Date: January 13, 2026
 Source: "3 Git Workflows Every Develo...
 
-
 ---
 
 ## Today's Numbers
 
-| What | Count |
-|------|-------|
+| What            | Count  |
+| --------------- | ------ |
 | Lessons Learned | **25** |
-| Critical Issues | 11 |
-| High Priority | 6 |
-| Improvements | 8 |
+| Critical Issues | 11     |
+| High Priority   | 6      |
+| Improvements    | 8      |
 
 ---
 
@@ -158,12 +158,12 @@ flowchart LR
 
 ### How We Learn Autonomously
 
-| Component | Role in Learning |
-|-----------|------------------|
-| **Claude Opus 4.5** | Analyzes errors, extracts insights, determines severity |
-| **Vertex AI RAG** | Stores lessons with 768D embeddings for semantic search |
-| **Gemini 2.0 Flash** | Retrieves relevant past lessons before new trades |
-| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research |
+| Component                 | Role in Learning                                        |
+| ------------------------- | ------------------------------------------------------- |
+| **Claude Opus 4.5**       | Analyzes errors, extracts insights, determines severity |
+| **Vertex AI RAG**         | Stores lessons with 768D embeddings for semantic search |
+| **Gemini 2.0 Flash**      | Retrieves relevant past lessons before new trades       |
+| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research          |
 
 ### Why This Matters
 
@@ -172,7 +172,7 @@ flowchart LR
 3. **Continuous Improvement**: 200+ lessons shape every decision
 4. **Transparent Journey**: All learnings published publicly
 
-*[Full Tech Stack Documentation](/trading/tech-stack/)*
+_[Full Tech Stack Documentation](/trading/tech-stack/)_
 
 ---
 
@@ -181,6 +181,7 @@ flowchart LR
 We're building an autonomous AI trading system that learns from every mistake. This isn't about getting rich quick - it's about building a system that can consistently generate income through disciplined options trading.
 
 **Our approach:**
+
 - Paper trade for 90 days to validate the strategy
 - Document every lesson, every failure, every win
 - Use AI (Claude) as CTO to automate and improve
@@ -190,4 +191,4 @@ Want to follow along? Check out the [full project on GitHub](https://github.com/
 
 ---
 
-*Day 77/90 complete. 13 to go.*
+_Day 77/90 complete. 13 to go._

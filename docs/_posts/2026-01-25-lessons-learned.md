@@ -18,21 +18,19 @@ Every mistake is a lesson in disguise. Today we uncovered a critical flaw in our
 
 ## The Hard Lessons
 
-*These are the moments that test us. Critical issues that demanded immediate attention.*
+_These are the moments that test us. Critical issues that demanded immediate attention._
 
 ### CTO Ignores Surfaced RAG Lessons - Pattern Identified
 
 Every session:
 
-
 ## Important Discoveries
 
-*Not emergencies, but insights that will shape how we trade going forward.*
+_Not emergencies, but insights that will shape how we trade going forward._
 
 ### RAG Learning Synthesis - Iron Condor Adjustments
 
 During Ralph Mode iteration 21, queried RAG and synthesized key learnings from recent lessons.
-
 
 ## Quick Wins & Refinements
 
@@ -40,23 +38,23 @@ During Ralph Mode iteration 21, queried RAG and synthesized key learnings from r
 
 Date: 2026-01-25
 Category: Research / Strategy Optimiz...
+
 - **VIX Timing for Iron Condor Entry** - LL-310: VIX Timing for Iron Condor Entry
 
 Date: 2026-01-25
 Category: Strategy / Entry Timing
 Status:...
 
-
 ---
 
 ## Today's Numbers
 
-| What | Count |
-|------|-------|
+| What            | Count |
+| --------------- | ----- |
 | Lessons Learned | **4** |
-| Critical Issues | 1 |
-| High Priority | 1 |
-| Improvements | 2 |
+| Critical Issues | 1     |
+| High Priority   | 1     |
+| Improvements    | 2     |
 
 ---
 
@@ -76,12 +74,12 @@ flowchart LR
 
 ### How We Learn Autonomously
 
-| Component | Role in Learning |
-|-----------|------------------|
-| **Claude Opus 4.5** | Analyzes errors, extracts insights, determines severity |
-| **Vertex AI RAG** | Stores lessons with 768D embeddings for semantic search |
-| **Gemini 2.0 Flash** | Retrieves relevant past lessons before new trades |
-| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research |
+| Component                 | Role in Learning                                        |
+| ------------------------- | ------------------------------------------------------- |
+| **Claude Opus 4.5**       | Analyzes errors, extracts insights, determines severity |
+| **Vertex AI RAG**         | Stores lessons with 768D embeddings for semantic search |
+| **Gemini 2.0 Flash**      | Retrieves relevant past lessons before new trades       |
+| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research          |
 
 ### Why This Matters
 
@@ -90,7 +88,7 @@ flowchart LR
 3. **Continuous Improvement**: 200+ lessons shape every decision
 4. **Transparent Journey**: All learnings published publicly
 
-*[Full Tech Stack Documentation](/trading/tech-stack/)*
+_[Full Tech Stack Documentation](/trading/tech-stack/)_
 
 ---
 
@@ -99,6 +97,7 @@ flowchart LR
 We're building an autonomous AI trading system that learns from every mistake. This isn't about getting rich quick - it's about building a system that can consistently generate income through disciplined options trading.
 
 **Our approach:**
+
 - Paper trade for 90 days to validate the strategy
 - Document every lesson, every failure, every win
 - Use AI (Claude) as CTO to automate and improve
@@ -108,4 +107,4 @@ Want to follow along? Check out the [full project on GitHub](https://github.com/
 
 ---
 
-*Day 89/90 complete. 1 to go.*
+_Day 89/90 complete. 1 to go._

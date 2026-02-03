@@ -50,11 +50,13 @@
 ## Data Flow Rules
 
 ### ✅ DO
+
 - Read trade data from `system_state.json` → `trade_history[]`
 - Query Alpaca API directly for real-time data (webhook does this)
 - Trust `sync-system-state.yml` as the sync mechanism
 
 ### ❌ DON'T
+
 - Write trade data to `trades_*.json` files (deprecated)
 - Create alternative trade storage locations
 - Bypass the single source of truth
@@ -69,10 +71,10 @@ The system includes staleness guards:
 
 ## File Locations
 
-| File | Purpose | Writer | Readers |
-|------|---------|--------|---------|
+| File                     | Purpose            | Writer                | Readers                      |
+| ------------------------ | ------------------ | --------------------- | ---------------------------- |
 | `data/system_state.json` | Portfolio + Trades | sync-system-state.yml | Webhook, Dashboards, Scripts |
-| `data/trades_*.json` | **DEPRECATED** | ~~trade_sync.py~~ | None (remove) |
+| `data/trades_*.json`     | **DEPRECATED**     | ~~trade_sync.py~~     | None (remove)                |
 
 ## Why This Architecture?
 
@@ -89,4 +91,4 @@ The system includes staleness guards:
 
 ---
 
-*Architecture defined after LL-230 incident (Jan 17, 2026)*
+_Architecture defined after LL-230 incident (Jan 17, 2026)_

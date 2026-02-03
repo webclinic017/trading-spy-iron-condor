@@ -18,7 +18,7 @@ Today was a wake-up call. Two critical issues surfaced that could have derailed 
 
 ## The Hard Lessons
 
-*These are the moments that test us. Critical issues that demanded immediate attention.*
+_These are the moments that test us. Critical issues that demanded immediate attention._
 
 ### SOFI Position Blocked All Trading - Buying Power Crisis
 
@@ -28,7 +28,7 @@ Today was a wake-up call. Two critical issues surfaced that could have derailed 
 
 ### Strategy Violation Crisis - Multiple Rogue Workflows
 
-On Jan 21, 2026, the trading system LOST $70.13 due to executing trades that VIOLATE CLAUDE.md strategy mandate. The system bought SPY SHARES and SOFI OPTIONS when it should ONLY execute iron condors 
+On Jan 21, 2026, the trading system LOST $70.13 due to executing trades that VIOLATE CLAUDE.md strategy mandate. The system bought SPY SHARES and SOFI OPTIONS when it should ONLY execute iron condors
 
 **Key takeaway:** Portfolio: $5,028.
 
@@ -54,10 +54,9 @@ The position limit check was counting UNIQUE SYMBOLS instead of TOTAL CONTRACTS:
 
 **Key takeaway:** 3. **Log details**: Show exact positions when limit reached
 
-
 ## Important Discoveries
 
-*Not emergencies, but insights that will shape how we trade going forward.*
+_Not emergencies, but insights that will shape how we trade going forward._
 
 ### Iron Condor Optimization Research - 86% Win Rate Strategy
 
@@ -67,7 +66,8 @@ Date: January 21, 2026
 Category: strategy, research, optimization
 Severity: HIGH
 
- Source
+Source
+
 - Options Trading IQ: Iron Condor Success
 
 ### CALL Leg Pricing Fix - Aggressive Fallbacks
@@ -83,25 +83,23 @@ Date: 2026-01-21
 Severity: HIGH
 Category: Testing
 
- Summary
+Summary
 Evaluated Medium article "RAG Testing — Validating Retrieval
-
 
 ## Quick Wins & Refinements
 
 - **Day 2 Crisis - Position Imbalance and Missing CALL Legs** - Two consecutive days of trading crises:...
 
-
 ---
 
 ## Today's Numbers
 
-| What | Count |
-|------|-------|
+| What            | Count  |
+| --------------- | ------ |
 | Lessons Learned | **10** |
-| Critical Issues | 6 |
-| High Priority | 3 |
-| Improvements | 1 |
+| Critical Issues | 6      |
+| High Priority   | 3      |
+| Improvements    | 1      |
 
 ---
 
@@ -121,12 +119,12 @@ flowchart LR
 
 ### How We Learn Autonomously
 
-| Component | Role in Learning |
-|-----------|------------------|
-| **Claude Opus 4.5** | Analyzes errors, extracts insights, determines severity |
-| **Vertex AI RAG** | Stores lessons with 768D embeddings for semantic search |
-| **Gemini 2.0 Flash** | Retrieves relevant past lessons before new trades |
-| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research |
+| Component                 | Role in Learning                                        |
+| ------------------------- | ------------------------------------------------------- |
+| **Claude Opus 4.5**       | Analyzes errors, extracts insights, determines severity |
+| **Vertex AI RAG**         | Stores lessons with 768D embeddings for semantic search |
+| **Gemini 2.0 Flash**      | Retrieves relevant past lessons before new trades       |
+| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research          |
 
 ### Why This Matters
 
@@ -135,7 +133,7 @@ flowchart LR
 3. **Continuous Improvement**: 200+ lessons shape every decision
 4. **Transparent Journey**: All learnings published publicly
 
-*[Full Tech Stack Documentation](/trading/tech-stack/)*
+_[Full Tech Stack Documentation](/trading/tech-stack/)_
 
 ---
 
@@ -144,6 +142,7 @@ flowchart LR
 We're building an autonomous AI trading system that learns from every mistake. This isn't about getting rich quick - it's about building a system that can consistently generate income through disciplined options trading.
 
 **Our approach:**
+
 - Paper trade for 90 days to validate the strategy
 - Document every lesson, every failure, every win
 - Use AI (Claude) as CTO to automate and improve
@@ -153,4 +152,4 @@ Want to follow along? Check out the [full project on GitHub](https://github.com/
 
 ---
 
-*Day 85/90 complete. 5 to go.*
+_Day 85/90 complete. 5 to go._

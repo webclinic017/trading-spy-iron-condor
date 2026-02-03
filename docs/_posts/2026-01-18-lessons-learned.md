@@ -18,7 +18,7 @@ Markets are closed, but the learning never stops. While other traders take the w
 
 ## Important Discoveries
 
-*Not emergencies, but insights that will shape how we trade going forward.*
+_Not emergencies, but insights that will shape how we trade going forward._
 
 ### Portfolio sync failed - blind trading risk
 
@@ -31,18 +31,17 @@ Cannot verify account state. Error: API Error
 ### Portfolio sync failed - blind trading risk
 
 Cannot verify account state. Error: API Error
-
 
 ---
 
 ## Today's Numbers
 
-| What | Count |
-|------|-------|
+| What            | Count |
+| --------------- | ----- |
 | Lessons Learned | **3** |
-| Critical Issues | 0 |
-| High Priority | 3 |
-| Improvements | 0 |
+| Critical Issues | 0     |
+| High Priority   | 3     |
+| Improvements    | 0     |
 
 ---
 
@@ -51,6 +50,7 @@ Cannot verify account state. Error: API Error
 We're building an autonomous AI trading system that learns from every mistake. This isn't about getting rich quick - it's about building a system that can consistently generate income through disciplined options trading.
 
 **Our approach:**
+
 - Paper trade for 90 days to validate the strategy
 - Document every lesson, every failure, every win
 - Use AI (Claude) as CTO to automate and improve
@@ -60,4 +60,4 @@ Want to follow along? Check out the [full project on GitHub](https://github.com/
 
 ---
 
-*Day 82/90 complete. 8 to go.*
+_Day 82/90 complete. 8 to go._

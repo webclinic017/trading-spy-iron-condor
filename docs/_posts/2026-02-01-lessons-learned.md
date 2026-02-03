@@ -18,7 +18,7 @@ Today was a wake-up call. Two critical issues surfaced that could have derailed 
 
 ## The Hard Lessons
 
-*These are the moments that test us. Critical issues that demanded immediate attention.*
+_These are the moments that test us. Critical issues that demanded immediate attention._
 
 ### SOFI Position Held Through Earnings Blackout
 
@@ -160,3 +160,4 @@ Want to follow along? Check out the [full project on GitHub](https://github.com/
 ---
 
 *Day 96/90 complete. 0 to go.*
+```

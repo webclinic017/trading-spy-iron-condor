@@ -10,23 +10,23 @@ description: "We lost $40.74 today by breaking our own rules. Here's what happen
 
 ## The Loss
 
-| Metric | Value |
-|--------|-------|
-| **Starting Capital** | $5,000.00 |
-| **Current Equity** | $4,959.26 |
-| **Total Loss** | **-$40.74 (-0.81%)** |
-| **Today's Loss** | -$65.58 |
+| Metric               | Value                |
+| -------------------- | -------------------- |
+| **Starting Capital** | $5,000.00            |
+| **Current Equity**   | $4,959.26            |
+| **Total Loss**       | **-$40.74 (-0.81%)** |
+| **Today's Loss**     | -$65.58              |
 
 ## What Went Wrong
 
 ### Rule Violations
 
-| Rule | What We Did | What We Should Have Done |
-|------|-------------|--------------------------|
-| Position sizing (5% max) | 96% of account on SOFI | Max $248 per trade |
-| Credit spreads only | Naked puts | Buy protective leg |
-| SOFI blackout | Held through blackout | Avoid until Feb 1 |
-| Phil Town Rule #1 | Averaged down on loser | Cut losses quickly |
+| Rule                     | What We Did            | What We Should Have Done |
+| ------------------------ | ---------------------- | ------------------------ |
+| Position sizing (5% max) | 96% of account on SOFI | Max $248 per trade       |
+| Credit spreads only      | Naked puts             | Buy protective leg       |
+| SOFI blackout            | Held through blackout  | Avoid until Feb 1        |
+| Phil Town Rule #1        | Averaged down on loser | Cut losses quickly       |
 
 ### The SOFI Trap
 
@@ -39,6 +39,7 @@ We were holding naked puts on a stock with earnings in 16 days. IV was 55%. The 
 ## The Emergency Exit
 
 At 11:52 AM ET, the CTO triggered an emergency exit:
+
 - Closed 2 SOFI puts (buy to close)
 - Sold 24.75 SOFI shares
 - Realized loss: -$40.74
@@ -52,21 +53,21 @@ At 11:52 AM ET, the CTO triggered an emergency exit:
 
 After deep research on traders who started with $500-5,000:
 
-| What They Say | Reality |
-|---------------|---------|
+| What They Say               | Reality               |
+| --------------------------- | --------------------- |
 | "3-5% monthly is realistic" | We were targeting 40% |
-| "6+ months simulator first" | We skipped this |
-| "95% fail rate" | We almost joined them |
-| "Process over money" | We focused on money |
+| "6+ months simulator first" | We skipped this       |
+| "95% fail rate"             | We almost joined them |
+| "Process over money"        | We focused on money   |
 
 ### Revised Targets
 
-| Before | After |
-|--------|-------|
-| $100/day | $150-250/month |
+| Before             | After               |
+| ------------------ | ------------------- |
+| $100/day           | $150-250/month      |
 | 40% monthly return | 3-5% monthly return |
-| Any ticker | SPY/IWM only |
-| Naked puts OK | Spreads required |
+| Any ticker         | SPY/IWM only        |
+| Naked puts OK      | Spreads required    |
 
 ## Prevention Measures
 
@@ -85,16 +86,17 @@ Created `scripts/pre_trade_checklist.py`:
 
 ## Current State
 
-| Metric | Value |
-|--------|-------|
-| Equity | $4,959.26 |
-| Positions | 0 |
-| Buying Power | $9,918.52 |
-| Next Trade | SPY/IWM credit spread |
+| Metric       | Value                 |
+| ------------ | --------------------- |
+| Equity       | $4,959.26             |
+| Positions    | 0                     |
+| Buying Power | $9,918.52             |
+| Next Trade   | SPY/IWM credit spread |
 
 ## The Path Forward
 
 We paid $40.74 to learn:
+
 1. Follow the rules you wrote
 2. 3-5% monthly is success
 3. SPY/IWM only until proven
@@ -104,4 +106,4 @@ The loss is real. The lesson is permanent.
 
 ---
 
-*Day 79 of 90-day paper trading phase. Lesson logged as LL-196.*
+_Day 79 of 90-day paper trading phase. Lesson logged as LL-196._

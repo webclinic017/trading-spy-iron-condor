@@ -18,7 +18,7 @@ Today was a wake-up call. Two critical issues surfaced that could have derailed 
 
 ## The Hard Lessons
 
-*These are the moments that test us. Critical issues that demanded immediate attention.*
+_These are the moments that test us. Critical issues that demanded immediate attention._
 
 ### Trading Crisis - System Stuck for 7 Days
 
@@ -36,10 +36,9 @@ The trading system correctly blocked new trades due to 30% risk exposure (3 spre
 
 **Key takeaway:** If a system can detect a violation, it must also have an automated path to RESOLVE that violation.
 
-
 ## Important Discoveries
 
-*Not emergencies, but insights that will shape how we trade going forward.*
+_Not emergencies, but insights that will shape how we trade going forward._
 
 ### SOFI PDT Crisis - SPY ONLY Violation
 
@@ -49,28 +48,26 @@ A SOFI short put position (SOFI260213P00032000) was opened at 14:35 UTC, violati
 
 SOFI260213P00032000 (short put) cannot be closed due to PDT (Pattern Day Trading) protection.
 
-
 ## Quick Wins & Refinements
 
 - **Exceptional Daily Profit - Strategy Validated** - LL-271: Exceptional Daily Profit - Strategy Validated
 
- Date
+Date
 January 20, 2026
 
- Category
+Category
 SUCCESS / S...
-
 
 ---
 
 ## Today's Numbers
 
-| What | Count |
-|------|-------|
+| What            | Count |
+| --------------- | ----- |
 | Lessons Learned | **6** |
-| Critical Issues | 3 |
-| High Priority | 2 |
-| Improvements | 1 |
+| Critical Issues | 3     |
+| High Priority   | 2     |
+| Improvements    | 1     |
 
 ---
 
@@ -90,12 +87,12 @@ flowchart LR
 
 ### How We Learn Autonomously
 
-| Component | Role in Learning |
-|-----------|------------------|
-| **Claude Opus 4.5** | Analyzes errors, extracts insights, determines severity |
-| **Vertex AI RAG** | Stores lessons with 768D embeddings for semantic search |
-| **Gemini 2.0 Flash** | Retrieves relevant past lessons before new trades |
-| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research |
+| Component                 | Role in Learning                                        |
+| ------------------------- | ------------------------------------------------------- |
+| **Claude Opus 4.5**       | Analyzes errors, extracts insights, determines severity |
+| **Vertex AI RAG**         | Stores lessons with 768D embeddings for semantic search |
+| **Gemini 2.0 Flash**      | Retrieves relevant past lessons before new trades       |
+| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research          |
 
 ### Why This Matters
 
@@ -104,7 +101,7 @@ flowchart LR
 3. **Continuous Improvement**: 200+ lessons shape every decision
 4. **Transparent Journey**: All learnings published publicly
 
-*[Full Tech Stack Documentation](/trading/tech-stack/)*
+_[Full Tech Stack Documentation](/trading/tech-stack/)_
 
 ---
 
@@ -113,6 +110,7 @@ flowchart LR
 We're building an autonomous AI trading system that learns from every mistake. This isn't about getting rich quick - it's about building a system that can consistently generate income through disciplined options trading.
 
 **Our approach:**
+
 - Paper trade for 90 days to validate the strategy
 - Document every lesson, every failure, every win
 - Use AI (Claude) as CTO to automate and improve
@@ -122,4 +120,4 @@ Want to follow along? Check out the [full project on GitHub](https://github.com/
 
 ---
 
-*Day 84/90 complete. 6 to go.*
+_Day 84/90 complete. 6 to go._

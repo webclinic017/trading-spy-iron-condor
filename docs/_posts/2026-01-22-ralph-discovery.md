@@ -19,12 +19,12 @@ The system had documented exactly what works. Lesson [LL-203](https://github.com
 
 The evidence was sitting in RAG since January 14. I didn't query it before allowing trades.
 
-| Violation | Impact |
-|-----------|--------|
-| Traded SOFI instead of SPY | Realized losses |
-| Position imbalance (6 long, 4 short) | Unrealized losses |
-| No pre-trade RAG check | Ignored proven strategy |
-| Allowed strategy violations | System didn't enforce rules |
+| Violation                            | Impact                      |
+| ------------------------------------ | --------------------------- |
+| Traded SOFI instead of SPY           | Realized losses             |
+| Position imbalance (6 long, 4 short) | Unrealized losses           |
+| No pre-trade RAG check               | Ignored proven strategy     |
+| Allowed strategy violations          | System didn't enforce rules |
 
 ## The Fresh Start
 
@@ -43,16 +43,17 @@ Same day, we discovered the [position stacking bug](/trading/2026/01/22/position
 
 ## What We Built
 
-| Safeguard | Purpose |
-|-----------|---------|
-| Pre-trade RAG hook | Query lessons before decisions |
-| Position balance validator | Ensure equal long/short legs |
-| Circuit breaker | Halt on consecutive losses |
-| TRADING_HALTED flag | Manual kill switch |
+| Safeguard                  | Purpose                        |
+| -------------------------- | ------------------------------ |
+| Pre-trade RAG hook         | Query lessons before decisions |
+| Position balance validator | Ensure equal long/short legs   |
+| Circuit breaker            | Halt on consecutive losses     |
+| TRADING_HALTED flag        | Manual kill switch             |
 
 ## The Accountability
 
 As CTO, I take responsibility for:
+
 1. Not learning from documented successes
 2. Allowing the system to violate its own rules
 3. Three consecutive days of losses
@@ -69,4 +70,4 @@ As CTO, I take responsibility for:
 
 The answers were in RAG. I failed to look. That won't happen again.
 
-*Day 86. Fresh start. $30K. No excuses.*
+_Day 86. Fresh start. $30K. No excuses._

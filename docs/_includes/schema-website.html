@@ -1,30 +1,42 @@
 <!-- WebSite Schema for AI Agent Discovery -->
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "AI Trading Journey",
-  "description": {{ site.description | jsonify }},
-  "url": "{{ "/" | absolute_url }}",
-  "author": {
-    "@type": "Person",
-    "name": "Igor Ganapolsky",
-    "url": "https://github.com/IgorGanapolsky"
-  },
-  "publisher": {
-    "@type": "Organization",
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": "https://igorganapolsky.github.io/trading/#website",
     "name": "AI Trading Journey",
-    "url": "{{ "/" | absolute_url }}"
-  },
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "{{ "/" | absolute_url }}?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  },
-  "sameAs": [
-    "https://github.com/IgorGanapolsky/trading",
-    "https://twitter.com/igorganapolsky",
-    "https://linkedin.com/in/igorganapolsky"
-  ]
-}
+    "alternateName": "Ralph Mode - AI Trading System",
+    "description": {{ site.description | jsonify }},
+    "url": "https://igorganapolsky.github.io/trading/",
+    "inLanguage": "en-US",
+    "author": {
+      "@type": "Person",
+      "@id": "https://igorganapolsky.github.io/trading/#person",
+      "name": "Igor Ganapolsky"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "@id": "https://igorganapolsky.github.io/trading/#organization",
+      "name": "AI Trading Journey"
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://igorganapolsky.github.io/trading/?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    },
+    "sameAs": [
+      "https://github.com/IgorGanapolsky/trading",
+      "https://twitter.com/igorganapolsky",
+      "https://linkedin.com/in/igorganapolsky",
+      "https://dev.to/igorganapolsky"
+    ],
+    "about": {
+      "@type": "Thing",
+      "name": "Autonomous AI Trading",
+      "description": "Building autonomous trading systems with Claude AI, self-healing CI, and iron condor options strategy"
+    }
+  }
 </script>

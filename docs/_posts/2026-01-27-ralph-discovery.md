@@ -13,7 +13,6 @@ mermaid: true
 
 ## 🗺️ Today's Fix Flow
 
-
 ```mermaid
 flowchart LR
     subgraph Detection["🔍 Detection"]
@@ -43,21 +42,17 @@ flowchart LR
     V1 --> V2
 ```
 
-
-
 ## 📊 Today's Metrics
 
-| Metric | Value |
-|--------|-------|
-| Issues Detected | 3 |
-| 🔴 Critical | 0 |
-| 🟠 High | 2 |
-| 🟡 Medium | 0 |
-| 🟢 Low/Info | 1 |
-
+| Metric          | Value |
+| --------------- | ----- |
+| Issues Detected | 3     |
+| 🔴 Critical     | 0     |
+| 🟠 High         | 2     |
+| 🟡 Medium       | 0     |
+| 🟢 Low/Info     | 1     |
 
 ---
-
 
 ## 🟠 HIGH LL-298: Invalid Option Strikes Causing CALL Legs to Fail
 
@@ -65,10 +60,9 @@ flowchart LR
 
 - Dead code detected: true
 
-
 ### 🔬 Root Cause
 
-```python
+````python
 
 
 ### ✅ How We Fixed It
@@ -85,8 +79,7 @@ short_call = round(price * 1.05)  # round(690*1.05) = $724 INVALID!
 # FIXED CODE
 def round_to_5(x): return round(x / 5) * 5
 short_call = round_to_5(price * 1.05)  # round_to_5(724.5) = $725 VALID!
-```
-
+````
 
 ### 📈 Impact
 
@@ -100,11 +93,9 @@ Risk reduced and system resilience improved.
 
 id: LL-298 title: $22.61 Loss from SPY Share Churning - Crisis Workflow Failure date: 2026-01-23
 
-
 ### ✅ How We Fixed It
 
 severity: CRITICAL category: trading Lost $22.61 on January 23, 2026 from 49 SPY share trades instead of iron condor execution.
-
 
 ### 📈 Impact
 
@@ -118,16 +109,13 @@ severity: CRITICAL category: trading Lost $22.61 on January 23, 2026 from 49 SPY
 
 **Date**: 2026-01-25 **Category**: Research / Strategy Optimization **Source**: arXiv:2501.12397 - "Stochastic Optimal Control of Iron Condor Portfolios"
 
-
 ### 🔬 Root Cause
 
 - **Left-biased portfolios**: Hold to expiration (τ = T) is optimal - **Non-left-biased portfolios**: Exit at 50-75% of duration - **Our current rule**: Exit at 50% profit OR 7 DTE aligns with research - **Pro**: Higher profitability and success rates - **Con**: Extreme loss potential in tail events
 
-
 ### ✅ How We Fixed It
 
 - **Finding**: "Asymmetric, left-biased Iron Condor portfolios with τ = T are optimal in SPX markets" - **Meaning**: Put spread should be closer to current price than call spread - **Why**: Markets have negative skew (crashes more likely than rallies)
-
 
 ### 📈 Impact
 
@@ -139,14 +127,13 @@ severity: CRITICAL category: trading Lost $22.61 on January 23, 2026 from 49 SPY
 
 These commits shipped today ([view on GitHub](https://github.com/IgorGanapolsky/trading/commits/main)):
 
-| Severity | Commit | Description |
-|----------|--------|-------------|
-| ℹ️ INFO | [1311ef8e](https://github.com/IgorGanapolsky/trading/commit/1311ef8e) | docs(ralph): Auto-publish discovery blog post |
-| ℹ️ INFO | [67ce60c9](https://github.com/IgorGanapolsky/trading/commit/67ce60c9) | docs(blog): Ralph discovery - docs(ralph): Au |
-| ℹ️ INFO | [2542e55c](https://github.com/IgorGanapolsky/trading/commit/2542e55c) | docs(ralph): Auto-publish discovery blog post |
-| ℹ️ INFO | [cd715410](https://github.com/IgorGanapolsky/trading/commit/cd715410) | chore(ralph): Record proactive scan findings |
-| ℹ️ INFO | [656ab667](https://github.com/IgorGanapolsky/trading/commit/656ab667) | chore(ralph): Update workflow health dashboar |
-
+| Severity | Commit                                                                | Description                                   |
+| -------- | --------------------------------------------------------------------- | --------------------------------------------- |
+| ℹ️ INFO  | [1311ef8e](https://github.com/IgorGanapolsky/trading/commit/1311ef8e) | docs(ralph): Auto-publish discovery blog post |
+| ℹ️ INFO  | [67ce60c9](https://github.com/IgorGanapolsky/trading/commit/67ce60c9) | docs(blog): Ralph discovery - docs(ralph): Au |
+| ℹ️ INFO  | [2542e55c](https://github.com/IgorGanapolsky/trading/commit/2542e55c) | docs(ralph): Auto-publish discovery blog post |
+| ℹ️ INFO  | [cd715410](https://github.com/IgorGanapolsky/trading/commit/cd715410) | chore(ralph): Record proactive scan findings  |
+| ℹ️ INFO  | [656ab667](https://github.com/IgorGanapolsky/trading/commit/656ab667) | chore(ralph): Update workflow health dashboar |
 
 ## 🎯 Key Takeaways
 
@@ -159,18 +146,20 @@ These commits shipped today ([view on GitHub](https://github.com/IgorGanapolsky/
 ## 🤖 About Ralph Mode
 
 Ralph is our AI CTO that autonomously maintains this trading system. It:
+
 - Monitors for issues 24/7
 - Runs tests and fixes failures
 - Learns from mistakes via RAG + RLHF
 - Documents everything for transparency
 
-*This is part of our journey building an AI-powered iron condor trading system targeting $6K/month financial independence.*
+_This is part of our journey building an AI-powered iron condor trading system targeting $6K/month financial independence._
 
 **Resources:**
+
 - 📊 [Source Code](https://github.com/IgorGanapolsky/trading)
 - 📈 [Strategy Guide](https://igorganapolsky.github.io/trading/2026/01/21/iron-condors-ai-trading-complete-guide.html)
 - 🤫 [The Silent 74 Days](https://igorganapolsky.github.io/trading/2026/01/07/the-silent-74-days.html) - How we built a system that did nothing
 
 ---
 
-*💬 Found this useful? Star the repo or drop a comment!*
+_💬 Found this useful? Star the repo or drop a comment!_

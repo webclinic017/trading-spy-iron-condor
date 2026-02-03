@@ -1,32 +1,40 @@
 ---
 layout: default
 ---
-<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
+<article
+  class="post h-entry"
+  itemscope
+  itemtype="http://schema.org/BlogPosting"
+>
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
+    <h1 class="post-title p-name" itemprop="name headline">
+      {{ page.title | escape }}
+    </h1>
     <p class="post-meta">
-      <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+      <time
+        class="dt-published"
+        datetime="{{ page.date | date_to_xmlschema }}"
+        itemprop="datePublished"
+      >
         {{ page.date | date: "%b %-d, %Y" }}
       </time>
       {%- if page.author -%}
-        <span itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <span itemprop="name">{{ page.author }}</span>
-        </span>
+      <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">{{ page.author }}</span>
+      </span>
       {%- endif -%}
     </p>
   </header>
 
-  <div class="post-content e-content" itemprop="articleBody">
-    {{ content }}
-  </div>
+  <div class="post-content e-content" itemprop="articleBody">{{ content }}</div>
 
   {%- if site.posts.size > 1 -%}
   <nav class="related-posts">
     <h3>Related Lessons</h3>
     <ul>
-      {%- assign related = site.posts | where_exp: "post", "post.url != page.url" | slice: 0, 3 -%}
-      {%- for post in related -%}
+      {%- assign related = site.posts | where_exp: "post", "post.url !=
+      page.url" | slice: 0, 3 -%} {%- for post in related -%}
       <li>
         <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
         <small>{{ post.date | date: "%Y-%m-%d" }}</small>
@@ -39,35 +47,74 @@ layout: default
   <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
 </article>
 
-<!-- JSON-LD BlogPosting Schema for AI Agents -->
+<!-- JSON-LD BlogPosting Schema for AI Agents / Perplexity / Search -->
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": {{ page.title | jsonify }},
-  "description": {{ page.excerpt | strip_html | truncate: 160 | jsonify }},
-  "datePublished": "{{ page.date | date_to_xmlschema }}",
-  "dateModified": "{{ page.date | date_to_xmlschema }}",
-  "author": {
-    "@type": "Person",
-    "name": {{ page.author | default: site.author | jsonify }},
-    "url": "{{ "/" | absolute_url }}"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "AI Trading Journey",
-    "url": "{{ "/" | absolute_url }}",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "{{ "/assets/og-image.png" | absolute_url }}"
-    }
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "{{ page.url | absolute_url }}"
-  },
-  "keywords": {{ page.tags | default: site.keywords | jsonify }},
-  "articleSection": "Trading Lessons",
-  "inLanguage": "en-US"
-}
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": "{{ page.url | absolute_url }}#article",
+    "headline": {{ page.title | jsonify }},
+    "name": {{ page.title | jsonify }},
+    "description": {{ page.excerpt | strip_html | truncate: 160 | jsonify }},
+    "datePublished": "{{ page.date | date_to_xmlschema }}",
+    "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
+    "wordCount": {{ content | number_of_words }},
+    "author": {
+      "@type": "Person",
+      "@id": "https://igorganapolsky.github.io/trading/#person",
+      "name": "Igor Ganapolsky",
+      "jobTitle": "Senior Mobile Engineer",
+      "url": "https://igorganapolsky.github.io/trading/",
+      "sameAs": [
+        "https://github.com/IgorGanapolsky",
+        "https://linkedin.com/in/igorganapolsky",
+        "https://dev.to/igorganapolsky"
+      ]
+    },
+    "publisher": {
+      "@type": "Organization",
+      "@id": "https://igorganapolsky.github.io/trading/#organization",
+      "name": "AI Trading Journey",
+      "url": "https://igorganapolsky.github.io/trading/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://igorganapolsky.github.io/trading/assets/og-image.png",
+        "width": 1200,
+        "height": 630
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "{{ page.url | absolute_url }}"
+    },
+    "isPartOf": {
+      "@type": "WebSite",
+      "@id": "https://igorganapolsky.github.io/trading/#website",
+      "name": "AI Trading Journey"
+    },
+    "keywords": {{ page.tags | default: site.keywords | jsonify }},
+    "articleSection": "{{ page.categories | default: 'Trading Lessons' | jsonify }}",
+    "inLanguage": "en-US",
+    "copyrightYear": "{{ page.date | date: '%Y' }}",
+    "copyrightHolder": {
+      "@type": "Person",
+      "@id": "https://igorganapolsky.github.io/trading/#person"
+    },
+    "about": [
+      {
+        "@type": "Thing",
+        "name": "AI Trading",
+        "description": "Autonomous trading systems powered by Claude AI"
+      },
+      {
+        "@type": "Thing",
+        "name": "Options Trading",
+        "description": "Iron condor strategy for consistent returns"
+      }
+    ]
+  }
 </script>
+
+<!-- Include Person and Organization schemas on all posts -->
+{% include schema-person.html %} {% include schema-organization.html %} {%
+include schema-faq.html %}

@@ -18,7 +18,7 @@ Every mistake is a lesson in disguise. Today we uncovered a critical flaw in our
 
 ## The Hard Lessons
 
-*These are the moments that test us. Critical issues that demanded immediate attention.*
+_These are the moments that test us. Critical issues that demanded immediate attention._
 
 ### SOFI Ticker Blackout Violation
 
@@ -26,10 +26,9 @@ Trading workflow was configured to execute credit spreads and CSPs on SOFI, desp
 
 **Key takeaway:** PR
 
-
 ## Important Discoveries
 
-*Not emergencies, but insights that will shape how we trade going forward.*
+_Not emergencies, but insights that will shape how we trade going forward._
 
 ### Mandate Violation - Manual Work Handoff
 
@@ -43,7 +42,6 @@ CTO violated CLAUDE.md mandate: "Never tell CEO to do manual work - If I can do 
 
 CI workflow "Run All Tests" failed with:
 
-
 ## Quick Wins & Refinements
 
 - **January 14, 2026 Loss Root Cause Analysis** - On January 14, 2026, the paper trading account suffered a $65.58 daily loss when the system correctl...
@@ -52,17 +50,16 @@ CI workflow "Run All Tests" failed with:
 - **Author:** A. Gharakha...
 - **SOFI Earnings Risk - Emergency Close** - Short puts on SOFI (strike $24, exp Feb 6) held through earnings date (Jan 30)....
 
-
 ---
 
 ## Today's Numbers
 
-| What | Count |
-|------|-------|
+| What            | Count  |
+| --------------- | ------ |
 | Lessons Learned | **12** |
-| Critical Issues | 1 |
-| High Priority | 4 |
-| Improvements | 7 |
+| Critical Issues | 1      |
+| High Priority   | 4      |
+| Improvements    | 7      |
 
 ---
 
@@ -71,6 +68,7 @@ CI workflow "Run All Tests" failed with:
 We're building an autonomous AI trading system that learns from every mistake. This isn't about getting rich quick - it's about building a system that can consistently generate income through disciplined options trading.
 
 **Our approach:**
+
 - Paper trade for 90 days to validate the strategy
 - Document every lesson, every failure, every win
 - Use AI (Claude) as CTO to automate and improve
@@ -80,4 +78,4 @@ Want to follow along? Check out the [full project on GitHub](https://github.com/
 
 ---
 
-*Day 78/90 complete. 12 to go.*
+_Day 78/90 complete. 12 to go._

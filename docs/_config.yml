@@ -43,7 +43,7 @@ header_pages:
 # Collections
 collections:
   lessons:
-    output: false  # Disabled Jan 12, 2026 - lessons contain stale stats, keep in rag_knowledge only
+    output: false # Disabled Jan 12, 2026 - lessons contain stale stats, keep in rag_knowledge only
     permalink: /lessons/:name/
   reports:
     output: true

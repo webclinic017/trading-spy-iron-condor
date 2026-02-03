@@ -18,7 +18,7 @@ Today was a wake-up call. Two critical issues surfaced that could have derailed 
 
 ## The Hard Lessons
 
-*These are the moments that test us. Critical issues that demanded immediate attention.*
+_These are the moments that test us. Critical issues that demanded immediate attention._
 
 ### Paper Trading Blocked by Overly Strict VIX Threshold
 
@@ -27,13 +27,13 @@ Paper trading phase went 5 days (Jan 22-26) with ZERO trades executed. The syste
 ### CI Scripts Failing + Orphan Positions Blocking Trades
 
 After fixing VIX threshold (LL-316), iron condor trades were STILL blocked because:
+
 1. 3 orphan option positions from Jan 22 crisis were blocking new trades
 2. The `manage_iron_condor_positions.py` sc
 
-
 ## Important Discoveries
 
-*Not emergencies, but insights that will shape how we trade going forward.*
+_Not emergencies, but insights that will shape how we trade going forward._
 
 ### CTO Violated Directive 3 - Asked CEO to Do Manual Work
 
@@ -47,27 +47,26 @@ Audit of all crisis prevention systems implemented after the Jan 20-22, 2026 pos
 
 Audit of RAG hooks against official Claude Code documentation revealed that `capture_session_learnings.sh` is configured as a **SessionEnd** hook, which cannot inject context to Claude. This means les
 
-
 ## Quick Wins & Refinements
 
 - **PR & Branch Hygiene Session - Jan 26, 2026** - LL-316: PR & Branch Hygiene Session - Jan 26, 2026
 
- Summary
+Summary
 Completed PR management and branch clea...
+
 - **CTO Session - Wrong Repo Confusion & RAG Query Protocol** - 1. CEO asked "How much money did we make today?"...
 - **Execution Readiness Checklist - Jan 26, 2026** - CEO Directive: "Execute" - Stop researching, start trading....
-
 
 ---
 
 ## Today's Numbers
 
-| What | Count |
-|------|-------|
+| What            | Count |
+| --------------- | ----- |
 | Lessons Learned | **8** |
-| Critical Issues | 2 |
-| High Priority | 3 |
-| Improvements | 3 |
+| Critical Issues | 2     |
+| High Priority   | 3     |
+| Improvements    | 3     |
 
 ---
 
@@ -87,12 +86,12 @@ flowchart LR
 
 ### How We Learn Autonomously
 
-| Component | Role in Learning |
-|-----------|------------------|
-| **Claude Opus 4.5** | Analyzes errors, extracts insights, determines severity |
-| **Vertex AI RAG** | Stores lessons with 768D embeddings for semantic search |
-| **Gemini 2.0 Flash** | Retrieves relevant past lessons before new trades |
-| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research |
+| Component                 | Role in Learning                                        |
+| ------------------------- | ------------------------------------------------------- |
+| **Claude Opus 4.5**       | Analyzes errors, extracts insights, determines severity |
+| **Vertex AI RAG**         | Stores lessons with 768D embeddings for semantic search |
+| **Gemini 2.0 Flash**      | Retrieves relevant past lessons before new trades       |
+| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research          |
 
 ### Why This Matters
 
@@ -101,7 +100,7 @@ flowchart LR
 3. **Continuous Improvement**: 200+ lessons shape every decision
 4. **Transparent Journey**: All learnings published publicly
 
-*[Full Tech Stack Documentation](/trading/tech-stack/)*
+_[Full Tech Stack Documentation](/trading/tech-stack/)_
 
 ---
 
@@ -110,6 +109,7 @@ flowchart LR
 We're building an autonomous AI trading system that learns from every mistake. This isn't about getting rich quick - it's about building a system that can consistently generate income through disciplined options trading.
 
 **Our approach:**
+
 - Paper trade for 90 days to validate the strategy
 - Document every lesson, every failure, every win
 - Use AI (Claude) as CTO to automate and improve
@@ -119,4 +119,4 @@ Want to follow along? Check out the [full project on GitHub](https://github.com/
 
 ---
 
-*Day 90/90 complete. 0 to go.*
+_Day 90/90 complete. 0 to go._

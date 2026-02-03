@@ -18,7 +18,7 @@ Another day in the 90-day journey to build a profitable AI trading system. Here'
 
 ## Important Discoveries
 
-*Not emergencies, but insights that will shape how we trade going forward.*
+_Not emergencies, but insights that will shape how we trade going forward._
 
 ### Stale Order Threshold Must Be 4 Hours, Not 24
 
@@ -27,7 +27,6 @@ System had $5K in paper account but hadn't traded in 6 days. Root cause: unfille
 ### Comprehensive Investment Strategy Review - January 12, 2026
 
 CEO requested comprehensive audit of all trading systems. CTO conducted thorough investigation with evidence-based answers to 15+ questions.
-
 
 ## Quick Wins & Refinements
 
@@ -39,17 +38,16 @@ CEO requested comprehensive audit of all trading systems. CTO conducted thorough
 Date: January 12, 2026
 Category: DevOps / Git Workf...
 
-
 ---
 
 ## Today's Numbers
 
-| What | Count |
-|------|-------|
+| What            | Count |
+| --------------- | ----- |
 | Lessons Learned | **6** |
-| Critical Issues | 0 |
-| High Priority | 2 |
-| Improvements | 4 |
+| Critical Issues | 0     |
+| High Priority   | 2     |
+| Improvements    | 4     |
 
 ---
 
@@ -58,6 +56,7 @@ Category: DevOps / Git Workf...
 We're building an autonomous AI trading system that learns from every mistake. This isn't about getting rich quick - it's about building a system that can consistently generate income through disciplined options trading.
 
 **Our approach:**
+
 - Paper trade for 90 days to validate the strategy
 - Document every lesson, every failure, every win
 - Use AI (Claude) as CTO to automate and improve
@@ -67,4 +66,4 @@ Want to follow along? Check out the [full project on GitHub](https://github.com/
 
 ---
 
-*Day 76/90 complete. 14 to go.*
+_Day 76/90 complete. 14 to go._

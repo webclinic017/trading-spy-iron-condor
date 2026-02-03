@@ -1,844 +1,947 @@
 ---
 layout: null
 ---
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RAG Knowledge Base Query - Trading System</title>
-    <meta name="description" content="Search and explore the RAG knowledge base containing 300+ lessons learned from AI trading system development">
+    <meta
+      name="description"
+      content="Search and explore the RAG knowledge base containing 300+ lessons learned from AI trading system development"
+    />
     <style>
-        :root {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-tertiary: #21262d;
-            --text-primary: #c9d1d9;
-            --text-secondary: #8b949e;
-            --text-muted: #6e7681;
-            --accent-green: #3fb950;
-            --accent-blue: #58a6ff;
-            --accent-purple: #a371f7;
-            --accent-yellow: #d29922;
-            --accent-red: #f85149;
-            --border-color: #30363d;
-            --shadow: 0 8px 24px rgba(0,0,0,0.4);
-        }
+      :root {
+        --bg-primary: #0d1117;
+        --bg-secondary: #161b22;
+        --bg-tertiary: #21262d;
+        --text-primary: #c9d1d9;
+        --text-secondary: #8b949e;
+        --text-muted: #6e7681;
+        --accent-green: #3fb950;
+        --accent-blue: #58a6ff;
+        --accent-purple: #a371f7;
+        --accent-yellow: #d29922;
+        --accent-red: #f85149;
+        --border-color: #30363d;
+        --shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica,
+          Arial, sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
 
-        header {
-            text-align: center;
-            padding: 40px 20px;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 30px;
-        }
+      header {
+        text-align: center;
+        padding: 40px 20px;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 30px;
+      }
 
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        background: linear-gradient(
+          135deg,
+          var(--accent-blue),
+          var(--accent-purple)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
 
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-        }
+      .subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+      }
 
-        .stats-bar {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
+      .stats-bar {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
 
-        .stat {
-            text-align: center;
-        }
+      .stat {
+        text-align: center;
+      }
 
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--accent-green);
-        }
+      .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--accent-green);
+      }
 
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+      .stat-label {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
 
-        .search-section {
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 1px solid var(--border-color);
-        }
+      .search-section {
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 30px;
+        border: 1px solid var(--border-color);
+      }
 
-        .search-wrapper {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
+      .search-wrapper {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 15px;
+      }
 
-        #searchInput {
-            flex: 1;
-            padding: 14px 20px;
-            font-size: 1rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
+      #searchInput {
+        flex: 1;
+        padding: 14px 20px;
+        font-size: 1rem;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-primary);
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
 
-        #searchInput:focus {
-            outline: none;
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
-        }
+      #searchInput:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+      }
 
-        #searchInput::placeholder {
-            color: var(--text-muted);
-        }
+      #searchInput::placeholder {
+        color: var(--text-muted);
+      }
 
-        #searchBtn {
-            padding: 14px 28px;
-            font-size: 1rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
+      #searchBtn {
+        padding: 14px 28px;
+        font-size: 1rem;
+        font-weight: 600;
+        background: linear-gradient(
+          135deg,
+          var(--accent-blue),
+          var(--accent-purple)
+        );
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
 
-        #searchBtn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
-        }
+      #searchBtn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
+      }
 
-        .quick-filters {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
+      .quick-filters {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
 
-        .filter-tag {
-            padding: 6px 14px;
-            font-size: 0.85rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: var(--text-secondary);
-        }
+      .filter-tag {
+        padding: 6px 14px;
+        font-size: 0.85rem;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: var(--text-secondary);
+      }
 
-        .filter-tag:hover {
-            background: var(--border-color);
-            color: var(--text-primary);
-        }
+      .filter-tag:hover {
+        background: var(--border-color);
+        color: var(--text-primary);
+      }
 
-        .filter-tag.active {
-            background: var(--accent-blue);
-            border-color: var(--accent-blue);
-            color: white;
-        }
+      .filter-tag.active {
+        background: var(--accent-blue);
+        border-color: var(--accent-blue);
+        color: white;
+      }
 
+      .results-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      @media (max-width: 900px) {
         .results-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+          grid-template-columns: 1fr;
         }
+      }
 
-        @media (max-width: 900px) {
-            .results-section {
-                grid-template-columns: 1fr;
-            }
-        }
+      .results-panel,
+      .recent-panel {
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+      }
 
-        .results-panel, .recent-panel {
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-        }
+      .panel-header {
+        padding: 16px 20px;
+        background: var(--bg-tertiary);
+        border-bottom: 1px solid var(--border-color);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
 
-        .panel-header {
-            padding: 16px 20px;
-            background: var(--bg-tertiary);
-            border-bottom: 1px solid var(--border-color);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+      .panel-icon {
+        font-size: 1.2rem;
+      }
 
-        .panel-icon {
-            font-size: 1.2rem;
-        }
+      .panel-content {
+        padding: 20px;
+        max-height: 600px;
+        overflow-y: auto;
+      }
 
-        .panel-content {
-            padding: 20px;
-            max-height: 600px;
-            overflow-y: auto;
-        }
+      .lesson-card {
+        background: var(--bg-tertiary);
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 12px;
+        border: 1px solid var(--border-color);
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+        cursor: pointer;
+      }
 
-        .lesson-card {
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border: 1px solid var(--border-color);
-            transition: border-color 0.2s, transform 0.2s;
-            cursor: pointer;
-        }
+      .lesson-card:hover {
+        border-color: var(--accent-blue);
+        transform: translateX(4px);
+      }
 
-        .lesson-card:hover {
-            border-color: var(--accent-blue);
-            transform: translateX(4px);
-        }
+      .lesson-card:last-child {
+        margin-bottom: 0;
+      }
 
-        .lesson-card:last-child {
-            margin-bottom: 0;
-        }
+      .lesson-id {
+        font-family: "SFMono-Regular", Consolas, monospace;
+        font-size: 0.8rem;
+        color: var(--accent-purple);
+        margin-bottom: 6px;
+      }
 
-        .lesson-id {
-            font-family: 'SFMono-Regular', Consolas, monospace;
-            font-size: 0.8rem;
-            color: var(--accent-purple);
-            margin-bottom: 6px;
-        }
+      .lesson-title {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+      }
 
-        .lesson-title {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-primary);
-        }
+      .lesson-summary {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
 
-        .lesson-summary {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
+      .lesson-meta {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
 
-        .lesson-meta {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+      .lesson-tag {
+        font-size: 0.75rem;
+        padding: 3px 8px;
+        background: var(--bg-secondary);
+        border-radius: 4px;
+        color: var(--text-muted);
+      }
 
-        .lesson-tag {
-            font-size: 0.75rem;
-            padding: 3px 8px;
-            background: var(--bg-secondary);
-            border-radius: 4px;
-            color: var(--text-muted);
-        }
+      .lesson-tag.critical {
+        background: rgba(248, 81, 73, 0.15);
+        color: var(--accent-red);
+      }
 
-        .lesson-tag.critical {
-            background: rgba(248, 81, 73, 0.15);
-            color: var(--accent-red);
-        }
+      .lesson-tag.high {
+        background: rgba(210, 153, 34, 0.15);
+        color: var(--accent-yellow);
+      }
 
-        .lesson-tag.high {
-            background: rgba(210, 153, 34, 0.15);
-            color: var(--accent-yellow);
-        }
+      .lesson-tag.research {
+        background: rgba(88, 166, 255, 0.15);
+        color: var(--accent-blue);
+      }
 
-        .lesson-tag.research {
-            background: rgba(88, 166, 255, 0.15);
-            color: var(--accent-blue);
-        }
+      .no-results {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-muted);
+      }
 
-        .no-results {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-muted);
-        }
+      .local-query-section {
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        padding: 24px;
+        margin-top: 30px;
+        border: 1px solid var(--border-color);
+      }
 
-        .local-query-section {
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 24px;
-            margin-top: 30px;
-            border: 1px solid var(--border-color);
-        }
+      .local-query-section h3 {
+        margin-bottom: 15px;
+        color: var(--accent-yellow);
+      }
 
-        .local-query-section h3 {
-            margin-bottom: 15px;
-            color: var(--accent-yellow);
-        }
+      .code-block {
+        background: var(--bg-primary);
+        border-radius: 8px;
+        padding: 16px;
+        font-family: "SFMono-Regular", Consolas, monospace;
+        font-size: 0.9rem;
+        overflow-x: auto;
+        border: 1px solid var(--border-color);
+        margin-bottom: 12px;
+      }
 
-        .code-block {
-            background: var(--bg-primary);
-            border-radius: 8px;
-            padding: 16px;
-            font-family: 'SFMono-Regular', Consolas, monospace;
-            font-size: 0.9rem;
-            overflow-x: auto;
-            border: 1px solid var(--border-color);
-            margin-bottom: 12px;
-        }
+      .code-block code {
+        color: var(--accent-green);
+      }
 
-        .code-block code {
-            color: var(--accent-green);
-        }
+      .code-comment {
+        color: var(--text-muted);
+      }
 
-        .code-comment {
-            color: var(--text-muted);
-        }
+      /* Modal for lesson details */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
 
-        /* Modal for lesson details */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+      .modal-overlay.active {
+        display: flex;
+      }
 
-        .modal-overlay.active {
-            display: flex;
-        }
+      .modal-content {
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        max-width: 800px;
+        max-height: 80vh;
+        width: 100%;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow);
+      }
 
-        .modal-content {
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            max-width: 800px;
-            max-height: 80vh;
-            width: 100%;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-        }
+      .modal-header {
+        padding: 20px;
+        background: var(--bg-tertiary);
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 
-        .modal-header {
-            padding: 20px;
-            background: var(--bg-tertiary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+      .modal-close {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 4px;
+      }
 
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
+      .modal-close:hover {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+      }
 
-        .modal-close:hover {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-        }
+      .modal-body {
+        padding: 20px;
+        overflow-y: auto;
+        max-height: calc(80vh - 80px);
+      }
 
-        .modal-body {
-            padding: 20px;
-            overflow-y: auto;
-            max-height: calc(80vh - 80px);
-        }
+      .modal-body pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.7;
+      }
 
-        .modal-body pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            line-height: 1.7;
-        }
+      footer {
+        text-align: center;
+        padding: 30px 20px;
+        margin-top: 40px;
+        border-top: 1px solid var(--border-color);
+        color: var(--text-muted);
+      }
 
-        footer {
-            text-align: center;
-            padding: 30px 20px;
-            margin-top: 40px;
-            border-top: 1px solid var(--border-color);
-            color: var(--text-muted);
-        }
+      footer a {
+        color: var(--accent-blue);
+        text-decoration: none;
+      }
 
-        footer a {
-            color: var(--accent-blue);
-            text-decoration: none;
-        }
+      footer a:hover {
+        text-decoration: underline;
+      }
 
-        footer a:hover {
-            text-decoration: underline;
-        }
+      /* Chat Section */
+      .chat-section {
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 30px;
+        overflow: hidden;
+      }
 
-        /* Chat Section */
-        .chat-section {
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 30px;
-            overflow: hidden;
-        }
+      .chat-container {
+        padding: 20px;
+      }
 
-        .chat-container {
-            padding: 20px;
-        }
+      .chat-messages {
+        max-height: 400px;
+        overflow-y: auto;
+        margin-bottom: 16px;
+        padding: 10px;
+        background: var(--bg-primary);
+        border-radius: 8px;
+        min-height: 150px;
+      }
 
-        .chat-messages {
-            max-height: 400px;
-            overflow-y: auto;
-            margin-bottom: 16px;
-            padding: 10px;
-            background: var(--bg-primary);
-            border-radius: 8px;
-            min-height: 150px;
-        }
+      .chat-message {
+        margin-bottom: 12px;
+        display: flex;
+      }
 
-        .chat-message {
-            margin-bottom: 12px;
-            display: flex;
-        }
+      .chat-message.user {
+        justify-content: flex-end;
+      }
 
-        .chat-message.user {
-            justify-content: flex-end;
-        }
+      .chat-message .message-content {
+        max-width: 80%;
+        padding: 12px 16px;
+        border-radius: 12px;
+        line-height: 1.5;
+      }
 
-        .chat-message .message-content {
-            max-width: 80%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            line-height: 1.5;
-        }
+      .chat-message.user .message-content {
+        background: var(--accent-blue);
+        color: white;
+        border-bottom-right-radius: 4px;
+      }
 
-        .chat-message.user .message-content {
-            background: var(--accent-blue);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
+      .chat-message.assistant .message-content {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        border-bottom-left-radius: 4px;
+      }
 
-        .chat-message.assistant .message-content {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            border-bottom-left-radius: 4px;
-        }
+      .chat-message.loading .message-content {
+        color: var(--text-muted);
+        font-style: italic;
+      }
 
-        .chat-message.loading .message-content {
-            color: var(--text-muted);
-            font-style: italic;
-        }
+      .chat-input-wrapper {
+        display: flex;
+        gap: 12px;
+      }
 
-        .chat-input-wrapper {
-            display: flex;
-            gap: 12px;
-        }
+      #chatInput {
+        flex: 1;
+        padding: 14px 20px;
+        font-size: 1rem;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-primary);
+        transition: border-color 0.2s;
+      }
 
-        #chatInput {
-            flex: 1;
-            padding: 14px 20px;
-            font-size: 1rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            transition: border-color 0.2s;
-        }
+      #chatInput:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+      }
 
-        #chatInput:focus {
-            outline: none;
-            border-color: var(--accent-blue);
-        }
+      #chatSendBtn {
+        padding: 14px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, var(--accent-green), #2ea043);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
 
-        #chatSendBtn {
-            padding: 14px 24px;
-            font-size: 1rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, var(--accent-green), #2ea043);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
+      #chatSendBtn:hover {
+        transform: translateY(-2px);
+      }
 
-        #chatSendBtn:hover {
-            transform: translateY(-2px);
-        }
+      #chatSendBtn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
 
-        #chatSendBtn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
+      .chat-examples {
+        margin-top: 12px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
 
-        .chat-examples {
-            margin-top: 12px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
+      .example-chip {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        cursor: pointer;
+        color: var(--text-secondary);
+        transition: all 0.2s;
+      }
 
-        .example-chip {
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            transition: all 0.2s;
-        }
+      .example-chip:hover {
+        background: var(--border-color);
+        color: var(--text-primary);
+      }
 
-        .example-chip:hover {
-            background: var(--border-color);
-            color: var(--text-primary);
-        }
+      /* Scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
 
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-primary);
+      }
 
-        ::-webkit-scrollbar-track {
-            background: var(--bg-primary);
-        }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 4px;
+      }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-muted);
-        }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--text-muted);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <header>
-            <h1>RAG Knowledge Base</h1>
-            <p class="subtitle">Search 300+ lessons from building an autonomous AI trading system</p>
-            <div class="stats-bar">
-                <div class="stat">
-                    <div class="stat-value" id="totalLessons">320+</div>
-                    <div class="stat-label">Lessons Learned</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value">90</div>
-                    <div class="stat-label">Days Building</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value">$100K</div>
-                    <div class="stat-label">Paper Account</div>
-                </div>
-            </div>
-        </header>
+      <header>
+        <h1>RAG Knowledge Base</h1>
+        <p class="subtitle">
+          Search 300+ lessons from building an autonomous AI trading system
+        </p>
+        <div class="stats-bar">
+          <div class="stat">
+            <div class="stat-value" id="totalLessons">320+</div>
+            <div class="stat-label">Lessons Learned</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">90</div>
+            <div class="stat-label">Days Building</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">$100K</div>
+            <div class="stat-label">Paper Account</div>
+          </div>
+        </div>
+      </header>
 
-        <div class="search-section">
-            <div class="search-wrapper">
-                <input type="text" id="searchInput" placeholder="Search lessons... (e.g., 'iron condor', 'VIX', 'Rule 1', 'tax')">
-                <button id="searchBtn">Search</button>
+      <div class="search-section">
+        <div class="search-wrapper">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search lessons... (e.g., 'iron condor', 'VIX', 'Rule 1', 'tax')"
+          />
+          <button id="searchBtn">Search</button>
+        </div>
+        <div class="quick-filters">
+          <span class="filter-tag" data-filter="iron condor">Iron Condor</span>
+          <span class="filter-tag" data-filter="rule 1">Rule #1</span>
+          <span class="filter-tag" data-filter="VIX">VIX</span>
+          <span class="filter-tag" data-filter="tax">Tax</span>
+          <span class="filter-tag" data-filter="crisis">Crisis</span>
+          <span class="filter-tag" data-filter="win rate">Win Rate</span>
+          <span class="filter-tag" data-filter="position">Position</span>
+          <span class="filter-tag" data-filter="failure">Failures</span>
+        </div>
+      </div>
+
+      <div class="results-section">
+        <div class="results-panel">
+          <div class="panel-header">
+            <span class="panel-icon">&#128269;</span>
+            <span>Search Results</span>
+            <span
+              id="resultCount"
+              style="
+                margin-left: auto;
+                color: var(--text-muted);
+                font-weight: normal;
+              "
+            ></span>
+          </div>
+          <div class="panel-content" id="searchResults">
+            <div class="no-results">
+              Enter a search term to find relevant lessons from the knowledge
+              base.
             </div>
-            <div class="quick-filters">
-                <span class="filter-tag" data-filter="iron condor">Iron Condor</span>
-                <span class="filter-tag" data-filter="rule 1">Rule #1</span>
-                <span class="filter-tag" data-filter="VIX">VIX</span>
-                <span class="filter-tag" data-filter="tax">Tax</span>
-                <span class="filter-tag" data-filter="crisis">Crisis</span>
-                <span class="filter-tag" data-filter="win rate">Win Rate</span>
-                <span class="filter-tag" data-filter="position">Position</span>
-                <span class="filter-tag" data-filter="failure">Failures</span>
-            </div>
+          </div>
         </div>
 
-        <div class="results-section">
-            <div class="results-panel">
-                <div class="panel-header">
-                    <span class="panel-icon">&#128269;</span>
-                    <span>Search Results</span>
-                    <span id="resultCount" style="margin-left: auto; color: var(--text-muted); font-weight: normal;"></span>
-                </div>
-                <div class="panel-content" id="searchResults">
-                    <div class="no-results">
-                        Enter a search term to find relevant lessons from the knowledge base.
-                    </div>
-                </div>
-            </div>
-
-            <div class="recent-panel">
-                <div class="panel-header">
-                    <span class="panel-icon">&#128197;</span>
-                    <span>Recent Lessons</span>
-                </div>
-                <div class="panel-content" id="recentLessons">
-                    <!-- Populated by JavaScript -->
-                </div>
-            </div>
+        <div class="recent-panel">
+          <div class="panel-header">
+            <span class="panel-icon">&#128197;</span>
+            <span>Recent Lessons</span>
+          </div>
+          <div class="panel-content" id="recentLessons">
+            <!-- Populated by JavaScript -->
+          </div>
         </div>
+      </div>
 
-        <div class="chat-section">
-            <div class="panel-header">
-                <span class="panel-icon">&#128172;</span>
-                <span>Ask the Knowledge Base</span>
-            </div>
-            <div class="chat-container">
-                <div class="chat-messages" id="chatMessages">
-                    <div class="chat-message assistant">
-                        <div class="message-content">
-                            Hi! I'm your trading knowledge assistant. Ask me about iron condors, VIX entry rules, position management, or any lesson from the knowledge base.
-                        </div>
-                    </div>
-                </div>
-                <div class="chat-input-wrapper">
-                    <input type="text" id="chatInput" placeholder="Ask a question... (e.g., 'When should I close an iron condor?')">
-                    <button id="chatSendBtn">Send</button>
-                </div>
-                <div class="chat-examples">
-                    <span class="example-chip" data-question="What's the optimal exit strategy for iron condors?">Exit strategy</span>
-                    <span class="example-chip" data-question="When should I enter based on VIX?">VIX entry rules</span>
-                    <span class="example-chip" data-question="What's the North Star goal?">North Star</span>
-                    <span class="example-chip" data-question="What went wrong in the January 2026 crisis?">Jan 2026 crisis</span>
-                </div>
-            </div>
+      <div class="chat-section">
+        <div class="panel-header">
+          <span class="panel-icon">&#128172;</span>
+          <span>Ask the Knowledge Base</span>
         </div>
-
-        <div class="local-query-section">
-            <h3>Query RAG Locally (Full Semantic Search)</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 15px;">
-                For full LanceDB semantic search with embeddings, run these commands locally:
-            </p>
-            <div class="code-block">
-                <code><span class="code-comment"># Activate the venv</span>
-source .claude/scripts/feedback/venv/bin/activate
-
-<span class="code-comment"># Query the RAG system</span>
-python3 .claude/scripts/feedback/semantic-memory-v2.py --query "iron condor management"
-
-<span class="code-comment"># Reindex if needed (after adding new lessons)</span>
-python3 .claude/scripts/feedback/semantic-memory-v2.py --reindex</code>
+        <div class="chat-container">
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-message assistant">
+              <div class="message-content">
+                Hi! I'm your trading knowledge assistant. Ask me about iron
+                condors, VIX entry rules, position management, or any lesson
+                from the knowledge base.
+              </div>
             </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">
-                The local RAG system uses LanceDB with sentence-transformers for hybrid search (semantic + keyword).
-            </p>
+          </div>
+          <div class="chat-input-wrapper">
+            <input
+              type="text"
+              id="chatInput"
+              placeholder="Ask a question... (e.g., 'When should I close an iron condor?')"
+            />
+            <button id="chatSendBtn">Send</button>
+          </div>
+          <div class="chat-examples">
+            <span
+              class="example-chip"
+              data-question="What's the optimal exit strategy for iron condors?"
+              >Exit strategy</span
+            >
+            <span
+              class="example-chip"
+              data-question="When should I enter based on VIX?"
+              >VIX entry rules</span
+            >
+            <span
+              class="example-chip"
+              data-question="What's the North Star goal?"
+              >North Star</span
+            >
+            <span
+              class="example-chip"
+              data-question="What went wrong in the January 2026 crisis?"
+              >Jan 2026 crisis</span
+            >
+          </div>
         </div>
+      </div>
 
-        <footer>
-            <p>Part of the <a href="{{ '/trading/' | relative_url }}">Ralph Mode AI Trading System</a></p>
-            <p style="margin-top: 8px;">
-                <a href="https://github.com/IgorGanapolsky/trading/tree/main/rag_knowledge/lessons_learned">View all lessons on GitHub</a>
-            </p>
-        </footer>
+      <div class="local-query-section">
+        <h3>Query RAG Locally (Full Semantic Search)</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 15px">
+          For full LanceDB semantic search with embeddings, run these commands
+          locally:
+        </p>
+        <div class="code-block">
+          <code
+            ><span class="code-comment"># Activate the venv</span>
+            source .claude/scripts/feedback/venv/bin/activate
+
+            <span class="code-comment"># Query the RAG system</span>
+            python3 .claude/scripts/feedback/semantic-memory-v2.py --query "iron
+            condor management"
+
+            <span class="code-comment"
+              ># Reindex if needed (after adding new lessons)</span
+            >
+            python3 .claude/scripts/feedback/semantic-memory-v2.py
+            --reindex</code
+          >
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.9rem">
+          The local RAG system uses LanceDB with sentence-transformers for
+          hybrid search (semantic + keyword).
+        </p>
+      </div>
+
+      <footer>
+        <p>
+          Part of the
+          <a href="{{ '/trading/' | relative_url }}"
+            >Ralph Mode AI Trading System</a
+          >
+        </p>
+        <p style="margin-top: 8px">
+          <a
+            href="https://github.com/IgorGanapolsky/trading/tree/main/rag_knowledge/lessons_learned"
+            >View all lessons on GitHub</a
+          >
+        </p>
+      </footer>
     </div>
 
     <!-- Modal for lesson details -->
     <div class="modal-overlay" id="lessonModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span id="modalTitle">Lesson Details</span>
-                <button class="modal-close" id="modalClose">&times;</button>
-            </div>
-            <div class="modal-body">
-                <pre id="modalContent"></pre>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <span id="modalTitle">Lesson Details</span>
+          <button class="modal-close" id="modalClose">&times;</button>
         </div>
+        <div class="modal-body">
+          <pre id="modalContent"></pre>
+        </div>
+      </div>
     </div>
 
     <script>
-        // Lessons data embedded from rag_knowledge/lessons_learned
-        const lessons = [
-            {
-                id: "LL-323",
-                title: "Iron Condor Management - 71,417 Trade Study",
-                date: "January 31, 2026",
-                category: "Research / Position Management",
-                severity: "HIGH",
-                summary: "Analysis of 71,417 iron condor trades on SPY reveals optimal management: close at 50% profit for 85% win rate, 7 DTE mandatory close, risk:reward improves to 1.5:1.",
-                tags: ["iron-condor", "management", "research", "win-rate", "capital-efficiency"],
-                content: `Study of 71,417 iron condor trades (2007-2017):
+      // Lessons data embedded from rag_knowledge/lessons_learned
+      const lessons = [
+        {
+          id: "LL-323",
+          title: "Iron Condor Management - 71,417 Trade Study",
+          date: "January 31, 2026",
+          category: "Research / Position Management",
+          severity: "HIGH",
+          summary:
+            "Analysis of 71,417 iron condor trades on SPY reveals optimal management: close at 50% profit for 85% win rate, 7 DTE mandatory close, risk:reward improves to 1.5:1.",
+          tags: [
+            "iron-condor",
+            "management",
+            "research",
+            "win-rate",
+            "capital-efficiency",
+          ],
+          content: `Study of 71,417 iron condor trades (2007-2017):
 - 16-delta setup: optimal profit target 50-75%
 - Win rate at 50% target: ~85%
 - Win rate at expiration: ~68%
 - Close at 50% captures most profit in ~40% of time
 - Capital efficiency: 2-3 trades/month vs 1 at expiration
-- VIX > 20 significantly outperforms other regimes`
-            },
-            {
-                id: "LL-322",
-                title: "XSP vs SPY - Section 1256 Tax Optimization",
-                date: "January 31, 2026",
-                category: "Tax Strategy",
-                severity: "HIGH",
-                summary: "XSP options qualify for 60/40 tax treatment, potentially saving 25%+ on taxes. At $72K/year profit: SPY taxes $25,200 vs XSP $18,720 = $6,480 annual savings.",
-                tags: ["tax-optimization", "section-1256", "xsp", "spy", "north-star"],
-                content: `XSP (Mini-SPX) vs SPY comparison:
+- VIX > 20 significantly outperforms other regimes`,
+        },
+        {
+          id: "LL-322",
+          title: "XSP vs SPY - Section 1256 Tax Optimization",
+          date: "January 31, 2026",
+          category: "Tax Strategy",
+          severity: "HIGH",
+          summary:
+            "XSP options qualify for 60/40 tax treatment, potentially saving 25%+ on taxes. At $72K/year profit: SPY taxes $25,200 vs XSP $18,720 = $6,480 annual savings.",
+          tags: [
+            "tax-optimization",
+            "section-1256",
+            "xsp",
+            "spy",
+            "north-star",
+          ],
+          content: `XSP (Mini-SPX) vs SPY comparison:
 - SPY: 100% short-term capital gains, wash sale rules apply
 - XSP: 60% long-term / 40% short-term (Section 1256)
 - At $72K profit: XSP saves ~$6,480/year in taxes
 - XSP = cash settled, European-style, no early assignment
 - Break-even: ~$10K annual profits for XSP to be worth it
-- Recommendation: Use SPY for paper, switch to XSP live at >$25K profit`
-            },
-            {
-                id: "LL-321",
-                title: "VIX-Based Iron Condor Entry Rules",
-                date: "January 31, 2026",
-                category: "Strategy / Entry Timing",
-                severity: "HIGH",
-                summary: "VIX < 15: avoid (premiums thin). VIX 15-20: tradeable with caution. VIX 20-25: OPTIMAL zone. IV Rank > 50% ideal.",
-                tags: ["iron-condor", "vix", "iv-rank", "entry-timing", "volatility"],
-                content: `VIX Entry Decision Matrix:
+- Recommendation: Use SPY for paper, switch to XSP live at >$25K profit`,
+        },
+        {
+          id: "LL-321",
+          title: "VIX-Based Iron Condor Entry Rules",
+          date: "January 31, 2026",
+          category: "Strategy / Entry Timing",
+          severity: "HIGH",
+          summary:
+            "VIX < 15: avoid (premiums thin). VIX 15-20: tradeable with caution. VIX 20-25: OPTIMAL zone. IV Rank > 50% ideal.",
+          tags: ["iron-condor", "vix", "iv-rank", "entry-timing", "volatility"],
+          content: `VIX Entry Decision Matrix:
 - VIX < 15: WAIT - don't enter
 - VIX 15-20 + IV Rank < 30%: WAIT
 - VIX 15-20 + IV Rank > 50%: ENTER
 - VIX 20-25 + IV Rank > 30%: ENTER - optimal zone
 - VIX > 30: CAUTION - may whipsaw
-Key insight: High IV = vol crush benefit when IV reverts to mean`
-            },
-            {
-                id: "LL-320",
-                title: "CEO Identity and North Star Commitment",
-                date: "January 30, 2026",
-                category: "North Star / Identity",
-                severity: "PERMANENT",
-                summary: "Igor Ganapolsky, born Nov 14, 1979. By 50th birthday (Nov 14, 2029), MUST reach $6K/month after-tax = financial independence.",
-                tags: ["north-star", "identity", "mission", "commitment"],
-                content: `North Star: $6,000/month after-tax = FINANCIAL INDEPENDENCE
+Key insight: High IV = vol crush benefit when IV reverts to mean`,
+        },
+        {
+          id: "LL-320",
+          title: "CEO Identity and North Star Commitment",
+          date: "January 30, 2026",
+          category: "North Star / Identity",
+          severity: "PERMANENT",
+          summary:
+            "Igor Ganapolsky, born Nov 14, 1979. By 50th birthday (Nov 14, 2029), MUST reach $6K/month after-tax = financial independence.",
+          tags: ["north-star", "identity", "mission", "commitment"],
+          content: `North Star: $6,000/month after-tax = FINANCIAL INDEPENDENCE
 Timeline: 3 years, 9 months, 15 days
 Path: $100K -> $600K via iron condors
-Why: Promise to late grandmother, freedom, security for family`
-            },
-            {
-                id: "LL-319",
-                title: "CTO Failed Phil Town Rule #1 - Lost 86% of Account",
-                date: "January 30, 2026",
-                category: "CTO Accountability",
-                severity: "CRITICAL",
-                summary: "CTO failed to protect capital. $30K reduced to $4,099 - 86% loss in 8 days. Complete Rule #1 failure.",
-                tags: ["critical", "rule-1-violation", "cto-failure", "trust-breach"],
-                content: `Failures:
+Why: Promise to late grandmother, freedom, security for family`,
+        },
+        {
+          id: "LL-319",
+          title: "CTO Failed Phil Town Rule #1 - Lost 86% of Account",
+          date: "January 30, 2026",
+          category: "CTO Accountability",
+          severity: "CRITICAL",
+          summary:
+            "CTO failed to protect capital. $30K reduced to $4,099 - 86% loss in 8 days. Complete Rule #1 failure.",
+          tags: ["critical", "rule-1-violation", "cto-failure", "trust-breach"],
+          content: `Failures:
 1. Dismissed CEO crisis concerns without verification
 2. Did not query RAG for past crisis patterns
 3. Looked at wrong number ($29,959 vs actual $4,099)
 4. Repeated mistakes from 9+ documented crisis lessons
-Recovery: Must validate 80%+ win rate for 30 days before trading`
-            },
-            {
-                id: "LL-318",
-                title: "Claude Code Async Hooks for Performance",
-                date: "January 27, 2026",
-                category: "Performance Optimization",
-                severity: "MEDIUM",
-                summary: "Add async: true to hooks that don't need to block execution. Reduced startup latency by 15-20 seconds.",
-                tags: ["performance", "hooks", "async", "optimization"],
-                content: `Make async: backup scripts, feedback capture, blog generators
+Recovery: Must validate 80%+ win rate for 30 days before trading`,
+        },
+        {
+          id: "LL-318",
+          title: "Claude Code Async Hooks for Performance",
+          date: "January 27, 2026",
+          category: "Performance Optimization",
+          severity: "MEDIUM",
+          summary:
+            "Add async: true to hooks that don't need to block execution. Reduced startup latency by 15-20 seconds.",
+          tags: ["performance", "hooks", "async", "optimization"],
+          content: `Make async: backup scripts, feedback capture, blog generators
 Keep synchronous: context injection, validation, format hooks
-Key: async: true runs in managed background vs shell & which may get killed`
-            },
-            {
-                id: "LL-300",
-                title: "Vertex AI Cost Explosion - $98/mo vs $20/mo Budget",
-                date: "February 1, 2026",
-                category: "Cost Management",
-                severity: "CRITICAL",
-                summary: "GCP bill hit $98.70 when budget was $20. Multiple workflows calling Vertex AI RAG APIs caused 5x overspend.",
-                tags: ["cost-management", "vertex-ai", "budget", "rag"],
-                content: `Root cause: Too many automated RAG calls
+Key: async: true runs in managed background vs shell & which may get killed`,
+        },
+        {
+          id: "LL-300",
+          title: "Vertex AI Cost Explosion - $98/mo vs $20/mo Budget",
+          date: "February 1, 2026",
+          category: "Cost Management",
+          severity: "CRITICAL",
+          summary:
+            "GCP bill hit $98.70 when budget was $20. Multiple workflows calling Vertex AI RAG APIs caused 5x overspend.",
+          tags: ["cost-management", "vertex-ai", "budget", "rag"],
+          content: `Root cause: Too many automated RAG calls
 - enforce-phil-town-completeness.yml
 - phil-town-ingestion.yml
 - daily-trading.yml (4 RAG calls)
 - Dialogflow webhook
-Resolution: Disabled all auto Vertex AI calls, switched to local file storage`
-            },
-            {
-                id: "LL-268",
-                title: "Iron Condor Win Rate Research",
-                date: "January 21, 2026",
-                category: "Research",
-                severity: "HIGH",
-                summary: "15-delta iron condors = 86% win rate. Close at 50% profit OR 7 DTE, whichever first. Risk/reward ~1.5:1.",
-                tags: ["iron-condor", "win-rate", "research", "strategy"],
-                content: `Key findings from research:
+Resolution: Disabled all auto Vertex AI calls, switched to local file storage`,
+        },
+        {
+          id: "LL-268",
+          title: "Iron Condor Win Rate Research",
+          date: "January 21, 2026",
+          category: "Research",
+          severity: "HIGH",
+          summary:
+            "15-delta iron condors = 86% win rate. Close at 50% profit OR 7 DTE, whichever first. Risk/reward ~1.5:1.",
+          tags: ["iron-condor", "win-rate", "research", "strategy"],
+          content: `Key findings from research:
 - 15-delta = 86% probability of profit
 - Close at 50% max profit for optimal returns
 - 7 DTE exit to avoid gamma risk (changed from 21 DTE)
-- Better than credit spreads: profit from BOTH sides`
-            },
-            {
-                id: "LL-282",
-                title: "CTO Failure Crisis Jan 22",
-                date: "January 22, 2026",
-                category: "Crisis",
-                severity: "CRITICAL",
-                summary: "Position accumulation bug allowed 10+ simultaneous positions when limit was 2. Lost $1,472 in paper account.",
-                tags: ["crisis", "position-accumulation", "bug", "failure"],
-                content: `Root cause: Position count checked SHARES not CONTRACTS
+- Better than credit spreads: profit from BOTH sides`,
+        },
+        {
+          id: "LL-282",
+          title: "CTO Failure Crisis Jan 22",
+          date: "January 22, 2026",
+          category: "Crisis",
+          severity: "CRITICAL",
+          summary:
+            "Position accumulation bug allowed 10+ simultaneous positions when limit was 2. Lost $1,472 in paper account.",
+          tags: ["crisis", "position-accumulation", "bug", "failure"],
+          content: `Root cause: Position count checked SHARES not CONTRACTS
 Fix: Count option contracts, not share equivalent
 Impact: $1,472 loss in paper, positions need manual close
-Prevention: Circuit breaker now checks contract count`
-            },
-            {
-                id: "LL-230",
-                title: "Trade Data Source Priority Bug",
-                date: "January 15, 2026",
-                category: "Architecture",
-                severity: "HIGH",
-                summary: "Webhook looked for trades_*.json which doesn't exist on Cloud Run. Must fetch from GitHub API.",
-                tags: ["architecture", "webhook", "cloud-run", "data-source"],
-                content: `CANONICAL data source: data/system_state.json -> trade_history
+Prevention: Circuit breaker now checks contract count`,
+        },
+        {
+          id: "LL-230",
+          title: "Trade Data Source Priority Bug",
+          date: "January 15, 2026",
+          category: "Architecture",
+          severity: "HIGH",
+          summary:
+            "Webhook looked for trades_*.json which doesn't exist on Cloud Run. Must fetch from GitHub API.",
+          tags: ["architecture", "webhook", "cloud-run", "data-source"],
+          content: `CANONICAL data source: data/system_state.json -> trade_history
 Cloud Run has NO local files - must fetch via GitHub API
-Deprecated: data/trades_*.json (legacy)`
-            }
-        ];
+Deprecated: data/trades_*.json (legacy)`,
+        },
+      ];
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            renderRecentLessons();
-            setupEventListeners();
-        });
+      // Initialize
+      document.addEventListener("DOMContentLoaded", () => {
+        renderRecentLessons();
+        setupEventListeners();
+      });
 
-        function renderRecentLessons() {
-            const container = document.getElementById('recentLessons');
-            container.innerHTML = lessons.slice(0, 10).map(lesson => createLessonCard(lesson)).join('');
-        }
+      function renderRecentLessons() {
+        const container = document.getElementById("recentLessons");
+        container.innerHTML = lessons
+          .slice(0, 10)
+          .map((lesson) => createLessonCard(lesson))
+          .join("");
+      }
 
-        function createLessonCard(lesson) {
-            const severityClass = lesson.severity === 'CRITICAL' ? 'critical' :
-                                 lesson.severity === 'HIGH' ? 'high' :
-                                 lesson.category.includes('Research') ? 'research' : '';
+      function createLessonCard(lesson) {
+        const severityClass =
+          lesson.severity === "CRITICAL"
+            ? "critical"
+            : lesson.severity === "HIGH"
+              ? "high"
+              : lesson.category.includes("Research")
+                ? "research"
+                : "";
 
-            return `
+        return `
                 <div class="lesson-card" onclick="showLessonModal('${lesson.id}')">
                     <div class="lesson-id">${lesson.id}</div>
                     <div class="lesson-title">${lesson.title}</div>
@@ -849,81 +952,101 @@ Deprecated: data/trades_*.json (legacy)`
                     </div>
                 </div>
             `;
+      }
+
+      function setupEventListeners() {
+        // Search button
+        document
+          .getElementById("searchBtn")
+          .addEventListener("click", performSearch);
+
+        // Enter key
+        document
+          .getElementById("searchInput")
+          .addEventListener("keypress", (e) => {
+            if (e.key === "Enter") performSearch();
+          });
+
+        // Filter tags
+        document.querySelectorAll(".filter-tag").forEach((tag) => {
+          tag.addEventListener("click", () => {
+            document
+              .querySelectorAll(".filter-tag")
+              .forEach((t) => t.classList.remove("active"));
+            tag.classList.add("active");
+            document.getElementById("searchInput").value = tag.dataset.filter;
+            performSearch();
+          });
+        });
+
+        // Modal close
+        document
+          .getElementById("modalClose")
+          .addEventListener("click", hideModal);
+        document
+          .getElementById("lessonModal")
+          .addEventListener("click", (e) => {
+            if (e.target.id === "lessonModal") hideModal();
+          });
+
+        // Escape key to close modal
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") hideModal();
+        });
+      }
+
+      function performSearch() {
+        const query = document
+          .getElementById("searchInput")
+          .value.toLowerCase()
+          .trim();
+        const resultsContainer = document.getElementById("searchResults");
+        const resultCount = document.getElementById("resultCount");
+
+        if (!query) {
+          resultsContainer.innerHTML =
+            '<div class="no-results">Enter a search term to find relevant lessons.</div>';
+          resultCount.textContent = "";
+          return;
         }
 
-        function setupEventListeners() {
-            // Search button
-            document.getElementById('searchBtn').addEventListener('click', performSearch);
+        // Search logic - check title, summary, tags, content
+        const results = lessons.filter((lesson) => {
+          const searchableText = [
+            lesson.title,
+            lesson.summary,
+            lesson.content,
+            lesson.category,
+            ...lesson.tags,
+          ]
+            .join(" ")
+            .toLowerCase();
 
-            // Enter key
-            document.getElementById('searchInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') performSearch();
-            });
+          return searchableText.includes(query);
+        });
 
-            // Filter tags
-            document.querySelectorAll('.filter-tag').forEach(tag => {
-                tag.addEventListener('click', () => {
-                    document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
-                    tag.classList.add('active');
-                    document.getElementById('searchInput').value = tag.dataset.filter;
-                    performSearch();
-                });
-            });
-
-            // Modal close
-            document.getElementById('modalClose').addEventListener('click', hideModal);
-            document.getElementById('lessonModal').addEventListener('click', (e) => {
-                if (e.target.id === 'lessonModal') hideModal();
-            });
-
-            // Escape key to close modal
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') hideModal();
-            });
+        if (results.length === 0) {
+          resultsContainer.innerHTML = `<div class="no-results">No lessons found for "${query}". Try different keywords.</div>`;
+          resultCount.textContent = "0 results";
+          return;
         }
 
-        function performSearch() {
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            const resultsContainer = document.getElementById('searchResults');
-            const resultCount = document.getElementById('resultCount');
+        resultsContainer.innerHTML = results
+          .map((lesson) => createLessonCard(lesson))
+          .join("");
+        resultCount.textContent = `${results.length} result${results.length !== 1 ? "s" : ""}`;
+      }
 
-            if (!query) {
-                resultsContainer.innerHTML = '<div class="no-results">Enter a search term to find relevant lessons.</div>';
-                resultCount.textContent = '';
-                return;
-            }
+      function showLessonModal(lessonId) {
+        const lesson = lessons.find((l) => l.id === lessonId);
+        if (!lesson) return;
 
-            // Search logic - check title, summary, tags, content
-            const results = lessons.filter(lesson => {
-                const searchableText = [
-                    lesson.title,
-                    lesson.summary,
-                    lesson.content,
-                    lesson.category,
-                    ...lesson.tags
-                ].join(' ').toLowerCase();
-
-                return searchableText.includes(query);
-            });
-
-            if (results.length === 0) {
-                resultsContainer.innerHTML = `<div class="no-results">No lessons found for "${query}". Try different keywords.</div>`;
-                resultCount.textContent = '0 results';
-                return;
-            }
-
-            resultsContainer.innerHTML = results.map(lesson => createLessonCard(lesson)).join('');
-            resultCount.textContent = `${results.length} result${results.length !== 1 ? 's' : ''}`;
-        }
-
-        function showLessonModal(lessonId) {
-            const lesson = lessons.find(l => l.id === lessonId);
-            if (!lesson) return;
-
-            document.getElementById('modalTitle').textContent = `${lesson.id}: ${lesson.title}`;
-            document.getElementById('modalContent').textContent = `Date: ${lesson.date}
+        document.getElementById("modalTitle").textContent =
+          `${lesson.id}: ${lesson.title}`;
+        document.getElementById("modalContent").textContent =
+          `Date: ${lesson.date}
 Category: ${lesson.category}
-Severity: ${lesson.severity || 'N/A'}
+Severity: ${lesson.severity || "N/A"}
 
 Summary:
 ${lesson.summary}
@@ -931,140 +1054,146 @@ ${lesson.summary}
 Details:
 ${lesson.content}
 
-Tags: ${lesson.tags.join(', ')}`;
+Tags: ${lesson.tags.join(", ")}`;
 
-            document.getElementById('lessonModal').classList.add('active');
-        }
+        document.getElementById("lessonModal").classList.add("active");
+      }
 
-        function hideModal() {
-            document.getElementById('lessonModal').classList.remove('active');
-        }
+      function hideModal() {
+        document.getElementById("lessonModal").classList.remove("active");
+      }
 
-        // Chat functionality with conversation memory
-        const WORKER_URL = 'https://trading-rag-chat.iganapolsky.workers.dev';
-        let conversationHistory = [];
+      // Chat functionality with conversation memory
+      const WORKER_URL = "https://trading-rag-chat.iganapolsky.workers.dev";
+      let conversationHistory = [];
 
-        function setupChatListeners() {
-            const chatInput = document.getElementById('chatInput');
-            const chatSendBtn = document.getElementById('chatSendBtn');
+      function setupChatListeners() {
+        const chatInput = document.getElementById("chatInput");
+        const chatSendBtn = document.getElementById("chatSendBtn");
 
-            chatSendBtn.addEventListener('click', sendChatMessage);
-            chatInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendChatMessage();
-                }
-            });
+        chatSendBtn.addEventListener("click", sendChatMessage);
+        chatInput.addEventListener("keypress", (e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            sendChatMessage();
+          }
+        });
 
-            // Example chips
-            document.querySelectorAll('.example-chip').forEach(chip => {
-                chip.addEventListener('click', () => {
-                    chatInput.value = chip.dataset.question;
-                    sendChatMessage();
-                });
-            });
-        }
+        // Example chips
+        document.querySelectorAll(".example-chip").forEach((chip) => {
+          chip.addEventListener("click", () => {
+            chatInput.value = chip.dataset.question;
+            sendChatMessage();
+          });
+        });
+      }
 
-        async function sendChatMessage() {
-            const chatInput = document.getElementById('chatInput');
-            const chatMessages = document.getElementById('chatMessages');
-            const chatSendBtn = document.getElementById('chatSendBtn');
-            const message = chatInput.value.trim();
+      async function sendChatMessage() {
+        const chatInput = document.getElementById("chatInput");
+        const chatMessages = document.getElementById("chatMessages");
+        const chatSendBtn = document.getElementById("chatSendBtn");
+        const message = chatInput.value.trim();
 
-            if (!message) return;
+        if (!message) return;
 
-            // Add user message to UI
-            chatMessages.innerHTML += `
+        // Add user message to UI
+        chatMessages.innerHTML += `
                 <div class="chat-message user">
                     <div class="message-content">${escapeHtml(message)}</div>
                 </div>
             `;
 
-            // Clear input and disable button
-            chatInput.value = '';
-            chatSendBtn.disabled = true;
+        // Clear input and disable button
+        chatInput.value = "";
+        chatSendBtn.disabled = true;
 
-            // Add loading message
-            const loadingId = 'loading-' + Date.now();
-            chatMessages.innerHTML += `
+        // Add loading message
+        const loadingId = "loading-" + Date.now();
+        chatMessages.innerHTML += `
                 <div class="chat-message assistant loading" id="${loadingId}">
                     <div class="message-content">Thinking...</div>
                 </div>
             `;
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
 
-            try {
-                const response = await fetch(WORKER_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message,
-                        history: conversationHistory
-                    }),
-                });
+        try {
+          const response = await fetch(WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              message,
+              history: conversationHistory,
+            }),
+          });
 
-                const data = await response.json();
+          const data = await response.json();
 
-                // Remove loading message
-                document.getElementById(loadingId)?.remove();
+          // Remove loading message
+          document.getElementById(loadingId)?.remove();
 
-                if (data.error) {
-                    chatMessages.innerHTML += `
+          if (data.error) {
+            chatMessages.innerHTML += `
                         <div class="chat-message assistant">
                             <div class="message-content" style="color: var(--accent-red);">
                                 Error: ${escapeHtml(data.error)}
                             </div>
                         </div>
                     `;
-                } else {
-                    // Add to conversation history for context
-                    conversationHistory.push({ role: 'user', content: message });
-                    conversationHistory.push({ role: 'assistant', content: data.reply });
+          } else {
+            // Add to conversation history for context
+            conversationHistory.push({ role: "user", content: message });
+            conversationHistory.push({
+              role: "assistant",
+              content: data.reply,
+            });
 
-                    // Keep only last 10 messages
-                    if (conversationHistory.length > 10) {
-                        conversationHistory = conversationHistory.slice(-10);
-                    }
+            // Keep only last 10 messages
+            if (conversationHistory.length > 10) {
+              conversationHistory = conversationHistory.slice(-10);
+            }
 
-                    chatMessages.innerHTML += `
+            chatMessages.innerHTML += `
                         <div class="chat-message assistant">
                             <div class="message-content">${formatResponse(data.reply)}</div>
                         </div>
                     `;
-                }
-            } catch (error) {
-                document.getElementById(loadingId)?.remove();
-                chatMessages.innerHTML += `
+          }
+        } catch (error) {
+          document.getElementById(loadingId)?.remove();
+          chatMessages.innerHTML += `
                     <div class="chat-message assistant">
                         <div class="message-content" style="color: var(--accent-yellow);">
                             Chat service unavailable. Please try again.
                         </div>
                     </div>
                 `;
-            }
-
-            chatSendBtn.disabled = false;
-            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+        chatSendBtn.disabled = false;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
 
-        function formatResponse(text) {
-            // Convert markdown-like formatting
-            return escapeHtml(text)
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\n/g, '<br>')
-                .replace(/`(.*?)`/g, '<code style="background: var(--bg-primary); padding: 2px 6px; border-radius: 3px;">$1</code>');
-        }
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
 
-        // Initialize chat on load
-        document.addEventListener('DOMContentLoaded', () => {
-            setupChatListeners();
-        });
+      function formatResponse(text) {
+        // Convert markdown-like formatting
+        return escapeHtml(text)
+          .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+          .replace(/\n/g, "<br>")
+          .replace(
+            /`(.*?)`/g,
+            '<code style="background: var(--bg-primary); padding: 2px 6px; border-radius: 3px;">$1</code>',
+          );
+      }
+
+      // Initialize chat on load
+      document.addEventListener("DOMContentLoaded", () => {
+        setupChatListeners();
+      });
     </script>
-</body>
+  </body>
 </html>

@@ -18,7 +18,7 @@ Today was a wake-up call. Two critical issues surfaced that could have derailed 
 
 ## The Hard Lessons
 
-*These are the moments that test us. Critical issues that demanded immediate attention.*
+_These are the moments that test us. Critical issues that demanded immediate attention._
 
 ### Invalid Option Strikes Causing CALL Legs to Fail
 
@@ -28,31 +28,31 @@ Date: January 23, 2026
 Severity: CRITICAL
 Impact: 4 consecutive days of losses (~$70 total)
 
- Summary
+Summary
 Iron condor CALL legs were not executin
 
 ### Ll 298 Share Churning Loss
 
 ---
+
 id: LL-298
 title: $22.61 Loss from SPY Share Churning - Crisis Workflow Failure
 date: 2026-01-23
 severity: CRITICAL
 category: trading
+
 ---
 
- Incident
+Incident
 Lost $22.61 on January 23, 2026 from 49 SPY sha
-
 
 ## Important Discoveries
 
-*Not emergencies, but insights that will shape how we trade going forward.*
+_Not emergencies, but insights that will shape how we trade going forward._
 
 ### Iron Condor Position Management System Implementation
 
 Created dedicated iron condor position management system with proper exit rules based on LL-268/LL-277 research. This addresses a critical gap where the existing `manage_positions.py` used equity-base
-
 
 ## Quick Wins & Refinements
 
@@ -61,23 +61,23 @@ Created dedicated iron condor position management system with proper exit rules 
 ID: LL-301
 Date: 2026-01-23
 Severity: IMPROVEMEN...
+
 - **Dialogflow RAG Query Fix - Irrelevant Lessons Returned** - **Status**: FIXED...
 - **ML/RAG Integration Analysis and Implementation** - LL-302: ML/RAG Integration Analysis and Implementation
 
 ID: LL-302
 Date: 2026-01-23 (Updated: 2026-0...
 
-
 ---
 
 ## Today's Numbers
 
-| What | Count |
-|------|-------|
+| What            | Count |
+| --------------- | ----- |
 | Lessons Learned | **6** |
-| Critical Issues | 2 |
-| High Priority | 1 |
-| Improvements | 3 |
+| Critical Issues | 2     |
+| High Priority   | 1     |
+| Improvements    | 3     |
 
 ---
 
@@ -97,12 +97,12 @@ flowchart LR
 
 ### How We Learn Autonomously
 
-| Component | Role in Learning |
-|-----------|------------------|
-| **Claude Opus 4.5** | Analyzes errors, extracts insights, determines severity |
-| **Vertex AI RAG** | Stores lessons with 768D embeddings for semantic search |
-| **Gemini 2.0 Flash** | Retrieves relevant past lessons before new trades |
-| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research |
+| Component                 | Role in Learning                                        |
+| ------------------------- | ------------------------------------------------------- |
+| **Claude Opus 4.5**       | Analyzes errors, extracts insights, determines severity |
+| **Vertex AI RAG**         | Stores lessons with 768D embeddings for semantic search |
+| **Gemini 2.0 Flash**      | Retrieves relevant past lessons before new trades       |
+| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research          |
 
 ### Why This Matters
 
@@ -111,7 +111,7 @@ flowchart LR
 3. **Continuous Improvement**: 200+ lessons shape every decision
 4. **Transparent Journey**: All learnings published publicly
 
-*[Full Tech Stack Documentation](/trading/tech-stack/)*
+_[Full Tech Stack Documentation](/trading/tech-stack/)_
 
 ---
 
@@ -120,6 +120,7 @@ flowchart LR
 We're building an autonomous AI trading system that learns from every mistake. This isn't about getting rich quick - it's about building a system that can consistently generate income through disciplined options trading.
 
 **Our approach:**
+
 - Paper trade for 90 days to validate the strategy
 - Document every lesson, every failure, every win
 - Use AI (Claude) as CTO to automate and improve
@@ -129,4 +130,4 @@ Want to follow along? Check out the [full project on GitHub](https://github.com/
 
 ---
 
-*Day 87/90 complete. 3 to go.*
+_Day 87/90 complete. 3 to go._
