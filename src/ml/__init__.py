@@ -16,12 +16,19 @@ except ImportError:
 
 # GRPO Trade Learning
 from src.ml.grpo_trade_learner import (
+    TORCH_AVAILABLE,
     GRPOTradeLearner,
     TradeFeatures,
     TradeParams,
     get_optimal_trade_params,
     train_grpo_model,
-    TORCH_AVAILABLE,
+)
+
+# Market Regime Classification
+from src.ml.market_regime import (
+    MarketRegime,
+    MarketRegimeClassifier,
+    get_regime_signal,
 )
 
 # Trade Confidence (Thompson Sampling)
@@ -29,13 +36,6 @@ from src.ml.trade_confidence import (
     TradeConfidenceModel,
     get_trade_confidence_model,
     sample_trade_confidence,
-)
-
-# Market Regime Classification
-from src.ml.market_regime import (
-    MarketRegimeClassifier,
-    MarketRegime,
-    get_regime_signal,
 )
 
 __all__ = [
