@@ -242,28 +242,28 @@ def log_trade(trade: dict, result: dict):
 **Trade ID**: {trade_id}
 **Date**: {today}
 **Type**: Iron Condor Entry
-**Status**: {result.get('status', 'unknown')}
+**Status**: {result.get("status", "unknown")}
 **Severity**: INFO
 **Category**: trade-execution
 
 ## Position Details
-- **Expiry**: {trade.get('expiry', 'unknown')}
-- **DTE**: {trade.get('dte', 'unknown')}
-- **Short Put**: ${trade['strikes']['short_put']:.0f}
-- **Long Put**: ${trade['strikes']['long_put']:.0f}
-- **Short Call**: ${trade['strikes']['short_call']:.0f}
-- **Long Call**: ${trade['strikes']['long_call']:.0f}
+- **Expiry**: {trade.get("expiry", "unknown")}
+- **DTE**: {trade.get("dte", "unknown")}
+- **Short Put**: ${trade["strikes"]["short_put"]:.0f}
+- **Long Put**: ${trade["strikes"]["long_put"]:.0f}
+- **Short Call**: ${trade["strikes"]["short_call"]:.0f}
+- **Long Call**: ${trade["strikes"]["long_call"]:.0f}
 
 ## Financials
-- **Credit Received**: ${trade['pricing']['credit_dollars']:.0f}
-- **Max Risk**: ${trade['pricing']['max_risk']:.0f}
-- **Win Probability**: {trade['pricing']['win_probability']*100:.0f}%
+- **Credit Received**: ${trade["pricing"]["credit_dollars"]:.0f}
+- **Max Risk**: ${trade["pricing"]["max_risk"]:.0f}
+- **Win Probability**: {trade["pricing"]["win_probability"] * 100:.0f}%
 
 ## Execution
-- **Order ID**: {result.get('order_id', 'N/A')}
-- **Order Status**: {result.get('order_status', 'N/A')}
-- **VIX Conditions**: {trade.get('vix_status', 'unknown')}
-- **Account Equity**: ${trade.get('equity', 0):,.2f}
+- **Order ID**: {result.get("order_id", "N/A")}
+- **Order Status**: {result.get("order_status", "N/A")}
+- **VIX Conditions**: {trade.get("vix_status", "unknown")}
+- **Account Equity**: ${trade.get("equity", 0):,.2f}
 
 ## Phil Town Rule #1 Compliance
 - Position size: 5% max ✓
@@ -484,35 +484,35 @@ def record_trade_to_rag(trade: dict, result: dict):
     try:
         from datetime import datetime
         from pathlib import Path
-        
+
         # Create lesson file for this trade
         today = datetime.utcnow().strftime("%Y-%m-%d")
         trade_id = result.get("order_id", "unknown")[:8]
-        
+
         lesson_content = f"""# Trade Executed: {today}
 
 **Trade ID**: {trade_id}
 **Date**: {today}
 **Type**: Iron Condor Entry
-**Status**: {result.get('status', 'unknown')}
+**Status**: {result.get("status", "unknown")}
 
 ## Position Details
-- **Expiry**: {trade.get('expiry', 'unknown')}
-- **DTE**: {trade.get('dte', 'unknown')}
-- **Short Put**: ${trade['strikes']['short_put']:.0f}
-- **Long Put**: ${trade['strikes']['long_put']:.0f}
-- **Short Call**: ${trade['strikes']['short_call']:.0f}
-- **Long Call**: ${trade['strikes']['long_call']:.0f}
+- **Expiry**: {trade.get("expiry", "unknown")}
+- **DTE**: {trade.get("dte", "unknown")}
+- **Short Put**: ${trade["strikes"]["short_put"]:.0f}
+- **Long Put**: ${trade["strikes"]["long_put"]:.0f}
+- **Short Call**: ${trade["strikes"]["short_call"]:.0f}
+- **Long Call**: ${trade["strikes"]["long_call"]:.0f}
 
 ## Financials
-- **Credit Received**: ${trade['pricing']['credit_dollars']:.0f}
-- **Max Risk**: ${trade['pricing']['max_risk']:.0f}
-- **Win Probability**: {trade['pricing']['win_probability']*100:.0f}%
+- **Credit Received**: ${trade["pricing"]["credit_dollars"]:.0f}
+- **Max Risk**: ${trade["pricing"]["max_risk"]:.0f}
+- **Win Probability**: {trade["pricing"]["win_probability"] * 100:.0f}%
 
 ## Execution
-- **Order ID**: {result.get('order_id', 'N/A')}
-- **Order Status**: {result.get('order_status', 'N/A')}
-- **VIX Conditions**: {trade.get('vix_status', 'unknown')}
+- **Order ID**: {result.get("order_id", "N/A")}
+- **Order Status**: {result.get("order_status", "N/A")}
+- **VIX Conditions**: {trade.get("vix_status", "unknown")}
 
 ## Phil Town Rule #1 Compliance
 - Position size: 5% max ✓
@@ -520,13 +520,13 @@ def record_trade_to_rag(trade: dict, result: dict):
 - Stop loss defined: 200% ✓
 - Profit target: 50% ✓
 """
-        
+
         # Save to RAG lessons
         lesson_file = Path(f"rag_knowledge/lessons_learned/trade_{today}_{trade_id}.md")
         lesson_file.parent.mkdir(parents=True, exist_ok=True)
         lesson_file.write_text(lesson_content)
-        
+
         print(f"Trade recorded to RAG: {lesson_file}")
-        
+
     except Exception as e:
         print(f"Failed to record trade to RAG: {e}")
