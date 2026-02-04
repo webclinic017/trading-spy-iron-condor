@@ -11,7 +11,6 @@ Publishes to: GitHub Pages, Dev.to, LinkedIn
 import json
 import os
 import re
-import subprocess  # nosec B404
 import sys
 import time
 from datetime import datetime
@@ -245,7 +244,7 @@ def queue_for_linkedin(post: dict, devto_url: str = None) -> bool:
         return False
 
     # Short LinkedIn post with link
-    link = devto_url or f"https://igorganapolsky.github.io/trading/"
+    link = devto_url or "https://igorganapolsky.github.io/trading/"
     emoji = "✅" if post["signal"] == "positive" else "📚"
 
     content = f"""{emoji} {post["title"]}
@@ -267,16 +266,18 @@ Building an AI trading system that learns from every decision.
         next_id = max([item.get("id", 0) for item in data.get("queue", [])], default=0) + 1
 
         # Add new entry
-        data["queue"].append({
-            "id": next_id,
-            "title": post["title"],
-            "status": "pending",
-            "content": content,
-            "source": "rlhf_auto",
-            "signal": post["signal"],
-            "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-            "tags": ["AITrading", "RLHF", "BuildingInPublic", "FinTech"]
-        })
+        data["queue"].append(
+            {
+                "id": next_id,
+                "title": post["title"],
+                "status": "pending",
+                "content": content,
+                "source": "rlhf_auto",
+                "signal": post["signal"],
+                "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "tags": ["AITrading", "RLHF", "BuildingInPublic", "FinTech"],
+            }
+        )
 
         with open(queue_file, "w") as f:
             json.dump(data, f, indent=2)

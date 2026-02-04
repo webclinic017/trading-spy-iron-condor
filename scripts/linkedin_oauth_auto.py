@@ -29,7 +29,10 @@ try:
     from playwright.sync_api import sync_playwright
 except ImportError:
     print("📦 Installing playwright...")
-    subprocess.run([sys.executable, "-m", "pip", "install", "playwright", "--break-system-packages"], check=True)
+    subprocess.run(
+        [sys.executable, "-m", "pip", "install", "playwright", "--break-system-packages"],
+        check=True,
+    )
     subprocess.run(["playwright", "install", "chromium"], check=True)
     from playwright.sync_api import sync_playwright
 
@@ -110,7 +113,7 @@ def automate_oauth_flow() -> str | None:
                 'button:has-text("Allow")',
                 'button:has-text("Authorize")',
                 'input[type="submit"][value="Allow"]',
-                'button[data-test-modal-close-btn]'
+                "button[data-test-modal-close-btn]",
             ]
             for selector in allow_selectors:
                 if page.query_selector(selector):
@@ -192,12 +195,16 @@ def save_credentials(token_data: dict, user_info: dict | None):
     # Save to token file
     TOKEN_FILE.parent.mkdir(parents=True, exist_ok=True)
     with open(TOKEN_FILE, "w") as f:
-        json.dump({
-            "access_token": access_token,
-            "person_urn": person_urn,
-            "name": name,
-            "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-        }, f, indent=2)
+        json.dump(
+            {
+                "access_token": access_token,
+                "person_urn": person_urn,
+                "name": name,
+                "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            },
+            f,
+            indent=2,
+        )
 
     print(f"✅ Token saved to {TOKEN_FILE}")
 
@@ -205,12 +212,12 @@ def save_credentials(token_data: dict, user_info: dict | None):
     env_content = ENV_FILE.read_text() if ENV_FILE.exists() else ""
 
     # Remove old LinkedIn tokens if present
-    env_content = re.sub(r'LINKEDIN_ACCESS_TOKEN=.*\n', '', env_content)
-    env_content = re.sub(r'LINKEDIN_PERSON_URN=.*\n', '', env_content)
+    env_content = re.sub(r"LINKEDIN_ACCESS_TOKEN=.*\n", "", env_content)
+    env_content = re.sub(r"LINKEDIN_PERSON_URN=.*\n", "", env_content)
 
     # Append new tokens
-    if not env_content.endswith('\n'):
-        env_content += '\n'
+    if not env_content.endswith("\n"):
+        env_content += "\n"
 
     env_content += f"\n# LinkedIn OAuth Token (Generated {time.strftime('%Y-%m-%d %H:%M:%S')})\n"
     env_content += f"LINKEDIN_ACCESS_TOKEN={access_token}\n"

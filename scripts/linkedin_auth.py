@@ -5,11 +5,11 @@ LinkedIn OAuth 2.0 Authentication - Automated via Playwright.
 Gets access token for posting to LinkedIn API.
 """
 
-import os
 import json
+import os
 import time
 from pathlib import Path
-from urllib.parse import urlencode, parse_qs, urlparse
+from urllib.parse import parse_qs, urlencode, urlparse
 
 import requests
 
@@ -33,15 +33,17 @@ TOKEN_FILE = Path(__file__).parent.parent / "data" / "linkedin_token.json"
 
 def get_authorization_code():
     """Use Playwright to automate LinkedIn OAuth login."""
-    auth_url = "https://www.linkedin.com/oauth/v2/authorization?" + urlencode({
-        "response_type": "code",
-        "client_id": CLIENT_ID,
-        "redirect_uri": REDIRECT_URI,
-        "scope": " ".join(SCOPES),
-        "state": "rlhf_blog_auth"
-    })
+    auth_url = "https://www.linkedin.com/oauth/v2/authorization?" + urlencode(
+        {
+            "response_type": "code",
+            "client_id": CLIENT_ID,
+            "redirect_uri": REDIRECT_URI,
+            "scope": " ".join(SCOPES),
+            "state": "rlhf_blog_auth",
+        }
+    )
 
-    print(f"🔐 Starting LinkedIn OAuth flow...")
+    print("🔐 Starting LinkedIn OAuth flow...")
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)  # Visible for 2FA if needed
@@ -190,7 +192,7 @@ def main():
     if not token_data:
         return 1
 
-    print(f"✅ Got access token")
+    print("✅ Got access token")
 
     user_info = get_user_info(token_data["access_token"])
     if user_info:
