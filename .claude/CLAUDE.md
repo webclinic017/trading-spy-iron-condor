@@ -3,10 +3,12 @@
 CTO: Claude | CEO: Igor Ganapolsky
 
 ## CEO Identity (PERMANENT)
+
 **I am Igor Ganapolsky. Born November 14th, 1979, in Kiev, Ukraine.**
 **By the time I hit my 50th birthday (November 14th, 2029), I MUST reach my North Star.**
 
 ## Strategy (Updated Jan 30, 2026 - FINANCIAL INDEPENDENCE PATH)
+
 - **North Star**: $6,000/month after-tax = FINANCIAL INDEPENDENCE
 - **Philosophy**: Grow $100K → $600K through disciplined compounding (Phil Town Rule #1)
 - **Current capital**: $100,000 | Switched to $100K account Jan 30, 2026
@@ -32,6 +34,7 @@ CTO: Claude | CEO: Igor Ganapolsky
 ## Financial Independence Framework (Jan 22, 2026)
 
 ### The Four Pillars
+
 1. **Capital Preservation** (Phil Town Rule #1)
    - NEVER lose more than 5% on a single trade
    - Stop-loss at 200% of credit - NO EXCEPTIONS
@@ -62,14 +65,16 @@ CTO: Claude | CEO: Igor Ganapolsky
    - Phase 4 ($600K+): Financial independence reached - withdraw $6K/month
 
 ### Path to $6K/Month (Financial Independence) - UPDATED Jan 30, 2026
-| Phase | Capital | Monthly Income | After Tax | Timeline |
-|-------|---------|----------------|-----------|----------|
-| Now | $100,000 | ~$1,600 | ~$1,100 | Jan 2026 |
-| +12mo | $250,000 | ~$4,000 | ~$2,800 | Jan 2027 |
-| +18mo | $400,000 | ~$6,400 | ~$4,500 | Jul 2027 |
-| +24mo | $600,000 | ~$9,600 | **$6,700** | Jan 2028 🎯 |
+
+| Phase | Capital  | Monthly Income | After Tax  | Timeline    |
+| ----- | -------- | -------------- | ---------- | ----------- |
+| Now   | $100,000 | ~$1,600        | ~$1,100    | Jan 2026    |
+| +12mo | $250,000 | ~$4,000        | ~$2,800    | Jan 2027    |
+| +18mo | $400,000 | ~$6,400        | ~$4,500    | Jul 2027    |
+| +24mo | $600,000 | ~$9,600        | **$6,700** | Jan 2028 🎯 |
 
 ### Why This Works (Phil Town Math)
+
 - Conservative 8% monthly = 150% annual (iron condor territory)
 - 86% win rate provides margin of safety
 - Compounding turns $100K → $600K in **2 years** (not 3!)
@@ -79,6 +84,7 @@ CTO: Claude | CEO: Igor Ganapolsky
 **Note**: $100K starting capital = FASTER PATH TO GOAL (2 years instead of 3)!
 
 ## MANDATORY Pre-Trade Checklist
+
 1. [ ] Is ticker SPY? (SPY ONLY - best liquidity, tightest spreads)
 2. [ ] Is position size ≤5% of account ($1,500)?
 3. [ ] Is it an IRON CONDOR (4-leg, defined risk on BOTH sides)?
@@ -88,6 +94,7 @@ CTO: Claude | CEO: Igor Ganapolsky
 7. [ ] Exit plan at 50% profit or 7 DTE? (LL-268: 7 DTE for 80%+ win rate)
 
 ## Win Rate Tracking (Data-Driven)
+
 - Track every paper trade: entry, exit, P/L, win/loss
 - Required metrics: win rate %, avg win, avg loss, profit factor
 - Scale decisions based on REAL data, not projections
@@ -97,20 +104,24 @@ CTO: Claude | CEO: Igor Ganapolsky
 - If win rate 85%+: profitable, consider scaling after 90 days
 
 ### Ticker Selection (Jan 19, 2026 - Simplified)
-| Priority | Ticker | Rationale |
-|----------|--------|-----------|
-| 1 | SPY | ONLY ticker. Best liquidity, tightest spreads, no early assignment risk |
+
+| Priority | Ticker | Rationale                                                               |
+| -------- | ------ | ----------------------------------------------------------------------- |
+| 1        | SPY    | ONLY ticker. Best liquidity, tightest spreads, no early assignment risk |
 
 **NO individual stocks.** The $100K success was SPY. The $5K failure was SOFI. Learn the lesson.
 
 ### Phil Town Alignment Note
+
 Iron condors ALIGN with Rule #1 better than credit spreads:
+
 - Defined risk on BOTH sides (put AND call spread)
 - 15-delta = ~85% probability of profit
 - 1.5:1 reward/risk ratio (BETTER than credit spreads' 0.5:1)
 - Profit if SPY stays within range (most of the time)
 
 ## Core Directives (PERMANENT)
+
 1. **Don't lose money** - Rule #1 always
 2. **Never argue with CEO** - Follow directives immediately
 3. **Never tell CEO to do manual work** - If I can do it, I MUST do it myself
@@ -131,8 +142,10 @@ Iron condors ALIGN with Rule #1 better than credit spreads:
 18. **Cost optimize** - Minimize Vertex AI data store usage costs
 19. **Continuous learning** - Synthesize from YouTube, blogs, papers into RAG
 20. **Phil Town Rule #1** - Verify compliance BEFORE any trade executes
+21. **NEVER HARDCODE CREDENTIALS** - No default values in os.environ.get() for secrets (GitGuardian incident Feb 3, 2026)
 
 ## Commands
+
 ```bash
 python3 -c "from src.orchestrator.main import TradingOrchestrator"  # verify imports
 python3 scripts/system_health_check.py  # health check
@@ -141,12 +154,12 @@ python scripts/validate_env_keys.py  # validate API key consistency
 ```
 
 ## Pre-Merge Checklist
+
 1. Run tests: `pytest tests/ -q`
 2. Run lint: `ruff check src/`
 3. Validate env keys: `python scripts/validate_env_keys.py`
 4. Dry run trading logic if applicable
 5. Confirm CI passes on PR
-
 
 ## Trade Data Architecture (CANONICAL - Jan 17, 2026)
 
@@ -170,45 +183,56 @@ python scripts/validate_env_keys.py  # validate API key consistency
 ```
 
 ### Why This Matters
+
 - **Cloud Run has no local files** - webhook MUST fetch from GitHub API
 - **Alpaca is source of truth** - workflow syncs real broker data
 - **LL-230**: Previous bug where webhook looked for `trades_*.json` (didn't exist on Cloud Run)
 
 ### Files
-| File | Purpose | Written By |
-|------|---------|------------|
+
+| File                     | Purpose                  | Written By                           |
+| ------------------------ | ------------------------ | ------------------------------------ |
 | `data/system_state.json` | **CANONICAL** trade data | sync-system-state.yml, trade_sync.py |
-| `data/trades_*.json` | **DEPRECATED** | Legacy, do not use |
+| `data/trades_*.json`     | **DEPRECATED**           | Legacy, do not use                   |
 
 See `docs/ARCHITECTURE.md` for detailed architecture documentation.
 
 ### Monitoring
+
 - CI workflow `webhook-integration-test.yml` validates `trades_loaded > 0` after every deployment
 - Failure = data source mismatch, see LL-230
+
 ## What NOT To Do
+
 - Don't create unnecessary documentation
 - Don't over-engineer
 - Don't document failures - just fix them and learn in RAG
 
 ## Context
+
 Hooks provide: portfolio status, market hours, trade count, date verification.
 Trust the hooks. They work.
 
 ## RAG Chat (Feb 1, 2026)
+
 Live at: https://igorganapolsky.github.io/trading/rag-query/
+
 - Cloudflare Worker: `cloudflare-workers/rag-chat/worker.js`
 - Worker URL: `https://trading-rag-chat.iganapolsky.workers.dev`
 - Features: Conversation memory, 10+ embedded lessons, Claude Haiku backend
 - API key configured in Cloudflare Workers dashboard
 
 ## Date Verification (LL-324 Prevention)
+
 Hook: `.claude/hooks/verify_date_claims.sh`
+
 - Runs on every UserPromptSubmit
 - Reminds to verify dates before writing content
 - February 2026 key dates embedded (Super Bowl Feb 8, etc.)
 - Prevents hallucinations like "Super Bowl weekend" on wrong date
 
 ## $100K Paper Account (Jan 30, 2026)
+
 Account ID: PA3C5AG0CECQ - Primary trading account.
 Use `ALPACA_PAPER_TRADING_API_KEY` (points to $100K account).
 All code must use `get_alpaca_credentials()` from `src/utils/alpaca_client.py`.
