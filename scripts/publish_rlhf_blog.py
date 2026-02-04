@@ -32,6 +32,7 @@ try:
 except ImportError:
     # Try relative import
     import sys
+
     sys.path.insert(0, str(Path(__file__).parent))
     from ai_disclosure import (
         add_disclosure_to_post,

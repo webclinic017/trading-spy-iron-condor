@@ -41,6 +41,7 @@ except ImportError:
     def verify_data_sources(content):
         return {"verified": True, "warnings": []}
 
+
 # Paths
 DOCS_DIR = Path(__file__).parent.parent / "docs"
 DISCOVERIES_DIR = DOCS_DIR / "_discoveries"

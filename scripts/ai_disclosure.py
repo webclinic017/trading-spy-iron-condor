@@ -57,7 +57,8 @@ def get_ai_disclosure_footer() -> str:
 
     This reinforces disclosure at the bottom per best practices.
     """
-    return """
+    return (
+        """
 ---
 
 ## About This Post
@@ -67,13 +68,16 @@ def get_ai_disclosure_footer() -> str:
 - 📊 **Data Sources**: Alpaca API (trades), FRED API (yields), RAG (lessons)
 - ✅ **Data Verification**: All numbers pulled from live APIs, no fabrication
 - 👤 **Human Oversight**: Igor Ganapolsky reviews publication workflow
-- 📅 **Generated**: """ + datetime.now(ET).strftime("%Y-%m-%d %H:%M ET") + """
+- 📅 **Generated**: """
+        + datetime.now(ET).strftime("%Y-%m-%d %H:%M ET")
+        + """
 
 *Per [WordPress AI Guidelines](https://wordpress.org/ai-guidelines/): We clearly disclose
 AI involvement, verify all data, and maintain human oversight.*
 
 **Not financial advice. Paper trading only.**
 """
+    )
 
 
 def verify_data_sources(post_content: str) -> dict:
@@ -105,7 +109,8 @@ def verify_data_sources(post_content: str) -> dict:
 
     # Check for suspiciously round numbers in financial context
     import re
-    round_numbers = re.findall(r'\$(\d{3,}),000\.00', post_content)
+
+    round_numbers = re.findall(r"\$(\d{3,}),000\.00", post_content)
     if len(round_numbers) > 2:
         warnings.append("Multiple suspiciously round dollar amounts detected")
 
@@ -124,7 +129,7 @@ def verify_data_sources(post_content: str) -> dict:
             "alpaca": has_alpaca,
             "fred": has_fred,
             "rag": has_rag,
-        }
+        },
     }
 
 
@@ -134,14 +139,14 @@ def add_disclosure_to_post(content: str, content_type: str = "blog") -> str:
 
     Handles Jekyll/Hugo front matter (---) and adds disclosure after it.
     """
-    lines = content.split('\n')
+    lines = content.split("\n")
 
     # Find end of front matter
     front_matter_end = 0
     in_front_matter = False
 
     for i, line in enumerate(lines):
-        if line.strip() == '---':
+        if line.strip() == "---":
             if not in_front_matter:
                 in_front_matter = True
             else:
@@ -161,7 +166,7 @@ def add_disclosure_to_post(content: str, content_type: str = "blog") -> str:
     # Add footer at end
     footer = get_ai_disclosure_footer()
 
-    return '\n'.join(new_lines) + footer
+    return "\n".join(new_lines) + footer
 
 
 def log_publication(
@@ -169,7 +174,7 @@ def log_publication(
     title: str,
     filepath: str,
     data_verified: bool,
-    warnings: list[str] | None = None
+    warnings: list[str] | None = None,
 ) -> None:
     """
     Log publication to audit trail for WordPress compliance.
@@ -207,7 +212,7 @@ def log_publication(
     # Keep last 500 records
     records = records[-500:]
 
-    with open(audit_file, 'w') as f:
+    with open(audit_file, "w") as f:
         json.dump(records, f, indent=2)
 
 
