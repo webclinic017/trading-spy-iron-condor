@@ -17,12 +17,12 @@ from __future__ import annotations
 
 import json
 import logging
-from dataclasses import dataclass, field, asdict
+import time
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any, Callable, Optional
-import time
 
 logger = logging.getLogger(__name__)
 
@@ -133,7 +133,7 @@ class WorkflowGraph:
         function: Optional[Callable] = None,
         depends_on: list[str] = None,
         description: str = "",
-    ) -> "WorkflowGraph":
+    ) -> WorkflowGraph:
         """
         Add a node to the workflow graph.
 
