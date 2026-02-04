@@ -10,7 +10,6 @@ Uses unsupervised learning to discover patterns in trade data:
 Per Kirk Borne's recommendation: "Data Without Labels"
 """
 
-import json
 import logging
 import sys
 from datetime import datetime, timedelta
@@ -187,7 +186,9 @@ def analyze_clusters(trades: list[dict], labels: np.ndarray, centroids: np.ndarr
         analysis[cluster_id] = {
             "size": len(cluster_trades),
             "pct_of_total": len(cluster_trades) / len(trades) * 100,
-            "centroid": {name: float(val) for name, val in zip(feature_names, centroids[cluster_id])},
+            "centroid": {
+                name: float(val) for name, val in zip(feature_names, centroids[cluster_id])
+            },
             "characteristics": [],
         }
 
@@ -220,7 +221,9 @@ def analyze_clusters(trades: list[dict], labels: np.ndarray, centroids: np.ndarr
     return analysis
 
 
-def find_anomalies(features: np.ndarray, labels: np.ndarray, centroids: np.ndarray, threshold: float = 2.0) -> list[int]:
+def find_anomalies(
+    features: np.ndarray, labels: np.ndarray, centroids: np.ndarray, threshold: float = 2.0
+) -> list[int]:
     """Find trades that are far from their cluster centroid (anomalies)."""
     anomalies = []
 
@@ -252,7 +255,9 @@ def generate_insights(analysis: dict, trades: list[dict], anomalies: list[int]) 
     insights.append("## Cluster Analysis\n")
 
     for cluster_id, data in sorted(analysis.items(), key=lambda x: x[1]["size"], reverse=True):
-        insights.append(f"### Cluster {cluster_id} ({data['size']} trades, {data['pct_of_total']:.1f}%)\n")
+        insights.append(
+            f"### Cluster {cluster_id} ({data['size']} trades, {data['pct_of_total']:.1f}%)\n"
+        )
         for char in data["characteristics"]:
             insights.append(f"- {char}")
         insights.append("")
@@ -268,7 +273,9 @@ def generate_insights(analysis: dict, trades: list[dict], anomalies: list[int]) 
 
     # Anomaly insight
     if anomalies:
-        insights.append(f"**Anomalies Detected:** {len(anomalies)} trades deviate significantly from normal patterns.")
+        insights.append(
+            f"**Anomalies Detected:** {len(anomalies)} trades deviate significantly from normal patterns."
+        )
         insights.append("Review these trades for potential issues or opportunities.\n")
 
     # Trading recommendations

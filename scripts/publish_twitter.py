@@ -11,7 +11,6 @@ This avoids X.com API approval requirements and rate limits.
 import os
 import sys
 import time
-from pathlib import Path
 
 try:
     from playwright.sync_api import sync_playwright
@@ -80,9 +79,7 @@ def post_to_twitter(text: str, dry_run: bool = False) -> bool:
                 )
                 if not text_area:
                     # Try alternate selector
-                    text_area = page.query_selector(
-                        '[role="textbox"][aria-label*="Post"]'
-                    )
+                    text_area = page.query_selector('[role="textbox"][aria-label*="Post"]')
 
                 if text_area:
                     print("   Filling tweet text...")
@@ -136,7 +133,7 @@ def generate_twitter_post(signal: str, title: str, devto_url: str = None) -> str
         text = f"{base_text}{link}\n\n{tags}"
     else:
         # Link too long, use short version
-        text = f"{base_text}{tags}\n\n{link[:remaining-3]}..."
+        text = f"{base_text}{tags}\n\n{link[: remaining - 3]}..."
 
     return text
 
@@ -149,9 +146,7 @@ def main():
     parser.add_argument("--signal", required=True, choices=["positive", "negative"])
     parser.add_argument("--title", required=True, help="Post title")
     parser.add_argument("--url", help="Article URL")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Don't post, just preview"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Don't post, just preview")
 
     args = parser.parse_args()
 

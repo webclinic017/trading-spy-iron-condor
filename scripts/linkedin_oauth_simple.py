@@ -54,13 +54,13 @@ class OAuthCallbackHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-type", "text/html")
             self.end_headers()
             self.wfile.write(
-                """
+                b"""
                 <html><body style="font-family: sans-serif; padding: 50px; text-align: center;">
                 <h1 style="color: #0a66c2;">&#x2705; Authorization Successful!</h1>
                 <p>You can close this window and return to the terminal.</p>
                 <script>setTimeout(() => window.close(), 2000);</script>
                 </body></html>
-            """.encode()
+            """
             )
         elif "error" in params:
             auth_error = params["error"][0]
@@ -205,7 +205,7 @@ def main():
                 existing = json.load(f)
             print(f"✅ Valid token exists for {existing.get('name', 'user')}")
             print(f"   Person URN: {existing.get('person_urn')}")
-            print(f"\n   Token ready for use in RLHF blog publisher")
+            print("\n   Token ready for use in RLHF blog publisher")
             return 0
         except Exception:
             pass
