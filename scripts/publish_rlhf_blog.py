@@ -534,6 +534,38 @@ def post_to_linkedin_direct(post: dict, devto_url: str = None) -> bool:
         return False
 
 
+def post_to_twitter_api(post: dict, devto_url: str = None) -> bool:
+    """Post to X.com using Twitter API v2."""
+    import subprocess
+
+    # Call publish_twitter.py
+    try:
+        result = subprocess.run(  # nosec B603 B607 - safe call with no untrusted input
+            [
+                "python3",
+                str(Path(__file__).parent / "publish_twitter.py"),
+                "--signal",
+                post["signal"],
+                "--title",
+                post["title"],
+                "--url",
+                devto_url or "https://igorganapolsky.github.io/trading/",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+
+        if result.returncode == 0:
+            return True
+        else:
+            print(f"⚠️ X.com posting failed: {result.stderr[:200]}")
+            return False
+    except Exception as e:
+        print(f"⚠️ X.com error: {e}")
+        return False
+
+
 def queue_for_linkedin_backup(post: dict, devto_url: str = None) -> bool:
     """BACKUP: Queue for LinkedIn if direct posting fails."""
     queue_file = Path(__file__).parent.parent.parent / "docs" / "linkedin_post_queue.json"
@@ -610,6 +642,10 @@ def main():
     print("\n📤 Posting to LinkedIn...")
     linkedin_ok = post_to_linkedin_direct(post, devto_url)
 
+    # Post to X.com (API)
+    print("\n📤 Posting to X.com...")
+    twitter_ok = post_to_twitter_api(post, devto_url)
+
     # Count successful platforms
     platforms = []
     if gh_path:
@@ -618,13 +654,17 @@ def main():
         platforms.append(f"Dev.to ({devto_url})")
     if linkedin_ok:
         platforms.append("LinkedIn")
+    if twitter_ok:
+        platforms.append("X.com")
 
-    print(f"\n✅ Published to {len(platforms)}/3 platforms:")
+    print(f"\n✅ Published to {len(platforms)}/4 platforms:")
     for p in platforms:
         print(f"   - {p}")
 
     if not linkedin_ok:
-        print("   ⚠️  LinkedIn posting failed (see output above)")
+        print("   ⚠️  LinkedIn posting failed")
+    if not twitter_ok:
+        print("   ⚠️  X.com posting failed")
 
     return 0
 
