@@ -497,17 +497,55 @@ def publish_to_devto(post: dict) -> dict | None:
         return None
 
 
-def queue_for_linkedin(post: dict, devto_url: str = None) -> bool:
-    """Queue post for LinkedIn."""
+def post_to_linkedin_direct(post: dict, devto_url: str = None) -> bool:
+    """Post directly to LinkedIn using browser automation - ACTUALLY POSTS."""
+    import subprocess
+
+    link = devto_url or "https://igorganapolsky.github.io/trading/"
+    emoji = "✅" if post["signal"] == "positive" else "📚"
+
+    content = f"""{emoji} {post["title"]}
+
+{post["summary"]}
+
+#AITrading #RLHF #BuildingInPublic #FinTech
+
+{link}"""
+
+    # Call linkedin_post_direct.py to actually post
+    try:
+        result = subprocess.run(  # nosec B603 B607 - safe call with no untrusted input
+            [
+                "python3",
+                str(Path(__file__).parent / "linkedin_post_direct.py"),
+                "--text",
+                content,
+            ],
+            capture_output=True,
+            text=True,
+            timeout=180,
+        )
+
+        if result.returncode == 0:
+            return True
+        else:
+            print(f"⚠️ LinkedIn posting failed: {result.stderr[:200]}")
+            return False
+    except Exception as e:
+        print(f"⚠️ LinkedIn error: {e}")
+        return False
+
+
+def queue_for_linkedin_backup(post: dict, devto_url: str = None) -> bool:
+    """BACKUP: Queue for LinkedIn if direct posting fails."""
     queue_file = (
         Path(__file__).parent.parent.parent / "docs" / "linkedin_post_queue.json"
     )
 
     if not queue_file.exists():
-        print("⚠️ LinkedIn queue not found")
         return False
 
-    link = devto_url or f"https://igorganapolsky.github.io/trading/"
+    link = devto_url or "https://igorganapolsky.github.io/trading/"
     emoji = "✅" if post["signal"] == "positive" else "📚"
 
     content = f"""{emoji} {post["title"]}
@@ -573,10 +611,27 @@ def main():
     gh_path = save_to_github_pages(post)
     devto_result = publish_to_devto(post)
     devto_url = devto_result.get("url") if devto_result else None
-    linkedin_ok = queue_for_linkedin(post, devto_url)
 
-    platforms = sum([bool(gh_path), bool(devto_result), linkedin_ok])
-    print(f"\n✅ Published to {platforms}/3 platforms")
+    # Post directly to LinkedIn (browser automation)
+    print("\n📤 Posting to LinkedIn...")
+    linkedin_ok = post_to_linkedin_direct(post, devto_url)
+
+    # Count successful platforms
+    platforms = []
+    if gh_path:
+        platforms.append("GitHub Pages")
+    if devto_result:
+        platforms.append(f"Dev.to ({devto_url})")
+    if linkedin_ok:
+        platforms.append("LinkedIn")
+
+    print(f"\n✅ Published to {len(platforms)}/3 platforms:")
+    for p in platforms:
+        print(f"   - {p}")
+
+    if not linkedin_ok:
+        print("   ⚠️  LinkedIn posting failed (see output above)")
+
     return 0
 
 
