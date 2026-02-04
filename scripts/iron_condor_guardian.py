@@ -21,11 +21,18 @@ from alpaca.trading.client import TradingClient
 from alpaca.trading.enums import OrderSide, TimeInForce
 from alpaca.trading.requests import MarketOrderRequest
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
-API_KEY = os.environ.get("ALPACA_API_KEY", "PKH7GFFWGISNWYCO4YYQZ3OYXW")
-SECRET_KEY = os.environ.get("ALPACA_SECRET_KEY", "9Yc47pZcq6buxmmF61e3KfXAxvBSY8zb4jKroGPwqcYW")
+API_KEY = os.environ.get("ALPACA_API_KEY")
+SECRET_KEY = os.environ.get("ALPACA_SECRET_KEY")
+if not API_KEY or not SECRET_KEY:
+    raise ValueError(
+        "ALPACA_API_KEY and ALPACA_SECRET_KEY environment variables are required. "
+        "Never hardcode credentials."
+    )
 PAPER = True
 
 # Phil Town Rule #1 Parameters
@@ -134,7 +141,9 @@ def close_iron_condor(client, ic_data: dict, reason: str):
                     time_in_force=TimeInForce.DAY,
                 )
             )
-            logger.info(f"  Closed {pos['symbol']}: {side.value} {qty} - {order.status}")
+            logger.info(
+                f"  Closed {pos['symbol']}: {side.value} {qty} - {order.status}"
+            )
         except Exception as e:
             logger.error(f"  FAILED to close {pos['symbol']}: {e}")
 
@@ -168,7 +177,9 @@ def run_guardian():
         entry_key = f"IC_{expiry}"
         if entry_key not in entries:
             # Estimate: sum of short premiums - sum of long premiums
-            short_premium = sum(p["entry"] for p in ic_data["positions"] if p["qty"] < 0)
+            short_premium = sum(
+                p["entry"] for p in ic_data["positions"] if p["qty"] < 0
+            )
             long_premium = sum(p["entry"] for p in ic_data["positions"] if p["qty"] > 0)
             entry_credit = short_premium - long_premium
             entries[entry_key] = {
@@ -194,7 +205,9 @@ def run_guardian():
         # CHECK 2: Stop Loss (200% of credit)
         stop_loss = entry_credit * STOP_LOSS_MULTIPLIER * 100
         if pnl < -stop_loss:
-            close_iron_condor(client, ic_data, f"STOP LOSS: P/L ${pnl:.2f} < -${stop_loss:.2f}")
+            close_iron_condor(
+                client, ic_data, f"STOP LOSS: P/L ${pnl:.2f} < -${stop_loss:.2f}"
+            )
             continue
 
         # CHECK 3: Profit Take (50% of max)
