@@ -13,6 +13,7 @@ import os
 import re
 import subprocess  # nosec B404
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -234,20 +235,20 @@ def publish_to_devto(post: dict) -> dict | None:
         return None
 
 
-def publish_to_linkedin(post: dict, devto_url: str = None) -> bool:
-    """Publish short summary to LinkedIn."""
-    access_token = os.environ.get("LINKEDIN_ACCESS_TOKEN")
-    person_urn = os.environ.get("LINKEDIN_PERSON_URN")
+def queue_for_linkedin(post: dict, devto_url: str = None) -> bool:
+    """Queue post for LinkedIn via /linkedin-post skill (browser automation)."""
+    # Use existing LinkedIn queue system
+    queue_file = Path(__file__).parent.parent.parent / "docs" / "linkedin_post_queue.json"
 
-    if not access_token or not person_urn:
-        print("⚠️ LinkedIn credentials not set")
+    if not queue_file.exists():
+        print("⚠️ LinkedIn queue not found - LinkedIn posting disabled")
         return False
 
     # Short LinkedIn post with link
     link = devto_url or f"https://igorganapolsky.github.io/trading/"
     emoji = "✅" if post["signal"] == "positive" else "📚"
 
-    text = f"""{emoji} {post["title"]}
+    content = f"""{emoji} {post["title"]}
 
 {post["summary"]}
 
@@ -257,37 +258,33 @@ Building an AI trading system that learns from every decision.
 
 {link}"""
 
-    payload = {
-        "author": person_urn,
-        "lifecycleState": "PUBLISHED",
-        "specificContent": {
-            "com.linkedin.ugc.ShareContent": {
-                "shareCommentary": {"text": text},
-                "shareMediaCategory": "NONE",
-            }
-        },
-        "visibility": {"com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"},
-    }
-
+    # Add to queue
     try:
-        resp = requests.post(
-            "https://api.linkedin.com/v2/ugcPosts",
-            headers={
-                "Authorization": f"Bearer {access_token}",
-                "Content-Type": "application/json",
-                "X-Restli-Protocol-Version": "2.0.0",
-            },
-            json=payload,
-            timeout=30,
-        )
-        if resp.status_code in [200, 201]:
-            print(f"✅ LinkedIn: Posted")
-            return True
-        else:
-            print(f"⚠️ LinkedIn failed: {resp.status_code}")
-            return False
+        with open(queue_file) as f:
+            data = json.load(f)
+
+        # Get next ID
+        next_id = max([item.get("id", 0) for item in data.get("queue", [])], default=0) + 1
+
+        # Add new entry
+        data["queue"].append({
+            "id": next_id,
+            "title": post["title"],
+            "status": "pending",
+            "content": content,
+            "source": "rlhf_auto",
+            "signal": post["signal"],
+            "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "tags": ["AITrading", "RLHF", "BuildingInPublic", "FinTech"]
+        })
+
+        with open(queue_file, "w") as f:
+            json.dump(data, f, indent=2)
+
+        print(f"✅ LinkedIn: Queued (ID: {next_id}, use /linkedin-post)")
+        return True
     except Exception as e:
-        print(f"⚠️ LinkedIn error: {e}")
+        print(f"⚠️ LinkedIn queue error: {e}")
         return False
 
 
@@ -316,7 +313,7 @@ def main():
     gh_path = save_to_github_pages(post)
     devto_result = publish_to_devto(post)
     devto_url = devto_result.get("url") if devto_result else None
-    linkedin_ok = publish_to_linkedin(post, devto_url)
+    linkedin_ok = queue_for_linkedin(post, devto_url)
 
     print(f"\n✅ Published to {sum([bool(gh_path), bool(devto_result), linkedin_ok])}/3 platforms")
     return 0
