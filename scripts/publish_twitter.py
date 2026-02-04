@@ -105,9 +105,7 @@ def main():
     parser.add_argument("--signal", required=True, choices=["positive", "negative"])
     parser.add_argument("--title", required=True, help="Post title")
     parser.add_argument("--url", help="Article URL")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Don't post, just preview"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Don't post, just preview")
 
     args = parser.parse_args()
 
