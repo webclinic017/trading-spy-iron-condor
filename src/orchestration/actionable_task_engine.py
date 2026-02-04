@@ -22,13 +22,12 @@ Date: February 2026
 """
 
 import json
-import uuid
-from dataclasses import dataclass, field, asdict
+import logging
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
 from pathlib import Path
 from typing import Any, Callable, Optional
-import logging
 
 logger = logging.getLogger(__name__)
 
