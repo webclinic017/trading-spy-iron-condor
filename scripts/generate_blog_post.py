@@ -67,17 +67,13 @@ def extract_narrative(context: str, signal: str, commits: list[str]) -> dict:
         narrative["struggle"] = "Testing script kept creating new Dev.to posts"
         narrative["pivot"] = "Need duplicate detection before publishing"
         narrative["solution"] = "Check last 10 articles for same title within 2 hours"
-        narrative["lesson"] = (
-            "Prevent problems at the source, don't just clean up after"
-        )
+        narrative["lesson"] = "Prevent problems at the source, don't just clean up after"
 
     elif "bot" in ctx and "slop" in ctx:
         narrative["problem"] = "Auto-generated blog posts read like robot wrote them"
         narrative["struggle"] = "Templates and mad-libs create formulaic content"
         narrative["pivot"] = "2026 SEO requires emotional appeal and authentic voice"
-        narrative["solution"] = (
-            "Extract real narrative from context, write actual stories"
-        )
+        narrative["solution"] = "Extract real narrative from context, write actual stories"
         narrative["lesson"] = "Humans share content that makes them FEEL something"
 
     # Default: extract from context string directly
@@ -127,14 +123,14 @@ def generate_post_content(narrative: dict, signal: str) -> str:
 
 ## The Problem
 
-{narrative['problem']}
+{narrative["problem"]}
 
 """
 
     if narrative["struggle"]:
         content += f"""## What I Tried (And Failed)
 
-{narrative['struggle']}
+{narrative["struggle"]}
 
 The trap: I kept thinking "just one more thing..." Classic sunk cost fallacy.
 
@@ -143,7 +139,7 @@ The trap: I kept thinking "just one more thing..." Classic sunk cost fallacy.
     if narrative["pivot"]:
         content += f"""## The Realization
 
-{narrative['pivot']}
+{narrative["pivot"]}
 
 This changed everything.
 
@@ -152,7 +148,7 @@ This changed everything.
     if narrative["solution"]:
         content += f"""## What Actually Worked
 
-{narrative['solution']}
+{narrative["solution"]}
 
 """
 
@@ -160,14 +156,14 @@ This changed everything.
     if narrative["technical_context"]:
         content += f"""## The Technical Details
 
-Latest commit: `{narrative['technical_context']}`
+Latest commit: `{narrative["technical_context"]}`
 
 """
 
     # Lesson and tie to larger goal
     content += f"""## The Lesson
 
-{narrative['lesson']}
+{narrative["lesson"]}
 
 ## Why This Matters
 
