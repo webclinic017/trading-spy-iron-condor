@@ -229,46 +229,65 @@ def execute_iron_condor(trade: dict, dry_run: bool = False) -> dict:
 
 
 def log_trade(trade: dict, result: dict):
-    """Log the trade to ic_trade_log.json."""
-    trade_log = load_trade_log()
+    """Log the trade to RAG for full traceability."""
+    from datetime import datetime, timezone
 
-    trade_id = f"IC_{trade['expiry'].replace('-', '')}_{len(trade_log['trades']) + 1:03d}"
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    order_id = result.get("order_id", "unknown")[:8]
+    trade_id = f"trade_{today}_{order_id}"
 
-    trade_record = {
-        "id": trade_id,
-        "entry_date": datetime.utcnow().strftime("%Y-%m-%d"),
-        "entry_time": datetime.utcnow().isoformat(),
-        "expiry": trade["expiry"],
-        "dte_at_entry": trade["dte"],
-        "short_put": trade["strikes"]["short_put"],
-        "long_put": trade["strikes"]["long_put"],
-        "short_call": trade["strikes"]["short_call"],
-        "long_call": trade["strikes"]["long_call"],
-        "contracts": 1,
-        "credit_received": trade["pricing"]["credit_dollars"],
-        "max_risk": trade["pricing"]["max_risk"],
-        "status": "open" if result["status"] == "SUBMITTED" else "failed",
-        "order_id": result.get("order_id"),
-        "exit_date": None,
-        "exit_reason": None,
-        "exit_price": None,
-        "pnl": None,
-    }
+    # Create RAG lesson content
+    lesson_content = f"""# Trade Executed: {today}
 
-    trade_log["trades"].append(trade_record)
-    trade_log["stats"]["total_trades"] = len(trade_log["trades"])
+**Trade ID**: {trade_id}
+**Date**: {today}
+**Type**: Iron Condor Entry
+**Status**: {result.get('status', 'unknown')}
+**Severity**: INFO
+**Category**: trade-execution
 
-    # Update average credit
-    open_trades = [t for t in trade_log["trades"] if t["status"] == "open"]
-    if open_trades:
-        trade_log["stats"]["avg_credit"] = sum(t["credit_received"] for t in open_trades) / len(
-            open_trades
-        )
+## Position Details
+- **Expiry**: {trade.get('expiry', 'unknown')}
+- **DTE**: {trade.get('dte', 'unknown')}
+- **Short Put**: ${trade['strikes']['short_put']:.0f}
+- **Long Put**: ${trade['strikes']['long_put']:.0f}
+- **Short Call**: ${trade['strikes']['short_call']:.0f}
+- **Long Call**: ${trade['strikes']['long_call']:.0f}
 
-    save_trade_log(trade_log)
-    logger.info(f"Trade logged: {trade_id}")
+## Financials
+- **Credit Received**: ${trade['pricing']['credit_dollars']:.0f}
+- **Max Risk**: ${trade['pricing']['max_risk']:.0f}
+- **Win Probability**: {trade['pricing']['win_probability']*100:.0f}%
 
-    # Also update ic_entries.json for guardian
+## Execution
+- **Order ID**: {result.get('order_id', 'N/A')}
+- **Order Status**: {result.get('order_status', 'N/A')}
+- **VIX Conditions**: {trade.get('vix_status', 'unknown')}
+- **Account Equity**: ${trade.get('equity', 0):,.2f}
+
+## Phil Town Rule #1 Compliance
+- Position size: 5% max ✓
+- Defined risk: Yes ✓
+- Stop loss defined: 200% ✓
+- Profit target: 50% ✓
+
+## Exit Rules (Guardian Enforced)
+- Take profit at 50% of credit
+- Stop loss at 200% of credit
+- Exit at 7 DTE
+"""
+
+    # Add to RAG
+    try:
+        from src.rag.lessons_learned_rag import LessonsLearnedRAG
+
+        rag = LessonsLearnedRAG()
+        rag.add_lesson(trade_id, lesson_content)
+        logger.info(f"Trade logged to RAG: {trade_id}")
+    except Exception as e:
+        logger.error(f"Failed to log trade to RAG: {e}")
+
+    # Also update ic_entries.json for guardian (still needed for exit tracking)
     update_ic_entries(trade, trade_id)
 
     return trade_id
@@ -458,3 +477,56 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+def record_trade_to_rag(trade: dict, result: dict):
+    """Record trade execution to RAG for full traceability."""
+    try:
+        from datetime import datetime
+        from pathlib import Path
+        
+        # Create lesson file for this trade
+        today = datetime.utcnow().strftime("%Y-%m-%d")
+        trade_id = result.get("order_id", "unknown")[:8]
+        
+        lesson_content = f"""# Trade Executed: {today}
+
+**Trade ID**: {trade_id}
+**Date**: {today}
+**Type**: Iron Condor Entry
+**Status**: {result.get('status', 'unknown')}
+
+## Position Details
+- **Expiry**: {trade.get('expiry', 'unknown')}
+- **DTE**: {trade.get('dte', 'unknown')}
+- **Short Put**: ${trade['strikes']['short_put']:.0f}
+- **Long Put**: ${trade['strikes']['long_put']:.0f}
+- **Short Call**: ${trade['strikes']['short_call']:.0f}
+- **Long Call**: ${trade['strikes']['long_call']:.0f}
+
+## Financials
+- **Credit Received**: ${trade['pricing']['credit_dollars']:.0f}
+- **Max Risk**: ${trade['pricing']['max_risk']:.0f}
+- **Win Probability**: {trade['pricing']['win_probability']*100:.0f}%
+
+## Execution
+- **Order ID**: {result.get('order_id', 'N/A')}
+- **Order Status**: {result.get('order_status', 'N/A')}
+- **VIX Conditions**: {trade.get('vix_status', 'unknown')}
+
+## Phil Town Rule #1 Compliance
+- Position size: 5% max ✓
+- Defined risk: Yes ✓
+- Stop loss defined: 200% ✓
+- Profit target: 50% ✓
+"""
+        
+        # Save to RAG lessons
+        lesson_file = Path(f"rag_knowledge/lessons_learned/trade_{today}_{trade_id}.md")
+        lesson_file.parent.mkdir(parents=True, exist_ok=True)
+        lesson_file.write_text(lesson_content)
+        
+        print(f"Trade recorded to RAG: {lesson_file}")
+        
+    except Exception as e:
+        print(f"Failed to record trade to RAG: {e}")

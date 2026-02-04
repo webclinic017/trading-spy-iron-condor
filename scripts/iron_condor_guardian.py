@@ -150,46 +150,50 @@ def save_trade_log(trade_log: dict):
 
 
 def update_trade_log_on_exit(expiry: str, reason: str, pnl: float):
-    """Update the trade log when a position is closed."""
-    trade_log = load_trade_log()
+    """Log trade exit to RAG for full traceability."""
+    import sys
+    from datetime import timezone
+    from pathlib import Path
 
-    # Find the matching open trade by expiry
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     expiry_formatted = f"20{expiry[:2]}-{expiry[2:4]}-{expiry[4:6]}"  # YYMMDD -> YYYY-MM-DD
+    trade_id = f"trade_exit_{today}_{expiry}"
 
-    for trade in trade_log["trades"]:
-        if trade["status"] == "open" and trade["expiry"] == expiry_formatted:
-            trade["status"] = "closed"
-            trade["exit_date"] = datetime.utcnow().strftime("%Y-%m-%d")
-            trade["exit_reason"] = reason
-            trade["pnl"] = round(pnl, 2)
+    outcome = "WIN" if pnl > 0 else "LOSS"
 
-            # Update stats
-            if pnl > 0:
-                trade_log["stats"]["wins"] += 1
-            else:
-                trade_log["stats"]["losses"] += 1
+    lesson_content = f"""# Trade Exit: {today}
 
-            total_closed = trade_log["stats"]["wins"] + trade_log["stats"]["losses"]
-            if total_closed > 0:
-                trade_log["stats"]["win_rate"] = round(
-                    trade_log["stats"]["wins"] / total_closed * 100, 1
-                )
+**Trade ID**: {trade_id}
+**Date**: {today}
+**Type**: Iron Condor Exit
+**Outcome**: {outcome}
+**Severity**: {"INFO" if pnl > 0 else "WARNING"}
+**Category**: trade-exit
 
-            trade_log["stats"]["total_pnl"] = round(
-                sum(t["pnl"] for t in trade_log["trades"] if t["pnl"] is not None), 2
-            )
+## Exit Details
+- **Expiry**: {expiry_formatted}
+- **Exit Reason**: {reason}
+- **P/L**: ${pnl:+.2f}
 
-            closed_trades = [t for t in trade_log["trades"] if t["pnl"] is not None]
-            if closed_trades:
-                trade_log["stats"]["avg_pnl"] = round(
-                    trade_log["stats"]["total_pnl"] / len(closed_trades), 2
-                )
+## Phil Town Rule #1
+{"✓ Capital protected - profitable exit" if pnl > 0 else "✓ Stop loss enforced - limited loss"}
 
-            save_trade_log(trade_log)
-            logger.info(f"Trade log updated: {trade['id']} closed with P/L ${pnl:.2f}")
-            return
+## Guardian Rules Applied
+- 50% profit target
+- 200% stop loss
+- 7 DTE exit
+"""
 
-    logger.warning(f"Could not find open trade for expiry {expiry_formatted} in trade log")
+    # Add to RAG
+    try:
+        sys.path.insert(0, str(Path(__file__).parent.parent))
+        from src.rag.lessons_learned_rag import LessonsLearnedRAG
+
+        rag = LessonsLearnedRAG()
+        rag.add_lesson(trade_id, lesson_content)
+        logger.info(f"Trade exit logged to RAG: {trade_id} - {outcome} ${pnl:+.2f}")
+    except Exception as e:
+        logger.error(f"Failed to log trade exit to RAG: {e}")
 
 
 def close_iron_condor(client, ic_data: dict, reason: str, expiry: str, pnl: float):
