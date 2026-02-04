@@ -54,13 +54,11 @@ def get_equity() -> float:
 def get_recent_commits() -> list[str]:
     """Get recent commits for context."""
     try:
-        result = (
-            subprocess.run(  # nosec B603 B607 - safe git command, no untrusted input
-                ["git", "log", "--oneline", "-5", "--format=%s"],
-                capture_output=True,
-                text=True,
-                timeout=5,
-            )
+        result = subprocess.run(  # nosec B603 B607 - safe git command, no untrusted input
+            ["git", "log", "--oneline", "-5", "--format=%s"],
+            capture_output=True,
+            text=True,
+            timeout=5,
         )
         return result.stdout.strip().split("\n")
     except Exception:
@@ -348,7 +346,7 @@ tags: [{signal}, rlhf, ai-trading, fintech]
 
 I'm building toward $600K in capital → $6K/month passive income → financial independence by my 50th birthday (November 14, 2029).
 
-Current progress: ${equity:,.0f} / $600K = {(equity/600000)*100:.1f}% complete.
+Current progress: ${equity:,.0f} / $600K = {(equity / 600000) * 100:.1f}% complete.
 
 Every thumbs up/down makes the system smarter. After {total} feedback signals, it knows what works and what doesn't. That knowledge compounds.
 
@@ -385,7 +383,9 @@ def generate_engaging_title(signal: str, context: str) -> str:
         elif "bot slop" in ctx:
             return "Fixing Bot Slop: Making AI Content Human-Readable"
         else:
-            return f"Trading System Lesson #{get_rlhf_stats().get('total', 0)}: Learning from Failure"
+            return (
+                f"Trading System Lesson #{get_rlhf_stats().get('total', 0)}: Learning from Failure"
+            )
 
 
 def generate_mermaid_diagram(signal: str, stats: dict, model: dict) -> str:
@@ -425,9 +425,7 @@ def generate_post(signal: str, intensity: float, context: str) -> dict:
     model = get_model_stats()
     equity = get_equity()
 
-    content = generate_engaging_content(
-        signal, intensity, context, stats, model, equity
-    )
+    content = generate_engaging_content(signal, intensity, context, stats, model, equity)
     title = generate_engaging_title(signal, context)
 
     return {
@@ -499,15 +497,13 @@ def publish_to_devto(post: dict) -> dict | None:
 
 def queue_for_linkedin(post: dict, devto_url: str = None) -> bool:
     """Queue post for LinkedIn."""
-    queue_file = (
-        Path(__file__).parent.parent.parent / "docs" / "linkedin_post_queue.json"
-    )
+    queue_file = Path(__file__).parent.parent.parent / "docs" / "linkedin_post_queue.json"
 
     if not queue_file.exists():
         print("⚠️ LinkedIn queue not found")
         return False
 
-    link = devto_url or f"https://igorganapolsky.github.io/trading/"
+    link = devto_url or "https://igorganapolsky.github.io/trading/"
     emoji = "✅" if post["signal"] == "positive" else "📚"
 
     content = f"""{emoji} {post["title"]}
@@ -522,9 +518,7 @@ def queue_for_linkedin(post: dict, devto_url: str = None) -> bool:
         with open(queue_file) as f:
             data = json.load(f)
 
-        next_id = (
-            max([item.get("id", 0) for item in data.get("queue", [])], default=0) + 1
-        )
+        next_id = max([item.get("id", 0) for item in data.get("queue", [])], default=0) + 1
 
         data["queue"].append(
             {
