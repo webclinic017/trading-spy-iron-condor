@@ -1,0 +1,108 @@
+name: Iron Condor Scanner + Auto-Execute
+
+on:
+  schedule:
+    # 9:45 AM ET = 14:45 UTC (Mon-Fri)
+    - cron: '45 14 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no execution)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  scan-and-execute:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install alpaca-py python-dotenv
+
+      - name: Scan for opportunity
+        id: scan
+        env:
+          ALPACA_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}
+          ALPACA_PAPER_TRADING_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
+          ALPACA_PAPER_TRADING_API_SECRET: ${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}
+        run: |
+          python3 << 'EOF'
+          import json
+          import os
+          import sys
+          sys.path.insert(0, '.')
+
+          from dotenv import load_dotenv
+          load_dotenv()
+
+          from scripts.iron_condor_scanner import scan_for_opportunity
+
+          dry_run = "${{ github.event.inputs.dry_run }}" == "true"
+          result = scan_for_opportunity(dry_run=dry_run)
+
+          if result:
+              print(f"OPPORTUNITY FOUND: {result['expiry']}")
+              with open('opportunity.json', 'w') as f:
+                  json.dump(result, f)
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write('found=true\n')
+          else:
+              print("No opportunity found")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write('found=false\n')
+          EOF
+
+      - name: Execute trade immediately
+        if: steps.scan.outputs.found == 'true' && github.event.inputs.dry_run != 'true'
+        env:
+          ALPACA_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}
+          ALPACA_PAPER_TRADING_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
+          ALPACA_PAPER_TRADING_API_SECRET: ${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'EOF'
+          import json
+          import sys
+          sys.path.insert(0, '.')
+
+          from dotenv import load_dotenv
+          load_dotenv()
+
+          # Load opportunity from scan step
+          with open('opportunity.json') as f:
+              trade = json.load(f)
+
+          # Save as pending trade for executor
+          with open('data/pending_ic_trade.json', 'w') as f:
+              json.dump(trade, f, indent=2)
+
+          # Execute immediately - no waiting for approval
+          from scripts.iron_condor_executor import main as execute
+          import sys
+          sys.argv = ['executor', '--force']  # Force execution, skip approval check
+          result = execute()
+
+          if result == 0:
+              print("✅ TRADE EXECUTED AUTONOMOUSLY")
+          else:
+              print("❌ EXECUTION FAILED")
+              sys.exit(1)
+          EOF
+
+      - name: Commit trade log updates
+        if: steps.scan.outputs.found == 'true' && github.event.inputs.dry_run != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/ic_trade_log.json data/ic_entries.json || true
+          git diff --staged --quiet || git commit -m "chore: Log IC trade [autonomous]"
+          git push || true

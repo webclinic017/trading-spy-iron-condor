@@ -40,6 +40,7 @@ MIN_DTE = 7  # Exit at 7 DTE
 
 # Track iron condor entry credits
 IC_ENTRIES_FILE = Path(__file__).parent.parent / "data" / "ic_entries.json"
+IC_TRADE_LOG = Path(__file__).parent.parent / "data" / "ic_trade_log.json"
 
 
 def load_ic_entries() -> dict:
@@ -122,7 +123,76 @@ def calculate_ic_pnl(ic_data: dict, entry_credit: float) -> tuple[float, float]:
     return current_value, pnl
 
 
-def close_iron_condor(client, ic_data: dict, reason: str):
+def load_trade_log() -> dict:
+    """Load or initialize the trade log."""
+    if IC_TRADE_LOG.exists():
+        with open(IC_TRADE_LOG) as f:
+            return json.load(f)
+    return {
+        "trades": [],
+        "stats": {
+            "total_trades": 0,
+            "wins": 0,
+            "losses": 0,
+            "win_rate": None,
+            "avg_credit": 0,
+            "avg_pnl": None,
+            "total_pnl": 0,
+        },
+    }
+
+
+def save_trade_log(trade_log: dict):
+    """Save the trade log."""
+    IC_TRADE_LOG.parent.mkdir(parents=True, exist_ok=True)
+    with open(IC_TRADE_LOG, "w") as f:
+        json.dump(trade_log, f, indent=2)
+
+
+def update_trade_log_on_exit(expiry: str, reason: str, pnl: float):
+    """Update the trade log when a position is closed."""
+    trade_log = load_trade_log()
+
+    # Find the matching open trade by expiry
+    expiry_formatted = f"20{expiry[:2]}-{expiry[2:4]}-{expiry[4:6]}"  # YYMMDD -> YYYY-MM-DD
+
+    for trade in trade_log["trades"]:
+        if trade["status"] == "open" and trade["expiry"] == expiry_formatted:
+            trade["status"] = "closed"
+            trade["exit_date"] = datetime.utcnow().strftime("%Y-%m-%d")
+            trade["exit_reason"] = reason
+            trade["pnl"] = round(pnl, 2)
+
+            # Update stats
+            if pnl > 0:
+                trade_log["stats"]["wins"] += 1
+            else:
+                trade_log["stats"]["losses"] += 1
+
+            total_closed = trade_log["stats"]["wins"] + trade_log["stats"]["losses"]
+            if total_closed > 0:
+                trade_log["stats"]["win_rate"] = round(
+                    trade_log["stats"]["wins"] / total_closed * 100, 1
+                )
+
+            trade_log["stats"]["total_pnl"] = round(
+                sum(t["pnl"] for t in trade_log["trades"] if t["pnl"] is not None), 2
+            )
+
+            closed_trades = [t for t in trade_log["trades"] if t["pnl"] is not None]
+            if closed_trades:
+                trade_log["stats"]["avg_pnl"] = round(
+                    trade_log["stats"]["total_pnl"] / len(closed_trades), 2
+                )
+
+            save_trade_log(trade_log)
+            logger.info(f"Trade log updated: {trade['id']} closed with P/L ${pnl:.2f}")
+            return
+
+    logger.warning(f"Could not find open trade for expiry {expiry_formatted} in trade log")
+
+
+def close_iron_condor(client, ic_data: dict, reason: str, expiry: str, pnl: float):
     """Close all legs of an iron condor."""
     logger.warning(f"🚨 CLOSING IRON CONDOR: {reason}")
 
@@ -142,6 +212,9 @@ def close_iron_condor(client, ic_data: dict, reason: str):
             logger.info(f"  Closed {pos['symbol']}: {side.value} {qty} - {order.status}")
         except Exception as e:
             logger.error(f"  FAILED to close {pos['symbol']}: {e}")
+
+    # Log the exit to trade log
+    update_trade_log_on_exit(expiry, reason, pnl)
 
 
 def run_guardian():
@@ -193,13 +266,15 @@ def run_guardian():
 
         # CHECK 1: DTE Exit (7 days)
         if dte <= MIN_DTE:
-            close_iron_condor(client, ic_data, f"DTE={dte} <= {MIN_DTE} (gamma risk)")
+            close_iron_condor(client, ic_data, f"DTE={dte} <= {MIN_DTE} (gamma risk)", expiry, pnl)
             continue
 
         # CHECK 2: Stop Loss (200% of credit)
         stop_loss = entry_credit * STOP_LOSS_MULTIPLIER * 100
         if pnl < -stop_loss:
-            close_iron_condor(client, ic_data, f"STOP LOSS: P/L ${pnl:.2f} < -${stop_loss:.2f}")
+            close_iron_condor(
+                client, ic_data, f"STOP LOSS: P/L ${pnl:.2f} < -${stop_loss:.2f}", expiry, pnl
+            )
             continue
 
         # CHECK 3: Profit Take (50% of max)
@@ -209,6 +284,8 @@ def run_guardian():
                 client,
                 ic_data,
                 f"PROFIT TARGET: P/L ${pnl:.2f} >= ${profit_target:.2f}",
+                expiry,
+                pnl,
             )
             continue
 

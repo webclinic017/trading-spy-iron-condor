@@ -65,6 +65,24 @@
           {
             "type": "command",
             "command": "bash \"$CLAUDE_PROJECT_DIR\"/../.claude/hooks/session-start.sh",
+            "timeout": 5,
+            "async": true
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/force_rag_learning.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block_position_close.sh \"$TOOL_INPUT\"",
             "timeout": 5
           }
         ]

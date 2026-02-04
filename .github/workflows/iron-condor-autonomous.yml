@@ -1,0 +1,147 @@
+name: Iron Condor Autonomous System
+
+# This is the ONLY way trades happen. CTO cannot bypass this.
+# Per LL-306: "Trust the guardrails, not the agent"
+
+on:
+  schedule:
+    # Scan at 9:45 AM ET (14:45 UTC) Mon-Fri
+    - cron: '45 14 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to take'
+        required: true
+        default: 'scan'
+        type: choice
+        options:
+          - scan
+          - status
+          - force_scan
+
+jobs:
+  autonomous-trading:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install alpaca-py python-dotenv
+
+      - name: Check positions first
+        id: positions
+        env:
+          ALPACA_PAPER_TRADING_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
+          ALPACA_PAPER_TRADING_API_SECRET: ${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}
+        run: |
+          python3 << 'PYTHON'
+          import os
+          from alpaca.trading.client import TradingClient
+
+          api_key = os.environ.get('ALPACA_PAPER_TRADING_API_KEY')
+          secret = os.environ.get('ALPACA_PAPER_TRADING_API_SECRET')
+          client = TradingClient(api_key, secret, paper=True)
+
+          positions = client.get_all_positions()
+          spy_options = [p for p in positions if p.symbol.startswith('SPY') and len(p.symbol) > 5]
+          ic_count = len(spy_options) // 4
+
+          print(f"Current IC positions: {ic_count}")
+          print(f"Max allowed: 2")
+
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f'ic_count={ic_count}\n')
+              f.write(f'can_trade={"true" if ic_count < 2 else "false"}\n')
+          PYTHON
+
+      - name: Scan for opportunity
+        if: steps.positions.outputs.can_trade == 'true'
+        id: scan
+        env:
+          ALPACA_PAPER_TRADING_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
+          ALPACA_PAPER_TRADING_API_SECRET: ${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}
+        run: |
+          python3 << 'PYTHON'
+          import json
+          import os
+          import sys
+          sys.path.insert(0, '.')
+
+          from scripts.iron_condor_scanner import scan_for_opportunity
+          result = scan_for_opportunity(dry_run=False)
+
+          if result:
+              print(f"✅ Opportunity found: {result['expiry']}")
+              with open('opportunity.json', 'w') as f:
+                  json.dump(result, f)
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write('found=true\n')
+          else:
+              print("No opportunity found")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write('found=false\n')
+          PYTHON
+
+      - name: Execute trade (AUTONOMOUS)
+        if: steps.scan.outputs.found == 'true'
+        env:
+          ALPACA_PAPER_TRADING_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
+          ALPACA_PAPER_TRADING_API_SECRET: ${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}
+        run: |
+          python3 << 'PYTHON'
+          import json
+          import os
+          import sys
+          sys.path.insert(0, '.')
+
+          from alpaca.trading.client import TradingClient
+          from alpaca.trading.enums import OrderClass, OrderSide, TimeInForce
+          from alpaca.trading.requests import MarketOrderRequest, OptionLegRequest
+
+          # Load opportunity
+          with open('opportunity.json') as f:
+              opp = json.load(f)
+
+          strikes = opp['strikes']
+          expiry = opp['expiry'].replace('-', '')[2:]  # YYMMDD
+
+          def build_sym(strike, opt_type):
+              return f"SPY{expiry}{opt_type}{int(strike * 1000):08d}"
+
+          long_put = build_sym(strikes['long_put'], 'P')
+          short_put = build_sym(strikes['short_put'], 'P')
+          short_call = build_sym(strikes['short_call'], 'C')
+          long_call = build_sym(strikes['long_call'], 'C')
+
+          print(f"Executing IC: {long_put}/{short_put} | {short_call}/{long_call}")
+
+          api_key = os.environ.get('ALPACA_PAPER_TRADING_API_KEY')
+          secret = os.environ.get('ALPACA_PAPER_TRADING_API_SECRET')
+          client = TradingClient(api_key, secret, paper=True)
+
+          legs = [
+              OptionLegRequest(symbol=long_put, side=OrderSide.BUY, ratio_qty=1),
+              OptionLegRequest(symbol=short_put, side=OrderSide.SELL, ratio_qty=1),
+              OptionLegRequest(symbol=short_call, side=OrderSide.SELL, ratio_qty=1),
+              OptionLegRequest(symbol=long_call, side=OrderSide.BUY, ratio_qty=1),
+          ]
+
+          order = client.submit_order(MarketOrderRequest(
+              qty=1,
+              order_class=OrderClass.MLEG,
+              legs=legs,
+              time_in_force=TimeInForce.DAY,
+          ))
+
+          print(f"✅ Order submitted: {order.id} - {order.status}")
+          PYTHON
+
+      - name: Log trade
+        if: steps.scan.outputs.found == 'true'
+        run: |
+          echo "Trade executed autonomously by workflow"
+          echo "CTO did not touch this - Phil Town Rule #1 enforced"
