@@ -13,20 +13,22 @@ This is the unfiltered story of building an autonomous AI trading system—every
 
 ---
 
-## Where We Are Today (Sunday, February 1, 2026)
+## Where We Are Today (Wednesday, February 5, 2026)
 
-The markets are closed for the weekend, and I'm sitting here with a $100K paper trading account wondering if this crazy idea will actually work.
+Day 7 of 90-day paper trading phase. One iron condor open, 15 days to expiration.
 
-Here's the setup: Iron condors on SPY. Sell both a put spread and a call spread, collect premium from both sides, and profit as long as SPY stays within a range. The math says 86% win rate at 15-delta strikes. We'll see if reality agrees.
+| What             | Status                    |
+| ---------------- | ------------------------- |
+| Account Equity   | $101,376                  |
+| Daily P/L        | -$56 (-0.06%)             |
+| Strategy         | Iron Condors on SPY       |
+| Open Positions   | 1 iron condor (Feb 20)    |
+| Position P/L     | -$23 (theta decay normal) |
+| PDT Restrictions | None (account > $25K)     |
 
-| What             | Status                 |
-| ---------------- | ---------------------- |
-| Account Size     | $100,000               |
-| Strategy         | Iron Condors on SPY    |
-| Open Positions   | 0 (waiting for Monday) |
-| PDT Restrictions | None (account > $25K)  |
+**Active Trade**: SPY Feb 20 iron condor, 15 DTE. Exit criteria: 7 DTE (Feb 13), 50% profit target, or 200% stop-loss. Currently holding per Phil Town Rule #1.
 
-The goal is simple: prove 80%+ win rate over 90 days of paper trading, then go live. No shortcuts, no YOLO trades, just boring, disciplined options selling.
+The goal: prove 80%+ win rate over 90 days of paper trading, then go live. No shortcuts, no YOLO trades, just boring, disciplined options selling.
 
 ---
 
