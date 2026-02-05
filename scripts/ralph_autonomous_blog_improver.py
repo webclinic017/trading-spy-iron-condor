@@ -105,9 +105,7 @@ print(post['content'])
             "β=",
             "something worked",
         ]
-        no_bot_slop = not any(
-            indicator in content_lower for indicator in bot_slop_indicators
-        )
+        no_bot_slop = not any(indicator in content_lower for indicator in bot_slop_indicators)
 
         # Check for emotional hooks
         emotion_words = [
@@ -123,10 +121,7 @@ print(post['content'])
         # Check for story structure
         has_story_arc = (
             "## the problem" in content_lower
-            and (
-                "## what actually worked" in content_lower
-                or "## the fix" in content_lower
-            )
+            and ("## what actually worked" in content_lower or "## the fix" in content_lower)
             and "## the lesson" in content_lower
         )
 
@@ -151,9 +146,9 @@ print(post['content'])
     def run_iteration(self) -> dict:
         """Run one iteration of testing and improvement."""
         self.iteration += 1
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"Ralph Iteration {self.iteration}/{self.max_iterations}")
-        print(f"{'='*60}\n")
+        print(f"{'=' * 60}\n")
 
         results = []
         total_score = 0
@@ -197,21 +192,20 @@ print(post['content'])
             "avg_score": avg_score,
             "avg_time_ms": avg_time,
             "results": results,
-            "met_targets": avg_score >= self.target_score
-            and avg_time <= self.target_time_ms,
+            "met_targets": avg_score >= self.target_score and avg_time <= self.target_time_ms,
         }
 
         # Save progress
         self.save_progress(iteration_result)
 
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"Iteration {self.iteration} Summary:")
         print(f"  Average Score: {avg_score:.1f}/10 (target: {self.target_score})")
         print(f"  Average Time: {avg_time:.0f}ms (target: {self.target_time_ms}ms)")
         print(
             f"  Status: {'✅ TARGETS MET' if iteration_result['met_targets'] else '❌ Keep improving'}"
         )
-        print(f"{'='*60}\n")
+        print(f"{'=' * 60}\n")
 
         return iteration_result
 
@@ -242,19 +236,13 @@ print(post['content'])
                 metrics = result["metrics"]
 
                 if not metrics["emotional_hook"]:
-                    improvements.append(
-                        f"Add emotional hooks to {result['signal']} posts"
-                    )
+                    improvements.append(f"Add emotional hooks to {result['signal']} posts")
 
                 if not metrics["story_arc"]:
-                    improvements.append(
-                        f"Improve story structure for {result['context'][:30]}..."
-                    )
+                    improvements.append(f"Improve story structure for {result['context'][:30]}...")
 
                 if not metrics["no_bot_slop"]:
-                    improvements.append(
-                        "Remove bot slop (Thompson stats, mermaid diagrams)"
-                    )
+                    improvements.append("Remove bot slop (Thompson stats, mermaid diagrams)")
 
         return list(set(improvements))  # Dedupe
 
