@@ -120,7 +120,9 @@ class DocumentSection:
     id: str
     title: str
     content: str
-    section_type: str  # 'what_happened', 'root_cause', 'solution', 'prevention', 'summary'
+    section_type: (
+        str  # 'what_happened', 'root_cause', 'solution', 'prevention', 'summary'
+    )
     parent_doc_id: str
     parent_doc_title: str
     chunk_index: int
@@ -182,11 +184,18 @@ class DocumentAwareRAG:
             return True
 
         try:
+            import os
+
             import lancedb
             from lancedb.embeddings import get_registry
 
             self.lancedb_path.mkdir(parents=True, exist_ok=True)
             self._db = lancedb.connect(str(self.lancedb_path))
+
+            # Force offline mode to prevent network timeouts in tests
+            # Model should be pre-downloaded from HuggingFace
+            os.environ["HF_HUB_OFFLINE"] = "1"
+            os.environ["TRANSFORMERS_OFFLINE"] = "1"
 
             # Initialize embedding model
             self._model = (
@@ -200,7 +209,9 @@ class DocumentAwareRAG:
             return True
 
         except ImportError:
-            logger.error("LanceDB not installed. Run: pip install lancedb sentence-transformers")
+            logger.error(
+                "LanceDB not installed. Run: pip install lancedb sentence-transformers"
+            )
             return False
         except Exception as e:
             logger.error(f"Failed to initialize LanceDB: {e}")
@@ -246,14 +257,22 @@ class DocumentAwareRAG:
         if metadata.get("strategies"):
             strategies = metadata["strategies"]
             if isinstance(strategies, str):
-                strategies = json.loads(strategies) if strategies.startswith("[") else [strategies]
+                strategies = (
+                    json.loads(strategies)
+                    if strategies.startswith("[")
+                    else [strategies]
+                )
             if strategies:
                 parts.append(f"Trading strategies: {', '.join(strategies)}.")
 
         if metadata.get("categories"):
             categories = metadata["categories"]
             if isinstance(categories, str):
-                categories = json.loads(categories) if categories.startswith("[") else [categories]
+                categories = (
+                    json.loads(categories)
+                    if categories.startswith("[")
+                    else [categories]
+                )
             if categories and len(categories) > 1:
                 cat_list = [c.replace("_", " ") for c in categories]
                 parts.append(f"Related categories: {', '.join(cat_list)}.")
@@ -288,7 +307,9 @@ class DocumentAwareRAG:
         # Flatten with metadata for richer embeddings
         return self.flatten_for_embedding(base_content, metadata)
 
-    def _extract_sections(self, content: str, doc_id: str, doc_title: str) -> list[DocumentSection]:
+    def _extract_sections(
+        self, content: str, doc_id: str, doc_title: str
+    ) -> list[DocumentSection]:
         """
         Extract logical sections from markdown content.
 
@@ -361,13 +382,23 @@ class DocumentAwareRAG:
             for kw in ["what happened", "incident", "problem", "issue", "bug", "error"]
         ):
             return "what_happened"
-        elif any(kw in title_lower for kw in ["root cause", "why", "analysis", "investigation"]):
+        elif any(
+            kw in title_lower
+            for kw in ["root cause", "why", "analysis", "investigation"]
+        ):
             return "root_cause"
-        elif any(kw in title_lower for kw in ["solution", "fix", "resolution", "how we fixed"]):
+        elif any(
+            kw in title_lower
+            for kw in ["solution", "fix", "resolution", "how we fixed"]
+        ):
             return "solution"
-        elif any(kw in title_lower for kw in ["prevention", "lesson", "takeaway", "key"]):
+        elif any(
+            kw in title_lower for kw in ["prevention", "lesson", "takeaway", "key"]
+        ):
             return "prevention"
-        elif any(kw in title_lower for kw in ["summary", "tldr", "overview", "abstract"]):
+        elif any(
+            kw in title_lower for kw in ["summary", "tldr", "overview", "abstract"]
+        ):
             return "summary"
         elif any(kw in title_lower for kw in ["code", "implementation", "example"]):
             return "code"
@@ -569,7 +600,9 @@ class DocumentAwareRAG:
         # list_tables() returns a response object with 'tables' attribute
         tables_response = self._db.list_tables()
         existing_tables = (
-            tables_response.tables if hasattr(tables_response, "tables") else list(tables_response)
+            tables_response.tables
+            if hasattr(tables_response, "tables")
+            else list(tables_response)
         )
         if force and "document_aware_rag" in existing_tables:
             logger.info("Force rebuild: dropping existing table")
@@ -641,8 +674,12 @@ class DocumentAwareRAG:
                         "date_hint": doc.metadata.get("date_hint"),
                         "date": doc.metadata.get("date"),
                         "primary_category": doc.metadata.get("primary_category"),
-                        "categories_json": json.dumps(doc.metadata.get("categories", [])),
-                        "strategies_json": json.dumps(doc.metadata.get("strategies", [])),
+                        "categories_json": json.dumps(
+                            doc.metadata.get("categories", [])
+                        ),
+                        "strategies_json": json.dumps(
+                            doc.metadata.get("strategies", [])
+                        ),
                         "market_condition": doc.metadata.get("market_condition"),
                         "account": doc.metadata.get("account"),
                     }
@@ -721,7 +758,9 @@ class DocumentAwareRAG:
                         stats["backup_path"] = str(backup_path)
                         logger.info(f"Backed up existing index to {backup_path}")
                     else:
-                        logger.warning("Table exists but directory not found, skipping backup")
+                        logger.warning(
+                            "Table exists but directory not found, skipping backup"
+                        )
                 else:
                     logger.info("No existing index to backup")
 
@@ -772,7 +811,9 @@ class DocumentAwareRAG:
 
         tables_response = self._db.list_tables()
         existing_tables = (
-            tables_response.tables if hasattr(tables_response, "tables") else list(tables_response)
+            tables_response.tables
+            if hasattr(tables_response, "tables")
+            else list(tables_response)
         )
         if "document_aware_rag" not in existing_tables:
             logger.error("Document-aware RAG table not found. Run reindex first.")
@@ -936,7 +977,9 @@ def get_document_aware_rag() -> DocumentAwareRAG:
 if __name__ == "__main__":
     import argparse
 
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    )
 
     parser = argparse.ArgumentParser(description="Document-Aware RAG System")
     parser.add_argument("--reindex", action="store_true", help="Reindex all documents")
