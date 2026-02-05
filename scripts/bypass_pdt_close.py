@@ -21,9 +21,7 @@ def main():
     print(f"PDT BYPASS CLOSE ATTEMPT - {datetime.now()}")
     print("=" * 60)
 
-    api_key = os.environ.get("ALPACA_API_KEY") or os.environ.get(
-        "ALPACA_PAPER_TRADING_5K_API_KEY"
-    )
+    api_key = os.environ.get("ALPACA_API_KEY") or os.environ.get("ALPACA_PAPER_TRADING_5K_API_KEY")
     api_secret = os.environ.get("ALPACA_SECRET_KEY") or os.environ.get(
         "ALPACA_PAPER_TRADING_5K_API_SECRET"
     )
@@ -123,9 +121,7 @@ def main():
             print("      ✅ CLOSED via close_position!")
             continue
         else:
-            print(
-                f"      ❌ close_position failed: {resp.status_code} - {resp.text[:100]}"
-            )
+            print(f"      ❌ close_position failed: {resp.status_code} - {resp.text[:100]}")
 
     # Step 5: Verify
     print("\n5️⃣ Verifying remaining positions...")

@@ -134,9 +134,7 @@ class TestAccountEquityProperty:
 
     def test_account_equity_simulated_default(self):
         """Should return simulated equity when snapshot empty."""
-        with patch.dict(
-            os.environ, {"ALPACA_SIMULATED": "true", "SIMULATED_EQUITY": "50000"}
-        ):
+        with patch.dict(os.environ, {"ALPACA_SIMULATED": "true", "SIMULATED_EQUITY": "50000"}):
             from src.execution.alpaca_executor import AlpacaExecutor
 
             executor = AlpacaExecutor(paper=True)
@@ -151,9 +149,7 @@ class TestSyncPortfolioState:
 
     def test_sync_simulated_mode(self):
         """Should sync in simulated mode."""
-        with patch.dict(
-            os.environ, {"ALPACA_SIMULATED": "true", "SIMULATED_EQUITY": "100000"}
-        ):
+        with patch.dict(os.environ, {"ALPACA_SIMULATED": "true", "SIMULATED_EQUITY": "100000"}):
             from src.execution.alpaca_executor import AlpacaExecutor
 
             executor = AlpacaExecutor(paper=True)
@@ -420,9 +416,7 @@ class TestPlaceOrderWithStopLoss:
 
                 executor = AlpacaExecutor(paper=True)
 
-                with patch.object(
-                    executor, "place_order", side_effect=Exception("Order rejected")
-                ):
+                with patch.object(executor, "place_order", side_effect=Exception("Order rejected")):
                     result = executor.place_order_with_stop_loss(
                         symbol="AAPL", notional=1000.0, side="buy"
                     )

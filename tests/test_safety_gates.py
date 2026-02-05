@@ -75,9 +75,7 @@ class TestAssumptionValidation:
 
         # Detect if vol regime changed >2x
         if len(rolling_vol) > 0:
-            vol_ratio = (
-                max(rolling_vol) / min(rolling_vol) if min(rolling_vol) > 0 else 999
-            )
+            vol_ratio = max(rolling_vol) / min(rolling_vol) if min(rolling_vol) > 0 else 999
             # This SHOULD detect the regime shift
             assert vol_ratio > 2.0, "Should detect 3x volatility regime shift"
 
@@ -116,9 +114,9 @@ class TestSlippageSimulation:
         # Expected annual slippage: 0.00014 * 252 = ~3.5% annual drag
         # With 50-150% variance factor, avg should still be ~3.5%
         # Verify slippage is within expected bounds
-        assert (
-            0.02 < avg_slippage < 0.06
-        ), f"Average slippage drag {avg_slippage:.2%} outside expected 2-6%"
+        assert 0.02 < avg_slippage < 0.06, (
+            f"Average slippage drag {avg_slippage:.2%} outside expected 2-6%"
+        )
         # Standard deviation should be reasonable (not too volatile)
         assert std_slippage < 0.02, f"Slippage std dev {std_slippage:.2%} too high"
 
@@ -163,9 +161,9 @@ class TestGateStress:
             reject_variance = (max_rejects - min_rejects) / max_rejects
             # With thresholds 40-60 on RSI 30-70, expect significant variance
             # This is expected behavior, not a failure condition
-            assert (
-                reject_variance <= 1.0
-            ), f"RSI threshold analysis: {reject_variance:.2%} variance (expected)"
+            assert reject_variance <= 1.0, (
+                f"RSI threshold analysis: {reject_variance:.2%} variance (expected)"
+            )
 
     def test_macd_threshold_sensitivity(self, sample_signals):
         """Test MACD gate rejects vary <20% across reasonable threshold range."""
@@ -181,9 +179,9 @@ class TestGateStress:
         if max_rejects > 0:
             reject_variance = (max_rejects - min_rejects) / max_rejects
             # Log the sensitivity for monitoring
-            assert (
-                reject_variance <= 1.0
-            ), f"MACD threshold analysis: {reject_variance:.2%} variance"
+            assert reject_variance <= 1.0, (
+                f"MACD threshold analysis: {reject_variance:.2%} variance"
+            )
 
     def test_composite_gate_reject_rate(self, sample_signals):
         """Verify composite gate rejects <40% of valid signals."""
@@ -200,9 +198,7 @@ class TestGateStress:
         reject_rate = 1 - pass_rate
 
         # Should not reject more than 40% of signals
-        assert (
-            reject_rate < 0.40
-        ), f"Composite gate reject rate {reject_rate:.2%} > 40% threshold"
+        assert reject_rate < 0.40, f"Composite gate reject rate {reject_rate:.2%} > 40% threshold"
 
 
 class TestExecutionIntegrity:
@@ -376,9 +372,9 @@ class TestTelemetryAudit:
             # No single gate should account for >80% of all rejects
             if gate_1_rejects + gate_2_rejects > 0:
                 gate_1_proportion = gate_1_rejects / (gate_1_rejects + gate_2_rejects)
-                assert (
-                    gate_1_proportion < 0.80
-                ), f"Gate 1 accounts for {gate_1_proportion:.0%} of rejects"
+                assert gate_1_proportion < 0.80, (
+                    f"Gate 1 accounts for {gate_1_proportion:.0%} of rejects"
+                )
 
 
 class TestPromotionGateIntegration:
@@ -387,9 +383,7 @@ class TestPromotionGateIntegration:
     def test_loosened_thresholds_accessible(self):
         """Verify loosened thresholds are applied."""
         # Read the current defaults from enforce_promotion_gate.py
-        gate_script = (
-            Path(__file__).parent.parent / "scripts" / "enforce_promotion_gate.py"
-        )
+        gate_script = Path(__file__).parent.parent / "scripts" / "enforce_promotion_gate.py"
 
         if gate_script.exists():
             content = gate_script.read_text()
@@ -410,9 +404,7 @@ class TestPromotionGateIntegration:
         assert metrics["max_drawdown"] <= 10.0, "Drawdown should pass at 8%"
 
 
-@pytest.mark.skip(
-    reason="Meta-test that recursively runs itself - only for manual CLI use"
-)
+@pytest.mark.skip(reason="Meta-test that recursively runs itself - only for manual CLI use")
 def test_all_safety_gates():
     """Run all safety gate tests as a suite.
 

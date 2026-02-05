@@ -95,12 +95,8 @@ class TradeExecutionEvals:
 
     def eval_delta_range(self, proposal: TradeProposal) -> EvalResult:
         """EVAL-005: Short strikes must be 15-20 delta."""
-        put_ok = (
-            self.target_delta_min <= proposal.short_put_delta <= self.target_delta_max
-        )
-        call_ok = (
-            self.target_delta_min <= proposal.short_call_delta <= self.target_delta_max
-        )
+        put_ok = self.target_delta_min <= proposal.short_put_delta <= self.target_delta_max
+        call_ok = self.target_delta_min <= proposal.short_call_delta <= self.target_delta_max
         passed = put_ok and call_ok
         return EvalResult(
             passed=passed,

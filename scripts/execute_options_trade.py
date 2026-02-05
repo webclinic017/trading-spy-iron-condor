@@ -41,9 +41,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
         logging.StreamHandler(),
-        logging.FileHandler(
-            f"logs/options_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
-        ),
+        logging.FileHandler(f"logs/options_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"),
     ],
 )
 logger = logging.getLogger(__name__)
@@ -128,9 +126,7 @@ def get_iv_percentile(symbol: str, lookback_days: int = 252) -> dict:
         # Get historical data for IV calculation (we'll use HV as proxy if IV not available)
         hist = ticker.history(period="1y")
         if len(hist) < 20:
-            logger.warning(
-                f"   ⚠️ Insufficient history for {symbol}, defaulting to neutral"
-            )
+            logger.warning(f"   ⚠️ Insufficient history for {symbol}, defaulting to neutral")
             return {
                 "iv_percentile": 50,
                 "current_iv": None,
@@ -139,9 +135,7 @@ def get_iv_percentile(symbol: str, lookback_days: int = 252) -> dict:
 
         # Calculate historical volatility (20-day rolling)
         returns = np.log(hist["Close"] / hist["Close"].shift(1))
-        rolling_vol = (
-            returns.rolling(window=20).std() * np.sqrt(252) * 100
-        )  # Annualized %
+        rolling_vol = returns.rolling(window=20).std() * np.sqrt(252) * 100  # Annualized %
 
         current_hv = rolling_vol.iloc[-1]
 
@@ -157,14 +151,10 @@ def get_iv_percentile(symbol: str, lookback_days: int = 252) -> dict:
             )
         elif iv_percentile >= 30:
             recommendation = "NEUTRAL"
-            logger.info(
-                f"   ⚠️ IV Percentile: {iv_percentile:.1f}% - NEUTRAL conditions"
-            )
+            logger.info(f"   ⚠️ IV Percentile: {iv_percentile:.1f}% - NEUTRAL conditions")
         else:
             recommendation = "AVOID_SELLING"
-            logger.info(
-                f"   ❌ IV Percentile: {iv_percentile:.1f}% - UNFAVORABLE for selling"
-            )
+            logger.info(f"   ❌ IV Percentile: {iv_percentile:.1f}% - UNFAVORABLE for selling")
 
         return {
             "iv_percentile": round(iv_percentile, 1),
@@ -208,9 +198,7 @@ def get_trend_filter(symbol: str, lookback_days: int = 20) -> dict:
         hist = ticker.history(period="2mo")
 
         if len(hist) < lookback_days:
-            logger.warning(
-                "   ⚠️ Insufficient history for trend filter, defaulting to neutral"
-            )
+            logger.warning("   ⚠️ Insufficient history for trend filter, defaulting to neutral")
             return {"trend": "NEUTRAL", "slope": 0, "recommendation": "PROCEED"}
 
         # Calculate 20-day moving average
@@ -235,23 +223,17 @@ def get_trend_filter(symbol: str, lookback_days: int = 20) -> dict:
             trend = "STRONG_DOWNTREND"
             recommendation = "AVOID_PUTS"
             logger.warning("   ❌ STRONG DOWNTREND detected!")
-            logger.warning(
-                f"      MA slope: {slope:.3f}%/day, Price vs MA: {price_vs_ma:.1f}%"
-            )
+            logger.warning(f"      MA slope: {slope:.3f}%/day, Price vs MA: {price_vs_ma:.1f}%")
         elif slope < -0.3:
             trend = "MODERATE_DOWNTREND"
             recommendation = "CAUTION_BUT_PROCEED"
             logger.info("   ⚠️ Moderate downtrend - proceeding with caution")
-            logger.info(
-                f"      MA slope: {slope:.3f}%/day, Price vs MA: {price_vs_ma:.1f}%"
-            )
+            logger.info(f"      MA slope: {slope:.3f}%/day, Price vs MA: {price_vs_ma:.1f}%")
         else:
             trend = "UPTREND_OR_SIDEWAYS"
             recommendation = "PROCEED"
             logger.info("   ✅ Trend FAVORABLE for selling puts")
-            logger.info(
-                f"      MA slope: {slope:.3f}%/day, Price vs MA: {price_vs_ma:.1f}%"
-            )
+            logger.info(f"      MA slope: {slope:.3f}%/day, Price vs MA: {price_vs_ma:.1f}%")
 
         return {
             "trend": trend,
@@ -391,9 +373,7 @@ def try_tradier_fallback(symbol: str, dry_run: bool = False) -> dict:
     return {"status": "NO_FALLBACK", "reason": "Tradier integration removed"}
 
 
-def execute_cash_secured_put(
-    trading_client, options_client, symbol: str, dry_run: bool = False
-):
+def execute_cash_secured_put(trading_client, options_client, symbol: str, dry_run: bool = False):
     """
     Execute a cash-secured put trade.
 
@@ -417,12 +397,8 @@ def execute_cash_secured_put(
         logger.warning(
             f"❌ IV Percentile {iv_data['iv_percentile']}% < {MIN_IV_PERCENTILE_FOR_SELLING}%"
         )
-        logger.warning(
-            "   Per RAG knowledge: Avoid selling premium in low IV environment"
-        )
-        logger.warning(
-            "   Recommendation: Wait for higher IV or use ETF accumulation strategy"
-        )
+        logger.warning("   Per RAG knowledge: Avoid selling premium in low IV environment")
+        logger.warning("   Recommendation: Wait for higher IV or use ETF accumulation strategy")
         return {
             "status": "NO_TRADE",
             "reason": f"IV Percentile too low ({iv_data['iv_percentile']}% < {MIN_IV_PERCENTILE_FOR_SELLING}%)",
@@ -439,12 +415,8 @@ def execute_cash_secured_put(
     trend_data = get_trend_filter(symbol)
     if trend_data["recommendation"] == "AVOID_PUTS":
         logger.warning(f"❌ TREND FILTER BLOCKED: {trend_data['trend']}")
-        logger.warning(
-            "   Per backtest analysis: 100% of losses came from adverse trend entries"
-        )
-        logger.warning(
-            "   Recommendation: Wait for trend reversal or use hedged strategy"
-        )
+        logger.warning("   Per backtest analysis: 100% of losses came from adverse trend entries")
+        logger.warning("   Recommendation: Wait for trend reversal or use hedged strategy")
         return {
             "status": "NO_TRADE",
             "reason": f"Trend filter blocked: {trend_data['trend']} (slope: {trend_data['slope']}%/day)",
@@ -539,9 +511,7 @@ def execute_cash_secured_put(
         logger.info("\n📊 RISK MANAGEMENT (per backtest recommendations):")
         logger.info(f"   ⚠️ STOP LOSS: Close if bid exceeds ${stop_loss_price:.2f}")
         logger.info(f"   📉 Max loss at stop: ${max_loss_dollars:.2f}")
-        logger.info(
-            f"   💰 Max profit: ${premium * 100:.2f} (option expires worthless)"
-        )
+        logger.info(f"   💰 Max profit: ${premium * 100:.2f} (option expires worthless)")
         logger.info(f"   📈 Risk/Reward: 1:{premium / 0.5:.1f} (50% stop)")
 
         return {
@@ -561,9 +531,7 @@ def execute_cash_secured_put(
 
         # Check if it's an insufficient buying power error
         if "insufficient options buying power" in error_str.lower():
-            logger.info(
-                "🔄 CSP blocked by buying power - trying credit spread instead..."
-            )
+            logger.info("🔄 CSP blocked by buying power - trying credit spread instead...")
             try:
                 from scripts.execute_credit_spread import execute_bull_put_spread
 
@@ -581,9 +549,7 @@ def execute_cash_secured_put(
         return try_tradier_fallback(symbol, dry_run)
 
 
-def execute_covered_call(
-    trading_client, options_client, symbol: str, dry_run: bool = False
-):
+def execute_covered_call(trading_client, options_client, symbol: str, dry_run: bool = False):
     """
     Execute a covered call trade.
 
@@ -610,15 +576,11 @@ def execute_covered_call(
 
     shares = int(float(position.qty))
     if shares < 100:
-        logger.warning(
-            f"❌ Only {shares} shares of {symbol}. Need 100+ for covered call."
-        )
+        logger.warning(f"❌ Only {shares} shares of {symbol}. Need 100+ for covered call.")
         return {"status": "NO_TRADE", "reason": f"Insufficient shares ({shares} < 100)"}
 
     contracts = shares // 100
-    logger.info(
-        f"✅ Own {shares} shares of {symbol}. Can sell {contracts} covered call(s)."
-    )
+    logger.info(f"✅ Own {shares} shares of {symbol}. Can sell {contracts} covered call(s).")
 
     # TODO: Implement call option finding similar to put finding
     logger.info("⚠️ Covered call execution not yet implemented")
@@ -651,9 +613,7 @@ def main():
                 trading_client, options_client, args.symbol, args.dry_run
             )
         elif args.strategy == "covered_call":
-            result = execute_covered_call(
-                trading_client, options_client, args.symbol, args.dry_run
-            )
+            result = execute_covered_call(trading_client, options_client, args.symbol, args.dry_run)
         elif args.strategy == "wheel":
             # Wheel = CSP first, then covered call if assigned
             result = execute_cash_secured_put(
@@ -668,9 +628,7 @@ def main():
         logger.info(json.dumps(result, indent=2, default=str))
 
         # Save result
-        result_file = (
-            Path("data") / f"options_trades_{datetime.now().strftime('%Y%m%d')}.json"
-        )
+        result_file = Path("data") / f"options_trades_{datetime.now().strftime('%Y%m%d')}.json"
         result_file.parent.mkdir(exist_ok=True)
 
         # Append to daily trades file

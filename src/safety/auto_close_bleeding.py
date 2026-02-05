@@ -120,9 +120,7 @@ def analyze_positions_for_closure(
 
     # Check 2: Total unrealized loss > 25%
     total_loss = sum(
-        float(p.get("unrealized_pl", 0))
-        for p in positions
-        if float(p.get("unrealized_pl", 0)) < 0
+        float(p.get("unrealized_pl", 0)) for p in positions if float(p.get("unrealized_pl", 0)) < 0
     )
     loss_pct = abs(total_loss) / account_equity if account_equity > 0 else 0
 
@@ -156,9 +154,7 @@ def analyze_positions_for_closure(
 
     # Sort by priority
     priority_order = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2}
-    recommendations.sort(
-        key=lambda r: (priority_order.get(r.priority, 99), r.unrealized_pl)
-    )
+    recommendations.sort(key=lambda r: (priority_order.get(r.priority, 99), r.unrealized_pl))
 
     return recommendations
 
@@ -198,9 +194,7 @@ def get_pdt_safe_close_qty(
         trade_date_str = trade.get("filled_at") or trade.get("created_at") or ""
         if trade_date_str:
             try:
-                trade_date = datetime.fromisoformat(
-                    trade_date_str.replace("Z", "+00:00")
-                ).date()
+                trade_date = datetime.fromisoformat(trade_date_str.replace("Z", "+00:00")).date()
                 if trade_date == today:
                     buys_today += float(trade.get("filled_qty", trade.get("qty", 0)))
             except (ValueError, TypeError, KeyError) as e:
@@ -235,9 +229,7 @@ def execute_auto_close(
     results = []
 
     for rec in recommendations:
-        logger.info(
-            f"{'[DRY RUN] ' if dry_run else ''}Closing {rec.symbol}: {rec.reason}"
-        )
+        logger.info(f"{'[DRY RUN] ' if dry_run else ''}Closing {rec.symbol}: {rec.reason}")
 
         result = {
             "symbol": rec.symbol,
@@ -274,9 +266,7 @@ def save_close_report(
     report_dir = Path("data/reports")
     report_dir.mkdir(parents=True, exist_ok=True)
 
-    report_path = (
-        report_dir / f"auto_close_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-    )
+    report_path = report_dir / f"auto_close_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
 
     report = {
         "generated_at": datetime.now().isoformat(),

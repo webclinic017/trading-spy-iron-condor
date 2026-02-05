@@ -200,9 +200,7 @@ class ADKOrchestratorClient:
             "Return the final JSON summary produced by the orchestrator."
         )
 
-    def _select_root_event(
-        self, events: Iterable[dict[str, Any]]
-    ) -> dict[str, Any] | None:
+    def _select_root_event(self, events: Iterable[dict[str, Any]]) -> dict[str, Any] | None:
         root_name = self.config.root_agent_name
         for event in reversed(list(events)):
             if event.get("author") == root_name and not event.get("partial", False):

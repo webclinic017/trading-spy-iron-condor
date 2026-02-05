@@ -24,9 +24,7 @@ class SentimentScraper:
     def scrape(self, *args, **kwargs) -> dict:
         return {"sentiment": "neutral", "confidence": 0.0}
 
-    async def scrape_all(
-        self, tickers: list[str], *args, **kwargs
-    ) -> dict[str, SentimentResult]:
+    async def scrape_all(self, tickers: list[str], *args, **kwargs) -> dict[str, SentimentResult]:
         """Stub for scrape_all - returns empty results for all tickers."""
         return {ticker: SentimentResult() for ticker in tickers}
 

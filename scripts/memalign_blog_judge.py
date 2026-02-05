@@ -78,9 +78,7 @@ class MemAlignBlogJudge:
         similar_lessons = self.episodic_memory.search(query, top_k=5)
 
         # Extract just the text from lessons (returns tuple of (LessonResult, score))
-        similar_failures = [
-            lesson[0].title for lesson in similar_lessons if lesson[1] > 0.3
-        ]
+        similar_failures = [lesson[0].title for lesson in similar_lessons if lesson[1] > 0.3]
 
         # STEP 2: Build working memory (dynamic context)
         # In full MemAlign, this would be passed to LLM judge
@@ -132,9 +130,7 @@ class MemAlignBlogJudge:
             "something worked",
             "in software development, that's worth noting",
         ]
-        has_bot_slop = any(
-            indicator in content_lower for indicator in bot_slop_indicators
-        )
+        has_bot_slop = any(indicator in content_lower for indicator in bot_slop_indicators)
         no_bot_slop = not has_bot_slop
 
         # Calculate score (0-10)
@@ -158,11 +154,7 @@ class MemAlignBlogJudge:
         if has_bot_slop:
             issues.append("CONTAINS BOT SLOP - remove Thompson stats/mermaid")
 
-        feedback = (
-            "PASS - Good quality"
-            if points >= 8.0
-            else f"FAIL - Issues: {'; '.join(issues)}"
-        )
+        feedback = "PASS - Good quality" if points >= 8.0 else f"FAIL - Issues: {'; '.join(issues)}"
 
         # Add episodic memory context to feedback
         if similar_failures:
@@ -198,9 +190,7 @@ This post received {signal} feedback.
         # Store in episodic memory (LanceDB)
         # Note: LessonsLearnedRAG doesn't expose direct insert, but we can
         # create a lesson file that will be indexed on next reindex
-        feedback_file = Path(
-            f"rag_knowledge/blog_feedback/{signal}_{hash(blog_post)}.md"
-        )
+        feedback_file = Path(f"rag_knowledge/blog_feedback/{signal}_{hash(blog_post)}.md")
         feedback_file.parent.mkdir(parents=True, exist_ok=True)
 
         with open(feedback_file, "w") as f:

@@ -41,12 +41,10 @@ class TestTechnicalScoreCalculation:
             score, indicators = calculate_technical_score(data, symbol="SPY")
             # Should be able to format without error
             _formatted = f"{score:.2f}"  # noqa: F841
-            assert isinstance(
-                score, (int, float)
-            ), f"Score should be numeric, got {type(score)}"
-            assert isinstance(
-                indicators, dict
-            ), f"Indicators should be dict, got {type(indicators)}"
+            assert isinstance(score, (int, float)), f"Score should be numeric, got {type(score)}"
+            assert isinstance(indicators, dict), (
+                f"Indicators should be dict, got {type(indicators)}"
+            )
         except TypeError as e:
             if "Series" in str(e):
                 pytest.fail(f"Technical score returned Series instead of float: {e}")
@@ -106,12 +104,10 @@ class TestMACDCalculation:
         macd, signal, histogram = calculate_macd(prices)
 
         assert isinstance(macd, (int, float)), f"MACD should be float, got {type(macd)}"
-        assert isinstance(
-            signal, (int, float)
-        ), f"Signal should be float, got {type(signal)}"
-        assert isinstance(
-            histogram, (int, float)
-        ), f"Histogram should be float, got {type(histogram)}"
+        assert isinstance(signal, (int, float)), f"Signal should be float, got {type(signal)}"
+        assert isinstance(histogram, (int, float)), (
+            f"Histogram should be float, got {type(histogram)}"
+        )
 
     def test_macd_histogram_equals_difference(self):
         """Histogram should equal MACD minus signal."""
@@ -124,9 +120,9 @@ class TestMACDCalculation:
         macd, signal, histogram = calculate_macd(prices)
 
         expected = macd - signal
-        assert (
-            abs(histogram - expected) < 0.0001
-        ), f"Histogram {histogram} != MACD {macd} - Signal {signal}"
+        assert abs(histogram - expected) < 0.0001, (
+            f"Histogram {histogram} != MACD {macd} - Signal {signal}"
+        )
 
     def test_macd_formattable(self):
         """MACD values should be formattable in f-strings."""
@@ -269,9 +265,7 @@ class TestVolumeRatio:
         hist = pd.DataFrame({"Volume": [1000000 + i * 10000 for i in range(30)]})
         ratio = calculate_volume_ratio(hist)
 
-        assert isinstance(
-            ratio, (int, float)
-        ), f"Volume ratio should be float, got {type(ratio)}"
+        assert isinstance(ratio, (int, float)), f"Volume ratio should be float, got {type(ratio)}"
 
     def test_volume_ratio_positive(self):
         """Volume ratio should be positive."""

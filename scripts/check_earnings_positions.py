@@ -40,9 +40,7 @@ def main():
         print(f"  Quantity:        {alert['qty']}")
         print(f"  Unrealized P/L:  ${alert['unrealized_pl']:.2f}")
         print(f"  Earnings Date:   {alert['earnings_date']}")
-        print(
-            f"  Blackout Period: {alert['blackout_start']} to {alert['blackout_end']}"
-        )
+        print(f"  Blackout Period: {alert['blackout_start']} to {alert['blackout_end']}")
         print(f"  Days to Blackout: {alert['days_to_blackout']}")
         print(f"  Days to Earnings: {alert['days_to_earnings']}")
         print(f"  Status:          {alert['status']}")

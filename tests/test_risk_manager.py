@@ -232,26 +232,20 @@ class TestCashReserveRequirements:
     def test_sufficient_cash_reserve_passes(self, risk_manager):
         """Trade leaving sufficient cash reserve should pass."""
         # $3000 cash, $1000 trade leaves $2000 (40% reserve)
-        check = risk_manager.check_cash_reserve(
-            cash_available=3000.0, trade_cost=1000.0
-        )
+        check = risk_manager.check_cash_reserve(cash_available=3000.0, trade_cost=1000.0)
         assert check.passed is True
         assert "ok" in check.reason.lower()
 
     def test_exactly_minimum_cash_reserve_passes(self, risk_manager):
         """Trade leaving exactly 20% reserve should pass."""
         # $2000 cash, $1000 trade leaves $1000 (20% of $5000)
-        check = risk_manager.check_cash_reserve(
-            cash_available=2000.0, trade_cost=1000.0
-        )
+        check = risk_manager.check_cash_reserve(cash_available=2000.0, trade_cost=1000.0)
         assert check.passed is True
 
     def test_insufficient_cash_reserve_fails(self, risk_manager):
         """Trade leaving insufficient cash reserve should fail."""
         # $1500 cash, $1000 trade leaves $500 (10% reserve)
-        check = risk_manager.check_cash_reserve(
-            cash_available=1500.0, trade_cost=1000.0
-        )
+        check = risk_manager.check_cash_reserve(cash_available=1500.0, trade_cost=1000.0)
         assert check.passed is False
         assert "below minimum" in check.reason.lower()
 
@@ -304,9 +298,7 @@ class TestMaxContractsCalculation:
         # Max by cash = $4000 / $500 = 8 contracts
         # Max by position = $250 (5%) / $500 = 0 contracts (can't afford 1)
         # Result should be min(8, 0, 10) = 0 (position limit too restrictive)
-        max_contracts = risk_manager.get_max_contracts(
-            strike_price=5.0, cash_available=5000.0
-        )
+        max_contracts = risk_manager.get_max_contracts(strike_price=5.0, cash_available=5000.0)
         assert max_contracts == 0
 
     def test_max_contracts_limited_by_cash(self, risk_manager):
@@ -314,9 +306,7 @@ class TestMaxContractsCalculation:
         # $5 strike with only $600 cash
         # Usable cash = $600 * 0.80 = $480
         # Max by cash = $480 / $500 = 0 contracts
-        max_contracts = risk_manager.get_max_contracts(
-            strike_price=5.0, cash_available=600.0
-        )
+        max_contracts = risk_manager.get_max_contracts(strike_price=5.0, cash_available=600.0)
         assert max_contracts == 0
 
     def test_max_contracts_capped_at_ten(self):
@@ -331,18 +321,14 @@ class TestMaxContractsCalculation:
         """Higher strike price requires more collateral (5% max position)."""
         # $10 strike = $1000 collateral per contract
         # Max by position = $250 (5%) / $1000 = 0 contracts (can't afford 1)
-        max_contracts = risk_manager.get_max_contracts(
-            strike_price=10.0, cash_available=5000.0
-        )
+        max_contracts = risk_manager.get_max_contracts(strike_price=10.0, cash_available=5000.0)
         assert max_contracts == 0
 
     def test_max_contracts_insufficient_capital(self, risk_manager):
         """Return 0 when insufficient capital."""
         # $50 strike = $5000 collateral per contract
         # Usable cash = $5000 * 0.80 = $4000 - not enough for 1 contract
-        max_contracts = risk_manager.get_max_contracts(
-            strike_price=50.0, cash_available=5000.0
-        )
+        max_contracts = risk_manager.get_max_contracts(strike_price=50.0, cash_available=5000.0)
         assert max_contracts == 0
 
 
@@ -550,9 +536,7 @@ class TestPhilTownRule1:
         """Test F/SOFI $5 strike CSP with minimum capital."""
         # $5 strike = $500 collateral
         # With only $500, can we trade?
-        max_contracts = conservative_rm.get_max_contracts(
-            strike_price=5.0, cash_available=500.0
-        )
+        max_contracts = conservative_rm.get_max_contracts(strike_price=5.0, cash_available=500.0)
         # Usable cash = $500 * 0.80 = $400
         # Not enough for 1 contract ($500)
         assert max_contracts == 0  # Cannot trade yet

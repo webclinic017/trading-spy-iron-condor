@@ -117,9 +117,7 @@ class OptionsStrategyCoordinator:
         )
 
         if not theta_enabled:
-            logger.info(
-                "Gate 6: Options disabled (set ENABLE_THETA_AUTOMATION=true to enable)"
-            )
+            logger.info("Gate 6: Options disabled (set ENABLE_THETA_AUTOMATION=true to enable)")
             return {"action": "disabled", "reason": "ENABLE_THETA_AUTOMATION not set"}
 
         logger.info("Gate 6: Theta automation ENABLED - executing options strategy")
@@ -257,9 +255,7 @@ class OptionsStrategyCoordinator:
         )
 
         if not iv_options_enabled:
-            logger.info(
-                "Gate 7: IV Options disabled (set ENABLE_IV_OPTIONS=true to enable)"
-            )
+            logger.info("Gate 7: IV Options disabled (set ENABLE_IV_OPTIONS=true to enable)")
             return {"action": "disabled", "reason": "ENABLE_IV_OPTIONS not set"}
 
         results: dict[str, Any] = {
@@ -282,9 +278,7 @@ class OptionsStrategyCoordinator:
             logger.info("Gate 7: OptionsExecutor initialized (paper=%s)", self.paper)
 
             account_equity = self.executor.account_equity
-            options_tickers = os.getenv("OPTIONS_TICKERS", "SPY,QQQ,AAPL,MSFT").split(
-                ","
-            )
+            options_tickers = os.getenv("OPTIONS_TICKERS", "SPY,QQQ,AAPL,MSFT").split(",")
             iv_provider = IVDataProvider()
 
             for ticker in options_tickers:
@@ -298,9 +292,7 @@ class OptionsStrategyCoordinator:
                     else:
                         iv_rank = 50.0
                         iv_percentile = 50.0
-                        logger.warning(
-                            f"IV data unavailable for {ticker}, using neutral defaults"
-                        )
+                        logger.warning(f"IV data unavailable for {ticker}, using neutral defaults")
 
                     # Fetch current stock price from market data
                     stock_price = 100.0  # Default fallback
@@ -312,9 +304,7 @@ class OptionsStrategyCoordinator:
                         if res.data is not None and not res.data.empty:
                             stock_price = float(res.data["Close"].iloc[-1])
                     except Exception as price_err:
-                        logger.warning(
-                            f"Failed to fetch price for {ticker}: {price_err}"
-                        )
+                        logger.warning(f"Failed to fetch price for {ticker}: {price_err}")
 
                     signal = signal_generator.generate_trade_signal(
                         ticker=ticker,
@@ -365,9 +355,7 @@ class OptionsStrategyCoordinator:
                         )
 
                 except Exception as ticker_exc:
-                    logger.warning(
-                        "Gate 7: Failed to process %s: %s", ticker, ticker_exc
-                    )
+                    logger.warning("Gate 7: Failed to process %s: %s", ticker, ticker_exc)
                     results["errors"].append(f"{ticker}: {str(ticker_exc)}")
                     continue
 

@@ -69,9 +69,7 @@ def check_text(text: str, source: str = "input") -> list[dict]:
             end = min(len(text), match.end() + 50)
             context = text[start:end]
 
-            is_allowed = any(
-                re.search(allowed, context) for allowed in ALLOWED_CONTEXTS
-            )
+            is_allowed = any(re.search(allowed, context) for allowed in ALLOWED_CONTEXTS)
 
             if not is_allowed:
                 violations.append(
@@ -130,9 +128,7 @@ def check_file(filepath: Path) -> list[dict]:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Detect anti-manual mandate violations"
-    )
+    parser = argparse.ArgumentParser(description="Detect anti-manual mandate violations")
     parser.add_argument("--file", "-f", type=Path, help="File to check")
     parser.add_argument(
         "--check-commits",
@@ -141,9 +137,7 @@ def main():
         default=0,
         help="Check last N commits",
     )
-    parser.add_argument(
-        "--ci", action="store_true", help="CI mode - exit 1 on violations"
-    )
+    parser.add_argument("--ci", action="store_true", help="CI mode - exit 1 on violations")
 
     args = parser.parse_args()
 
@@ -170,9 +164,7 @@ def main():
 
         if args.ci:
             print("❌ CI FAILED: Anti-manual mandate violations detected")
-            print(
-                "See: rag_knowledge/lessons_learned/ll_017_anti_manual_violation_dec12.md"
-            )
+            print("See: rag_knowledge/lessons_learned/ll_017_anti_manual_violation_dec12.md")
             sys.exit(1)
     else:
         print("✅ No anti-manual violations detected")

@@ -229,9 +229,7 @@ class ModelSelector:
         """
         complexity = TASK_COMPLEXITY_MAP.get(task_type.lower())
         if complexity is None:
-            logger.warning(
-                f"Unknown task type '{task_type}', defaulting to MEDIUM complexity"
-            )
+            logger.warning(f"Unknown task type '{task_type}', defaulting to MEDIUM complexity")
             return TaskComplexity.MEDIUM
         return complexity
 
@@ -343,9 +341,7 @@ class ModelSelector:
 
         # Budget-aware selection
         budget_remaining = self.daily_budget - self.daily_spend
-        budget_pct = (
-            budget_remaining / self.daily_budget if self.daily_budget > 0 else 0
-        )
+        budget_pct = budget_remaining / self.daily_budget if self.daily_budget > 0 else 0
 
         # Check if OpenRouter is available (required for cost-optimized models)
         openrouter_available = bool(os.getenv("OPENROUTER_API_KEY"))
@@ -496,9 +492,7 @@ class ModelSelector:
             "daily_budget": self.daily_budget,
             "daily_remaining": self.daily_budget - self.daily_spend,
             "daily_pct_used": (
-                (self.daily_spend / self.daily_budget * 100)
-                if self.daily_budget > 0
-                else 0
+                (self.daily_spend / self.daily_budget * 100) if self.daily_budget > 0 else 0
             ),
             "monthly_spent": self.monthly_spend,
             "monthly_budget": self.monthly_budget,

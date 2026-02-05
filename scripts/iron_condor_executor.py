@@ -32,9 +32,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Constants
@@ -48,7 +46,6 @@ IC_ENTRIES_FILE = Path(__file__).parent.parent / "data" / "ic_entries.json"
 def get_trading_client():
     """Get Alpaca trading client."""
     from alpaca.trading.client import TradingClient
-
     from src.utils.alpaca_client import get_alpaca_credentials
 
     api_key, secret = get_alpaca_credentials()
@@ -83,9 +80,7 @@ def check_position_limit(client) -> bool:
     """Check if we're under the position limit."""
     try:
         positions = client.get_all_positions()
-        spy_options = [
-            p for p in positions if p.symbol.startswith("SPY") and len(p.symbol) > 5
-        ]
+        spy_options = [p for p in positions if p.symbol.startswith("SPY") and len(p.symbol) > 5]
         ic_count = len(spy_options) // 4
 
         if ic_count >= MAX_POSITIONS:
@@ -109,15 +104,11 @@ def check_buying_power(client, max_risk: float) -> bool:
         # Max risk should be <= 5% of equity
         max_allowed_risk = equity * POSITION_SIZE_PCT
         if max_risk > max_allowed_risk:
-            logger.warning(
-                f"Risk too high: ${max_risk:.0f} > ${max_allowed_risk:.0f} (5%)"
-            )
+            logger.warning(f"Risk too high: ${max_risk:.0f} > ${max_allowed_risk:.0f} (5%)")
             return False
 
         if buying_power < max_risk:
-            logger.warning(
-                f"Insufficient buying power: ${buying_power:.0f} < ${max_risk:.0f}"
-            )
+            logger.warning(f"Insufficient buying power: ${buying_power:.0f} < ${max_risk:.0f}")
             return False
 
         logger.info(f"Buying power check passed: ${buying_power:,.0f} available")
@@ -163,9 +154,7 @@ def check_github_approval(issue_number: int) -> tuple[bool, str]:
         return True, "auto"
 
 
-def build_option_symbol(
-    underlying: str, expiry: str, strike: float, opt_type: str
-) -> str:
+def build_option_symbol(underlying: str, expiry: str, strike: float, opt_type: str) -> str:
     """Build OCC option symbol."""
     exp_formatted = expiry.replace("-", "")[2:]  # YYMMDD
     strike_str = f"{int(strike * 1000):08d}"

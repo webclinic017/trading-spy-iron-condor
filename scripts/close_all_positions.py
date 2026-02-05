@@ -9,9 +9,7 @@ This script closes EVERYTHING - use with caution!
 import os
 import sys
 
-api_key = os.environ.get("ALPACA_API_KEY") or os.environ.get(
-    "ALPACA_PAPER_TRADING_30K_API_KEY"
-)
+api_key = os.environ.get("ALPACA_API_KEY") or os.environ.get("ALPACA_PAPER_TRADING_30K_API_KEY")
 api_secret = os.environ.get("ALPACA_SECRET_KEY") or os.environ.get(
     "ALPACA_PAPER_TRADING_30K_API_SECRET"
 )
@@ -65,9 +63,7 @@ for pos in positions:
     print(f"\nClosing [{pos_type}] {symbol}...")
     try:
         result = client.close_position(symbol)
-        print(
-            f"  ✅ SUCCESS - Order ID: {result.id if hasattr(result, 'id') else 'N/A'}"
-        )
+        print(f"  ✅ SUCCESS - Order ID: {result.id if hasattr(result, 'id') else 'N/A'}")
         closed += 1
     except Exception as e:
         print(f"  ❌ FAILED: {e}")

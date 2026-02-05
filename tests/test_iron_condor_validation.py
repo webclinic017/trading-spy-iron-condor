@@ -44,12 +44,8 @@ class TestIronCondorValidation:
             return
 
         # Count puts and calls
-        puts = [
-            p for p in positions if isinstance(p, dict) and "P" in p.get("symbol", "")
-        ]
-        calls = [
-            p for p in positions if isinstance(p, dict) and "C" in p.get("symbol", "")
-        ]
+        puts = [p for p in positions if isinstance(p, dict) and "P" in p.get("symbol", "")]
+        calls = [p for p in positions if isinstance(p, dict) and "C" in p.get("symbol", "")]
 
         # If we have OPTIONS positions at all, validate balance
         if puts or calls:
@@ -202,17 +198,17 @@ class TestIronCondorCloseValidation:
         )
 
         # Must use OptionLegRequest for MLeg legs
-        assert (
-            "OptionLegRequest" in content
-        ), "manage_iron_condor_positions.py MUST use OptionLegRequest for MLeg legs."
+        assert "OptionLegRequest" in content, (
+            "manage_iron_condor_positions.py MUST use OptionLegRequest for MLeg legs."
+        )
 
         # Should NOT have individual leg close orders
         # The old pattern was: for leg in ic["legs"]: client.submit_order(single_leg)
         # Note: We check that the close function doesn't iterate legs for individual orders
         # The fix uses MLeg which bundles all legs into one order
-        assert (
-            "MLeg close order" in content or "MLeg (multi-leg) order" in content
-        ), "manage_iron_condor_positions.py should document MLeg close usage."
+        assert "MLeg close order" in content or "MLeg (multi-leg) order" in content, (
+            "manage_iron_condor_positions.py should document MLeg close usage."
+        )
 
 
 class TestExecutionVerification:
@@ -237,6 +233,6 @@ class TestExecutionVerification:
         )
 
         # Should use proper Alpaca API
-        assert (
-            "submit_order" in content
-        ), "close_excess_spreads.py should use Alpaca submit_order() for options."
+        assert "submit_order" in content, (
+            "close_excess_spreads.py should use Alpaca submit_order() for options."
+        )

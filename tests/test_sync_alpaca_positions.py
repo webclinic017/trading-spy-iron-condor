@@ -178,9 +178,9 @@ class TestUpdateSystemStatePositions:
         positions = state.get("performance", {}).get("open_positions", [])
         positions_count = state.get("account", {}).get("positions_count", 0)
 
-        assert (
-            len(positions) == positions_count
-        ), f"positions_count ({positions_count}) doesn't match actual positions ({len(positions)})"
+        assert len(positions) == positions_count, (
+            f"positions_count ({positions_count}) doesn't match actual positions ({len(positions)})"
+        )
 
     def test_none_alpaca_data_preserves_positions(self, temp_state_file):
         """When alpaca_data is None (no API keys), positions should be preserved."""
@@ -204,9 +204,7 @@ class TestUpdateSystemStatePositions:
 
         # Positions should be preserved
         positions = state.get("performance", {}).get("open_positions", [])
-        assert (
-            len(positions) == 1
-        ), "Positions should be preserved when alpaca_data is None"
+        assert len(positions) == 1, "Positions should be preserved when alpaca_data is None"
         assert positions[0]["symbol"] == "SPY"
 
     def test_position_with_quantity_field(self, temp_state_file):
@@ -336,9 +334,7 @@ class TestPositionFieldMapping:
     def temp_state_file(self, tmp_path):
         state_file = tmp_path / "data" / "system_state.json"
         state_file.parent.mkdir(parents=True)
-        state_file.write_text(
-            json.dumps({"meta": {}, "account": {}, "performance": {}})
-        )
+        state_file.write_text(json.dumps({"meta": {}, "account": {}, "performance": {}}))
         return state_file
 
     def test_all_position_fields_mapped(self, temp_state_file):

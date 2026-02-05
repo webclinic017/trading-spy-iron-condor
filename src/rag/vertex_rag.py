@@ -34,9 +34,7 @@ RAG_CORPUS_DESCRIPTION = (
 
 # 2026 Best Practices Configuration
 # Per Google Cloud docs: https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/use-embedding-models
-EMBEDDING_MODEL = (
-    "publishers/google/models/text-embedding-004"  # 768 dimensions, latest GA model
-)
+EMBEDDING_MODEL = "publishers/google/models/text-embedding-004"  # 768 dimensions, latest GA model
 CHUNK_SIZE = 512  # Optimal for financial documents
 CHUNK_OVERLAP = 100  # 20% overlap for context continuity
 SIMILARITY_TOP_K = 5  # Retrieve 3-5 docs per best practices
@@ -97,17 +95,13 @@ class VertexRAG:
             return project_id
 
         # Try to extract from service account JSON
-        sa_key = os.getenv("GCP_SA_KEY") or os.getenv(
-            "GOOGLE_APPLICATION_CREDENTIALS_JSON"
-        )
+        sa_key = os.getenv("GCP_SA_KEY") or os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
         if sa_key:
             try:
                 sa_data = json.loads(sa_key)
                 project_id = sa_data.get("project_id")
                 if project_id:
-                    logger.info(
-                        f"Extracted project ID from service account: {project_id}"
-                    )
+                    logger.info(f"Extracted project ID from service account: {project_id}")
                     return project_id
             except (json.JSONDecodeError, TypeError):
                 pass
@@ -120,9 +114,7 @@ class VertexRAG:
                     sa_data = json.load(f)
                     project_id = sa_data.get("project_id")
                     if project_id:
-                        logger.info(
-                            f"Extracted project ID from credentials file: {project_id}"
-                        )
+                        logger.info(f"Extracted project ID from credentials file: {project_id}")
                         return project_id
             except (json.JSONDecodeError, OSError):
                 pass
@@ -178,9 +170,7 @@ class VertexRAG:
             except (AttributeError, TypeError):
                 # Fallback for older SDK versions
                 embedding_model_config = None
-                logger.warning(
-                    "EmbeddingModelConfig not available, using default embedding"
-                )
+                logger.warning("EmbeddingModelConfig not available, using default embedding")
 
             # Create corpus with embedding config if available
             if embedding_model_config:
@@ -225,11 +215,7 @@ class VertexRAG:
         try:
             # Create trade document
             ts = timestamp or datetime.now(timezone.utc).isoformat()
-            outcome = (
-                "profit"
-                if (pnl or 0) > 0
-                else ("loss" if (pnl or 0) < 0 else "breakeven")
-            )
+            outcome = "profit" if (pnl or 0) > 0 else ("loss" if (pnl or 0) < 0 else "breakeven")
 
             trade_text = f"""
 Trade Record
@@ -255,14 +241,10 @@ at ${price:.2f} using the {strategy} strategy resulted in a
             from vertexai.preview import rag
 
             # Create a unique document ID for this trade
-            trade_id = f"trade_{symbol}_{ts[:10]}_{ts[11:19].replace(':', '')}".replace(
-                "-", ""
-            )
+            trade_id = f"trade_{symbol}_{ts[:10]}_{ts[11:19].replace(':', '')}".replace("-", "")
 
             # Write to temporary file for upload
-            with tempfile.NamedTemporaryFile(
-                mode="w", suffix=".txt", delete=False
-            ) as f:
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
                 f.write(trade_text)
                 temp_path = f.name
 
@@ -330,9 +312,7 @@ Date: {datetime.now(timezone.utc).strftime("%Y-%m-%d")}
 {content}
 """
             # Write to temporary file for upload
-            with tempfile.NamedTemporaryFile(
-                mode="w", suffix=".txt", delete=False
-            ) as f:
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
                 f.write(lesson_text)
                 temp_path = f.name
 

@@ -56,9 +56,7 @@ def analyze_100k_patterns(trades):
                     underlying = symbol[:i]
                     break
             if underlying:
-                patterns["underlyings"][underlying] = (
-                    patterns["underlyings"].get(underlying, 0) + 1
-                )
+                patterns["underlyings"][underlying] = patterns["underlyings"].get(underlying, 0) + 1
             patterns["options_trades"].append(trade)
         else:
             patterns["underlyings"][symbol] = patterns["underlyings"].get(symbol, 0) + 1
@@ -96,15 +94,11 @@ def compare_strategies():
     print(f"Stock trades: {len(patterns_100k['stock_trades'])}")
 
     print("\nUnderlyings traded (by frequency):")
-    for underlying, count in sorted(
-        patterns_100k["underlyings"].items(), key=lambda x: -x[1]
-    )[:10]:
+    for underlying, count in sorted(patterns_100k["underlyings"].items(), key=lambda x: -x[1])[:10]:
         print(f"  {underlying}: {count} trades")
 
     print("\nStrategies used:")
-    for strategy, count in sorted(
-        patterns_100k["strategies"].items(), key=lambda x: -x[1]
-    ):
+    for strategy, count in sorted(patterns_100k["strategies"].items(), key=lambda x: -x[1]):
         print(f"  {strategy}: {count}")
 
     # Load current $5K state
@@ -119,9 +113,7 @@ def compare_strategies():
         positions = current_state.get("positions", [])
 
         print(f"Equity: ${paper.get('equity', 0):,.2f}")
-        print(
-            f"Total P/L: ${paper.get('total_pl', 0):,.2f} ({paper.get('total_pl_pct', 0)}%)"
-        )
+        print(f"Total P/L: ${paper.get('total_pl', 0):,.2f} ({paper.get('total_pl_pct', 0)}%)")
         print(f"Positions: {len(positions)}")
 
         print("\nCurrent positions:")
@@ -159,9 +151,7 @@ def compare_strategies():
             "Earnings": "Avoided",
         },
         "$5K Current": {
-            "Underlyings": (
-                list(underlyings_5k.keys()) if current_state else ["Unknown"]
-            ),
+            "Underlyings": (list(underlyings_5k.keys()) if current_state else ["Unknown"]),
             "Strategy": "Bull put spreads on SPY",
             "Position Sizing": "Multiple spreads",
             "Earnings": "Avoided (after SOFI lesson)",

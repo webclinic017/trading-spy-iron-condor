@@ -30,9 +30,7 @@ class TestDeltaThetaRatio:
     def test_good_ratio_passes(self):
         """Delta/Theta > 3:1 should pass."""
         # Delta 0.45 = $45 per $1 move, Theta $0.10/day = ratio 4.5
-        result = validate_delta_theta_ratio(
-            delta=0.45, theta=-0.10, contract_price=2.50
-        )
+        result = validate_delta_theta_ratio(delta=0.45, theta=-0.10, contract_price=2.50)
         assert result["is_valid"] is True
         assert result["ratio"] >= MIN_DELTA_THETA_RATIO
         assert result["ratio_ok"] is True
@@ -41,18 +39,14 @@ class TestDeltaThetaRatio:
     def test_bad_ratio_fails(self):
         """Delta/Theta < 3:1 should fail."""
         # Delta 0.20 = $20 per $1 move, Theta $0.15/day = ratio 1.33
-        result = validate_delta_theta_ratio(
-            delta=0.20, theta=-0.15, contract_price=2.50
-        )
+        result = validate_delta_theta_ratio(delta=0.20, theta=-0.15, contract_price=2.50)
         assert result["ratio_ok"] is False
         assert "Low delta/theta ratio" in result["warnings"][0]
 
     def test_high_decay_percentage_fails(self):
         """Theta > 10% of contract price should fail."""
         # Contract $1.00, Theta $0.20/day = 20% decay
-        result = validate_delta_theta_ratio(
-            delta=0.50, theta=-0.20, contract_price=1.00
-        )
+        result = validate_delta_theta_ratio(delta=0.50, theta=-0.20, contract_price=1.00)
         assert result["decay_ok"] is False
         assert result["theta_decay_pct"] == 20.0
         assert "High daily decay" in str(result["warnings"])
@@ -60,9 +54,7 @@ class TestDeltaThetaRatio:
     def test_acceptable_decay_passes(self):
         """Theta < 10% of contract price should pass."""
         # Contract $5.00, Theta $0.10/day = 2% decay
-        result = validate_delta_theta_ratio(
-            delta=0.50, theta=-0.10, contract_price=5.00
-        )
+        result = validate_delta_theta_ratio(delta=0.50, theta=-0.10, contract_price=5.00)
         assert result["decay_ok"] is True
         assert result["theta_decay_pct"] == 2.0
 
@@ -74,9 +66,7 @@ class TestDeltaThetaRatio:
 
     def test_negative_theta_handled(self):
         """Negative theta (standard format) should work."""
-        result = validate_delta_theta_ratio(
-            delta=0.45, theta=-0.10, contract_price=2.50
-        )
+        result = validate_delta_theta_ratio(delta=0.45, theta=-0.10, contract_price=2.50)
         assert result["theta"] == -0.10
         assert result["ratio"] > 0
 

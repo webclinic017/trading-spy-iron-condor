@@ -273,9 +273,7 @@ def download(
     pd = _get_pandas()
     logger.warning(f"Returning empty DataFrame for {tickers}")
     if pd:
-        return pd.DataFrame(
-            columns=["Open", "High", "Low", "Close", "Volume", "Adj Close"]
-        )
+        return pd.DataFrame(columns=["Open", "High", "Low", "Close", "Volume", "Adj Close"])
     return {}
 
 

@@ -89,13 +89,9 @@ def find_stub_functions(file_path: Path) -> list[str]:
                             f"{file_path}:{node.lineno}: {node.name}() returns hardcoded {body.value.value!r}"
                         )
                     elif isinstance(body.value, ast.Dict) and not body.value.keys:
-                        stubs.append(
-                            f"{file_path}:{node.lineno}: {node.name}() returns empty dict"
-                        )
+                        stubs.append(f"{file_path}:{node.lineno}: {node.name}() returns empty dict")
                     elif isinstance(body.value, ast.List) and not body.value.elts:
-                        stubs.append(
-                            f"{file_path}:{node.lineno}: {node.name}() returns empty list"
-                        )
+                        stubs.append(f"{file_path}:{node.lineno}: {node.name}() returns empty list")
     return stubs
 
 
@@ -104,9 +100,7 @@ def find_empty_directories(root: Path) -> list[str]:
     empty_dirs = []
     for dirpath, dirnames, filenames in os.walk(root):
         # Skip hidden directories and __pycache__
-        dirnames[:] = [
-            d for d in dirnames if not d.startswith(".") and d != "__pycache__"
-        ]
+        dirnames[:] = [d for d in dirnames if not d.startswith(".") and d != "__pycache__"]
 
         py_files = [f for f in filenames if f.endswith(".py")]
         if py_files == ["__init__.py"]:
@@ -145,9 +139,7 @@ def find_broken_imports(file_path: Path, src_root: Path) -> list[str]:
             if node.module.startswith("src."):
                 module_path = node.module.replace(".", "/") + ".py"
                 full_path = src_root.parent / module_path
-                pkg_path = (
-                    src_root.parent / node.module.replace(".", "/") / "__init__.py"
-                )
+                pkg_path = src_root.parent / node.module.replace(".", "/") / "__init__.py"
 
                 if not full_path.exists() and not pkg_path.exists():
                     # Check if it's a package
@@ -214,10 +206,7 @@ def find_unused_files(src_root: Path) -> list[str]:
             try:
                 with open(file_path) as f:
                     content = f.read()
-                    if (
-                        '__name__ == "__main__"' in content
-                        or "__name__ == '__main__'" in content
-                    ):
+                    if '__name__ == "__main__"' in content or "__name__ == '__main__'" in content:
                         continue  # It's an executable script
             except Exception:
                 pass

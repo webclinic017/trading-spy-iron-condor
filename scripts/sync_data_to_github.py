@@ -99,15 +99,11 @@ def get_file_sha(path: str, token: str) -> Optional[str]:
     elif status == 404:
         return None  # File doesn't exist yet
     else:
-        print(
-            f"  Warning: Could not get SHA for {path}: {data.get('message', 'Unknown error')}"
-        )
+        print(f"  Warning: Could not get SHA for {path}: {data.get('message', 'Unknown error')}")
         return None
 
 
-def sync_file(
-    local_path: str, token: str, commit_message: Optional[str] = None
-) -> bool:
+def sync_file(local_path: str, token: str, commit_message: Optional[str] = None) -> bool:
     """
     Sync a local file to GitHub using the Contents API.
 
@@ -167,18 +163,12 @@ def sync_file(
             status, response = api_request("PUT", endpoint, token, data)
             if status in (200, 201):
                 commit_sha = response.get("commit", {}).get("sha", "unknown")[:7]
-                print(
-                    f"  ✅ Synced successfully after conflict resolution (commit: {commit_sha})"
-                )
+                print(f"  ✅ Synced successfully after conflict resolution (commit: {commit_sha})")
                 return True
-        print(
-            f"  ❌ Failed to resolve conflict: {response.get('message', 'Unknown error')}"
-        )
+        print(f"  ❌ Failed to resolve conflict: {response.get('message', 'Unknown error')}")
         return False
     else:
-        print(
-            f"  ❌ Sync failed: HTTP {status} - {response.get('message', 'Unknown error')}"
-        )
+        print(f"  ❌ Sync failed: HTTP {status} - {response.get('message', 'Unknown error')}")
         return False
 
 

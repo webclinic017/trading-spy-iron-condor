@@ -87,9 +87,7 @@ class ScheduledTask:
 
     def next_run(self, now: datetime) -> datetime:
         """Calculate next run time."""
-        target = now.replace(
-            hour=self.hour, minute=self.minute, second=0, microsecond=0
-        )
+        target = now.replace(hour=self.hour, minute=self.minute, second=0, microsecond=0)
 
         # If past today's target, start from tomorrow
         if now >= target:
@@ -143,9 +141,7 @@ class Scheduler:
                 state = json.loads(STATE_FILE.read_text())
                 for task in self.tasks:
                     if task.name in state.get("last_runs", {}):
-                        task.last_run = datetime.fromisoformat(
-                            state["last_runs"][task.name]
-                        )
+                        task.last_run = datetime.fromisoformat(state["last_runs"][task.name])
             except (json.JSONDecodeError, KeyError):
                 pass
 
@@ -153,9 +149,7 @@ class Scheduler:
         """Save scheduler state to file."""
         state = {
             "last_runs": {
-                task.name: task.last_run.isoformat()
-                for task in self.tasks
-                if task.last_run
+                task.name: task.last_run.isoformat() for task in self.tasks if task.last_run
             },
             "updated": datetime.now(ET).isoformat(),
         }
@@ -192,9 +186,7 @@ class Scheduler:
                 "timestamp": datetime.now(ET).isoformat(),
             }
 
-            print(
-                f"[Scheduler] Task {task.name} completed with status: {result['status']}"
-            )
+            print(f"[Scheduler] Task {task.name} completed with status: {result['status']}")
             return result
 
         except Exception as e:
@@ -296,9 +288,7 @@ async def main():
     parser.add_argument("--next", action="store_true", help="Show next scheduled task")
     parser.add_argument("--status", action="store_true", help="Show scheduler status")
     parser.add_argument("--trigger", type=str, help="Manually trigger a mode")
-    parser.add_argument(
-        "--interval", type=int, default=30, help="Check interval in seconds"
-    )
+    parser.add_argument("--interval", type=int, default=30, help="Check interval in seconds")
 
     args = parser.parse_args()
 

@@ -42,9 +42,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
         logging.StreamHandler(),
-        logging.FileHandler(
-            f"logs/credit_spread_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
-        ),
+        logging.FileHandler(f"logs/credit_spread_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"),
     ],
 )
 logger = logging.getLogger(__name__)
@@ -232,10 +230,7 @@ def find_bull_put_spread(
                 actual_width = short_put["strike"] - long_put["strike"]
 
                 # Allow some tolerance on spread width
-                if (
-                    actual_width < spread_width * 0.8
-                    or actual_width > spread_width * 1.5
-                ):
+                if actual_width < spread_width * 0.8 or actual_width > spread_width * 1.5:
                     continue
 
                 # Skip if delta is outside target range
@@ -282,9 +277,7 @@ def find_bull_put_spread(
     logger.info(f"   Net Credit: ${best_spread['credit_received']:.2f}")
     logger.info(f"   Max Loss: ${best_spread['max_loss'] * 100:.2f}")
     logger.info(f"   Collateral: ${best_spread['collateral_required']:.2f}")
-    logger.info(
-        f"   Expiration: {best_spread['expiration']} ({best_spread['dte']} DTE)"
-    )
+    logger.info(f"   Expiration: {best_spread['expiration']} ({best_spread['dte']} DTE)")
 
     return best_spread
 
@@ -362,9 +355,7 @@ def check_earnings_blackout(symbol: str) -> tuple[bool, str]:
     return False, ""
 
 
-def check_position_limit(
-    trading_client, collateral_required: float
-) -> tuple[bool, str]:
+def check_position_limit(trading_client, collateral_required: float) -> tuple[bool, str]:
     """
     Check if proposed trade violates 5% per-position limit (CLAUDE.md mandate).
     Returns (is_blocked, reason).
@@ -436,14 +427,10 @@ def execute_bull_put_spread(
     rag = LessonsLearnedRAG()
 
     # Check for strategy-specific failures
-    strategy_lessons = rag.search(
-        "credit spread bull put spread failures losses", top_k=3
-    )
+    strategy_lessons = rag.search("credit spread bull put spread failures losses", top_k=3)
     for lesson, score in strategy_lessons:
         if lesson.severity == "CRITICAL":
-            logger.error(
-                f"BLOCKED by RAG: {lesson.title} (severity: {lesson.severity})"
-            )
+            logger.error(f"BLOCKED by RAG: {lesson.title} (severity: {lesson.severity})")
             logger.error(f"Prevention: {lesson.prevention}")
             return {
                 "status": "BLOCKED_BY_RAG",
@@ -455,9 +442,7 @@ def execute_bull_put_spread(
     ticker_lessons = rag.search(f"{symbol} trading failures options losses", top_k=3)
     for lesson, score in ticker_lessons:
         if lesson.severity == "CRITICAL":
-            logger.error(
-                f"BLOCKED by RAG: {lesson.title} (severity: {lesson.severity})"
-            )
+            logger.error(f"BLOCKED by RAG: {lesson.title} (severity: {lesson.severity})")
             logger.error(f"Prevention: {lesson.prevention}")
             return {
                 "status": "BLOCKED_BY_RAG",
@@ -502,9 +487,7 @@ def execute_bull_put_spread(
     # CHECK 2: 5% per-position limit (LL-232 fix - Jan 19, 2026)
     # CRITICAL: This check was missing! The workflow has it, but when daily-trading.yml
     # calls this script directly, the workflow check is bypassed. Now enforced here.
-    is_blocked, limit_reason = check_position_limit(
-        trading_client, spread["collateral_required"]
-    )
+    is_blocked, limit_reason = check_position_limit(trading_client, spread["collateral_required"])
     if is_blocked:
         logger.error(f"5% LIMIT VIOLATION: {limit_reason}")
         return {
@@ -594,9 +577,7 @@ def execute_bull_put_spread(
         if long_result.status.value in ["rejected", "canceled", "expired", "suspended"]:
             logger.error(f"❌ LONG LEG FAILED: {long_result.status}")
             logger.error("   ⚠️  WARNING: Short leg is open without protection!")
-            logger.error(
-                "   ⚠️  MANUAL ACTION REQUIRED: Cancel short leg or buy protective put!"
-            )
+            logger.error("   ⚠️  MANUAL ACTION REQUIRED: Cancel short leg or buy protective put!")
 
             # Try to cancel the short leg to prevent naked short exposure
             try:
@@ -612,9 +593,7 @@ def execute_bull_put_spread(
                 }
             except Exception as cancel_error:
                 logger.error(f"   ❌ Could not cancel short leg: {cancel_error}")
-                logger.error(
-                    "   🚨 ORPHAN SHORT POSITION CREATED - MANUAL INTERVENTION REQUIRED!"
-                )
+                logger.error("   🚨 ORPHAN SHORT POSITION CREATED - MANUAL INTERVENTION REQUIRED!")
                 return {
                     "status": "ORPHAN_SHORT_CREATED",
                     "reason": f"Long failed, could not cancel short: {cancel_error}",
@@ -651,12 +630,8 @@ def execute_bull_put_spread(
                 logger.info("   ✅ VALIDATED: Both spread legs confirmed in Alpaca!")
                 validation_status = "passed"
             elif has_short and not has_long:
-                logger.error(
-                    "   ❌ ORPHAN DETECTED: Short leg exists but long leg missing!"
-                )
-                logger.error(
-                    "   🚨 ACTION REQUIRED: Buy protective put or close short!"
-                )
+                logger.error("   ❌ ORPHAN DETECTED: Short leg exists but long leg missing!")
+                logger.error("   🚨 ACTION REQUIRED: Buy protective put or close short!")
                 return {
                     "status": "ORPHAN_DETECTED",
                     "reason": "Short leg filled but long leg not in positions",
@@ -719,9 +694,7 @@ def main():
         logger.info(json.dumps(result, indent=2, default=str))
 
         # Save result
-        result_file = (
-            Path("data") / f"credit_spreads_{datetime.now().strftime('%Y%m%d')}.json"
-        )
+        result_file = Path("data") / f"credit_spreads_{datetime.now().strftime('%Y%m%d')}.json"
         trades = []
         if result_file.exists():
             with open(result_file) as f:
@@ -739,11 +712,7 @@ def main():
 
         logger.info(f"\n💾 Saved to {result_file}")
 
-        return (
-            0
-            if result.get("status") in ["ORDER_SUBMITTED", "DRY_RUN", "NO_TRADE"]
-            else 1
-        )
+        return 0 if result.get("status") in ["ORDER_SUBMITTED", "DRY_RUN", "NO_TRADE"] else 1
 
     except Exception as e:
         logger.exception(f"❌ Fatal error: {e}")

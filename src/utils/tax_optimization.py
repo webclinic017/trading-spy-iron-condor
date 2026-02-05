@@ -75,9 +75,7 @@ class TaxOptimizer:
 
     def __init__(self, data_dir: Path = Path("data")):
         self.data_dir = data_dir
-        self.tax_lots: dict[str, list[TaxLot]] = defaultdict(
-            list
-        )  # symbol -> list of lots
+        self.tax_lots: dict[str, list[TaxLot]] = defaultdict(list)  # symbol -> list of lots
         self.tax_events: list[TaxEvent] = []
         self.day_trades: list[dict[str, Any]] = []  # Track day trades for PDT rule
         self.wash_sale_tracker: dict[str, list[datetime]] = defaultdict(
@@ -311,15 +309,9 @@ class TaxOptimizer:
             e.gain_loss for e in tax_events if not e.is_long_term and e.gain_loss > 0
         )
         short_term_losses = abs(
-            sum(
-                e.gain_loss
-                for e in tax_events
-                if not e.is_long_term and e.gain_loss < 0
-            )
+            sum(e.gain_loss for e in tax_events if not e.is_long_term and e.gain_loss < 0)
         )
-        long_term_gains = sum(
-            e.gain_loss for e in tax_events if e.is_long_term and e.gain_loss > 0
-        )
+        long_term_gains = sum(e.gain_loss for e in tax_events if e.is_long_term and e.gain_loss > 0)
         long_term_losses = abs(
             sum(e.gain_loss for e in tax_events if e.is_long_term and e.gain_loss < 0)
         )
@@ -394,8 +386,7 @@ class TaxOptimizer:
         recent_losses = [
             e
             for e in self.tax_events
-            if e.gain_loss < 0
-            and (datetime.now() - e.sale_date).days <= WASH_SALE_WINDOW_DAYS
+            if e.gain_loss < 0 and (datetime.now() - e.sale_date).days <= WASH_SALE_WINDOW_DAYS
         ]
         if recent_losses:
             recommendations.append(
@@ -405,9 +396,7 @@ class TaxOptimizer:
             )
 
         # Check holding periods for long-term qualification
-        open_symbols = {
-            pos.get("symbol") for pos in open_positions if pos.get("symbol")
-        }
+        open_symbols = {pos.get("symbol") for pos in open_positions if pos.get("symbol")}
         for symbol in open_symbols:
             if symbol in self.tax_lots:
                 for lot in self.tax_lots[symbol]:
@@ -422,12 +411,8 @@ class TaxOptimizer:
 
         # Tax-loss harvesting opportunities
         if len(self.tax_events) >= 5:
-            year_to_date_gains = sum(
-                e.gain_loss for e in self.tax_events if e.gain_loss > 0
-            )
-            year_to_date_losses = abs(
-                sum(e.gain_loss for e in self.tax_events if e.gain_loss < 0)
-            )
+            year_to_date_gains = sum(e.gain_loss for e in self.tax_events if e.gain_loss > 0)
+            year_to_date_losses = abs(sum(e.gain_loss for e in self.tax_events if e.gain_loss < 0))
             if year_to_date_gains > year_to_date_losses:
                 net_gains = year_to_date_gains - year_to_date_losses
                 recommendations.append(
@@ -455,16 +440,12 @@ class TaxOptimizer:
         # Penalize short-term gains (higher tax rate)
         if not trade_event.is_long_term and trade_event.gain_loss > 0:
             # Reduce reward by tax difference (37% - 20% = 17%)
-            tax_penalty = trade_event.gain_loss * (
-                SHORT_TERM_TAX_RATE - LONG_TERM_TAX_RATE
-            )
+            tax_penalty = trade_event.gain_loss * (SHORT_TERM_TAX_RATE - LONG_TERM_TAX_RATE)
             adjusted_reward = base_reward - tax_penalty
         # Reward long-term gains (lower tax rate)
         elif trade_event.is_long_term and trade_event.gain_loss > 0:
             # Bonus for tax efficiency
-            tax_bonus = trade_event.gain_loss * (
-                SHORT_TERM_TAX_RATE - LONG_TERM_TAX_RATE
-            )
+            tax_bonus = trade_event.gain_loss * (SHORT_TERM_TAX_RATE - LONG_TERM_TAX_RATE)
             adjusted_reward = base_reward + tax_bonus
         # Penalize wash sales (losses can't be deducted)
         elif trade_event.is_wash_sale:
@@ -495,8 +476,7 @@ class TaxOptimizer:
         return {
             "total_trades": len(self.tax_events),
             "total_gains": after_tax["short_term_gains"] + after_tax["long_term_gains"],
-            "total_losses": after_tax["short_term_losses"]
-            + after_tax["long_term_losses"],
+            "total_losses": after_tax["short_term_losses"] + after_tax["long_term_losses"],
             "net_gain_loss": after_tax["gross_return"],
             "short_term_count": sum(1 for e in self.tax_events if not e.is_long_term),
             "long_term_count": sum(1 for e in self.tax_events if e.is_long_term),

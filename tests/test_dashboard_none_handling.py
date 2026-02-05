@@ -188,10 +188,7 @@ class TestDashboardNoneHandling:
             "strategy_health": None,  # Entire nested dict can be None
         }
 
-        ai_summary = (
-            ai_insights.get("summary", "No summary available.")
-            or "No summary available."
-        )
+        ai_summary = ai_insights.get("summary", "No summary available.") or "No summary available."
         ai_health = ai_insights.get("strategy_health", {}) or {}
         ai_emoji = ai_health.get("emoji", "❓") or "❓"
         ai_status = ai_health.get("status", "UNKNOWN") or "UNKNOWN"
@@ -215,9 +212,7 @@ class TestDashboardSmokeTest:
                 generate_world_class_dashboard_enhanced,
                 "generate_world_class_dashboard",
             )
-            assert hasattr(
-                generate_world_class_dashboard_enhanced, "calculate_simple_risk_metrics"
-            )
+            assert hasattr(generate_world_class_dashboard_enhanced, "calculate_simple_risk_metrics")
         except ImportError as e:
             skip(f"Could not import dashboard script: {e}")
             return

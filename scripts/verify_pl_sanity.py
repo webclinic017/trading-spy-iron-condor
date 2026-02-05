@@ -323,9 +323,9 @@ class PLSanityChecker:
                                 )
                             else:
                                 # Fallback for YYYY-MM-DD
-                                trade_date = datetime.strptime(
-                                    trade_date_str, "%Y-%m-%d"
-                                ).replace(tzinfo=timezone.utc)
+                                trade_date = datetime.strptime(trade_date_str, "%Y-%m-%d").replace(
+                                    tzinfo=timezone.utc
+                                )
 
                             # Ensure trade_date has timezone
                             if trade_date.tzinfo is None:
@@ -465,9 +465,7 @@ class PLSanityChecker:
         if day_before_equity == 0:
             return False
 
-        pct_change = abs(
-            (yesterday_equity - day_before_equity) / day_before_equity * 100
-        )
+        pct_change = abs((yesterday_equity - day_before_equity) / day_before_equity * 100)
 
         if pct_change > ANOMALY_PCT_THRESHOLD:
             self.alerts.append(
@@ -619,9 +617,7 @@ class PLSanityChecker:
         # Get current equity
         current_equity = self.get_current_equity()
         if current_equity is None:
-            print(
-                "ERROR: Could not retrieve current equity from Alpaca or system_state.json"
-            )
+            print("ERROR: Could not retrieve current equity from Alpaca or system_state.json")
             return False
 
         self.metrics["current_equity"] = current_equity

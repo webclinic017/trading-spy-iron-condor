@@ -67,16 +67,16 @@ def generate_failure_reflection(
 
     # Generate reflection content based on failure type
     if failure_type == "TRADE_BLOCKED":
-        title = (
-            f"Trade blocked: {symbol or 'unknown'} - {strategy or 'unknown strategy'}"
-        )
+        title = f"Trade blocked: {symbol or 'unknown'} - {strategy or 'unknown strategy'}"
         root_cause = f"Trade was blocked by safety gate. Reason: {error_message}"
         prevention = "Review gate criteria before attempting similar trades. Check for: position limits, buying power, pattern history."
 
     elif failure_type == "ORDER_FAILED":
         title = f"Order execution failed: {symbol or 'unknown'}"
         root_cause = f"Broker rejected order. Error: {error_message}"
-        prevention = "Verify account has sufficient funds. Check symbol is tradeable. Confirm market hours."
+        prevention = (
+            "Verify account has sufficient funds. Check symbol is tradeable. Confirm market hours."
+        )
 
     elif failure_type == "PATTERN_BLOCKED":
         win_rate = context.get("win_rate", 0)
@@ -146,9 +146,7 @@ def save_reflection_to_rag(reflection: dict[str, Any]) -> Optional[str]:
         # Check if similar lesson exists (avoid duplicates)
         # Allow max 3 auto-lessons per failure type per day
         existing = list(
-            LESSONS_DIR.glob(
-                f"auto_{reflection['failure_type'].lower()}_{date_str}*.md"
-            )
+            LESSONS_DIR.glob(f"auto_{reflection['failure_type'].lower()}_{date_str}*.md")
         )
         if len(existing) >= 3:
             logger.info(
@@ -277,16 +275,12 @@ def reflect_on_failure(
 
 
 # Convenience functions for common failure types
-def reflect_trade_blocked(
-    symbol: str, reason: str, strategy: str = None, context: dict = None
-):
+def reflect_trade_blocked(symbol: str, reason: str, strategy: str = None, context: dict = None):
     """Reflect on a blocked trade."""
     return reflect_on_failure("TRADE_BLOCKED", symbol, reason, context, strategy)
 
 
-def reflect_order_failed(
-    symbol: str, error: str, strategy: str = None, context: dict = None
-):
+def reflect_order_failed(symbol: str, error: str, strategy: str = None, context: dict = None):
     """Reflect on a failed order."""
     return reflect_on_failure("ORDER_FAILED", symbol, error, context, strategy)
 

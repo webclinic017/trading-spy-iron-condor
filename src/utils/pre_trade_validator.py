@@ -62,9 +62,7 @@ class PreTradeValidator:
         errors = []
 
         # Check 1: SPY-ONLY mandate (from CLAUDE.md, LL-203, LL-247)
-        base_symbol = (
-            symbol.split("2")[0] if "2" in symbol else symbol
-        )  # Extract base from options
+        base_symbol = symbol.split("2")[0] if "2" in symbol else symbol  # Extract base from options
         if base_symbol not in ALLOWED_TICKERS:
             errors.append(
                 f"BLOCKED: {symbol} violates SPY-ONLY mandate. "

@@ -23,18 +23,18 @@ class TestCoreStrategyParameters:
         from src.strategies.core_strategy import CoreStrategy
 
         strategy = CoreStrategy()
-        assert (
-            strategy.TAKE_PROFIT_PCT == 0.06
-        ), f"TAKE_PROFIT_PCT should be 0.06 (6%), got {strategy.TAKE_PROFIT_PCT}"
+        assert strategy.TAKE_PROFIT_PCT == 0.06, (
+            f"TAKE_PROFIT_PCT should be 0.06 (6%), got {strategy.TAKE_PROFIT_PCT}"
+        )
 
     def test_stop_loss_is_two_percent(self):
         """STOP_LOSS_PCT should be 2%."""
         from src.strategies.core_strategy import CoreStrategy
 
         strategy = CoreStrategy()
-        assert (
-            strategy.STOP_LOSS_PCT == 0.02
-        ), f"STOP_LOSS_PCT should be 0.02 (2%), got {strategy.STOP_LOSS_PCT}"
+        assert strategy.STOP_LOSS_PCT == 0.02, (
+            f"STOP_LOSS_PCT should be 0.02 (2%), got {strategy.STOP_LOSS_PCT}"
+        )
 
     def test_rr_ratio_is_three_to_one(self):
         """R:R ratio should be 3:1 (was 2:1, fixed Jan 6 2026)."""
@@ -53,13 +53,12 @@ class TestCoreStrategyParameters:
 
         # Expected value = (win% * TP) - (loss% * SL)
         expected_value = (
-            win_rate * strategy.TAKE_PROFIT_PCT
-            - (1 - win_rate) * strategy.STOP_LOSS_PCT
+            win_rate * strategy.TAKE_PROFIT_PCT - (1 - win_rate) * strategy.STOP_LOSS_PCT
         )
 
-        assert (
-            expected_value > 0
-        ), f"Expected value at 30% win rate should be positive, got {expected_value}"
+        assert expected_value > 0, (
+            f"Expected value at 30% win rate should be positive, got {expected_value}"
+        )
 
     def test_breakeven_at_twentyfive_percent_win_rate(self):
         """Strategy should break even at 25% win rate (3:1 R:R)."""
@@ -69,14 +68,13 @@ class TestCoreStrategyParameters:
         win_rate = 0.25
 
         expected_value = (
-            win_rate * strategy.TAKE_PROFIT_PCT
-            - (1 - win_rate) * strategy.STOP_LOSS_PCT
+            win_rate * strategy.TAKE_PROFIT_PCT - (1 - win_rate) * strategy.STOP_LOSS_PCT
         )
 
         # Should be approximately 0 (break-even)
-        assert (
-            abs(expected_value) < 0.001
-        ), f"Expected value at 25% win rate should be ~0, got {expected_value}"
+        assert abs(expected_value) < 0.001, (
+            f"Expected value at 25% win rate should be ~0, got {expected_value}"
+        )
 
 
 class TestMACDCalculation:
@@ -108,9 +106,9 @@ class TestMACDCalculation:
         macd_line, signal_line, histogram = strategy._calculate_macd(prices)
 
         expected_histogram = macd_line - signal_line
-        assert (
-            abs(histogram - expected_histogram) < 0.0001
-        ), f"Histogram {histogram} should equal MACD {macd_line} - Signal {signal_line}"
+        assert abs(histogram - expected_histogram) < 0.0001, (
+            f"Histogram {histogram} should equal MACD {macd_line} - Signal {signal_line}"
+        )
 
     def test_signal_line_not_simple_multiplier(self):
         """Signal line should NOT be macd_line * 0.9 (old broken implementation)."""
@@ -129,9 +127,9 @@ class TestMACDCalculation:
         # This is a regression test for the Jan 6 2026 fix
         if len(prices) >= strategy.MACD_SLOW + strategy.MACD_SIGNAL:
             # Only test when we have enough data for proper signal line
-            assert (
-                signal_line != broken_signal or abs(signal_line) < 0.001
-            ), "Signal line appears to use old broken implementation (macd * 0.9)"
+            assert signal_line != broken_signal or abs(signal_line) < 0.001, (
+                "Signal line appears to use old broken implementation (macd * 0.9)"
+            )
 
     def test_macd_with_uptrend_data(self):
         """MACD should be positive in uptrend."""

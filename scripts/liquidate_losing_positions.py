@@ -152,9 +152,7 @@ def main():
         "total_pl_liquidated": total_pl_liquidated,
     }
 
-    output_file = (
-        Path("data") / f"liquidation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-    )
+    output_file = Path("data") / f"liquidation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
     output_file.parent.mkdir(exist_ok=True)
     with open(output_file, "w") as f:
         json.dump(results, f, indent=2)

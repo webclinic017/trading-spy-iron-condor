@@ -17,9 +17,7 @@ from pathlib import Path
 from typing import Optional
 from urllib.parse import urljoin
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Blog and Podcast info
@@ -142,9 +140,7 @@ def discover_all_articles() -> list[dict]:
 def parse_article_content(html: str) -> Optional[str]:
     """Extract main article content from HTML."""
     # Remove scripts and styles
-    html = re.sub(
-        r"<script[^>]*>.*?</script>", "", html, flags=re.DOTALL | re.IGNORECASE
-    )
+    html = re.sub(r"<script[^>]*>.*?</script>", "", html, flags=re.DOTALL | re.IGNORECASE)
     html = re.sub(r"<style[^>]*>.*?</style>", "", html, flags=re.DOTALL | re.IGNORECASE)
 
     # Try to find article content
@@ -164,9 +160,7 @@ def parse_article_content(html: str) -> Optional[str]:
 
     if not content:
         # Fallback: get body content
-        body_match = re.search(
-            r"<body[^>]*>(.*?)</body>", html, re.DOTALL | re.IGNORECASE
-        )
+        body_match = re.search(r"<body[^>]*>(.*?)</body>", html, re.DOTALL | re.IGNORECASE)
         if body_match:
             content = body_match.group(1)
 
@@ -410,9 +404,7 @@ def ingest_podcast(max_episodes: int = 20) -> dict:
         insights = analyze_blog_article(content, episode["title"])
 
         # Save to podcast directory
-        safe_name = (
-            re.sub(r"[^\w\s-]", "", episode["title"])[:50].strip().replace(" ", "_")
-        )
+        safe_name = re.sub(r"[^\w\s-]", "", episode["title"])[:50].strip().replace(" ", "_")
         slug = (
             episode["url"].split("/")[-2]
             if episode["url"].endswith("/")
@@ -460,9 +452,7 @@ def main():
     """Main entry point."""
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Ingest Phil Town blog and podcast to RAG"
-    )
+    parser = argparse.ArgumentParser(description="Ingest Phil Town blog and podcast to RAG")
     parser.add_argument(
         "--max-articles",
         type=int,
@@ -475,9 +465,7 @@ def main():
         default="all",
         help="Source to ingest: blog, podcast, or all (default: all)",
     )
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Show what would be processed"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Show what would be processed")
     args = parser.parse_args()
 
     logger.info("=" * 60)

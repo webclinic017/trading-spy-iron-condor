@@ -262,9 +262,7 @@ class OptionsExecutor:
             )
 
         if shares % 100 != 0:
-            raise ValueError(
-                f"Shares must be multiple of 100 for covered calls. Got {shares}"
-            )
+            raise ValueError(f"Shares must be multiple of 100 for covered calls. Got {shares}")
 
         num_contracts = shares // 100
 
@@ -277,12 +275,7 @@ class OptionsExecutor:
             opt
             for opt in chain
             if self._parse_option_symbol(opt["symbol"])["type"] == "call"
-            and abs(
-                (
-                    self._parse_option_symbol(opt["symbol"])["expiration"]
-                    - target_expiry
-                ).days
-            )
+            and abs((self._parse_option_symbol(opt["symbol"])["expiration"] - target_expiry).days)
             <= 7
         ]
 
@@ -293,9 +286,7 @@ class OptionsExecutor:
         best_option = self._find_option_by_delta(call_options, target_delta)
 
         if not best_option:
-            raise RuntimeError(
-                f"No suitable call option found with delta ~{target_delta}"
-            )
+            raise RuntimeError(f"No suitable call option found with delta ~{target_delta}")
 
         # 4. Calculate IV rank and validate
         iv = best_option.get("implied_volatility", 0) * 100
@@ -330,9 +321,7 @@ class OptionsExecutor:
 
         total_premium = mid_price * num_contracts * 100  # Premium in dollars
         max_profit = total_premium
-        max_risk = float(
-            "inf"
-        )  # Unlimited if stock goes to infinity (covered by shares)
+        max_risk = float("inf")  # Unlimited if stock goes to infinity (covered by shares)
         current_stock_price = float(share_position.current_price)
         breakeven = current_stock_price - (mid_price * 100 / shares)
 
@@ -373,15 +362,9 @@ class OptionsExecutor:
             quantity=num_contracts,
             entry_price=mid_price,
             current_price=mid_price,
-            delta=(
-                best_option["greeks"]["delta"]
-                if best_option.get("greeks")
-                else target_delta
-            ),
+            delta=(best_option["greeks"]["delta"] if best_option.get("greeks") else target_delta),
             gamma=best_option["greeks"]["gamma"] if best_option.get("greeks") else 0,
-            theta=(
-                best_option["greeks"]["theta"] if best_option.get("greeks") else -0.02
-            ),
+            theta=(best_option["greeks"]["theta"] if best_option.get("greeks") else -0.02),
             vega=best_option["greeks"]["vega"] if best_option.get("greeks") else 0,
             expiration_date=parsed["expiration"],
             strike=parsed["strike"],
@@ -404,9 +387,7 @@ class OptionsExecutor:
             "breakeven": breakeven,
             "iv_rank": iv,
             "delta": (
-                best_option["greeks"]["delta"]
-                if best_option.get("greeks")
-                else target_delta
+                best_option["greeks"]["delta"] if best_option.get("greeks") else target_delta
             ),
             "order": order,
             "timestamp": datetime.now().isoformat(),
@@ -452,9 +433,7 @@ class OptionsExecutor:
         width = width or self.SPREAD_WIDTH
         target_delta = target_delta or self.IRON_CONDOR_TARGET_DELTA
 
-        logger.info(
-            f"Executing iron condor: {ticker} ({width}w, {dte} DTE, Δ={target_delta})"
-        )
+        logger.info(f"Executing iron condor: {ticker} ({width}w, {dte} DTE, Δ={target_delta})")
 
         # 0. TICKER WHITELIST CHECK (Jan 15, 2026)
         ticker_valid, ticker_error = validate_ticker_for_options(ticker)
@@ -474,24 +453,14 @@ class OptionsExecutor:
             opt
             for opt in chain
             if self._parse_option_symbol(opt["symbol"])["type"] == "put"
-            and abs(
-                (
-                    self._parse_option_symbol(opt["symbol"])["expiration"]
-                    - target_expiry
-                ).days
-            )
+            and abs((self._parse_option_symbol(opt["symbol"])["expiration"] - target_expiry).days)
             <= 7
         ]
         calls = [
             opt
             for opt in chain
             if self._parse_option_symbol(opt["symbol"])["type"] == "call"
-            and abs(
-                (
-                    self._parse_option_symbol(opt["symbol"])["expiration"]
-                    - target_expiry
-                ).days
-            )
+            and abs((self._parse_option_symbol(opt["symbol"])["expiration"] - target_expiry).days)
             <= 7
         ]
 
@@ -532,8 +501,7 @@ class OptionsExecutor:
             long_put.get("latest_quote_bid", 0) + long_put.get("latest_quote_ask", 0)
         ) / 2
         short_call_premium = (
-            short_call.get("latest_quote_bid", 0)
-            + short_call.get("latest_quote_ask", 0)
+            short_call.get("latest_quote_bid", 0) + short_call.get("latest_quote_ask", 0)
         ) / 2
         long_call_premium = (
             long_call.get("latest_quote_bid", 0) + long_call.get("latest_quote_ask", 0)
@@ -550,11 +518,7 @@ class OptionsExecutor:
 
         # 7. Check IV rank
         avg_iv = (
-            (
-                short_put.get("implied_volatility", 0)
-                + short_call.get("implied_volatility", 0)
-            )
-            / 2
+            (short_put.get("implied_volatility", 0) + short_call.get("implied_volatility", 0)) / 2
         ) * 100
         if avg_iv < self.MIN_IV_RANK:
             logger.warning(
@@ -723,9 +687,7 @@ class OptionsExecutor:
         width = width or self.SPREAD_WIDTH
         target_delta = target_delta or self.CREDIT_SPREAD_TARGET_DELTA
 
-        logger.info(
-            f"Executing {spread_type}: {ticker} ({width}w, {dte} DTE, Δ={target_delta})"
-        )
+        logger.info(f"Executing {spread_type}: {ticker} ({width}w, {dte} DTE, Δ={target_delta})")
 
         # 0. TICKER WHITELIST CHECK (Jan 15, 2026)
         ticker_valid, ticker_error = validate_ticker_for_options(ticker)
@@ -746,26 +708,17 @@ class OptionsExecutor:
             opt
             for opt in chain
             if self._parse_option_symbol(opt["symbol"])["type"] == option_type
-            and abs(
-                (
-                    self._parse_option_symbol(opt["symbol"])["expiration"]
-                    - target_expiry
-                ).days
-            )
+            and abs((self._parse_option_symbol(opt["symbol"])["expiration"] - target_expiry).days)
             <= 7
         ]
 
         if not options:
-            raise RuntimeError(
-                f"No {option_type} options found for {ticker} near {dte} DTE"
-            )
+            raise RuntimeError(f"No {option_type} options found for {ticker} near {dte} DTE")
 
         # 4. Find short strike (target delta)
         short_option = self._find_option_by_delta(options, target_delta)
         if not short_option:
-            raise RuntimeError(
-                f"No suitable {option_type} found with delta ~{target_delta}"
-            )
+            raise RuntimeError(f"No suitable {option_type} found with delta ~{target_delta}")
 
         short_strike = self._parse_option_symbol(short_option["symbol"])["strike"]
 
@@ -781,12 +734,10 @@ class OptionsExecutor:
 
         # 5. Calculate net credit and validate
         short_premium = (
-            short_option.get("latest_quote_bid", 0)
-            + short_option.get("latest_quote_ask", 0)
+            short_option.get("latest_quote_bid", 0) + short_option.get("latest_quote_ask", 0)
         ) / 2
         long_premium = (
-            long_option.get("latest_quote_bid", 0)
-            + long_option.get("latest_quote_ask", 0)
+            long_option.get("latest_quote_bid", 0) + long_option.get("latest_quote_ask", 0)
         ) / 2
         net_credit = short_premium - long_premium
 
@@ -878,15 +829,9 @@ class OptionsExecutor:
             quantity=1,
             entry_price=net_credit,
             current_price=net_credit,
-            delta=(
-                short_option["greeks"]["delta"]
-                if short_option.get("greeks")
-                else target_delta
-            ),
+            delta=(short_option["greeks"]["delta"] if short_option.get("greeks") else target_delta),
             gamma=short_option["greeks"]["gamma"] if short_option.get("greeks") else 0,
-            theta=(
-                short_option["greeks"]["theta"] if short_option.get("greeks") else -0.02
-            ),
+            theta=(short_option["greeks"]["theta"] if short_option.get("greeks") else -0.02),
             vega=short_option["greeks"]["vega"] if short_option.get("greeks") else 0,
             expiration_date=expiration,
             strike=short_strike,
@@ -909,17 +854,13 @@ class OptionsExecutor:
             "breakeven": breakeven,
             "iv": iv,
             "delta": (
-                short_option["greeks"]["delta"]
-                if short_option.get("greeks")
-                else target_delta
+                short_option["greeks"]["delta"] if short_option.get("greeks") else target_delta
             ),
             "orders": orders,
             "timestamp": datetime.now().isoformat(),
         }
 
-    def validate_order(
-        self, strategy: OptionsStrategy, account: dict[str, Any]
-    ) -> dict[str, Any]:
+    def validate_order(self, strategy: OptionsStrategy, account: dict[str, Any]) -> dict[str, Any]:
         """
         Validate options strategy against risk limits.
 
@@ -962,18 +903,14 @@ class OptionsExecutor:
         premium_per_contract = strategy.total_premium / sum(
             leg.quantity for leg in strategy.legs if leg.side == "sell"
         )
-        if (
-            premium_per_contract < self.MIN_PREMIUM_PER_CONTRACT * 100
-        ):  # Convert to dollars
+        if premium_per_contract < self.MIN_PREMIUM_PER_CONTRACT * 100:  # Convert to dollars
             return {
                 "approved": False,
                 "reason": f"Premium ${premium_per_contract:.2f} below minimum ${self.MIN_PREMIUM_PER_CONTRACT * 100:.2f}",
             }
 
         # 3. Check position size
-        total_contracts = sum(
-            leg.quantity for leg in strategy.legs if leg.side == "sell"
-        )
+        total_contracts = sum(leg.quantity for leg in strategy.legs if leg.side == "sell")
         if total_contracts > self.MAX_POSITION_SIZE:
             return {
                 "approved": False,

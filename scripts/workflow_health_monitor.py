@@ -108,9 +108,7 @@ class WorkflowHealthMonitor:
         self._save_executions()
         logger.info(f"Recorded {workflow_id} execution: {status}")
 
-    def get_expected_executions(
-        self, workflow_id: str, days: int = 7
-    ) -> list[datetime]:
+    def get_expected_executions(self, workflow_id: str, days: int = 7) -> list[datetime]:
         """Calculate expected execution times for a workflow."""
         schedule = WORKFLOW_SCHEDULES.get(workflow_id, {})
         schedule_type = schedule.get("schedule", "")
@@ -118,9 +116,7 @@ class WorkflowHealthMonitor:
 
         hour, minute = map(int, time_et.split(":"))
         expected = []
-        today = datetime.now().replace(
-            hour=hour, minute=minute, second=0, microsecond=0
-        )
+        today = datetime.now().replace(hour=hour, minute=minute, second=0, microsecond=0)
 
         for i in range(days):
             check_date = today - timedelta(days=i)

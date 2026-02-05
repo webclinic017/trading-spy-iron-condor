@@ -400,9 +400,7 @@ class GRPOTradeLearner:
 
         return processed
 
-    def _estimate_features_from_trade(
-        self, trade: dict, date_key: str
-    ) -> TradeFeatures:
+    def _estimate_features_from_trade(self, trade: dict, date_key: str) -> TradeFeatures:
         """Estimate market features at time of trade."""
         # Default features - in production these would come from historical data
         filled_at = trade.get("filled_at", "")
@@ -569,9 +567,7 @@ class GRPOTradeLearner:
 
         rewards_tensor = torch.tensor(rewards, dtype=torch.float32)
 
-        logger.info(
-            f"Training GRPO policy on {len(self.trade_history)} trades for {epochs} epochs"
-        )
+        logger.info(f"Training GRPO policy on {len(self.trade_history)} trades for {epochs} epochs")
 
         self.policy.train()
         best_loss = float("inf")
@@ -623,9 +619,9 @@ class GRPOTradeLearner:
 
             # Log progress
             if epoch % 10 == 0 or epoch == epochs - 1:
-                win_rate = sum(
-                    1 for t in self.trade_history if t.outcome == "win"
-                ) / len(self.trade_history)
+                win_rate = sum(1 for t in self.trade_history if t.outcome == "win") / len(
+                    self.trade_history
+                )
                 avg_reward = rewards.mean()
 
                 self.training_stats["epoch"].append(epoch)
@@ -653,9 +649,7 @@ class GRPOTradeLearner:
             / len(self.trade_history),
         }
 
-    def predict_optimal_params(
-        self, features: Optional[TradeFeatures] = None
-    ) -> TradeParams:
+    def predict_optimal_params(self, features: Optional[TradeFeatures] = None) -> TradeParams:
         """
         Predict optimal trade parameters given current market features.
 
@@ -821,15 +815,11 @@ class GRPOTradeLearner:
         # Calculate profit factor safely
         total_win_pnl = sum(w.pnl for w in wins) if wins else 0
         total_loss_pnl = sum(loss.pnl for loss in losses) if losses else 0
-        profit_factor = (
-            abs(total_win_pnl / total_loss_pnl) if total_loss_pnl != 0 else 0
-        )
+        profit_factor = abs(total_win_pnl / total_loss_pnl) if total_loss_pnl != 0 else 0
 
         return {
             "total_trades": len(self.trade_history),
-            "win_rate": (
-                len(wins) / len(self.trade_history) if self.trade_history else 0
-            ),
+            "win_rate": (len(wins) / len(self.trade_history) if self.trade_history else 0),
             "avg_win_pnl": np.mean([w.pnl for w in wins]) if wins else 0,
             "avg_loss_pnl": np.mean([loss.pnl for loss in losses]) if losses else 0,
             "profit_factor": profit_factor,

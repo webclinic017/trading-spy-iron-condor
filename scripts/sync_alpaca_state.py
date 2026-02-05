@@ -98,9 +98,7 @@ def sync_from_alpaca() -> dict:
                 for o in orders
                 if o.filled_at
             ]
-            logger.info(
-                f"📜 Fetched {len(trade_history)} closed trades from PAPER history"
-            )
+            logger.info(f"📜 Fetched {len(trade_history)} closed trades from PAPER history")
         except Exception as e:
             logger.warning(f"⚠️ Could not fetch PAPER trade history: {e}")
 
@@ -181,9 +179,7 @@ def update_system_state(alpaca_data: dict | None) -> None:
         # No API keys - only update timestamp, preserve existing data
         state["meta"]["last_sync"] = datetime.now().isoformat()
         state["meta"]["sync_mode"] = "skipped_no_keys"
-        logger.info(
-            "⚠️ No API keys - preserving existing account values, only updating timestamp"
-        )
+        logger.info("⚠️ No API keys - preserving existing account values, only updating timestamp")
     else:
         # LL-281: Handle new structure with separate PAPER and LIVE data
         paper_data = alpaca_data.get("paper")
@@ -194,9 +190,7 @@ def update_system_state(alpaca_data: dict | None) -> None:
             # CRITICAL: Reject simulated data
             mode = paper_data.get("mode", "unknown")
             if mode == "simulated":
-                raise AlpacaSyncError(
-                    f"REFUSING to update with SIMULATED data! mode='{mode}'"
-                )
+                raise AlpacaSyncError(f"REFUSING to update with SIMULATED data! mode='{mode}'")
 
             # Update account section (primary account = PAPER for R&D)
             state.setdefault("account", {})
@@ -206,9 +200,7 @@ def update_system_state(alpaca_data: dict | None) -> None:
             state["account"]["positions_count"] = paper_data.get("positions_count", 0)
 
             # Calculate P/L for PAPER
-            paper_starting = state.get("paper_account", {}).get(
-                "starting_balance", 5000.0
-            )
+            paper_starting = state.get("paper_account", {}).get("starting_balance", 5000.0)
             paper_current = paper_data.get("equity", 0)
             state["account"]["total_pl"] = paper_current - paper_starting
             state["account"]["total_pl_pct"] = (
@@ -223,9 +215,7 @@ def update_system_state(alpaca_data: dict | None) -> None:
             state["paper_account"]["equity"] = paper_data.get("equity", 0)
             state["paper_account"]["cash"] = paper_data.get("cash", 0)
             state["paper_account"]["buying_power"] = paper_data.get("buying_power", 0)
-            state["paper_account"]["positions_count"] = paper_data.get(
-                "positions_count", 0
-            )
+            state["paper_account"]["positions_count"] = paper_data.get("positions_count", 0)
             state["paper_account"]["starting_balance"] = paper_starting
             state["paper_account"]["total_pl"] = paper_current - paper_starting
             state["paper_account"]["total_pl_pct"] = (
@@ -278,15 +268,11 @@ def update_system_state(alpaca_data: dict | None) -> None:
             state["live_account"]["equity"] = live_current
             state["live_account"]["cash"] = live_data.get("cash", 0)
             state["live_account"]["buying_power"] = live_data.get("buying_power", 0)
-            state["live_account"]["positions_count"] = live_data.get(
-                "positions_count", 0
-            )
+            state["live_account"]["positions_count"] = live_data.get("positions_count", 0)
             state["live_account"]["starting_balance"] = live_starting
             state["live_account"]["total_pl"] = live_current - live_starting
             state["live_account"]["total_pl_pct"] = (
-                ((live_current - live_starting) / live_starting) * 100
-                if live_starting > 0
-                else 0
+                ((live_current - live_starting) / live_starting) * 100 if live_starting > 0 else 0
             )
             state["live_account"]["synced_at"] = live_data.get("synced_at")
 

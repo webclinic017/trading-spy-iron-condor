@@ -212,9 +212,7 @@ class WorkflowIntegrityTests:
                 # Check if this output is ever written by the referenced step
                 if (ref.step, ref.output_name) not in written_outputs:
                     # Check if any step writes this output (might be different ID)
-                    any_write = any(
-                        w.output_name == ref.output_name for w in all_writes
-                    )
+                    any_write = any(w.output_name == ref.output_name for w in all_writes)
                     if not any_write:
                         errors.append(
                             f"{ref.workflow}:{ref.line_number} - "
@@ -271,9 +269,7 @@ class WorkflowIntegrityTests:
                     )
 
         if errors:
-            return False, "Dangerous fault tolerance in critical steps:\n" + "\n".join(
-                errors
-            )
+            return False, "Dangerous fault tolerance in critical steps:\n" + "\n".join(errors)
 
         return True, "No fault tolerance in critical steps"
 
@@ -314,23 +310,17 @@ class WorkflowIntegrityTests:
             if_match = re.search(r"if:\s*([^\n]+)", search_range)
 
             if not if_match:
-                errors.append(
-                    f"{workflow_name}: 'Execute trading' step has no if: condition"
-                )
+                errors.append(f"{workflow_name}: 'Execute trading' step has no if: condition")
                 continue
 
             condition = if_match.group(1)
 
             # Verify both required conditions are present
             if "skip" not in condition.lower():
-                errors.append(
-                    f"{workflow_name}: Trading step missing skip check in condition"
-                )
+                errors.append(f"{workflow_name}: Trading step missing skip check in condition")
 
             if "health_check" not in condition.lower():
-                errors.append(
-                    f"{workflow_name}: Trading step missing health_check in condition"
-                )
+                errors.append(f"{workflow_name}: Trading step missing health_check in condition")
 
         if errors:
             return False, "Incomplete trading conditions:\n" + "\n".join(errors)

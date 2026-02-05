@@ -204,9 +204,7 @@ print(json.dumps({{"output": _sandbox_output}}))
 
             # Check for files created
             files_created = [
-                f.name
-                for f in self.workspace.glob("*")
-                if f.is_file() and f != script_file
+                f.name for f in self.workspace.glob("*") if f.is_file() and f != script_file
             ]
 
             result = SandboxResult(
@@ -302,9 +300,7 @@ print(f"Recommended IC: {result['recommended_put_strike']}/{result['recommended_
 
         return {"error": result.error or "Analysis failed"}
 
-    async def fetch_external_resource(
-        self, url: str, resource_type: str
-    ) -> dict[str, Any]:
+    async def fetch_external_resource(self, url: str, resource_type: str) -> dict[str, Any]:
         """
         Fetch external resource using sandbox.
 
@@ -406,9 +402,7 @@ print(f"Pattern validation: {{'VALID' if is_valid else 'INVALID'}}")
 print(f"Win rate: {{win_rate:.1%}}, Profit factor: {{profit_factor:.2f}}")
 """
 
-        result = await self.execute_code(
-            discovery_code, f"Pattern discovery: {hypothesis}"
-        )
+        result = await self.execute_code(discovery_code, f"Pattern discovery: {hypothesis}")
 
         result_file = self.workspace / "pattern_result.json"
         if result_file.exists():

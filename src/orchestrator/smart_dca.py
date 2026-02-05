@@ -74,9 +74,7 @@ class SmartDCAAllocator:
     def __init__(self, config: AppConfig | None = None) -> None:
         self.config = config or load_config()
         # BIL sweep REMOVED Dec 29, 2025 - Phil Town doesn't recommend bonds
-        self.safe_symbol = os.getenv(
-            "SMART_DCA_SAFE_SYMBOL", "SPY"
-        ).upper()  # Options collateral
+        self.safe_symbol = os.getenv("SMART_DCA_SAFE_SYMBOL", "SPY").upper()  # Options collateral
         self._bucket_targets = self._resolve_bucket_targets()
         self._bucket_spend = {bucket: 0.0 for bucket in self._bucket_targets}
         overrides = _load_custom_bucket_map()
@@ -185,9 +183,7 @@ class SmartDCAAllocator:
     def _resolve_bucket_targets(self) -> dict[str, float]:
         allocations = self.config.get_tier_allocations()
         # Normalize keys for downstream logging
-        normalized = {
-            bucket: round(float(amount), 2) for bucket, amount in allocations.items()
-        }
+        normalized = {bucket: round(float(amount), 2) for bucket, amount in allocations.items()}
         return normalized
 
     def _bucket_for_ticker(self, ticker: str) -> str:
@@ -195,9 +191,7 @@ class SmartDCAAllocator:
         if symbol in self._ticker_to_bucket:
             return self._ticker_to_bucket[symbol]
         # Default fallback: treat unknown tickers as growth to stay conservative
-        default_bucket = (
-            "growth_stocks" if symbol not in {"SPY", "QQQ"} else "core_etfs"
-        )
+        default_bucket = "growth_stocks" if symbol not in {"SPY", "QQQ"} else "core_etfs"
         self._ticker_to_bucket[symbol] = default_bucket
         return default_bucket
 
@@ -207,9 +201,7 @@ class SmartDCAAllocator:
         safe_strength = max(0.0, min(1.0, strength))
         safe_rl = max(0.0, min(1.0, rl_conf))
         safe_sentiment = max(-1.0, min(1.0, sentiment))
-        base = (
-            0.2 + 0.5 * safe_strength + 0.4 * safe_rl + 0.2 * max(0.0, safe_sentiment)
-        )
+        base = 0.2 + 0.5 * safe_strength + 0.4 * safe_rl + 0.2 * max(0.0, safe_sentiment)
         return max(0.0, min(1.0, base))
 
     # ------------------------------------------------------------------ #

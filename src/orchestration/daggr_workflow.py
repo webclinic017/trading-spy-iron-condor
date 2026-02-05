@@ -47,9 +47,7 @@ class NodeResult:
             "success": self.success,
             "output": (
                 self.output
-                if isinstance(
-                    self.output, (dict, list, str, int, float, bool, type(None))
-                )
+                if isinstance(self.output, (dict, list, str, int, float, bool, type(None)))
                 else str(self.output)
             ),
             "execution_time_ms": self.execution_time_ms,
@@ -71,16 +69,12 @@ class WorkflowNode:
     timeout_seconds: float = 30.0
     retry_count: int = 1
 
-    async def execute(
-        self, inputs: dict[str, Any], cache: dict[str, NodeResult]
-    ) -> NodeResult:
+    async def execute(self, inputs: dict[str, Any], cache: dict[str, NodeResult]) -> NodeResult:
         """Execute this node with given inputs."""
         start_time = datetime.now(timezone.utc)
 
         # Check cache first
-        cache_key = (
-            f"{self.name}:{hash(json.dumps(inputs, sort_keys=True, default=str))}"
-        )
+        cache_key = f"{self.name}:{hash(json.dumps(inputs, sort_keys=True, default=str))}"
         if self.cache_enabled and cache_key in cache:
             cached_result = cache[cache_key]
             cached_result.cached = True
@@ -92,15 +86,11 @@ class WorkflowNode:
             try:
                 # Handle both sync and async functions
                 if asyncio.iscoroutinefunction(self.fn):
-                    result = await asyncio.wait_for(
-                        self.fn(**inputs), timeout=self.timeout_seconds
-                    )
+                    result = await asyncio.wait_for(self.fn(**inputs), timeout=self.timeout_seconds)
                 else:
                     result = self.fn(**inputs)
 
-                execution_time = (
-                    datetime.now(timezone.utc) - start_time
-                ).total_seconds() * 1000
+                execution_time = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
 
                 node_result = NodeResult(
                     node_name=self.name,
@@ -121,9 +111,7 @@ class WorkflowNode:
                 last_error = str(e)
 
         # All retries failed
-        execution_time = (
-            datetime.now(timezone.utc) - start_time
-        ).total_seconds() * 1000
+        execution_time = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
         return NodeResult(
             node_name=self.name,
             success=False,
@@ -196,9 +184,7 @@ class TradingWorkflow:
 
         return order
 
-    async def execute(
-        self, initial_inputs: dict[str, Any] | None = None
-    ) -> dict[str, NodeResult]:
+    async def execute(self, initial_inputs: dict[str, Any] | None = None) -> dict[str, NodeResult]:
         """Execute the entire workflow."""
         self.execution_order = self._resolve_execution_order()
         self.results = {}
@@ -239,9 +225,7 @@ class TradingWorkflow:
 
         return self.results
 
-    async def rerun_node(
-        self, node_name: str, inputs: dict[str, Any] | None = None
-    ) -> NodeResult:
+    async def rerun_node(self, node_name: str, inputs: dict[str, Any] | None = None) -> NodeResult:
         """Re-execute a specific node (for debugging)."""
         if node_name not in self.nodes:
             raise ValueError(f"Node {node_name} not found")
@@ -280,9 +264,7 @@ class TradingWorkflow:
             "successful_nodes": sum(1 for r in self.results.values() if r.success),
             "failed_nodes": sum(1 for r in self.results.values() if not r.success),
             "cached_hits": sum(1 for r in self.results.values() if r.cached),
-            "total_execution_time_ms": sum(
-                r.execution_time_ms for r in self.results.values()
-            ),
+            "total_execution_time_ms": sum(r.execution_time_ms for r in self.results.values()),
             "nodes": {},
         }
 
@@ -303,9 +285,7 @@ class TradingWorkflow:
         state = {
             "workflow": self.name,
             "last_updated": datetime.now(timezone.utc).isoformat(),
-            "results": {
-                name: result.to_dict() for name, result in self.results.items()
-            },
+            "results": {name: result.to_dict() for name, result in self.results.items()},
             "execution_order": self.execution_order,
         }
         self.state_file.write_text(json.dumps(state, indent=2))

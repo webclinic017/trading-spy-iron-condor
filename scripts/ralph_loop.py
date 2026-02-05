@@ -140,9 +140,7 @@ def log(message: str, level: str = "INFO"):
 def run_command(cmd: str, timeout: int = 300) -> tuple[int, str, str]:
     """Run a shell command and return exit code, stdout, stderr."""
     try:
-        result = subprocess.run(
-            cmd, shell=True, capture_output=True, text=True, timeout=timeout
-        )
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=timeout)
         return result.returncode, result.stdout, result.stderr
     except subprocess.TimeoutExpired:
         return -1, "", "Command timed out"
@@ -153,9 +151,7 @@ def run_command(cmd: str, timeout: int = 300) -> tuple[int, str, str]:
 def run_tests() -> tuple[bool, str]:
     """Run pytest and return success status and output."""
     log("Running pytest...")
-    exit_code, stdout, stderr = run_command(
-        "pytest tests/ -q --tb=short 2>&1", timeout=300
-    )
+    exit_code, stdout, stderr = run_command("pytest tests/ -q --tb=short 2>&1", timeout=300)
     output = stdout + stderr
 
     # Check for success patterns
@@ -173,9 +169,7 @@ def run_tests() -> tuple[bool, str]:
 def run_lint() -> tuple[bool, str]:
     """Run ruff lint and return success status and output."""
     log("Running ruff lint...")
-    exit_code, stdout, stderr = run_command(
-        "ruff check src/ scripts/ --select=E,F,W 2>&1"
-    )
+    exit_code, stdout, stderr = run_command("ruff check src/ scripts/ --select=E,F,W 2>&1")
     output = stdout + stderr
     success = exit_code == 0 or "All checks passed" in output
     return success, output
@@ -183,9 +177,7 @@ def run_lint() -> tuple[bool, str]:
 
 def get_git_diff() -> str:
     """Get git diff to show recent changes."""
-    _, stdout, _ = run_command(
-        "git diff --stat HEAD~1 2>/dev/null || echo 'No previous commit'"
-    )
+    _, stdout, _ = run_command("git diff --stat HEAD~1 2>/dev/null || echo 'No previous commit'")
     return stdout[:2000]  # Limit size
 
 
@@ -249,15 +241,11 @@ def parse_code_changes(response: str) -> list[dict]:
     for line in lines:
         if line.startswith("```file:"):
             if current_file and current_content:
-                changes.append(
-                    {"file": current_file, "content": "\n".join(current_content)}
-                )
+                changes.append({"file": current_file, "content": "\n".join(current_content)})
             current_file = line[8:].strip()
             current_content = []
         elif line == "```" and current_file:
-            changes.append(
-                {"file": current_file, "content": "\n".join(current_content)}
-            )
+            changes.append({"file": current_file, "content": "\n".join(current_content)})
             current_file = None
             current_content = []
         elif current_file:
@@ -441,9 +429,7 @@ Fix the issues. Output ONLY files that need changes."""
         error_context = test_output if not tests_pass else lint_output
         stuck, reason = struggle_detector.is_stuck(error_output=error_context)
         if stuck:
-            log(
-                f"STRUGGLE DETECTED: {reason} - terminating early to save costs", "WARN"
-            )
+            log(f"STRUGGLE DETECTED: {reason} - terminating early to save costs", "WARN")
             results["termination_reason"] = f"struggle_detected:{reason}"
             results["struggle_status"] = struggle_detector.get_status()
             break
@@ -521,9 +507,7 @@ Fix the issues. Output ONLY files that need changes."""
     if results["success"]:
         log(f"Ralph Loop COMPLETE after {results['iterations']} iterations")
         log(f"Total estimated cost: ${struggle_detector.estimated_cost:.3f}")
-    elif results.get("termination_reason") and "struggle" in str(
-        results["termination_reason"]
-    ):
+    elif results.get("termination_reason") and "struggle" in str(results["termination_reason"]):
         log(
             f"Ralph Loop STOPPED due to struggle: {results['termination_reason']}",
             "WARN",
@@ -533,9 +517,7 @@ Fix the issues. Output ONLY files that need changes."""
         log("Ralph Loop reached max iterations without full success", "WARN")
         results["termination_reason"] = "max_iterations_reached"
 
-    log(
-        f"Final cost: ${struggle_detector.estimated_cost:.3f} / ${max_cost_usd:.2f} budget"
-    )
+    log(f"Final cost: ${struggle_detector.estimated_cost:.3f} / ${max_cost_usd:.2f} budget")
     return results
 
 
@@ -547,27 +529,21 @@ def main():
         choices=["fix_tests", "fix_lint", "improve_code", "auto"],
         help="Type of task to perform",
     )
-    parser.add_argument(
-        "--target", default="", help="Specific file/directory to focus on"
-    )
+    parser.add_argument("--target", default="", help="Specific file/directory to focus on")
     parser.add_argument(
         "--max-iterations",
         type=int,
         default=10,
         help="Maximum iterations (default: 10)",
     )
-    parser.add_argument(
-        "--no-commit", action="store_true", help="Don't auto-commit changes"
-    )
+    parser.add_argument("--no-commit", action="store_true", help="Don't auto-commit changes")
     parser.add_argument(
         "--max-cost",
         type=float,
         default=5.0,
         help="Maximum API cost budget in USD (default: $5.00)",
     )
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Run tests/lint only, don't call AI"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Run tests/lint only, don't call AI")
 
     args = parser.parse_args()
 

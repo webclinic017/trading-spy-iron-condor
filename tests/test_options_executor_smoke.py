@@ -257,9 +257,7 @@ class TestOptionsExecutorValidation:
     @patch("src.trading.options_executor.AlpacaOptionsClient")
     @patch("src.trading.options_executor.OptionsRiskMonitor")
     @patch("src.trading.options_executor.AlpacaTrader")
-    def test_validate_order_approves_valid(
-        self, mock_trader, mock_monitor, mock_client
-    ):
+    def test_validate_order_approves_valid(self, mock_trader, mock_monitor, mock_client):
         """Should approve valid strategy within risk limits."""
         from datetime import timedelta
 
@@ -310,9 +308,7 @@ class TestOptionsExecutorValidation:
     @patch("src.trading.options_executor.AlpacaOptionsClient")
     @patch("src.trading.options_executor.OptionsRiskMonitor")
     @patch("src.trading.options_executor.AlpacaTrader")
-    def test_validate_order_rejects_excessive_risk(
-        self, mock_trader, mock_monitor, mock_client
-    ):
+    def test_validate_order_rejects_excessive_risk(self, mock_trader, mock_monitor, mock_client):
         """Should reject strategy exceeding risk limits."""
         from src.trading.options_executor import (
             OptionLeg,

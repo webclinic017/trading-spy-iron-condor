@@ -191,9 +191,7 @@ class ActionableTaskEngine:
         """
         task_ids = []
         base_id = f"trade_{ticker}_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
-        deadline = (
-            datetime.utcnow() + timedelta(hours=deadline_hours)
-        ).isoformat() + "Z"
+        deadline = (datetime.utcnow() + timedelta(hours=deadline_hours)).isoformat() + "Z"
 
         # Task 1: Run pre-trade checklist
         task1 = ActionableTask(
@@ -358,9 +356,7 @@ class ActionableTaskEngine:
         """Create task list for exiting a position."""
         task_ids = []
         base_id = f"exit_{ticker}_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
-        deadline = (
-            datetime.utcnow() + timedelta(hours=deadline_hours)
-        ).isoformat() + "Z"
+        deadline = (datetime.utcnow() + timedelta(hours=deadline_hours)).isoformat() + "Z"
 
         # Task 1: Verify exit conditions
         task1 = ActionableTask(
@@ -555,13 +551,8 @@ class ActionableTaskEngine:
         for blocked_id in task.blocks:
             if blocked_id in self.tasks:
                 blocked_task = self.tasks[blocked_id]
-                blocked_task.blocked_by = [
-                    b for b in blocked_task.blocked_by if b != task_id
-                ]
-                if (
-                    not blocked_task.blocked_by
-                    and blocked_task.status == TaskStatus.BLOCKED
-                ):
+                blocked_task.blocked_by = [b for b in blocked_task.blocked_by if b != task_id]
+                if not blocked_task.blocked_by and blocked_task.status == TaskStatus.BLOCKED:
                     blocked_task.status = TaskStatus.PENDING
 
         self._save_tasks()
@@ -618,9 +609,7 @@ class ActionableTaskEngine:
                             "title": task.title,
                             "owner": task.owner.value,
                             "deadline": task.deadline,
-                            "overdue_minutes": int(
-                                (now - deadline).total_seconds() / 60
-                            ),
+                            "overdue_minutes": int((now - deadline).total_seconds() / 60),
                         }
                     )
 
@@ -677,9 +666,7 @@ class ActionableTaskEngine:
     # Verification Functions
     # =========================================================================
 
-    def _verify_checklist(
-        self, task: ActionableTask, context: dict
-    ) -> tuple[bool, str]:
+    def _verify_checklist(self, task: ActionableTask, context: dict) -> tuple[bool, str]:
         """Verify pre-trade checklist passed."""
         try:
             from src.risk.pre_trade_checklist import PreTradeChecklist
@@ -702,9 +689,7 @@ class ActionableTaskEngine:
         except Exception as e:
             return False, f"Checklist verification error: {e}"
 
-    def _verify_smoke_tests(
-        self, task: ActionableTask, context: dict
-    ) -> tuple[bool, str]:
+    def _verify_smoke_tests(self, task: ActionableTask, context: dict) -> tuple[bool, str]:
         """Verify smoke tests passed."""
         try:
             from src.safety.pre_trade_smoke_test import run_smoke_tests
@@ -733,36 +718,28 @@ class ActionableTaskEngine:
             return True, "Gateway approved trade"
         return False, "Gateway did not approve trade"
 
-    def _verify_position_opened(
-        self, task: ActionableTask, context: dict
-    ) -> tuple[bool, str]:
+    def _verify_position_opened(self, task: ActionableTask, context: dict) -> tuple[bool, str]:
         """Verify position was opened successfully."""
         position_id = context.get("position_id")
         if position_id:
             return True, f"Position opened: {position_id}"
         return False, "No position ID returned"
 
-    def _verify_position_closed(
-        self, task: ActionableTask, context: dict
-    ) -> tuple[bool, str]:
+    def _verify_position_closed(self, task: ActionableTask, context: dict) -> tuple[bool, str]:
         """Verify position was closed successfully."""
         close_result = context.get("close_result")
         if close_result and close_result.get("success"):
             return True, "Position closed successfully"
         return False, "Position close failed"
 
-    def _verify_rag_logged(
-        self, task: ActionableTask, context: dict
-    ) -> tuple[bool, str]:
+    def _verify_rag_logged(self, task: ActionableTask, context: dict) -> tuple[bool, str]:
         """Verify trade was logged to RAG."""
         rag_id = context.get("rag_id")
         if rag_id:
             return True, f"Logged to RAG: {rag_id}"
         return False, "Not logged to RAG"
 
-    def _verify_stop_loss(
-        self, task: ActionableTask, context: dict
-    ) -> tuple[bool, str]:
+    def _verify_stop_loss(self, task: ActionableTask, context: dict) -> tuple[bool, str]:
         """Verify stop-loss was set."""
         stop_loss_set = context.get("stop_loss_set", False)
         if stop_loss_set:

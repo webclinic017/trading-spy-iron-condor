@@ -112,9 +112,7 @@ def load_local_positions() -> dict[str, Position]:
 def load_alpaca_positions() -> dict[str, Position]:
     """Load current positions from Alpaca API."""
     if not ALPACA_API_KEY or not ALPACA_SECRET_KEY:
-        print(
-            "❌ ERROR: ALPACA_API_KEY and ALPACA_SECRET_KEY environment variables required"
-        )
+        print("❌ ERROR: ALPACA_API_KEY and ALPACA_SECRET_KEY environment variables required")
         return {}
 
     try:
@@ -144,9 +142,7 @@ def load_alpaca_positions() -> dict[str, Position]:
         return {}
 
 
-def compare_positions(
-    local: dict[str, Position], alpaca: dict[str, Position]
-) -> list[Discrepancy]:
+def compare_positions(local: dict[str, Position], alpaca: dict[str, Position]) -> list[Discrepancy]:
     """Compare positions and return list of discrepancies."""
     discrepancies = []
 
@@ -200,9 +196,7 @@ def compare_positions(
             # Check value mismatch (>1% difference)
             value_diff = abs(local_pos.market_value - alpaca_pos.market_value)
             value_diff_pct = (
-                (value_diff / alpaca_pos.market_value * 100)
-                if alpaca_pos.market_value
-                else 0
+                (value_diff / alpaca_pos.market_value * 100) if alpaca_pos.market_value else 0
             )
 
             if value_diff_pct > VALUE_TOLERANCE_PCT:

@@ -94,10 +94,7 @@ def record_heartbeat(
     data["workflows"][workflow_name] = {
         "last_heartbeat": timestamp,
         "last_status": status,
-        "total_runs": data.get("workflows", {})
-        .get(workflow_name, {})
-        .get("total_runs", 0)
-        + 1,
+        "total_runs": data.get("workflows", {}).get(workflow_name, {}).get("total_runs", 0) + 1,
     }
 
     # Write atomically

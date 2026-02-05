@@ -18,9 +18,7 @@ from zoneinfo import ZoneInfo
 
 import numpy as np
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -125,9 +123,7 @@ def normalize_features(features: np.ndarray) -> np.ndarray:
     return (features - mins) / ranges
 
 
-def kmeans_cluster(
-    features: np.ndarray, n_clusters: int = 5, max_iters: int = 100
-) -> np.ndarray:
+def kmeans_cluster(features: np.ndarray, n_clusters: int = 5, max_iters: int = 100) -> np.ndarray:
     """Simple K-means clustering implementation."""
     n_samples = features.shape[0]
 
@@ -162,9 +158,7 @@ def kmeans_cluster(
     return labels, centroids
 
 
-def analyze_clusters(
-    trades: list[dict], labels: np.ndarray, centroids: np.ndarray
-) -> dict:
+def analyze_clusters(trades: list[dict], labels: np.ndarray, centroids: np.ndarray) -> dict:
     """Analyze what each cluster represents."""
     n_clusters = len(centroids)
     analysis = {}
@@ -193,8 +187,7 @@ def analyze_clusters(
             "size": len(cluster_trades),
             "pct_of_total": len(cluster_trades) / len(trades) * 100,
             "centroid": {
-                name: float(val)
-                for name, val in zip(feature_names, centroids[cluster_id])
+                name: float(val) for name, val in zip(feature_names, centroids[cluster_id])
             },
             "characteristics": [],
         }
@@ -204,14 +197,10 @@ def analyze_clusters(
 
         # Day of week
         days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        analysis[cluster_id]["characteristics"].append(
-            f"Typical day: {days[int(centroid[0])]}"
-        )
+        analysis[cluster_id]["characteristics"].append(f"Typical day: {days[int(centroid[0])]}")
 
         # Hour
-        analysis[cluster_id]["characteristics"].append(
-            f"Typical hour: {int(centroid[1])}:00 UTC"
-        )
+        analysis[cluster_id]["characteristics"].append(f"Typical hour: {int(centroid[1])}:00 UTC")
 
         # Option type
         if centroid[4] > 0.5:
@@ -248,9 +237,7 @@ def find_anomalies(
         # Calculate average distance for this cluster
         cluster_mask = labels == label
         cluster_features = features[cluster_mask]
-        avg_distance = np.mean(
-            [np.sqrt(((f - centroid) ** 2).sum()) for f in cluster_features]
-        )
+        avg_distance = np.mean([np.sqrt(((f - centroid) ** 2).sum()) for f in cluster_features])
 
         if distance > threshold * avg_distance:
             anomalies.append(i)
@@ -270,9 +257,7 @@ def generate_insights(analysis: dict, trades: list[dict], anomalies: list[int]) 
 
     insights.append("## Cluster Analysis\n")
 
-    for cluster_id, data in sorted(
-        analysis.items(), key=lambda x: x[1]["size"], reverse=True
-    ):
+    for cluster_id, data in sorted(analysis.items(), key=lambda x: x[1]["size"], reverse=True):
         insights.append(
             f"### Cluster {cluster_id} ({data['size']} trades, {data['pct_of_total']:.1f}%)\n"
         )
@@ -301,9 +286,7 @@ def generate_insights(analysis: dict, trades: list[dict], anomalies: list[int]) 
     insights.append("Based on clustering analysis:")
     insights.append("1. Trades cluster by time-of-day - consider optimal entry windows")
     insights.append("2. PUT vs CALL patterns differ - analyze which performs better")
-    insights.append(
-        "3. Monitor anomalies - they may indicate unusual market conditions"
-    )
+    insights.append("3. Monitor anomalies - they may indicate unusual market conditions")
 
     return "\n".join(insights)
 

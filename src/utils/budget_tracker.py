@@ -107,9 +107,7 @@ class BudgetTracker:
 
         remaining = MONTHLY_BUDGET - self.data["spent_this_month"]
         if remaining <= 0:
-            logger.warning(
-                f"Budget EXCEEDED: ${self.data['spent_this_month']:.2f} spent"
-            )
+            logger.warning(f"Budget EXCEEDED: ${self.data['spent_this_month']:.2f} spent")
             return False
         return True
 
@@ -211,9 +209,7 @@ def track(api_name: str, cost: float | None = None) -> bool:
     return get_tracker().track(api_name, cost)
 
 
-def should_execute(
-    operation: str, priority: Literal["critical", "high", "medium", "low"]
-) -> bool:
+def should_execute(operation: str, priority: Literal["critical", "high", "medium", "low"]) -> bool:
     """Check if operation should execute."""
     return get_tracker().should_execute(operation, priority)
 
@@ -233,7 +229,5 @@ if __name__ == "__main__":
     tracker = get_tracker()
     print(tracker.get_prompt_injection())
     print(f"\nRecommended model: {get_model()}")
-    print(
-        f"Should execute deep_research (medium): {should_execute('deep_research', 'medium')}"
-    )
+    print(f"Should execute deep_research (medium): {should_execute('deep_research', 'medium')}")
     print(f"Should execute trade (critical): {should_execute('trade', 'critical')}")

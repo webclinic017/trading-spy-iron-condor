@@ -21,9 +21,7 @@ from alpaca.trading.client import TradingClient
 from alpaca.trading.enums import OrderSide, TimeInForce
 from alpaca.trading.requests import MarketOrderRequest
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 API_KEY = os.environ.get("ALPACA_API_KEY")
@@ -158,9 +156,7 @@ def update_trade_log_on_exit(expiry: str, reason: str, pnl: float):
     from pathlib import Path
 
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    expiry_formatted = (
-        f"20{expiry[:2]}-{expiry[2:4]}-{expiry[4:6]}"  # YYMMDD -> YYYY-MM-DD
-    )
+    expiry_formatted = f"20{expiry[:2]}-{expiry[2:4]}-{expiry[4:6]}"  # YYMMDD -> YYYY-MM-DD
     trade_id = f"trade_exit_{today}_{expiry}"
 
     outcome = "WIN" if pnl > 0 else "LOSS"
@@ -217,9 +213,7 @@ def close_iron_condor(client, ic_data: dict, reason: str, expiry: str, pnl: floa
                     time_in_force=TimeInForce.DAY,
                 )
             )
-            logger.info(
-                f"  Closed {pos['symbol']}: {side.value} {qty} - {order.status}"
-            )
+            logger.info(f"  Closed {pos['symbol']}: {side.value} {qty} - {order.status}")
         except Exception as e:
             logger.error(f"  FAILED to close {pos['symbol']}: {e}")
 
@@ -256,9 +250,7 @@ def run_guardian():
         entry_key = f"IC_{expiry}"
         if entry_key not in entries:
             # Estimate: sum of short premiums - sum of long premiums
-            short_premium = sum(
-                p["entry"] for p in ic_data["positions"] if p["qty"] < 0
-            )
+            short_premium = sum(p["entry"] for p in ic_data["positions"] if p["qty"] < 0)
             long_premium = sum(p["entry"] for p in ic_data["positions"] if p["qty"] > 0)
             entry_credit = short_premium - long_premium
             entries[entry_key] = {
@@ -278,9 +270,7 @@ def run_guardian():
 
         # CHECK 1: DTE Exit (7 days)
         if dte <= MIN_DTE:
-            close_iron_condor(
-                client, ic_data, f"DTE={dte} <= {MIN_DTE} (gamma risk)", expiry, pnl
-            )
+            close_iron_condor(client, ic_data, f"DTE={dte} <= {MIN_DTE} (gamma risk)", expiry, pnl)
             continue
 
         # CHECK 2: Stop Loss (200% of credit)

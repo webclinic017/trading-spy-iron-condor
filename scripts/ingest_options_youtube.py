@@ -23,9 +23,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Options-focused channels (using handles, not IDs - more reliable)
@@ -212,9 +210,7 @@ def save_cache(cache: dict):
     CACHE_FILE.write_text(json.dumps(cache, indent=2))
 
 
-def ingest_channel(
-    channel_key: str, mode: str = "recent", max_videos: int = 10
-) -> dict:
+def ingest_channel(channel_key: str, mode: str = "recent", max_videos: int = 10) -> dict:
     """Ingest videos from a single channel."""
     if channel_key not in CHANNELS:
         logger.error(f"Unknown channel: {channel_key}")

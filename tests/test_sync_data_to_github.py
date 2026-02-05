@@ -67,9 +67,7 @@ class TestApiRequest:
         mock_response.__exit__ = MagicMock(return_value=False)
         mock_urlopen.return_value = mock_response
 
-        status, data = api_request(
-            "GET", "/repos/test/test/contents/file.json", "token"
-        )
+        status, data = api_request("GET", "/repos/test/test/contents/file.json", "token")
 
         assert status == 200
         assert data == {"sha": "abc123"}

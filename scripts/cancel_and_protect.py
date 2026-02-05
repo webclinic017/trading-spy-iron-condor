@@ -32,7 +32,6 @@ def get_trading_client():
     """Get Alpaca trading client."""
     try:
         from alpaca.trading.client import TradingClient
-
         from src.utils.alpaca_client import get_alpaca_credentials
 
         api_key, secret_key = get_alpaca_credentials()
@@ -77,9 +76,7 @@ def cancel_dangerous_orders(client, dry_run: bool = False) -> list:
             # Check if this is a SELL order on a short position
             if symbol in short_options and side == "sell":
                 logger.warning(f"🚫 DANGEROUS ORDER FOUND: {order.id}")
-                logger.warning(
-                    f"   Symbol: {symbol} (already SHORT {short_options[symbol]})"
-                )
+                logger.warning(f"   Symbol: {symbol} (already SHORT {short_options[symbol]})")
                 logger.warning(f"   Side: {side} - would INCREASE short exposure!")
                 logger.warning(f"   Qty: {order.qty}")
 
@@ -115,9 +112,7 @@ def cancel_dangerous_orders(client, dry_run: bool = False) -> list:
         return cancelled
 
 
-def place_protective_orders(
-    client, dry_run: bool = False, max_loss_pct: float = 0.50
-) -> list:
+def place_protective_orders(client, dry_run: bool = False, max_loss_pct: float = 0.50) -> list:
     """
     Place BUY TO CLOSE limit orders to protect short option positions.
 
@@ -143,11 +138,7 @@ def place_protective_orders(
 
             # Get current market value and cost basis
             market_value = abs(float(pos.market_value))
-            cost_basis = (
-                abs(float(pos.cost_basis))
-                if hasattr(pos, "cost_basis")
-                else market_value
-            )
+            cost_basis = abs(float(pos.cost_basis)) if hasattr(pos, "cost_basis") else market_value
             current_price = (
                 float(pos.current_price)
                 if hasattr(pos, "current_price")
@@ -166,9 +157,7 @@ def place_protective_orders(
             logger.info(f"   Qty: {qty} (short)")
             logger.info(f"   Entry (sold at): ~${entry_price:.2f}")
             logger.info(f"   Current price: ~${current_price:.2f}")
-            logger.info(
-                f"   Max close price ({max_loss_pct:.0%} loss): ${max_close_price:.2f}"
-            )
+            logger.info(f"   Max close price ({max_loss_pct:.0%} loss): ${max_close_price:.2f}")
 
             # Check if protective order already exists
             existing_orders = client.get_orders()
@@ -227,9 +216,7 @@ def place_protective_orders(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Cancel dangerous orders and protect positions"
-    )
+    parser = argparse.ArgumentParser(description="Cancel dangerous orders and protect positions")
     parser.add_argument(
         "--dry-run",
         action="store_true",
@@ -261,9 +248,7 @@ def main():
 
     # Step 2: Place protective BUY TO CLOSE orders
     logger.info("\n📋 STEP 2: Placing protective orders...")
-    protected = place_protective_orders(
-        client, dry_run=args.dry_run, max_loss_pct=args.max_loss
-    )
+    protected = place_protective_orders(client, dry_run=args.dry_run, max_loss_pct=args.max_loss)
 
     # Summary
     logger.info("\n" + "=" * 60)

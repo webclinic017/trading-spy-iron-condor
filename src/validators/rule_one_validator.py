@@ -77,9 +77,7 @@ class BigFiveResult:
 
         # Check each metric
         if self.roic is not None and self.roic < BIG_FIVE_MIN_ROIC:
-            self.failed_metrics.append(
-                f"ROIC ({self.roic:.1%} < {BIG_FIVE_MIN_ROIC:.0%})"
-            )
+            self.failed_metrics.append(f"ROIC ({self.roic:.1%} < {BIG_FIVE_MIN_ROIC:.0%})")
         if self.sales_growth is not None and self.sales_growth < BIG_FIVE_MIN_GROWTH:
             self.failed_metrics.append(
                 f"Sales Growth ({self.sales_growth:.1%} < {BIG_FIVE_MIN_GROWTH:.0%})"
@@ -133,17 +131,13 @@ class StickerPriceResult:
     def __post_init__(self):
         """Calculate pass/fail and discount."""
         if self.sticker_price > 0:
-            self.discount_pct = (
-                self.sticker_price - self.current_price
-            ) / self.sticker_price
+            self.discount_pct = (self.sticker_price - self.current_price) / self.sticker_price
             self.passes = self.current_price <= self.mos_price
 
             if self.passes:
                 self.reason = f"Below MOS ({self.discount_pct:.0%} discount)"
             elif self.current_price <= self.sticker_price:
-                self.reason = (
-                    f"Below Sticker but above MOS ({self.discount_pct:.0%} discount)"
-                )
+                self.reason = f"Below Sticker but above MOS ({self.discount_pct:.0%} discount)"
             else:
                 self.reason = f"Overvalued ({-self.discount_pct:.0%} premium)"
 
@@ -182,16 +176,10 @@ class RuleOneValidationResult:
                 "failed_metrics": self.big_five.failed_metrics if self.big_five else [],
             },
             "sticker_price": {
-                "current": (
-                    self.sticker_price.current_price if self.sticker_price else None
-                ),
-                "sticker": (
-                    self.sticker_price.sticker_price if self.sticker_price else None
-                ),
+                "current": (self.sticker_price.current_price if self.sticker_price else None),
+                "sticker": (self.sticker_price.sticker_price if self.sticker_price else None),
                 "mos": self.sticker_price.mos_price if self.sticker_price else None,
-                "discount_pct": (
-                    self.sticker_price.discount_pct if self.sticker_price else None
-                ),
+                "discount_pct": (self.sticker_price.discount_pct if self.sticker_price else None),
                 "passes": self.sticker_price.passes if self.sticker_price else False,
             },
             "rejection_reasons": self.rejection_reasons,
@@ -230,9 +218,7 @@ class RuleOneValidator:
         self._cache: dict[str, tuple[RuleOneValidationResult, datetime]] = {}
         self._cache_ttl_seconds = 3600  # 1 hour cache
 
-    def validate(
-        self, symbol: str, current_price: float | None = None
-    ) -> RuleOneValidationResult:
+    def validate(self, symbol: str, current_price: float | None = None) -> RuleOneValidationResult:
         """
         Validate a symbol against Rule #1 principles.
 
@@ -250,9 +236,7 @@ class RuleOneValidator:
         # CHECK 1: Universe membership
         result.in_universe = self._check_universe(symbol, result)
         if not result.in_universe:
-            result.rejection_reasons.append(
-                f"{symbol} not in Rule #1 wonderful companies universe"
-            )
+            result.rejection_reasons.append(f"{symbol} not in Rule #1 wonderful companies universe")
             logger.warning(f"Rule #1 REJECTED: {symbol} not in universe")
             return result
 
@@ -285,9 +269,7 @@ class RuleOneValidator:
         result.sticker_price = self._check_sticker_price(symbol, current_price)
         if not result.sticker_price.passes:
             if self.strict_mode:
-                result.rejection_reasons.append(
-                    f"Above MOS price: {result.sticker_price.reason}"
-                )
+                result.rejection_reasons.append(f"Above MOS price: {result.sticker_price.reason}")
                 logger.warning(f"Rule #1 REJECTED: {symbol} above MOS")
             else:
                 result.warnings.append(f"Price caution: {result.sticker_price.reason}")
@@ -297,13 +279,9 @@ class RuleOneValidator:
         if len(result.rejection_reasons) == 0:
             result.approved = True
             result.confidence = self._calculate_confidence(result)
-            logger.info(
-                f"Rule #1 APPROVED: {symbol} (confidence: {result.confidence:.0%})"
-            )
+            logger.info(f"Rule #1 APPROVED: {symbol} (confidence: {result.confidence:.0%})")
         else:
-            logger.warning(
-                f"Rule #1 REJECTED: {symbol} - {', '.join(result.rejection_reasons)}"
-            )
+            logger.warning(f"Rule #1 REJECTED: {symbol} - {', '.join(result.rejection_reasons)}")
 
         return result
 
@@ -366,14 +344,10 @@ class RuleOneValidator:
                 sales_growth=info.get("revenueGrowth"),
                 eps_growth=info.get("earningsGrowth"),
                 equity_growth=(
-                    info.get("earningsGrowth", 0) * 0.8
-                    if info.get("earningsGrowth")
-                    else None
+                    info.get("earningsGrowth", 0) * 0.8 if info.get("earningsGrowth") else None
                 ),
                 fcf_growth=(
-                    info.get("earningsGrowth", 0) * 0.9
-                    if info.get("earningsGrowth")
-                    else None
+                    info.get("earningsGrowth", 0) * 0.9 if info.get("earningsGrowth") else None
                 ),
             )
         except Exception as e:
@@ -417,11 +391,7 @@ class RuleOneValidator:
             ticker = yf.Ticker(underlying)
             info = ticker.info
 
-            price = (
-                current_price
-                or info.get("currentPrice")
-                or info.get("regularMarketPrice", 0)
-            )
+            price = current_price or info.get("currentPrice") or info.get("regularMarketPrice", 0)
             eps = info.get("trailingEps") or info.get("forwardEps", 1)
             growth = min(info.get("earningsGrowth", 0.10) or 0.10, MAX_GROWTH_RATE)
 
@@ -502,8 +472,6 @@ class RuleOneValidator:
 
         # Collateral check
         if max_collateral > 500:
-            result.warnings.append(
-                f"Collateral ${max_collateral} exceeds $500 per-spread limit"
-            )
+            result.warnings.append(f"Collateral ${max_collateral} exceeds $500 per-spread limit")
 
         return result

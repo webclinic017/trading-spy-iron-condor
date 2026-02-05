@@ -92,13 +92,9 @@ def generate_blog_content(
 
     # Default content if not provided
     if not challenge:
-        challenge = (
-            "This post documents recent engineering work on the AI trading system."
-        )
+        challenge = "This post documents recent engineering work on the AI trading system."
     if not approach:
-        approach = (
-            "We followed our established patterns using Claude Code for implementation."
-        )
+        approach = "We followed our established patterns using Claude Code for implementation."
     if not results:
         results = "The implementation was successful and is now deployed."
     if not lessons:

@@ -178,16 +178,10 @@ class IronCondorBacktester:
         self.ny_tz = ZoneInfo("America/New_York")
 
         # Initialize Alpaca clients
-        self.trade_client = TradingClient(
-            api_key=alpaca_key, secret_key=alpaca_secret, paper=True
-        )
-        self.stock_client = StockHistoricalDataClient(
-            api_key=alpaca_key, secret_key=alpaca_secret
-        )
+        self.trade_client = TradingClient(api_key=alpaca_key, secret_key=alpaca_secret, paper=True)
+        self.stock_client = StockHistoricalDataClient(api_key=alpaca_key, secret_key=alpaca_secret)
 
-        print(
-            f"✅ Iron Condor Backtester initialized for {self.config.underlying_symbol}"
-        )
+        print(f"✅ Iron Condor Backtester initialized for {self.config.underlying_symbol}")
         print(
             f"   Short delta: {self.config.short_delta} (POP: ~{(1 - self.config.short_delta) * 100:.0f}%)"
         )
@@ -219,11 +213,7 @@ class IronCondorBacktester:
         if len(bars) < 2:
             return 0.18  # Default SPY IV
 
-        closes = (
-            bars["close"].values[-lookback:]
-            if len(bars) >= lookback
-            else bars["close"].values
-        )
+        closes = bars["close"].values[-lookback:] if len(bars) >= lookback else bars["close"].values
         if len(closes) < 2:
             return 0.18
 
@@ -303,9 +293,7 @@ class IronCondorBacktester:
 
         for _, bar in future_bars.iterrows():
             current_date = (
-                bar["timestamp"].date()
-                if hasattr(bar["timestamp"], "date")
-                else bar["timestamp"]
+                bar["timestamp"].date() if hasattr(bar["timestamp"], "date") else bar["timestamp"]
             )
             days_held = (current_date - entry_date).days
             dte_remaining = self.config.dte_min - days_held
@@ -381,9 +369,7 @@ class IronCondorBacktester:
 
         if exit_date is None:
             # Expired - determine final P/L based on where price ended
-            last_bar = (
-                future_bars.iloc[-1] if not future_bars.empty else entry_bar.iloc[0]
-            )
+            last_bar = future_bars.iloc[-1] if not future_bars.empty else entry_bar.iloc[0]
             exit_date = (
                 last_bar["timestamp"].date()
                 if hasattr(last_bar["timestamp"], "date")
@@ -432,9 +418,7 @@ class IronCondorBacktester:
             exit_reason=exit_reason,
         )
 
-    def run(
-        self, start_date: date, end_date: date
-    ) -> tuple[list[IronCondorResult], dict]:
+    def run(self, start_date: date, end_date: date) -> tuple[list[IronCondorResult], dict]:
         """Run backtest over date range."""
         print(f"\n🚀 Starting Iron Condor backtest: {start_date} to {end_date}")
 
@@ -513,15 +497,11 @@ class IronCondorBacktester:
             "max_win": max(pnls),
             "max_loss": min(pnls),
             "profit_factor": (
-                abs(sum(wins) / sum(losses))
-                if losses and sum(losses) != 0
-                else float("inf")
+                abs(sum(wins) / sum(losses)) if losses and sum(losses) != 0 else float("inf")
             ),
             "sharpe_ratio": np.mean(pnls) / np.std(pnls) if np.std(pnls) > 0 else 0,
             "exit_reasons": {
-                "profit_target": len(
-                    [r for r in results if r.exit_reason == "profit_target"]
-                ),
+                "profit_target": len([r for r in results if r.exit_reason == "profit_target"]),
                 "stop_loss": len([r for r in results if r.exit_reason == "stop_loss"]),
                 "time_exit": len([r for r in results if r.exit_reason == "time_exit"]),
                 "expired": len([r for r in results if r.exit_reason == "expired"]),
@@ -532,9 +512,7 @@ class IronCondorBacktester:
             "timestamp": datetime.now().isoformat(),
         }
 
-    def generate_rag_lessons(
-        self, results: list[IronCondorResult], summary: dict
-    ) -> list[dict]:
+    def generate_rag_lessons(self, results: list[IronCondorResult], summary: dict) -> list[dict]:
         """Generate lessons for RAG database."""
         lessons = []
 
@@ -594,16 +572,10 @@ def main():
     parser.add_argument("--days", type=int, default=90, help="Days to backtest")
     parser.add_argument("--start", type=str, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end", type=str, help="End date (YYYY-MM-DD)")
-    parser.add_argument(
-        "--ticker", type=str, default="SPY", help="Underlying (SPY, XSP, SPX)"
-    )
+    parser.add_argument("--ticker", type=str, default="SPY", help="Underlying (SPY, XSP, SPX)")
     parser.add_argument("--delta", type=float, default=0.16, help="Short strike delta")
-    parser.add_argument(
-        "--width", type=float, default=5.0, help="Wing width in dollars"
-    )
-    parser.add_argument(
-        "--output", type=str, default="data/backtests", help="Output directory"
-    )
+    parser.add_argument("--width", type=float, default=5.0, help="Wing width in dollars")
+    parser.add_argument("--output", type=str, default="data/backtests", help="Output directory")
 
     args = parser.parse_args()
 

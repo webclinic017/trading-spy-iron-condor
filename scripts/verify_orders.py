@@ -94,9 +94,7 @@ def load_local_trades() -> list[dict[str, Any]]:
             trades = json.load(f)
             return trades if isinstance(trades, list) else []
     except (OSError, json.JSONDecodeError) as e:
-        print(
-            f"{Colors.YELLOW}⚠️  Warning: Could not read trades log: {e}{Colors.RESET}"
-        )
+        print(f"{Colors.YELLOW}⚠️  Warning: Could not read trades log: {e}{Colors.RESET}")
         return []
 
 
@@ -126,9 +124,7 @@ def fetch_alpaca_orders(api: TradingClient) -> dict[str, Any]:
     return orders_dict
 
 
-def verify_order(
-    trade: dict[str, Any], alpaca_orders: dict[str, Any]
-) -> dict[str, Any]:
+def verify_order(trade: dict[str, Any], alpaca_orders: dict[str, Any]) -> dict[str, Any]:
     """
     Verify a single trade against Alpaca's records.
 
@@ -215,18 +211,14 @@ def verify_order(
             result["quantity_match"] = True
         else:
             result["quantity_match"] = False
-            result["issues"].append(
-                f"Quantity mismatch: logged={logged_qty}, filled={filled_qty}"
-            )
+            result["issues"].append(f"Quantity mismatch: logged={logged_qty}, filled={filled_qty}")
     else:
         # For non-filled orders, quantity check N/A
         result["quantity_match"] = True
 
     # Verify slippage (only if we have both prices)
     logged_price = trade.get("price")
-    filled_price = (
-        float(alpaca_order.filled_avg_price) if alpaca_order.filled_avg_price else None
-    )
+    filled_price = float(alpaca_order.filled_avg_price) if alpaca_order.filled_avg_price else None
 
     if logged_price and filled_price:
         # Calculate slippage percentage
@@ -292,9 +284,7 @@ def main() -> int:
 
     # Validate credentials
     if not ALPACA_API_KEY or not ALPACA_SECRET_KEY:
-        print(
-            f"{Colors.RED}❌ ERROR: Missing ALPACA_API_KEY or ALPACA_SECRET_KEY{Colors.RESET}"
-        )
+        print(f"{Colors.RED}❌ ERROR: Missing ALPACA_API_KEY or ALPACA_SECRET_KEY{Colors.RESET}")
         return 1
 
     # Load local trades
@@ -304,9 +294,7 @@ def main() -> int:
     if not local_trades:
         print(f"{Colors.YELLOW}⚠️  No trades found in local log for today{Colors.RESET}")
         print(f"   Log path: {get_trades_log_path()}")
-        print(
-            f"\n{Colors.GREEN}✅ VERIFICATION PASSED: No trades to verify{Colors.RESET}\n"
-        )
+        print(f"\n{Colors.GREEN}✅ VERIFICATION PASSED: No trades to verify{Colors.RESET}\n")
 
         # Write GitHub output (all zeros)
         write_github_output(
@@ -336,9 +324,7 @@ def main() -> int:
     print(f"{Colors.BLUE}📥 Fetching orders from Alpaca...{Colors.RESET}")
     try:
         alpaca_orders = fetch_alpaca_orders(api)
-        print(
-            f"{Colors.GREEN}   Found {len(alpaca_orders)} orders in Alpaca{Colors.RESET}\n"
-        )
+        print(f"{Colors.GREEN}   Found {len(alpaca_orders)} orders in Alpaca{Colors.RESET}\n")
     except Exception as e:
         print(f"{Colors.RED}❌ ERROR: Failed to fetch Alpaca orders: {e}{Colors.RESET}")
         return 1
@@ -363,9 +349,7 @@ def main() -> int:
         symbol = trade.get("symbol", "UNKNOWN")
         action = trade.get("action", "UNKNOWN")
 
-        print(
-            f"{Colors.BOLD}[{i}/{len(local_trades)}] {symbol} - {action}{Colors.RESET}"
-        )
+        print(f"{Colors.BOLD}[{i}/{len(local_trades)}] {symbol} - {action}{Colors.RESET}")
 
         result = verify_order(trade, alpaca_orders)
         results.append(result)
@@ -435,9 +419,7 @@ def main() -> int:
 
     if all_verified:
         print(f"{Colors.GREEN}{Colors.BOLD}✅ VERIFICATION PASSED{Colors.RESET}")
-        print(
-            f"{Colors.GREEN}   All orders verified successfully against Alpaca API{Colors.RESET}"
-        )
+        print(f"{Colors.GREEN}   All orders verified successfully against Alpaca API{Colors.RESET}")
         exit_code = 0
     else:
         print(f"{Colors.RED}{Colors.BOLD}❌ VERIFICATION FAILED{Colors.RESET}")

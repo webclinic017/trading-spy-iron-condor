@@ -401,8 +401,8 @@ def calculate_all_metrics(
     sharpe_consistency = None
 
     if len(returns) >= 10:
-        _, rolling_sharpe_mean, rolling_sharpe_std, sharpe_consistency = (
-            calculate_rolling_sharpe(returns, window=min(20, len(returns) // 2))
+        _, rolling_sharpe_mean, rolling_sharpe_std, sharpe_consistency = calculate_rolling_sharpe(
+            returns, window=min(20, len(returns) // 2)
         )
 
     return PerformanceMetrics(

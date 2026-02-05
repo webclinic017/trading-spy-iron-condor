@@ -29,9 +29,9 @@ class TestCancelStaleOrders:
         with open("scripts/cancel_stale_orders.py") as f:
             content = f.read()
 
-        assert (
-            "MAX_ORDER_AGE_HOURS = 0" in content
-        ), "CEO Fix Jan 13, 2026: MAX_ORDER_AGE_HOURS must be 0 to cancel ALL orders"
+        assert "MAX_ORDER_AGE_HOURS = 0" in content, (
+            "CEO Fix Jan 13, 2026: MAX_ORDER_AGE_HOURS must be 0 to cancel ALL orders"
+        )
 
     def test_stale_order_detection(self):
         """Test that orders older than threshold are detected as stale."""
@@ -58,9 +58,7 @@ class TestCancelStaleOrders:
         is_stale = fresh_order_time < threshold
         assert not is_stale, "1-hour-old order should NOT be cancelled"
 
-    @pytest.mark.skipif(
-        not HAS_ALPACA, reason="alpaca-py required for this integration test"
-    )
+    @pytest.mark.skipif(not HAS_ALPACA, reason="alpaca-py required for this integration test")
     @patch.dict(
         "os.environ",
         {
@@ -127,9 +125,7 @@ class TestBuyingPowerMath:
         # If we add another $24 Put pending order
         sofi_24_collateral = 24 * 100
         remaining_after_order = remaining - sofi_24_collateral
-        assert (
-            remaining_after_order == 100
-        ), "After 2 positions, only $100 buying power remains"
+        assert remaining_after_order == 100, "After 2 positions, only $100 buying power remains"
 
     def test_max_positions_for_5k_account(self):
         """Test maximum positions with $5K capital."""

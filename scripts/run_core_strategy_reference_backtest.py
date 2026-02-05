@@ -67,9 +67,7 @@ def validate_flat_format(summary: dict) -> tuple[bool, list[str]]:
     if win_rate < THRESHOLDS["min_win_rate"]:
         # For flat format with positive P/L, win rate is less critical
         if total_pnl <= 0:
-            issues.append(
-                f"Win rate {win_rate:.1f}% < {THRESHOLDS['min_win_rate']:.1f}%"
-            )
+            issues.append(f"Win rate {win_rate:.1f}% < {THRESHOLDS['min_win_rate']:.1f}%")
 
     return len(issues) == 0, issues
 
@@ -130,15 +128,11 @@ def validate_metrics(summary: dict) -> tuple[bool, list[str]]:
 
     # Check max drawdown (strict - CEO mandate)
     if max_drawdown > THRESHOLDS["max_drawdown"]:
-        issues.append(
-            f"Max drawdown {max_drawdown:.1f}% > {THRESHOLDS['max_drawdown']:.1f}%"
-        )
+        issues.append(f"Max drawdown {max_drawdown:.1f}% > {THRESHOLDS['max_drawdown']:.1f}%")
 
     # Check secondary metrics (relaxed for capital preservation strategy)
     if avg_win_rate < THRESHOLDS["min_win_rate"]:
-        issues.append(
-            f"Avg win rate {avg_win_rate:.1f}% < {THRESHOLDS['min_win_rate']:.1f}%"
-        )
+        issues.append(f"Avg win rate {avg_win_rate:.1f}% < {THRESHOLDS['min_win_rate']:.1f}%")
 
     if avg_sharpe < THRESHOLDS["min_sharpe"]:
         issues.append(f"Avg Sharpe {avg_sharpe:.2f} < {THRESHOLDS['min_sharpe']:.2f}")

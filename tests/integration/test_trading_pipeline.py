@@ -174,9 +174,7 @@ class TestSystemIntegration:
             text=True,
         )
 
-        assert (
-            result.returncode == 0
-        ), f"autonomous_trader.py syntax error: {result.stderr}"
+        assert result.returncode == 0, f"autonomous_trader.py syntax error: {result.stderr}"
 
     def test_required_dependencies(self):
         """Test critical dependencies are importable.
@@ -227,9 +225,7 @@ class TestHealthMonitoring:
             text=True,
         )
 
-        assert (
-            result.returncode == 0
-        ), f"health_monitor.py syntax error: {result.stderr}"
+        assert result.returncode == 0, f"health_monitor.py syntax error: {result.stderr}"
 
     def test_health_monitor_execution(self):
         """Test health monitor can execute successfully."""

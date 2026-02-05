@@ -141,9 +141,7 @@ class TestRAGBlockingLogic:
 
         is_trading_lesson = lesson.category.lower() in ["trading", "execution", "risk"]
         # The fix added score > 0.8 threshold
-        should_block = (
-            lesson.severity == "CRITICAL" and is_trading_lesson and score > 0.8
-        )
+        should_block = lesson.severity == "CRITICAL" and is_trading_lesson and score > 0.8
 
         assert not should_block, "Low relevance score lessons should NOT block"
 
@@ -158,9 +156,7 @@ class TestRAGBlockingLogic:
         score = 0.9  # High relevance
 
         is_trading_lesson = lesson.category.lower() in ["trading", "execution", "risk"]
-        should_block = (
-            lesson.severity == "CRITICAL" and is_trading_lesson and score > 0.8
-        )
+        should_block = lesson.severity == "CRITICAL" and is_trading_lesson and score > 0.8
 
         assert should_block, "High relevance trading CRITICAL lessons SHOULD block"
 

@@ -12,9 +12,7 @@ from mcp.utils import ensure_env_var
 
 
 def _get_trader(paper: bool = True):
-    return ensure_env_var(
-        lambda: get_alpaca_trader(paper=paper), "AlpacaTrader (check API keys)"
-    )
+    return ensure_env_var(lambda: get_alpaca_trader(paper=paper), "AlpacaTrader (check API keys)")
 
 
 def get_account_snapshot(paper: bool = True) -> dict[str, Any]:
@@ -26,9 +24,7 @@ def get_account_snapshot(paper: bool = True) -> dict[str, Any]:
     return trader.get_account_info()
 
 
-def get_latest_bars(
-    symbols: Iterable[str], limit: int = 200, paper: bool = True
-) -> dict[str, Any]:
+def get_latest_bars(symbols: Iterable[str], limit: int = 200, paper: bool = True) -> dict[str, Any]:
     """
     Fetch the latest bars for a list of symbols.
     """

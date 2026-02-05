@@ -109,9 +109,7 @@ class StateManager:
             The recorded trade dictionary
         """
         pl = (exit_price - entry_price) * quantity
-        pl_pct = (
-            ((exit_price - entry_price) / entry_price) * 100 if entry_price > 0 else 0
-        )
+        pl_pct = ((exit_price - entry_price) / entry_price) * 100 if entry_price > 0 else 0
         is_winner = pl > 0
 
         trade = {

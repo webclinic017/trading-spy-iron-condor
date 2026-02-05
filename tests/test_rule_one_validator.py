@@ -159,9 +159,7 @@ class TestRuleOneValidator:
         )
 
         with patch.object(validator, "_check_big_five", return_value=mock_big_five):
-            with patch.object(
-                validator, "_check_sticker_price", return_value=mock_sticker
-            ):
+            with patch.object(validator, "_check_sticker_price", return_value=mock_sticker):
                 result = validator.validate("SOFI")
                 assert result.approved is True
                 assert result.in_universe is True
@@ -285,22 +283,16 @@ class TestTradeGatewayIntegration:
             with patch.object(gateway, "_get_account_equity", return_value=5000.0):
                 with patch.object(gateway, "_get_positions", return_value=[]):
                     with patch.object(gateway, "_get_price", return_value=10.0):
-                        with patch.object(
-                            gateway, "_count_recent_trades", return_value=0
-                        ):
+                        with patch.object(gateway, "_count_recent_trades", return_value=0):
                             with patch.object(gateway, "_update_daily_pnl"):
-                                with patch.object(
-                                    gateway, "_get_drawdown", return_value=0.0
-                                ):
+                                with patch.object(gateway, "_get_drawdown", return_value=0.0):
                                     gateway.evaluate(request)  # Testing side effect
 
         # Validator should have been called
         mock_validator.validate.assert_called_once_with("SOFI")
 
     @patch("src.risk.trade_gateway.RuleOneValidator")
-    def test_gateway_rejects_rule_one_violation(
-        self, mock_validator_class, mock_trader
-    ):
+    def test_gateway_rejects_rule_one_violation(self, mock_validator_class, mock_trader):
         """TradeGateway should reject trades that fail Rule #1."""
         from src.risk.trade_gateway import RejectionReason, TradeGateway, TradeRequest
 
@@ -327,13 +319,9 @@ class TestTradeGatewayIntegration:
             with patch.object(gateway, "_get_account_equity", return_value=5000.0):
                 with patch.object(gateway, "_get_positions", return_value=[]):
                     with patch.object(gateway, "_get_price", return_value=10.0):
-                        with patch.object(
-                            gateway, "_count_recent_trades", return_value=0
-                        ):
+                        with patch.object(gateway, "_count_recent_trades", return_value=0):
                             with patch.object(gateway, "_update_daily_pnl"):
-                                with patch.object(
-                                    gateway, "_get_drawdown", return_value=0.0
-                                ):
+                                with patch.object(gateway, "_get_drawdown", return_value=0.0):
                                     decision = gateway.evaluate(request)
 
         # Should be rejected for Rule #1 violation

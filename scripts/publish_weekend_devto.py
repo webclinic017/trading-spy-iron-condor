@@ -44,9 +44,7 @@ def get_recent_lessons(max_count: int = 5) -> list[dict]:
     lessons = []
     cutoff = datetime.now().timestamp() - (7 * 24 * 60 * 60)  # 7 days
 
-    for f in sorted(
-        lessons_dir.glob("*.md"), key=lambda x: x.stat().st_mtime, reverse=True
-    ):
+    for f in sorted(lessons_dir.glob("*.md"), key=lambda x: x.stat().st_mtime, reverse=True):
         if f.stat().st_mtime > cutoff and len(lessons) < max_count:
             try:
                 content = f.read_text()
@@ -392,11 +390,7 @@ def find_existing_article(api_key: str) -> dict | None:
             # Look for today's weekend learning post
             for article in articles:
                 title = article.get("title", "")
-                if (
-                    "Day 79" in title
-                    or "January 18" in title
-                    or "Weekend Learning" in title
-                ):
+                if "Day 79" in title or "January 18" in title or "Weekend Learning" in title:
                     print(f"Found existing article: {article['id']} - {title}")
                     return article
     except Exception as e:

@@ -36,9 +36,7 @@ sys.path.insert(0, str(project_root))
 try:
     from playwright.async_api import async_playwright
 except ImportError:
-    print(
-        "❌ Playwright not installed. Run: pip install playwright && playwright install chromium"
-    )
+    print("❌ Playwright not installed. Run: pip install playwright && playwright install chromium")
     sys.exit(1)
 
 
@@ -63,9 +61,7 @@ class TradingScreenshotCapture:
         self.alpaca_key = os.environ.get("ALPACA_PAPER_TRADING_5K_API_KEY", "")
         self.alpaca_secret = os.environ.get("ALPACA_PAPER_TRADING_5K_API_SECRET", "")
 
-    async def capture_alpaca_dashboard(
-        self, account_type: str = "paper"
-    ) -> Path | None:
+    async def capture_alpaca_dashboard(self, account_type: str = "paper") -> Path | None:
         """
         Capture Alpaca dashboard screenshot.
 
@@ -76,9 +72,7 @@ class TradingScreenshotCapture:
             Path to saved screenshot or None if failed
         """
         if not self.alpaca_key or not self.alpaca_secret:
-            print(
-                f"⚠️  Alpaca credentials not found - skipping {account_type} dashboard"
-            )
+            print(f"⚠️  Alpaca credentials not found - skipping {account_type} dashboard")
             return None
 
         print(f"📸 Capturing Alpaca {account_type} dashboard...")
@@ -104,9 +98,7 @@ class TradingScreenshotCapture:
                 # 3. OR use API-based portfolio visualization
 
                 # For now, capture the portfolio summary from API instead
-                print(
-                    "⚠️  Direct dashboard login requires OAuth - using API-based capture instead"
-                )
+                print("⚠️  Direct dashboard login requires OAuth - using API-based capture instead")
 
                 # Alternative: Capture public progress dashboard or use Alpaca API visualization
                 await browser.close()
@@ -138,16 +130,12 @@ class TradingScreenshotCapture:
             # Get account data
             req = urllib.request.Request(account_url, headers=headers)
             ssl_context = ssl.create_default_context()
-            with urllib.request.urlopen(
-                req, timeout=10, context=ssl_context
-            ) as response:
+            with urllib.request.urlopen(req, timeout=10, context=ssl_context) as response:
                 account = json.loads(response.read().decode("utf-8"))
 
             # Get positions
             req = urllib.request.Request(positions_url, headers=headers)
-            with urllib.request.urlopen(
-                req, timeout=10, context=ssl_context
-            ) as response:
+            with urllib.request.urlopen(req, timeout=10, context=ssl_context) as response:
                 positions = json.loads(response.read().decode("utf-8"))
 
             # Generate HTML dashboard
@@ -167,9 +155,7 @@ class TradingScreenshotCapture:
                 # Save screenshot
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 screenshot_path = (
-                    self.output_dir
-                    / "alpaca"
-                    / f"{account_type}_dashboard_{timestamp}.png"
+                    self.output_dir / "alpaca" / f"{account_type}_dashboard_{timestamp}.png"
                 )
                 await page.screenshot(path=str(screenshot_path), full_page=True)
 
@@ -185,9 +171,7 @@ class TradingScreenshotCapture:
             print(f"❌ API dashboard capture failed: {e}")
             return None
 
-    def _generate_dashboard_html(
-        self, account: dict, positions: list, account_type: str
-    ) -> str:
+    def _generate_dashboard_html(self, account: dict, positions: list, account_type: str) -> str:
         """Generate HTML dashboard from Alpaca API data."""
         equity = float(account.get("equity", 0))
         cash = float(account.get("cash", 0))
@@ -381,9 +365,7 @@ class TradingScreenshotCapture:
                 # Save screenshot
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 screenshot_path = (
-                    self.output_dir
-                    / "dashboard"
-                    / f"progress_dashboard_{timestamp}.png"
+                    self.output_dir / "dashboard" / f"progress_dashboard_{timestamp}.png"
                 )
                 await page.screenshot(path=str(screenshot_path), full_page=True)
 
@@ -408,9 +390,7 @@ class TradingScreenshotCapture:
 
         return results
 
-    async def create_daily_summary(
-        self, screenshots: dict[str, Path | None]
-    ) -> Path | None:
+    async def create_daily_summary(self, screenshots: dict[str, Path | None]) -> Path | None:
         """Create a daily summary screenshot combining all dashboards."""
         print("📸 Creating daily summary...")
 
@@ -437,9 +417,7 @@ class TradingScreenshotCapture:
 
                 # Save screenshot
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                screenshot_path = (
-                    self.output_dir / "daily" / f"daily_summary_{timestamp}.png"
-                )
+                screenshot_path = self.output_dir / "daily" / f"daily_summary_{timestamp}.png"
                 await page.screenshot(path=str(screenshot_path), full_page=True)
 
                 await browser.close()
@@ -514,9 +492,7 @@ class TradingScreenshotCapture:
 
 async def main():
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Capture trading dashboard screenshots"
-    )
+    parser = argparse.ArgumentParser(description="Capture trading dashboard screenshots")
     parser.add_argument(
         "--dashboard",
         choices=["alpaca", "progress", "all"],

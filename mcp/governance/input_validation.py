@@ -38,9 +38,7 @@ class StockAnalysisRequest(BaseModel):
         if not re.match(r"^[A-Z]{1,5}$", v):
             raise ValueError(f"Invalid symbol format: {v}")
         if v not in ALLOWED_SYMBOLS:
-            raise ValueError(
-                f"Symbol {v} not in allowlist. Allowed: {sorted(ALLOWED_SYMBOLS)}"
-            )
+            raise ValueError(f"Symbol {v} not in allowlist. Allowed: {sorted(ALLOWED_SYMBOLS)}")
         return v
 
 
@@ -59,9 +57,7 @@ class PositionSizeRequest(BaseModel):
         if not re.match(r"^[A-Z]{1,5}$", v):
             raise ValueError(f"Invalid symbol format: {v}")
         if v not in ALLOWED_SYMBOLS:
-            raise ValueError(
-                f"Symbol {v} not in allowlist. Allowed: {sorted(ALLOWED_SYMBOLS)}"
-            )
+            raise ValueError(f"Symbol {v} not in allowlist. Allowed: {sorted(ALLOWED_SYMBOLS)}")
         return v
 
     @field_validator("stop_loss")
@@ -89,9 +85,7 @@ class OrderRequest(BaseModel):
         if not re.match(r"^[A-Z]{1,5}$", v):
             raise ValueError(f"Invalid symbol format: {v}")
         if v not in ALLOWED_SYMBOLS:
-            raise ValueError(
-                f"Symbol {v} not in allowlist. Allowed: {sorted(ALLOWED_SYMBOLS)}"
-            )
+            raise ValueError(f"Symbol {v} not in allowlist. Allowed: {sorted(ALLOWED_SYMBOLS)}")
         return v
 
     @field_validator("side")

@@ -33,9 +33,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Constants from CLAUDE.md
@@ -54,7 +52,6 @@ def get_alpaca_clients():
     from alpaca.data.historical import StockHistoricalDataClient
     from alpaca.data.historical.option import OptionHistoricalDataClient
     from alpaca.trading.client import TradingClient
-
     from src.utils.alpaca_client import get_alpaca_credentials
 
     api_key, secret = get_alpaca_credentials()
@@ -104,9 +101,7 @@ def count_open_ic_positions(trading_client) -> int:
     try:
         positions = trading_client.get_all_positions()
         # Count SPY option positions (IC = 4 legs)
-        spy_options = [
-            p for p in positions if p.symbol.startswith("SPY") and len(p.symbol) > 5
-        ]
+        spy_options = [p for p in positions if p.symbol.startswith("SPY") and len(p.symbol) > 5]
         # Each IC has 4 legs, so divide by 4
         ic_count = len(spy_options) // 4
         logger.info(f"Open IC positions: {ic_count} (max: {MAX_POSITIONS})")
@@ -178,9 +173,7 @@ def estimate_credit(strikes: dict) -> dict:
         "credit": estimated_credit,
         "credit_dollars": estimated_credit * 100,
         "max_risk": max_risk,
-        "risk_reward": (
-            max_risk / (estimated_credit * 100) if estimated_credit > 0 else 0
-        ),
+        "risk_reward": (max_risk / (estimated_credit * 100) if estimated_credit > 0 else 0),
         "win_probability": 0.85,  # 15 delta = ~85% POP
     }
 
@@ -326,9 +319,7 @@ def scan_for_opportunity(dry_run: bool = False) -> dict | None:
     # Check position limit
     open_positions = count_open_ic_positions(trading_client)
     if open_positions >= MAX_POSITIONS:
-        logger.info(
-            f"Position limit reached ({open_positions}/{MAX_POSITIONS}) - no scan needed"
-        )
+        logger.info(f"Position limit reached ({open_positions}/{MAX_POSITIONS}) - no scan needed")
         return None
 
     # Get market data
@@ -364,9 +355,7 @@ def scan_for_opportunity(dry_run: bool = False) -> dict | None:
     logger.info("=" * 60)
     logger.info(f"Expiry: {expiry} ({dte} DTE)")
     logger.info(f"Put Spread: ${strikes['long_put']:.0f}/${strikes['short_put']:.0f}")
-    logger.info(
-        f"Call Spread: ${strikes['short_call']:.0f}/${strikes['long_call']:.0f}"
-    )
+    logger.info(f"Call Spread: ${strikes['short_call']:.0f}/${strikes['long_call']:.0f}")
     logger.info(f"Credit: ${pricing['credit']:.2f} (${pricing['credit_dollars']:.0f})")
     logger.info(f"Max Risk: ${pricing['max_risk']:.0f}")
     logger.info(f"VIX: {vix_status}")
@@ -394,9 +383,7 @@ def scan_for_opportunity(dry_run: bool = False) -> dict | None:
 
 def main():
     parser = argparse.ArgumentParser(description="Iron Condor Scanner")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Scan without creating alert"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Scan without creating alert")
     args = parser.parse_args()
 
     # Check market hours

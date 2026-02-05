@@ -43,25 +43,19 @@ def main():
                 try:
                     # Support both ISO and "YYYY-MM-DD" formats
                     if "T" in last_trade:
-                        last_dt = datetime.fromisoformat(
-                            last_trade.replace("Z", "+00:00")
-                        )
+                        last_dt = datetime.fromisoformat(last_trade.replace("Z", "+00:00"))
                     else:
                         last_dt = datetime.strptime(last_trade, "%Y-%m-%d")
 
                     # BUGFIX Jan 14, 2026: Also check total_trades_today > 0
                     # The sync workflow sets last_trade_date even when no trades executed
                     # This caused false-positive duplicate detection blocking ALL trades
-                    total_trades_today = data.get("trades", {}).get(
-                        "total_trades_today", 0
-                    )
+                    total_trades_today = data.get("trades", {}).get("total_trades_today", 0)
                     if last_dt.date() == today and total_trades_today > 0:
                         skip = True
                         reason = f"Trading already executed today ({total_trades_today} trades at {last_dt.isoformat()})"
                     elif last_dt.date() == today and total_trades_today == 0:
-                        reason = (
-                            "Date sync'd today but no trades executed yet - proceeding"
-                        )
+                        reason = "Date sync'd today but no trades executed yet - proceeding"
                     else:
                         reason = f"Last trade was {last_dt.date()}, proceeding with today's trade"
                 except ValueError as e:
@@ -72,9 +66,7 @@ def main():
             print(f"❌ Error: Invalid JSON in system_state.json: {e}", file=sys.stderr)
             sys.exit(1)
         except Exception as exc:
-            print(
-                f"❌ Error: Unable to inspect system_state.json: {exc}", file=sys.stderr
-            )
+            print(f"❌ Error: Unable to inspect system_state.json: {exc}", file=sys.stderr)
             sys.exit(1)
     else:
         reason = "system_state.json not found (first run)"

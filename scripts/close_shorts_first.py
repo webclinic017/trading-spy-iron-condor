@@ -14,9 +14,7 @@ import os
 import sys
 from datetime import datetime
 
-api_key = os.environ.get("ALPACA_API_KEY") or os.environ.get(
-    "ALPACA_PAPER_TRADING_5K_API_KEY"
-)
+api_key = os.environ.get("ALPACA_API_KEY") or os.environ.get("ALPACA_PAPER_TRADING_5K_API_KEY")
 api_secret = os.environ.get("ALPACA_SECRET_KEY") or os.environ.get(
     "ALPACA_PAPER_TRADING_5K_API_SECRET"
 )
@@ -70,9 +68,7 @@ for symbol, qty, pnl in shorts:
     print(f"\nClosing {symbol} ({qty} contracts)...")
     try:
         result = client.close_position(symbol)
-        print(
-            f"  ✅ SUCCESS! Order ID: {result.id if hasattr(result, 'id') else result}"
-        )
+        print(f"  ✅ SUCCESS! Order ID: {result.id if hasattr(result, 'id') else result}")
     except Exception as e:
         print(f"  ❌ FAILED: {e}")
 
@@ -90,9 +86,7 @@ for symbol, qty, pnl in longs:
     print(f"\nClosing {symbol} ({qty} contracts)...")
     try:
         result = client.close_position(symbol)
-        print(
-            f"  ✅ SUCCESS! Order ID: {result.id if hasattr(result, 'id') else result}"
-        )
+        print(f"  ✅ SUCCESS! Order ID: {result.id if hasattr(result, 'id') else result}")
     except Exception as e:
         print(f"  ❌ FAILED: {e}")
 

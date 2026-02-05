@@ -24,45 +24,33 @@ class TestInputValidation:
 
     def test_stock_analysis_valid_symbol(self):
         """Valid symbol passes validation."""
-        request = validate_request(
-            StockAnalysisRequest, {"symbol": "SPY", "lookback_days": 30}
-        )
+        request = validate_request(StockAnalysisRequest, {"symbol": "SPY", "lookback_days": 30})
         assert request.symbol == "SPY"
         assert request.lookback_days == 30
 
     def test_stock_analysis_symbol_normalized(self):
         """Symbol is uppercased and stripped."""
-        request = validate_request(
-            StockAnalysisRequest, {"symbol": "  spy  ", "lookback_days": 30}
-        )
+        request = validate_request(StockAnalysisRequest, {"symbol": "  spy  ", "lookback_days": 30})
         assert request.symbol == "SPY"
 
     def test_stock_analysis_invalid_symbol_rejected(self):
         """Invalid symbol is rejected."""
         with pytest.raises(ValueError, match="not in allowlist"):
-            validate_request(
-                StockAnalysisRequest, {"symbol": "AAPL", "lookback_days": 30}
-            )
+            validate_request(StockAnalysisRequest, {"symbol": "AAPL", "lookback_days": 30})
 
     def test_stock_analysis_malformed_symbol_rejected(self):
         """Malformed symbol format is rejected."""
         with pytest.raises(ValueError, match="Invalid symbol format"):
-            validate_request(
-                StockAnalysisRequest, {"symbol": "SPY123", "lookback_days": 30}
-            )
+            validate_request(StockAnalysisRequest, {"symbol": "SPY123", "lookback_days": 30})
 
     def test_stock_analysis_lookback_limits(self):
         """Lookback days are bounded."""
         # Too high
         with pytest.raises(ValueError):
-            validate_request(
-                StockAnalysisRequest, {"symbol": "SPY", "lookback_days": 1000}
-            )
+            validate_request(StockAnalysisRequest, {"symbol": "SPY", "lookback_days": 1000})
         # Zero/negative
         with pytest.raises(ValueError):
-            validate_request(
-                StockAnalysisRequest, {"symbol": "SPY", "lookback_days": 0}
-            )
+            validate_request(StockAnalysisRequest, {"symbol": "SPY", "lookback_days": 0})
 
     def test_order_request_valid(self):
         """Valid order request passes."""

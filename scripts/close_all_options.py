@@ -65,9 +65,7 @@ def close_all_options():
         print(f"\nClosing {pos.symbol}...")
         try:
             result = client.close_position(pos.symbol)
-            print(
-                f"   Close initiated: Order {result.id if hasattr(result, 'id') else result}"
-            )
+            print(f"   Close initiated: Order {result.id if hasattr(result, 'id') else result}")
             success_count += 1
         except Exception as e:
             print(f"   Failed: {e}")

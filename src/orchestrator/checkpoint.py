@@ -230,8 +230,7 @@ class PipelineCheckpointer:
             rows = cursor.fetchall()
 
         return [
-            PipelineCheckpoint(**{k: v for k, v in dict(row).items() if k != "id"})
-            for row in rows
+            PipelineCheckpoint(**{k: v for k, v in dict(row).items() if k != "id"}) for row in rows
         ]
 
     def get_recent_checkpoints(
@@ -262,8 +261,7 @@ class PipelineCheckpointer:
             rows = cursor.fetchall()
 
         return [
-            PipelineCheckpoint(**{k: v for k, v in dict(row).items() if k != "id"})
-            for row in rows
+            PipelineCheckpoint(**{k: v for k, v in dict(row).items() if k != "id"}) for row in rows
         ]
 
     def cleanup_old_checkpoints(self, days_to_keep: int = 30) -> int:
@@ -283,9 +281,7 @@ class PipelineCheckpointer:
             deleted = cursor.rowcount
             conn.commit()
 
-        logger.info(
-            "Cleaned up %d old checkpoints (older than %d days)", deleted, days_to_keep
-        )
+        logger.info("Cleaned up %d old checkpoints (older than %d days)", deleted, days_to_keep)
         return deleted
 
     def _serialize_context(self, context: Any) -> dict[str, Any]:

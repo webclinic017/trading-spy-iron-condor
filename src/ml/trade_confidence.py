@@ -18,12 +18,7 @@ from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-MODEL_PATH = (
-    Path(__file__).parent.parent.parent
-    / "models"
-    / "ml"
-    / "trade_confidence_model.json"
-)
+MODEL_PATH = Path(__file__).parent.parent.parent / "models" / "ml" / "trade_confidence_model.json"
 
 
 class TradeConfidenceModel:
@@ -77,9 +72,7 @@ class TradeConfidenceModel:
         except Exception as e:
             logger.error(f"Failed to save trade confidence model: {e}")
 
-    def get_posterior_mean(
-        self, strategy: str = "iron_condor", ticker: str = "SPY"
-    ) -> float:
+    def get_posterior_mean(self, strategy: str = "iron_condor", ticker: str = "SPY") -> float:
         """
         Get posterior mean (expected probability of success).
 
@@ -149,9 +142,7 @@ class TradeConfidenceModel:
         # Get regime adjustment
         regime_adj = 1.0
         if regime:
-            regime_adj = self.model.get("regime_adjustments", {}).get(
-                regime.lower(), 1.0
-            )
+            regime_adj = self.model.get("regime_adjustments", {}).get(regime.lower(), 1.0)
 
         # Recommendation based on sampled confidence
         if sampled >= 0.7:

@@ -10,7 +10,6 @@ from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
-
 from src.utils.market_data import get_market_data_provider
 
 logger = logging.getLogger(__name__)
@@ -154,9 +153,7 @@ def main():
         help="Directory to store data (default: data/historical)",
     )
     parser.add_argument("--list", action="store_true", help="List existing data files")
-    parser.add_argument(
-        "--load", type=str, help="Load and display historical data for a symbol"
-    )
+    parser.add_argument("--load", type=str, help="Load and display historical data for a symbol")
 
     args = parser.parse_args()
 

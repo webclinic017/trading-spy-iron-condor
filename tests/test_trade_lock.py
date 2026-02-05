@@ -167,9 +167,7 @@ class TestCrisisMonitor:
         conditions = check_crisis_conditions(positions, account_equity=5000)
 
         # Should detect excess positions (9 > 8)
-        excess_conditions = [
-            c for c in conditions if c.condition_type == "EXCESS_POSITIONS"
-        ]
+        excess_conditions = [c for c in conditions if c.condition_type == "EXCESS_POSITIONS"]
         assert len(excess_conditions) > 0
 
     def test_excess_loss_detected(self):
@@ -189,9 +187,7 @@ class TestCrisisMonitor:
         conditions = check_crisis_conditions(positions, account_equity=5000)
 
         # Should detect excess loss (30% > 25% threshold)
-        loss_conditions = [
-            c for c in conditions if c.condition_type == "EXCESS_UNREALIZED_LOSS"
-        ]
+        loss_conditions = [c for c in conditions if c.condition_type == "EXCESS_UNREALIZED_LOSS"]
         assert len(loss_conditions) > 0
 
     def test_stop_loss_breach(self):
@@ -210,9 +206,7 @@ class TestCrisisMonitor:
 
         conditions = check_crisis_conditions(positions, account_equity=10000)
 
-        stop_loss_conditions = [
-            c for c in conditions if c.condition_type == "STOP_LOSS_BREACH"
-        ]
+        stop_loss_conditions = [c for c in conditions if c.condition_type == "STOP_LOSS_BREACH"]
         assert len(stop_loss_conditions) > 0
 
     def test_no_crisis_when_normal(self):

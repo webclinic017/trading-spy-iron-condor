@@ -230,9 +230,7 @@ def calculate_max_drawdown(equity_curve: np.ndarray) -> tuple[float, int]:
     return max_dd, duration
 
 
-def calculate_var_cvar(
-    returns: np.ndarray, confidence: float = 0.95
-) -> tuple[float, float]:
+def calculate_var_cvar(returns: np.ndarray, confidence: float = 0.95) -> tuple[float, float]:
     """
     Calculate Value at Risk (VaR) and Conditional VaR (Expected Shortfall).
 
@@ -314,9 +312,7 @@ def calculate_risk_metrics(
 
     # Annualized return (assuming trades are spread over the year)
     # For n trades over 252 days, annualized = total_return * (252 / n_trades)
-    annualized_return = (total_return / initial_capital) * (
-        periods_per_year / max(n_trades, 1)
-    )
+    annualized_return = (total_return / initial_capital) * (periods_per_year / max(n_trades, 1))
 
     # Build equity curve
     equity_curve = initial_capital + np.cumsum(pnls)
@@ -355,9 +351,7 @@ def calculate_risk_metrics(
     std_dev = float(np.std(pnls, ddof=1)) if n_trades > 1 else 0.0
 
     downside_pnls = pnls[pnls < 0]
-    downside_dev = (
-        float(np.std(downside_pnls, ddof=1)) if len(downside_pnls) > 1 else 0.0
-    )
+    downside_dev = float(np.std(downside_pnls, ddof=1)) if len(downside_pnls) > 1 else 0.0
 
     # Higher moments
     if n_trades > 3 and std_dev > 0:
@@ -391,9 +385,7 @@ def calculate_risk_metrics(
     )
 
 
-def generate_risk_report(
-    metrics: RiskMetrics, strategy_name: str = "Iron Condor"
-) -> str:
+def generate_risk_report(metrics: RiskMetrics, strategy_name: str = "Iron Condor") -> str:
     """Generate a human-readable risk report."""
     compliant, violations = metrics.is_phil_town_compliant()
 
@@ -552,12 +544,8 @@ def benchmark_comparison(
     Returns:
         Dictionary with comparison metrics
     """
-    strategy_sharpe = calculate_sharpe_ratio(
-        strategy_returns, risk_free_rate, periods_per_year
-    )
-    benchmark_sharpe = calculate_sharpe_ratio(
-        benchmark_returns, risk_free_rate, periods_per_year
-    )
+    strategy_sharpe = calculate_sharpe_ratio(strategy_returns, risk_free_rate, periods_per_year)
+    benchmark_sharpe = calculate_sharpe_ratio(benchmark_returns, risk_free_rate, periods_per_year)
 
     # Information ratio = (strategy return - benchmark return) / tracking error
     excess_returns = strategy_returns - benchmark_returns
@@ -589,9 +577,7 @@ def validate_backtest_realism(metrics: RiskMetrics) -> tuple[bool, list[str]]:
 
     # Sharpe > 2.5 is suspicious for options strategies
     if metrics.sharpe_ratio > 2.5:
-        warnings.append(
-            f"Sharpe ratio {metrics.sharpe_ratio:.2f} > 2.5 may indicate overfitting"
-        )
+        warnings.append(f"Sharpe ratio {metrics.sharpe_ratio:.2f} > 2.5 may indicate overfitting")
 
     # Win rate > 90% is suspicious
     if metrics.win_rate > 0.90:
@@ -599,9 +585,7 @@ def validate_backtest_realism(metrics: RiskMetrics) -> tuple[bool, list[str]]:
 
     # Sortino >> Sharpe suggests tail risk underestimation
     if metrics.sortino_ratio > metrics.sharpe_ratio * 2:
-        warnings.append(
-            "Sortino/Sharpe ratio suggests possible tail risk underestimation"
-        )
+        warnings.append("Sortino/Sharpe ratio suggests possible tail risk underestimation")
 
     # Zero or near-zero std_dev indicates degenerate results
     if metrics.std_dev < 1.0 and metrics.total_return != 0:

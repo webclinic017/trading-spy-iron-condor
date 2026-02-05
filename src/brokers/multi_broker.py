@@ -60,7 +60,6 @@ class MultiBroker:
         if self._alpaca_client is None:
             try:
                 from alpaca.trading.client import TradingClient
-
                 from src.utils.alpaca_client import get_alpaca_credentials
 
                 api_key, secret_key = get_alpaca_credentials()
@@ -146,14 +145,8 @@ class MultiBroker:
             symbol=symbol,
             side=side,
             quantity=qty,
-            status=(
-                order.status.value
-                if hasattr(order.status, "value")
-                else str(order.status)
-            ),
-            filled_price=(
-                float(order.filled_avg_price) if order.filled_avg_price else None
-            ),
+            status=(order.status.value if hasattr(order.status, "value") else str(order.status)),
+            filled_price=(float(order.filled_avg_price) if order.filled_avg_price else None),
             timestamp=datetime.now().isoformat(),
         )
 
@@ -161,7 +154,6 @@ class MultiBroker:
         """Get quote from Alpaca."""
         from alpaca.data.historical import StockHistoricalDataClient
         from alpaca.data.requests import StockLatestQuoteRequest
-
         from src.utils.alpaca_client import get_alpaca_credentials
 
         api_key, secret_key = get_alpaca_credentials()
@@ -175,9 +167,7 @@ class MultiBroker:
             "symbol": symbol,
             "bid": float(quote.bid_price) if quote else 0,
             "ask": float(quote.ask_price) if quote else 0,
-            "last": (
-                (float(quote.bid_price) + float(quote.ask_price)) / 2 if quote else 0
-            ),
+            "last": ((float(quote.bid_price) + float(quote.ask_price)) / 2 if quote else 0),
         }, BrokerType.ALPACA
 
     def health_check(self) -> dict[str, Any]:

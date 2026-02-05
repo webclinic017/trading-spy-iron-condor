@@ -193,9 +193,7 @@ class TestCEOApproval:
         )
 
         # Find approval task
-        approval_tasks = [
-            tid for tid in task_ids if engine.tasks[tid].owner == TaskOwner.CEO
-        ]
+        approval_tasks = [tid for tid in task_ids if engine.tasks[tid].owner == TaskOwner.CEO]
 
         assert len(approval_tasks) > 0
         assert engine.tasks[approval_tasks[0]].status == TaskStatus.AWAITING_APPROVAL
@@ -243,9 +241,7 @@ class TestStatusReport:
 
     def test_status_report_structure(self, engine):
         """Report should have all required sections."""
-        engine.create_trade_entry_tasks(
-            ticker="SPY", strategy="iron_condor", parameters={}
-        )
+        engine.create_trade_entry_tasks(ticker="SPY", strategy="iron_condor", parameters={})
 
         report = engine.get_status_report()
 
@@ -257,9 +253,7 @@ class TestStatusReport:
 
     def test_report_counts_correct(self, engine):
         """Report should count tasks correctly."""
-        engine.create_trade_entry_tasks(
-            ticker="SPY", strategy="iron_condor", parameters={}
-        )
+        engine.create_trade_entry_tasks(ticker="SPY", strategy="iron_condor", parameters={})
 
         report = engine.get_status_report()
 
@@ -276,9 +270,7 @@ class TestPersistence:
             "src.orchestration.actionable_task_engine.TASKS_FILE",
             tmp_path / "tasks.json",
         ):
-            engine.create_trade_entry_tasks(
-                ticker="SPY", strategy="iron_condor", parameters={}
-            )
+            engine.create_trade_entry_tasks(ticker="SPY", strategy="iron_condor", parameters={})
 
             # Check file exists and has content
             tasks_file = tmp_path / "tasks.json"

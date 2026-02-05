@@ -117,9 +117,7 @@ def get_iv_percentile(symbol: str, lookback_days: int = 252) -> dict:
 
         # Calculate historical volatility (20-day rolling)
         returns = np.log(hist["Close"] / hist["Close"].shift(1))
-        rolling_vol = (
-            returns.rolling(window=20).std() * np.sqrt(252) * 100
-        )  # Annualized %
+        rolling_vol = returns.rolling(window=20).std() * np.sqrt(252) * 100  # Annualized %
 
         current_hv = rolling_vol.iloc[-1]
 
@@ -130,17 +128,13 @@ def get_iv_percentile(symbol: str, lookback_days: int = 252) -> dict:
         # Determine recommendation per RAG knowledge
         if iv_percentile >= 50:
             recommendation = "SELL_PREMIUM"
-            logger.info(
-                f"IV Percentile: {iv_percentile:.1f}% - FAVORABLE for selling premium"
-            )
+            logger.info(f"IV Percentile: {iv_percentile:.1f}% - FAVORABLE for selling premium")
         elif iv_percentile >= 30:
             recommendation = "NEUTRAL"
             logger.info(f"IV Percentile: {iv_percentile:.1f}% - NEUTRAL conditions")
         else:
             recommendation = "AVOID_SELLING"
-            logger.info(
-                f"IV Percentile: {iv_percentile:.1f}% - UNFAVORABLE for selling"
-            )
+            logger.info(f"IV Percentile: {iv_percentile:.1f}% - UNFAVORABLE for selling")
 
         return {
             "iv_percentile": round(iv_percentile, 1),
@@ -194,9 +188,7 @@ def get_trend_filter(symbol: str, lookback_days: int = 20) -> dict:
         hist = ticker.history(period="2mo")
 
         if len(hist) < lookback_days:
-            logger.warning(
-                "Insufficient history for trend filter, defaulting to neutral"
-            )
+            logger.warning("Insufficient history for trend filter, defaulting to neutral")
             return {
                 "trend": "NEUTRAL",
                 "slope": 0,
@@ -225,9 +217,7 @@ def get_trend_filter(symbol: str, lookback_days: int = 20) -> dict:
             trend = "STRONG_DOWNTREND"
             recommendation = "AVOID_PUTS"
             logger.warning("STRONG DOWNTREND detected!")
-            logger.warning(
-                f"MA slope: {slope:.3f}%/day, Price vs MA: {price_vs_ma:.1f}%"
-            )
+            logger.warning(f"MA slope: {slope:.3f}%/day, Price vs MA: {price_vs_ma:.1f}%")
         elif slope < -0.3:
             trend = "MODERATE_DOWNTREND"
             recommendation = "CAUTION_BUT_PROCEED"
@@ -396,9 +386,7 @@ def get_atr(symbol: str, period: int = 14) -> dict:
 
         # Suggested minimum DTE: assume 1 ATR move target, 3x buffer
         # For a credit spread, we want time for theta decay
-        suggested_min_dte = max(
-            14, int(3 * (1 / (atr_pct / 100)) if atr_pct > 0 else 30)
-        )
+        suggested_min_dte = max(14, int(3 * (1 / (atr_pct / 100)) if atr_pct > 0 else 30))
 
         logger.info(f"ATR for {symbol}: ${atr:.2f} ({atr_pct:.2f}%)")
 
@@ -626,9 +614,7 @@ def validate_contract_quality(
     # Check 5: IV crush warning (if IV provided)
     iv_warning = None
     if implied_volatility is not None:
-        iv_pct = (
-            implied_volatility * 100 if implied_volatility < 1 else implied_volatility
-        )
+        iv_pct = implied_volatility * 100 if implied_volatility < 1 else implied_volatility
         if iv_pct > 50:
             iv_warning = f"HIGH IV ({iv_pct:.1f}%) - potential IV crush risk"
             all_warnings.append(iv_warning)
@@ -656,9 +642,7 @@ def validate_contract_quality(
     else:
         recommendation = "SKIP"
 
-    logger.info(
-        f"Checklist result: {checks_passed}/{checks_total} passed, {recommendation}"
-    )
+    logger.info(f"Checklist result: {checks_passed}/{checks_total} passed, {recommendation}")
 
     return {
         "passes_checklist": passes_checklist,

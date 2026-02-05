@@ -100,9 +100,7 @@ class CacheStats:
             "uptime_seconds": round(uptime_seconds, 2),
             "uptime_hours": round(uptime_seconds / 3600, 2),
             "queries_per_hour": (
-                round(self.total_queries / (uptime_seconds / 3600), 2)
-                if uptime_seconds > 0
-                else 0
+                round(self.total_queries / (uptime_seconds / 3600), 2) if uptime_seconds > 0 else 0
             ),
             "last_updated": datetime.now(timezone.utc).isoformat(),
         }
@@ -201,9 +199,7 @@ class SemanticCache:
             embedding = embedding / norm
         return embedding
 
-    def _compute_similarity(
-        self, embedding1: np.ndarray, embedding2: np.ndarray
-    ) -> float:
+    def _compute_similarity(self, embedding1: np.ndarray, embedding2: np.ndarray) -> float:
         """Compute cosine similarity between two embeddings."""
         # Embeddings are already normalized, so dot product = cosine similarity
         return float(np.dot(embedding1, embedding2))
@@ -234,9 +230,7 @@ class SemanticCache:
                     self._cache.move_to_end(exact_key)
                     entry.hit_count += 1
                     self._stats.hits += 1
-                    self._stats.estimated_cost_savings_usd += (
-                        self.ESTIMATED_COST_PER_QUERY_USD
-                    )
+                    self._stats.estimated_cost_savings_usd += self.ESTIMATED_COST_PER_QUERY_USD
                     logger.debug(f"Cache HIT (exact): '{query[:50]}...'")
                     return entry.result
                 else:
@@ -275,9 +269,7 @@ class SemanticCache:
                 self._cache.move_to_end(key)
                 entry.hit_count += 1
                 self._stats.hits += 1
-                self._stats.estimated_cost_savings_usd += (
-                    self.ESTIMATED_COST_PER_QUERY_USD
-                )
+                self._stats.estimated_cost_savings_usd += self.ESTIMATED_COST_PER_QUERY_USD
                 logger.debug(
                     f"Cache HIT (semantic, sim={similarity:.3f}): '{query[:50]}...' "
                     f"matched '{entry.query[:50]}...'"

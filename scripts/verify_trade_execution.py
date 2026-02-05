@@ -192,9 +192,7 @@ def verify_execution(date_str: str = None, alert_on_failure: bool = False) -> bo
     elif alpaca_result["orders_found"] > 0:
         print(f"   ✅ Orders found in Alpaca: {alpaca_result['orders_found']}")
         for order in alpaca_result["orders"][:5]:  # Show first 5
-            print(
-                f"      - {order['symbol']} {order['side']} {order['qty']} ({order['status']})"
-            )
+            print(f"      - {order['symbol']} {order['side']} {order['qty']} ({order['status']})")
         verification_passed = True
     else:
         print("   ℹ️  No new orders found in Alpaca for today")

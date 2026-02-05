@@ -21,9 +21,7 @@ INJECTION_PATTERNS = [
     r"execute.*command|run.*script|eval\(",  # Code execution
 ]
 
-COMPILED_PATTERNS = [
-    re.compile(p, re.IGNORECASE | re.DOTALL) for p in INJECTION_PATTERNS
-]
+COMPILED_PATTERNS = [re.compile(p, re.IGNORECASE | re.DOTALL) for p in INJECTION_PATTERNS]
 
 # Sensitive fields to redact from responses
 SENSITIVE_FIELDS = frozenset(

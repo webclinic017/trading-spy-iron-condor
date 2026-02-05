@@ -104,9 +104,7 @@ class AlpacaExecutor:
         except Exception as e:
             logger.warning(f"Failed to sync trade: {e}")
 
-    def _store_rlhf_trajectory(
-        self, order: dict[str, Any], strategy: str, price: float
-    ) -> None:
+    def _store_rlhf_trajectory(self, order: dict[str, Any], strategy: str, price: float) -> None:
         """Store trade as RLHF trajectory for ML learning."""
         try:
             from src.learning.rlhf_storage import store_trade_trajectory
@@ -143,9 +141,7 @@ class AlpacaExecutor:
             )
 
             if result:
-                logger.info(
-                    f"RLHF trajectory stored: {symbol} {side} (episode: {order_id})"
-                )
+                logger.info(f"RLHF trajectory stored: {symbol} {side} (episode: {order_id})")
             else:
                 logger.warning(f"RLHF trajectory storage returned None for {symbol}")
 
@@ -180,9 +176,7 @@ class AlpacaExecutor:
                         "portfolio_value": float(account.portfolio_value),
                     }
                 else:
-                    raise RuntimeError(
-                        "Trader has no get_account_info or get_account method!"
-                    )
+                    raise RuntimeError("Trader has no get_account_info or get_account method!")
 
                 # Get positions
                 if hasattr(self.trader, "get_positions"):
@@ -212,17 +206,13 @@ class AlpacaExecutor:
                 self.positions = []
 
                 # Re-raise so callers know there's a problem
-                raise RuntimeError(
-                    f"Cannot sync portfolio - trading unsafe: {e}"
-                ) from e
+                raise RuntimeError(f"Cannot sync portfolio - trading unsafe: {e}") from e
 
         equity = self.account_equity
 
         # Safety check: If equity is 0 or negative, something is VERY wrong
         if equity <= 0 and not self.simulated:
-            logger.error(
-                f"❌ CRITICAL: Equity is ${equity} - this should never happen!"
-            )
+            logger.error(f"❌ CRITICAL: Equity is ${equity} - this should never happen!")
             logger.error("   Either API failed or account is empty. BLOCKING TRADING.")
 
         logger.info(
@@ -235,11 +225,7 @@ class AlpacaExecutor:
     @property
     def account_equity(self) -> float:
         if not self.account_snapshot:
-            return (
-                float(os.getenv("SIMULATED_EQUITY", "100000"))
-                if self.simulated
-                else 0.0
-            )
+            return float(os.getenv("SIMULATED_EQUITY", "100000")) if self.simulated else 0.0
         return float(
             self.account_snapshot.get("equity")
             or self.account_snapshot.get("portfolio_value")
@@ -324,9 +310,7 @@ class AlpacaExecutor:
 
             gate_available = True
         except ImportError as import_err:
-            logger.error(
-                f"🚨 CRITICAL: Mandatory trade gate import failed: {import_err}"
-            )
+            logger.error(f"🚨 CRITICAL: Mandatory trade gate import failed: {import_err}")
             logger.error("🚫 FAIL CLOSED: All trades blocked until gate is restored")
             raise RuntimeError(
                 "SECURITY: Mandatory trade gate unavailable. "
@@ -335,9 +319,7 @@ class AlpacaExecutor:
             ) from import_err
 
         if gate_available:
-            amount = notional or (
-                qty * 100.0 if qty else 0.0
-            )  # Estimate for qty-based orders
+            amount = notional or (qty * 100.0 if qty else 0.0)  # Estimate for qty-based orders
 
             # Get account context for context-aware blocking (ll_051 prevention)
             # This enables blocking when equity=$0 (blind trading prevention)
@@ -346,9 +328,7 @@ class AlpacaExecutor:
                 if hasattr(self, "account_snapshot") and self.account_snapshot:
                     account_context = {
                         "equity": float(self.account_snapshot.get("equity", 0)),
-                        "buying_power": float(
-                            self.account_snapshot.get("buying_power", 0)
-                        ),
+                        "buying_power": float(self.account_snapshot.get("buying_power", 0)),
                     }
                 elif hasattr(self, "trader") and self.trader:
                     # Try to get fresh account data
@@ -360,9 +340,7 @@ class AlpacaExecutor:
                     if account:
                         account_context = {
                             "equity": float(getattr(account, "equity", 0) or 0),
-                            "buying_power": float(
-                                getattr(account, "buying_power", 0) or 0
-                            ),
+                            "buying_power": float(getattr(account, "buying_power", 0) or 0),
                         }
             except Exception as e:
                 logger.warning(f"Could not get account context for gate: {e}")
@@ -376,9 +354,7 @@ class AlpacaExecutor:
             )
 
             if not gate_result.approved:
-                logger.error(
-                    f"🚫 ORDER BLOCKED BY MANDATORY GATE: {gate_result.reason}"
-                )
+                logger.error(f"🚫 ORDER BLOCKED BY MANDATORY GATE: {gate_result.reason}")
                 logger.error(f"   RAG Warnings: {gate_result.rag_warnings}")
                 logger.error(f"   ML Anomalies: {gate_result.ml_anomalies}")
 
@@ -487,9 +463,7 @@ class AlpacaExecutor:
 
             # Apply slippage
             fill_price = (
-                est_price * (1 + slippage_pct)
-                if side == "buy"
-                else est_price * (1 - slippage_pct)
+                est_price * (1 + slippage_pct) if side == "buy" else est_price * (1 - slippage_pct)
             )
             fill_price = round(fill_price, 2)
 
@@ -552,9 +526,7 @@ class AlpacaExecutor:
             # SECURITY FIX (Jan 19, 2026): Validate broker response before use
             # Previous bug: None response would crash on attribute access
             if order_result is None:
-                raise ValueError(
-                    "Broker returned None - order submission failed silently"
-                )
+                raise ValueError("Broker returned None - order submission failed silently")
 
             # Record success for circuit breaker (Jan 13, 2026)
             try:
@@ -576,9 +548,7 @@ class AlpacaExecutor:
             ]
             for attr in required_attrs:
                 if not hasattr(order_result, attr):
-                    raise ValueError(
-                        f"Broker response missing required attribute: {attr}"
-                    )
+                    raise ValueError(f"Broker response missing required attribute: {attr}")
 
             order = {
                 "id": order_result.order_id,
@@ -645,9 +615,7 @@ class AlpacaExecutor:
                 logger.debug(f"Reflection failed: {refl_err}")
             raise e
 
-    def set_stop_loss(
-        self, symbol: str, qty: float, stop_price: float
-    ) -> dict[str, Any]:
+    def set_stop_loss(self, symbol: str, qty: float, stop_price: float) -> dict[str, Any]:
         """Place or simulate a stop-loss order.
 
         In simulated mode, records a synthetic stop order entry.
@@ -691,9 +659,7 @@ class AlpacaExecutor:
                 # AlpacaTrader.set_stop_loss is specialized.
                 # Let's fallback to underlying trader for stop loss for now
                 # UNTIL MultiBroker fully supports stops.
-                return self.trader.set_stop_loss(
-                    symbol=symbol, qty=qty, stop_price=stop_price
-                )
+                return self.trader.set_stop_loss(symbol=symbol, qty=qty, stop_price=stop_price)
             except Exception as e:
                 logger.warning(f"MultiBroker stop-loss failed: {e}")
 
@@ -756,9 +722,7 @@ class AlpacaExecutor:
         # Calculate entry price (estimated from notional / filled_qty or current price)
         entry_price = self._estimate_entry_price(symbol, notional, order)
         if entry_price <= 0:
-            logger.error(
-                f"Could not determine entry price for {symbol}. Stop-loss not placed."
-            )
+            logger.error(f"Could not determine entry price for {symbol}. Stop-loss not placed.")
             result["error"] = "Could not determine entry price for stop-loss."
             # Order was placed but stop failed - this is a risk!
             logger.critical(
@@ -797,9 +761,7 @@ class AlpacaExecutor:
 
         # Place the stop-loss order
         try:
-            stop_order = self.set_stop_loss(
-                symbol=symbol, qty=qty, stop_price=stop_price
-            )
+            stop_order = self.set_stop_loss(symbol=symbol, qty=qty, stop_price=stop_price)
             result["stop_loss"] = stop_order
             logger.info(
                 f"[PROTECTED] {symbol}: Entry=${entry_price:.2f}, "
@@ -845,9 +807,7 @@ class AlpacaExecutor:
 
         return result
 
-    def _estimate_entry_price(
-        self, symbol: str, notional: float, order: dict[str, Any]
-    ) -> float:
+    def _estimate_entry_price(self, symbol: str, notional: float, order: dict[str, Any]) -> float:
         """Estimate entry price from order or current market price."""
         # Try to get from order fill
         if order.get("filled_avg_price"):
@@ -867,9 +827,7 @@ class AlpacaExecutor:
                     if quote_data and quote_data.get("ask_price"):
                         return float(quote_data["ask_price"])
             except Exception as quote_err:
-                logger.debug(
-                    f"Quote fetch for {symbol} failed (notional calc): {quote_err}"
-                )
+                logger.debug(f"Quote fetch for {symbol} failed (notional calc): {quote_err}")
             # Default estimate: assume 1 share = notional (rough)
             return notional / 1.0 if notional > 0 else 0.0
 
@@ -915,9 +873,7 @@ class AlpacaExecutor:
         # Fallback to default
         return entry_price * (1 - DEFAULT_STOP_LOSS_PCT), DEFAULT_STOP_LOSS_PCT
 
-    def _get_order_qty(
-        self, order: dict[str, Any], notional: float, entry_price: float
-    ) -> float:
+    def _get_order_qty(self, order: dict[str, Any], notional: float, entry_price: float) -> float:
         """Get quantity from order or estimate from notional."""
         if order.get("filled_qty"):
             return float(order["filled_qty"])

@@ -105,9 +105,7 @@ def check_crisis_conditions(
 
     # Condition 2: Total unrealized loss exceeds threshold
     total_unrealized_loss = sum(
-        float(p.get("unrealized_pl", 0))
-        for p in positions
-        if float(p.get("unrealized_pl", 0)) < 0
+        float(p.get("unrealized_pl", 0)) for p in positions if float(p.get("unrealized_pl", 0)) < 0
     )
     loss_pct = abs(total_unrealized_loss) / account_equity if account_equity > 0 else 0
 
@@ -292,9 +290,7 @@ def clear_crisis_mode(reason: str = "Manual clear") -> bool:
 
         # Backup halt file content
         content = TRADING_HALTED_FILE.read_text()
-        backup_path = Path(
-            f"data/crisis_cleared_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-        )
+        backup_path = Path(f"data/crisis_cleared_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt")
         backup_path.write_text(f"Cleared: {reason}\n\nOriginal content:\n{content}")
 
         # Remove halt file

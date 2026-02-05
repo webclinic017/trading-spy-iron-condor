@@ -138,9 +138,7 @@ class TradingOrchestrator:
         self.paper = paper
 
         self.macro_agent = MacroeconomicAgent()
-        self.momentum_agent = MomentumAgent(
-            min_score=float(os.getenv("MOMENTUM_MIN_SCORE", "0.0"))
-        )
+        self.momentum_agent = MomentumAgent(min_score=float(os.getenv("MOMENTUM_MIN_SCORE", "0.0")))
 
         # Jan 10, 2026: DISABLED RL FILTER (CEO directive - reduce complexity)
         # Evidence: 1,601 lines of RL code, 0 trades using it
@@ -151,9 +149,7 @@ class TradingOrchestrator:
             "true",
             "yes",
         }
-        self.llm_sentiment_enabled = os.getenv(
-            "LLM_SENTIMENT_ENABLED", "true"
-        ).lower() in {
+        self.llm_sentiment_enabled = os.getenv("LLM_SENTIMENT_ENABLED", "true").lower() in {
             "1",
             "true",
             "yes",
@@ -179,9 +175,7 @@ class TradingOrchestrator:
         # LLM sentiment now uses BiasProvider with real data
         self.llm_agent = None
         if self.llm_sentiment_enabled:
-            logger.info(
-                "Gate 3: LLM Sentiment via BiasProvider (LangChain stub removed)"
-            )
+            logger.info("Gate 3: LLM Sentiment via BiasProvider (LangChain stub removed)")
         else:
             logger.info("Gate 3: LLM Sentiment DISABLED (simplification mode)")
         # Playwright MCP for dynamic sentiment scraping and trade verification
@@ -252,9 +246,7 @@ class TradingOrchestrator:
         if enable_rag and RAG_AVAILABLE:
             try:
                 self.rag_retriever = get_retriever()
-                logger.info(
-                    "RAG Retriever initialized (historical context for trading decisions)"
-                )
+                logger.info("RAG Retriever initialized (historical context for trading decisions)")
             except Exception as e:
                 logger.warning(f"RAG Retriever init failed: {e}")
 
@@ -285,23 +277,16 @@ class TradingOrchestrator:
         # Research: 5% targets too tight, positions closed before trends developed
         self.position_manager = PositionManager(
             conditions=ExitConditions(
-                take_profit_pct=float(
-                    os.getenv("TAKE_PROFIT_PCT", "0.15")
-                ),  # 15% (was 5%)
+                take_profit_pct=float(os.getenv("TAKE_PROFIT_PCT", "0.15")),  # 15% (was 5%)
                 stop_loss_pct=float(os.getenv("STOP_LOSS_PCT", "0.08")),  # 8% (was 5%)
-                max_holding_days=int(
-                    os.getenv("MAX_HOLDING_DAYS", "30")
-                ),  # 30 days (was 14)
+                max_holding_days=int(os.getenv("MAX_HOLDING_DAYS", "30")),  # 30 days (was 14)
                 enable_momentum_exit=os.getenv("ENABLE_MOMENTUM_EXIT", "false").lower()
                 in {
                     "1",
                     "true",
                 },  # DISABLED: MACD reversal causes false exits in sideways markets
-                enable_atr_stop=os.getenv("ENABLE_ATR_STOP", "true").lower()
-                in {"1", "true"},
-                atr_multiplier=float(
-                    os.getenv("ATR_MULTIPLIER", "2.5")
-                ),  # 2.5x ATR (was 2.0)
+                enable_atr_stop=os.getenv("ENABLE_ATR_STOP", "true").lower() in {"1", "true"},
+                atr_multiplier=float(os.getenv("ATR_MULTIPLIER", "2.5")),  # 2.5x ATR (was 2.0)
             )
         )
         self.bias_fresh_minutes = int(os.getenv("BIAS_FRESHNESS_MINUTES", "90"))
@@ -324,9 +309,7 @@ class TradingOrchestrator:
         # NOTE: Disabled - MultiLLMAnalyzer removed in favor of other analysis methods
         self.introspective_council: IntrospectiveCouncil | None = None
         self.uncertainty_tracker = None
-        logger.info(
-            "Gate 3.5: IntrospectiveCouncil disabled (MultiLLMAnalyzer removed)"
-        )
+        logger.info("Gate 3.5: IntrospectiveCouncil disabled (MultiLLMAnalyzer removed)")
 
         # Go ADK Multi-Agent Adapter (Dec 2025)
         # Provides Gemini-powered multi-agent analysis: research → signal → risk → execution
@@ -344,9 +327,7 @@ class TradingOrchestrator:
                     "Go ADK Multi-Agent Adapter initialized (research/signal/risk/execution)"
                 )
             except Exception as e:
-                logger.warning(
-                    f"Go ADK adapter init failed (will use Python-only pipeline): {e}"
-                )
+                logger.warning(f"Go ADK adapter init failed (will use Python-only pipeline): {e}")
 
         # Gate 0: Mental Toughness Coach (CEO FIX Jan 15, 2026)
         # Mental coach feature not yet implemented - set to None to skip Gate0Psychology checks
@@ -366,9 +347,7 @@ class TradingOrchestrator:
             telemetry=self.telemetry,
             strict_mode=True,  # Block on MEDIUM+ threats
         )
-        logger.info(
-            "Gate S: Security validation initialized (prompt injection defense)"
-        )
+        logger.info("Gate S: Security validation initialized (prompt injection defense)")
 
         # Gate M: Memory feedback loop - query before, record after (Dec 24, 2025)
         # Closes the learning loop from past trades
@@ -524,11 +503,7 @@ class TradingOrchestrator:
                 if not ready:
                     logger.warning(
                         "Gate 0: BLOCKED - Not psychologically ready: %s",
-                        (
-                            blocking_intervention.headline
-                            if blocking_intervention
-                            else "Unknown"
-                        ),
+                        (blocking_intervention.headline if blocking_intervention else "Unknown"),
                     )
                     self.telemetry.record(
                         event_type="coaching.session_blocked",
@@ -541,9 +516,7 @@ class TradingOrchestrator:
                                 else "Tilt/Danger zone"
                             ),
                             "message": (
-                                blocking_intervention.message
-                                if blocking_intervention
-                                else ""
+                                blocking_intervention.message if blocking_intervention else ""
                             ),
                             "zone": state_summary["zone"],
                         },
@@ -553,9 +526,7 @@ class TradingOrchestrator:
                         "1",
                         "true",
                     }:
-                        logger.error(
-                            "Gate 0: STRICT MODE - Session aborted due to mental state"
-                        )
+                        logger.error("Gate 0: STRICT MODE - Session aborted due to mental state")
                         return
             except Exception as e:
                 logger.warning(f"Gate 0: Coaching check failed, continuing: {e}")
@@ -652,9 +623,7 @@ class TradingOrchestrator:
         else:
             # Sequential fallback (single ticker or parallel disabled)
             for ticker in active_tickers:
-                self._process_ticker(
-                    ticker, rl_threshold=session_profile["rl_threshold"]
-                )
+                self._process_ticker(ticker, rl_threshold=session_profile["rl_threshold"])
 
         # Allocate any unused DCA budget into the safety bucket
         self._deploy_safe_reserve()
@@ -787,9 +756,7 @@ class TradingOrchestrator:
         """Run strategies that operate on the portfolio level."""
         logger.info("--- Running Portfolio-Level Strategies ---")
         if not self.session_profile:
-            logger.warning(
-                "Session profile not available, skipping portfolio strategies."
-            )
+            logger.warning("Session profile not available, skipping portfolio strategies.")
             return
 
         # --- REIT Smart Income Strategy ---
@@ -895,9 +862,7 @@ class TradingOrchestrator:
                             symbol,
                             reason,
                         )
-                        results["errors"].append(
-                            f"{symbol}: execution returned no order"
-                        )
+                        results["errors"].append(f"{symbol}: execution returned no order")
                         continue
 
                     results["exits_executed"] += 1
@@ -909,9 +874,7 @@ class TradingOrchestrator:
                         exit_price=position.current_price,
                         quantity=position.quantity,
                         entry_date=(
-                            position.entry_date.isoformat()
-                            if position.entry_date
-                            else None
+                            position.entry_date.isoformat() if position.entry_date else None
                         ),
                         exit_reason=reason,
                     )
@@ -919,9 +882,7 @@ class TradingOrchestrator:
 
                     # A2 Adaptation: Calculate actual return and prediction correctness
                     actual_return_pct = position.unrealized_plpc * 100
-                    prediction_correct = (
-                        actual_return_pct > 0
-                    )  # True if profitable exit
+                    prediction_correct = actual_return_pct > 0  # True if profitable exit
 
                     # Log telemetry with prediction outcome tracking
                     self.telemetry.record(
@@ -958,9 +919,7 @@ class TradingOrchestrator:
                             self.gate_memory.record_outcome(
                                 ticker=symbol,
                                 strategy=entry_record.get("strategy", "momentum"),
-                                entry_reason=entry_record.get(
-                                    "entry_reason", "technical"
-                                ),
+                                entry_reason=entry_record.get("entry_reason", "technical"),
                                 won=won,
                                 pnl=pnl,
                                 lesson=lesson,
@@ -973,17 +932,13 @@ class TradingOrchestrator:
                                 pnl,
                             )
                     except Exception as mem_err:
-                        logger.warning(
-                            "Failed to record feedback for %s: %s", symbol, mem_err
-                        )
+                        logger.warning("Failed to record feedback for %s: %s", symbol, mem_err)
 
                     # DiscoRL online learning: Record trade outcome for continuous improvement
                     if hasattr(self.rl_filter, "record_trade_outcome"):
                         try:
                             # Get entry features stored when position was opened
-                            entry_features = self.position_manager.get_entry_features(
-                                symbol
-                            )
+                            entry_features = self.position_manager.get_entry_features(symbol)
 
                             if entry_features:
                                 # Fetch current market features for exit state
@@ -996,9 +951,7 @@ class TradingOrchestrator:
                                     logger.debug(
                                         f"Could not fetch exit features for {symbol}: {fetch_err}"
                                     )
-                                    exit_features = (
-                                        entry_features  # Fallback to entry features
-                                    )
+                                    exit_features = entry_features  # Fallback to entry features
 
                                 # Calculate reward (P/L percentage)
                                 reward = (
@@ -1026,9 +979,7 @@ class TradingOrchestrator:
                                         payload={
                                             "reward": reward,
                                             "metrics": training_metrics,
-                                            "buffer_size": training_metrics.get(
-                                                "buffer_size", 0
-                                            ),
+                                            "buffer_size": training_metrics.get("buffer_size", 0),
                                         },
                                     )
                             else:
@@ -1037,9 +988,7 @@ class TradingOrchestrator:
                                 )
 
                         except Exception as rl_err:
-                            logger.warning(
-                                f"DiscoRL online learning failed for {symbol}: {rl_err}"
-                            )
+                            logger.warning(f"DiscoRL online learning failed for {symbol}: {rl_err}")
 
                     # Clear entry tracking (after DiscoRL uses the features)
                     self.position_manager.clear_entry(symbol)
@@ -1049,9 +998,7 @@ class TradingOrchestrator:
                     )
 
                 except Exception as e:
-                    logger.error(
-                        f"Error executing exit for {exit_info.get('symbol')}: {e}"
-                    )
+                    logger.error(f"Error executing exit for {exit_info.get('symbol')}: {e}")
                     results["errors"].append(f"{exit_info.get('symbol')}: {str(e)}")
                     continue
 
@@ -1112,14 +1059,10 @@ class TradingOrchestrator:
                 )
 
             # Recalculate win rate
-            total_closed = len(
-                state_manager.state["performance"].get("closed_trades", [])
-            )
+            total_closed = len(state_manager.state["performance"].get("closed_trades", []))
             winning = state_manager.state["performance"].get("winning_trades", 0)
             if total_closed > 0:
-                state_manager.state["performance"]["win_rate"] = (
-                    winning / total_closed
-                ) * 100
+                state_manager.state["performance"]["win_rate"] = (winning / total_closed) * 100
 
             state_manager.save_state()
 
@@ -1142,16 +1085,10 @@ class TradingOrchestrator:
                         if momentum_exit:
                             exit_features = momentum_exit.indicators
                     except Exception as fetch_err:
-                        logger.debug(
-                            f"Could not fetch exit features for {symbol}: {fetch_err}"
-                        )
+                        logger.debug(f"Could not fetch exit features for {symbol}: {fetch_err}")
                         exit_features = entry_features  # Fallback to entry features
 
-                    pl_pct = (
-                        (exit_price - entry_price) / entry_price
-                        if entry_price > 0
-                        else 0
-                    )
+                    pl_pct = (exit_price - entry_price) / entry_price if entry_price > 0 else 0
                     # Scale reward: +-10% maps to +-1.0 reward
                     reward = pl_pct * 10.0
                     # Action: 1=BUY (we bought), outcome determines if it was good
@@ -1171,13 +1108,9 @@ class TradingOrchestrator:
                             f"(reward={reward:.3f}, action={action})"
                         )
                 else:
-                    logger.debug(
-                        f"No entry features stored for {symbol}, skipping RL training"
-                    )
+                    logger.debug(f"No entry features stored for {symbol}, skipping RL training")
             except Exception as rl_exc:
-                logger.debug(
-                    f"Gate 2 RL training update failed (non-critical): {rl_exc}"
-                )
+                logger.debug(f"Gate 2 RL training update failed (non-critical): {rl_exc}")
 
             # Gate 0: Mental Toughness Coach - Process trade result for psychological state
             if self.mental_coach:
@@ -1213,9 +1146,7 @@ class TradingOrchestrator:
                                 "action_items": intervention.action_items,
                                 "zone": state_summary["zone"],
                                 "consecutive_wins": state_summary["consecutive_wins"],
-                                "consecutive_losses": state_summary[
-                                    "consecutive_losses"
-                                ],
+                                "consecutive_losses": state_summary["consecutive_losses"],
                             },
                         )
 
@@ -1401,9 +1332,7 @@ class TradingOrchestrator:
                     )
                     return
             except Exception as e:
-                logger.warning(
-                    f"Gate 0 (%s): Pre-trade check failed, continuing: {e}", ticker
-                )
+                logger.warning(f"Gate 0 (%s): Pre-trade check failed, continuing: {e}", ticker)
 
         # Gate 1: deterministic momentum
         momentum_outcome = self.failure_manager.run(
@@ -1447,9 +1376,7 @@ class TradingOrchestrator:
                 metrics={"confidence": momentum_signal.strength},
             )
             return
-        logger.info(
-            "Gate 1 (%s): PASSED (strength=%.2f)", ticker, momentum_signal.strength
-        )
+        logger.info("Gate 1 (%s): PASSED (strength=%.2f)", ticker, momentum_signal.strength)
         self.telemetry.gate_pass(
             "momentum",
             ticker,
@@ -1474,20 +1401,14 @@ class TradingOrchestrator:
                 debate_market_data = {
                     "price": momentum_signal.indicators.get("close", 0),
                     "rsi": momentum_signal.indicators.get("rsi", 50),
-                    "macd_histogram": momentum_signal.indicators.get(
-                        "macd_histogram", 0
-                    ),
+                    "macd_histogram": momentum_signal.indicators.get("macd_histogram", 0),
                     "volume_ratio": momentum_signal.indicators.get("volume_ratio", 1.0),
                     "trend": "BULLISH" if momentum_signal.is_buy else "BEARISH",
                     "ma_50": momentum_signal.indicators.get("sma_20", 0),  # Approximate
-                    "ma_200": momentum_signal.indicators.get(
-                        "sma_50", 0
-                    ),  # Approximate
+                    "ma_200": momentum_signal.indicators.get("sma_50", 0),  # Approximate
                 }
 
-                debate_outcome = self.debate_moderator.conduct_debate(
-                    ticker, debate_market_data
-                )
+                debate_outcome = self.debate_moderator.conduct_debate(ticker, debate_market_data)
 
                 logger.info(
                     "Gate 1.5 (%s): Bull/Bear Debate - Winner: %s, Rec: %s, Confidence: %.2f",
@@ -1532,9 +1453,7 @@ class TradingOrchestrator:
                     return
 
             except Exception as debate_err:
-                logger.warning(
-                    f"Gate 1.5 (%s): Debate failed, continuing: {debate_err}", ticker
-                )
+                logger.warning(f"Gate 1.5 (%s): Debate failed, continuing: {debate_err}", ticker)
 
         # Gate 2: RL inference (SKIPPED if disabled - simplification mode)
         if not self.rl_filter_enabled or self.rl_filter is None:
@@ -1623,9 +1542,7 @@ class TradingOrchestrator:
                 status="exhausted",
                 payload={
                     "bucket": pre_plan.bucket,
-                    "remaining": self.smart_dca.remaining_budget().get(
-                        pre_plan.bucket, 0.0
-                    ),
+                    "remaining": self.smart_dca.remaining_budget().get(pre_plan.bucket, 0.0),
                 },
             )
             return
@@ -1701,9 +1618,7 @@ class TradingOrchestrator:
                         },
                     )
         except Exception as sentiment_exc:
-            logger.warning(
-                "Gate 2.5 (%s): Sentiment analyzer failed: %s", ticker, sentiment_exc
-            )
+            logger.warning("Gate 2.5 (%s): Sentiment analyzer failed: %s", ticker, sentiment_exc)
             self.telemetry.record(
                 event_type="gate.sentiment_analyzer",
                 ticker=ticker,
@@ -1750,10 +1665,7 @@ class TradingOrchestrator:
             playwright_result = asyncio.get_event_loop().run_until_complete(
                 self.playwright_scraper.scrape_all([ticker])
             )
-            if (
-                ticker in playwright_result
-                and playwright_result[ticker].total_mentions > 0
-            ):
+            if ticker in playwright_result and playwright_result[ticker].total_mentions > 0:
                 playwright_score = playwright_result[ticker].weighted_score
                 logger.info(
                     "Gate 3 (%s): Playwright sentiment=%.2f (mentions=%d, bull=%d, bear=%d)",
@@ -1774,9 +1686,7 @@ class TradingOrchestrator:
                     },
                 )
         except Exception as pw_exc:
-            logger.warning(
-                "Gate 3 (%s): Playwright scraping failed: %s", ticker, pw_exc
-            )
+            logger.warning("Gate 3 (%s): Playwright scraping failed: %s", ticker, pw_exc)
             self.telemetry.record(
                 event_type="gate.playwright",
                 ticker=ticker,
@@ -1814,9 +1724,7 @@ class TradingOrchestrator:
             llm_outcome = self.failure_manager.run(
                 gate="llm",
                 ticker=ticker,
-                operation=lambda: self.llm_agent.analyze_news(
-                    ticker, momentum_signal.indicators
-                ),
+                operation=lambda: self.llm_agent.analyze_news(ticker, momentum_signal.indicators),
                 retry=2,
             )
             if llm_outcome.ok:
@@ -1825,8 +1733,7 @@ class TradingOrchestrator:
                 # Blend LLM and Playwright sentiment scores
                 if playwright_score != 0.0:
                     sentiment_score = (
-                        llm_score * (1 - playwright_weight)
-                        + playwright_score * playwright_weight
+                        llm_score * (1 - playwright_weight) + playwright_score * playwright_weight
                     )
                     logger.info(
                         "Gate 3 (%s): Blended sentiment=%.2f (LLM=%.2f, Playwright=%.2f, weight=%.1f)",
@@ -1858,9 +1765,7 @@ class TradingOrchestrator:
                         metrics={"confidence": sentiment_score},
                     )
                     return
-                logger.info(
-                    "Gate 3 (%s): PASSED (sentiment=%.2f).", ticker, sentiment_score
-                )
+                logger.info("Gate 3 (%s): PASSED (sentiment=%.2f).", ticker, sentiment_score)
                 self.telemetry.gate_pass("llm", ticker, llm_result)
                 self._track_gate_event(
                     gate="llm",
@@ -1981,9 +1886,7 @@ class TradingOrchestrator:
                 )
 
             except Exception as e:
-                logger.warning(
-                    "Gate 3.5 (%s): Introspection failed, continuing: %s", ticker, e
-                )
+                logger.warning("Gate 3.5 (%s): Introspection failed, continuing: %s", ticker, e)
 
         # RAG Context - Query historical knowledge for this ticker (Dec 2025)
         rag_sentiment = None
@@ -2012,9 +1915,7 @@ class TradingOrchestrator:
                         status="success",
                         payload={
                             "article_count": rag_sentiment.get("article_count", 0),
-                            "sentiment_score": rag_sentiment.get(
-                                "sentiment_score", 0.0
-                            ),
+                            "sentiment_score": rag_sentiment.get("sentiment_score", 0.0),
                             "sources": rag_sentiment.get("sources", []),
                         },
                     )
@@ -2053,9 +1954,7 @@ class TradingOrchestrator:
                 payload={
                     "bucket": allocation_plan.bucket,
                     "confidence": allocation_plan.confidence,
-                    "remaining": self.smart_dca.remaining_budget().get(
-                        allocation_plan.bucket, 0.0
-                    ),
+                    "remaining": self.smart_dca.remaining_budget().get(allocation_plan.bucket, 0.0),
                 },
             )
             return
@@ -2127,9 +2026,7 @@ class TradingOrchestrator:
         order_size = risk_outcome.result
 
         if order_size <= 0:
-            logger.info(
-                "Gate 4 (%s): REJECTED (position size calculated as 0).", ticker
-            )
+            logger.info("Gate 4 (%s): REJECTED (position size calculated as 0).", ticker)
             self.telemetry.gate_reject(
                 "risk",
                 ticker,
@@ -2156,10 +2053,7 @@ class TradingOrchestrator:
         gateway_decision = self.trade_gateway.evaluate(trade_request)
 
         if not gateway_decision.approved:
-            if (
-                RejectionReason.MINIMUM_BATCH_NOT_MET
-                not in gateway_decision.rejection_reasons
-            ):
+            if RejectionReason.MINIMUM_BATCH_NOT_MET not in gateway_decision.rejection_reasons:
                 self.smart_dca.release(allocation_plan.bucket, order_size)
             logger.warning(
                 "Gate GATEWAY (%s): REJECTED by Trade Gateway - %s",
@@ -2170,9 +2064,7 @@ class TradingOrchestrator:
                 "gateway",
                 ticker,
                 {
-                    "rejection_reasons": [
-                        r.value for r in gateway_decision.rejection_reasons
-                    ],
+                    "rejection_reasons": [r.value for r in gateway_decision.rejection_reasons],
                     "risk_score": gateway_decision.risk_score,
                 },
             )
@@ -2186,9 +2078,7 @@ class TradingOrchestrator:
         )
         if not order_outcome.ok:
             self.smart_dca.release(allocation_plan.bucket, order_size)
-            logger.error(
-                "Execution failed for %s: %s", ticker, order_outcome.failure.error
-            )
+            logger.error("Execution failed for %s: %s", ticker, order_outcome.failure.error)
             return
         order = order_outcome.result
         self.telemetry.gate_pass(
@@ -2244,9 +2134,7 @@ class TradingOrchestrator:
                 )
                 # Approximate quantity from notional if fill qty unavailable
                 qty = order.get("filled_qty") or (order_size / float(current_price))
-                stop_order = self.executor.set_stop_loss(
-                    ticker, float(qty), float(stop_price)
-                )
+                stop_order = self.executor.set_stop_loss(ticker, float(qty), float(stop_price))
                 self.telemetry.record(
                     event_type="execution.stop",
                     ticker=ticker,
@@ -2254,9 +2142,7 @@ class TradingOrchestrator:
                     payload={
                         "stop": stop_order,
                         "atr_pct": atr_pct,
-                        "atr_multiplier": float(
-                            os.getenv("ATR_STOP_MULTIPLIER", "2.0")
-                        ),
+                        "atr_multiplier": float(os.getenv("ATR_STOP_MULTIPLIER", "2.0")),
                     },
                 )
         except Exception as exc:  # pragma: no cover - non-fatal
@@ -2269,9 +2155,7 @@ class TradingOrchestrator:
                 entry_date=datetime.now(),
                 entry_features=momentum_signal.indicators,
             )
-            logger.debug(
-                f"Tracked entry for {ticker} with features for DiscoRL online learning"
-            )
+            logger.debug(f"Tracked entry for {ticker} with features for DiscoRL online learning")
         except Exception as exc:
             logger.warning(f"Failed to track entry for {ticker}: {exc}")
 
@@ -2316,9 +2200,7 @@ class TradingOrchestrator:
                     },
                 )
                 if verification.verified:
-                    logger.info(
-                        "Trade verification PASSED for %s (order=%s)", ticker, order_id
-                    )
+                    logger.info("Trade verification PASSED for %s (order=%s)", ticker, order_id)
                 else:
                     logger.warning(
                         "Trade verification FAILED for %s (order=%s): %s",
@@ -2327,9 +2209,7 @@ class TradingOrchestrator:
                         verification.errors,
                     )
             except Exception as verify_exc:
-                logger.warning(
-                    "Trade verification skipped for %s: %s", ticker, verify_exc
-                )
+                logger.warning("Trade verification skipped for %s: %s", ticker, verify_exc)
 
     def _process_ticker_v2(self, ticker: str, rl_threshold: float) -> None:
         """
@@ -2394,9 +2274,7 @@ class TradingOrchestrator:
         )
 
         if pre_plan.cap <= 0:
-            logger.info(
-                "Smart DCA: bucket %s exhausted, skipping %s", pre_plan.bucket, ticker
-            )
+            logger.info("Smart DCA: bucket %s exhausted, skipping %s", pre_plan.bucket, ticker)
             self.telemetry.record(
                 event_type="dca.skip",
                 ticker=ticker,
@@ -2470,9 +2348,7 @@ class TradingOrchestrator:
                 ticker,
                 {
                     "block_reason": rag_result.get("block_reason"),
-                    "lessons": [
-                        lesson.get("title") for lesson in rag_result.get("lessons", [])
-                    ],
+                    "lessons": [lesson.get("title") for lesson in rag_result.get("lessons", [])],
                 },
             )
             return
@@ -2537,9 +2413,7 @@ class TradingOrchestrator:
                 ctx.current_price = float(ctx.hist["Close"].iloc[-1])
                 if len(ctx.hist) >= 14:
                     atr = float(calculate_atr(ctx.hist))
-                    ctx.atr_pct = (
-                        (atr / ctx.current_price * 100) if ctx.current_price else None
-                    )
+                    ctx.atr_pct = (atr / ctx.current_price * 100) if ctx.current_price else None
         except Exception as e:
             logger.warning("Failed to fetch price/history for %s: %s", ticker, e)
 
@@ -2569,9 +2443,7 @@ class TradingOrchestrator:
         # Gate 5: Execution
         exec_result = self.gate5.execute(ticker, ctx, order_size)
         if not exec_result.passed:
-            logger.warning(
-                "Gate 5 (%s): Execution failed - %s", ticker, exec_result.reason
-            )
+            logger.warning("Gate 5 (%s): Execution failed - %s", ticker, exec_result.reason)
             return
 
         # Record successful execution
@@ -2614,30 +2486,20 @@ class TradingOrchestrator:
 
                 # Extract order details for anomaly detection
                 filled_price = (
-                    order.get("filled_avg_price")
-                    if isinstance(order, dict)
-                    else ctx.current_price
+                    order.get("filled_avg_price") if isinstance(order, dict) else ctx.current_price
                 )
                 if filled_price is None:
                     filled_price = ctx.current_price
 
                 execution_analysis = detector.detect_execution_anomalies(
                     order_id=(
-                        str(order.get("id", "unknown"))
-                        if isinstance(order, dict)
-                        else "unknown"
+                        str(order.get("id", "unknown")) if isinstance(order, dict) else "unknown"
                     ),
                     expected_price=ctx.current_price,
                     actual_fill_price=float(filled_price),
-                    quantity=(
-                        abs(order_size / ctx.current_price)
-                        if ctx.current_price > 0
-                        else 0
-                    ),
+                    quantity=(abs(order_size / ctx.current_price) if ctx.current_price > 0 else 0),
                     order_type=(
-                        order.get("type", "market")
-                        if isinstance(order, dict)
-                        else "market"
+                        order.get("type", "market") if isinstance(order, dict) else "market"
                     ),
                     timestamp=dt.now().isoformat(),
                 )
@@ -2676,9 +2538,7 @@ class TradingOrchestrator:
                         },
                     )
         except Exception as anomaly_exc:
-            logger.warning(
-                "Gate 5.5 (%s): Anomaly detection failed: %s", ticker, anomaly_exc
-            )
+            logger.warning("Gate 5.5 (%s): Anomaly detection failed: %s", ticker, anomaly_exc)
             self.telemetry.record(
                 event_type="gate.anomaly_detector",
                 ticker=ticker,
@@ -2699,9 +2559,7 @@ class TradingOrchestrator:
                 "strategy": strategy,  # Using actual strategy from line 2465
                 "entry_reason": entry_reason,  # Using actual entry_reason from lines 2469-2475
                 "order_id": order.get("id") if isinstance(order, dict) else None,
-                "entry_time": (
-                    order.get("created_at") if isinstance(order, dict) else None
-                ),
+                "entry_time": (order.get("created_at") if isinstance(order, dict) else None),
                 "entry_price": ctx.current_price,
                 "order_size": order_size,
                 "memory_context": memory_context,
@@ -2830,14 +2688,10 @@ class TradingOrchestrator:
 
         # CRITICAL: Capital efficiency guard - disable delta hedging for small accounts
         account_equity = self.executor.account_equity
-        delta_hedge_check = self.capital_calculator.should_enable_delta_hedging(
-            account_equity
-        )
+        delta_hedge_check = self.capital_calculator.should_enable_delta_hedging(account_equity)
 
         if not delta_hedge_check["enabled"]:
-            logger.warning(
-                "Gate 5: Delta hedging DISABLED - %s", delta_hedge_check["reason"]
-            )
+            logger.warning("Gate 5: Delta hedging DISABLED - %s", delta_hedge_check["reason"])
             self.telemetry.record(
                 event_type="gate.delta_rebalance",
                 ticker="PORTFOLIO",
@@ -2881,9 +2735,7 @@ class TradingOrchestrator:
                 return {"action": "none", "delta_analysis": delta_analysis}
 
             # Calculate hedge trade
-            hedge = self.options_risk_monitor.calculate_delta_hedge(
-                delta_analysis["net_delta"]
-            )
+            hedge = self.options_risk_monitor.calculate_delta_hedge(delta_analysis["net_delta"])
 
             if hedge["action"] == "NONE":
                 return {"action": "none", "delta_analysis": delta_analysis}
@@ -2984,6 +2836,4 @@ class TradingOrchestrator:
 
         Jan 10, 2026: Extracted to SessionManager for cleaner architecture.
         """
-        self.session_manager.maybe_reallocate_for_weekend(
-            self.smart_dca, self.telemetry
-        )
+        self.session_manager.maybe_reallocate_for_weekend(self.smart_dca, self.telemetry)

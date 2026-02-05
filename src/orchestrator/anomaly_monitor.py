@@ -93,9 +93,7 @@ class AnomalyMonitor:
         if len(bucket) < self.min_events:
             return None
 
-        rejection_rate = sum(1 for item in bucket if item["status"] == "reject") / len(
-            bucket
-        )
+        rejection_rate = sum(1 for item in bucket if item["status"] == "reject") / len(bucket)
         anomaly: dict[str, Any] | None = None
 
         # Check 1: Rejection spike
@@ -107,9 +105,7 @@ class AnomalyMonitor:
             }
         # Check 2: Confidence deterioration
         else:
-            confidences = [
-                c for c in (item.get("confidence") for item in bucket) if c is not None
-            ]
+            confidences = [c for c in (item.get("confidence") for item in bucket) if c is not None]
             if confidences:
                 if median(confidences) < self.confidence_floor:
                     anomaly = {
@@ -123,9 +119,7 @@ class AnomalyMonitor:
             threshold = self.latency_thresholds.get(gate, 1000.0)
             median_latency = median(latency_bucket)
             # Also check if current latency is way above threshold (3x)
-            if median_latency > threshold or (
-                latency_ms > threshold * 3 and latency_ms > 100
-            ):
+            if median_latency > threshold or (latency_ms > threshold * 3 and latency_ms > 100):
                 anomaly = {
                     "type": "latency_spike",
                     "median_latency_ms": round(median_latency, 2),
@@ -165,9 +159,7 @@ class AnomalyMonitor:
             "threshold_ms": self.latency_thresholds.get(gate, 1000.0),
         }
 
-    def _create_lesson_from_anomaly(
-        self, gate: str, ticker: str, anomaly: dict[str, Any]
-    ) -> None:
+    def _create_lesson_from_anomaly(self, gate: str, ticker: str, anomaly: dict[str, Any]) -> None:
         """
         Automatically create a lesson learned entry when an anomaly is detected.
 
@@ -329,6 +321,4 @@ class AnomalyMonitor:
             # Non-fatal - don't break trading for lesson creation failures
             import logging
 
-            logging.getLogger(__name__).debug(
-                f"Failed to create lesson from anomaly: {e}"
-            )
+            logging.getLogger(__name__).debug(f"Failed to create lesson from anomaly: {e}")

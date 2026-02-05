@@ -144,12 +144,8 @@ class StickerPriceResult:
             self.timestamp = datetime.now()
 
         if self.current_price > 0:
-            self.upside_to_sticker = (
-                self.sticker_price - self.current_price
-            ) / self.current_price
-            self.margin_of_safety = (
-                self.sticker_price - self.current_price
-            ) / self.sticker_price
+            self.upside_to_sticker = (self.sticker_price - self.current_price) / self.current_price
+            self.margin_of_safety = (self.sticker_price - self.current_price) / self.sticker_price
 
             if self.current_price <= self.mos_price:
                 self.recommendation = "STRONG BUY - Below MOS Price"
@@ -355,9 +351,7 @@ class RuleOneOptionsStrategy:
             info = ticker.info
 
             # Get current data
-            current_price = info.get("currentPrice") or info.get(
-                "regularMarketPrice", 0
-            )
+            current_price = info.get("currentPrice") or info.get("regularMarketPrice", 0)
             current_eps = info.get("trailingEps", 0)
 
             if current_eps <= 0:
@@ -368,9 +362,7 @@ class RuleOneOptionsStrategy:
             analyst_growth = info.get("earningsGrowth")
 
             # Get Big Five for growth estimate
-            big_five = self._big_five_cache.get(symbol) or self.calculate_big_five(
-                symbol
-            )
+            big_five = self._big_five_cache.get(symbol) or self.calculate_big_five(symbol)
 
             if big_five and big_five.avg_growth > 0:
                 growth_rate = min(big_five.avg_growth, 0.25)  # Cap at 25%
@@ -503,9 +495,7 @@ class RuleOneOptionsStrategy:
                 return None
 
             clean = [
-                float(iv)
-                for iv in implied_vols
-                if iv is not None and not np.isnan(iv) and iv > 0
+                float(iv) for iv in implied_vols if iv is not None and not np.isnan(iv) and iv > 0
             ]
             if len(clean) < 5:
                 return None
@@ -595,9 +585,9 @@ class RuleOneOptionsStrategy:
 
         for symbol in self.universe:
             try:
-                valuation = self._valuation_cache.get(
+                valuation = self._valuation_cache.get(symbol) or self.calculate_sticker_price(
                     symbol
-                ) or self.calculate_sticker_price(symbol)
+                )
                 if not valuation:
                     continue
 
@@ -607,9 +597,7 @@ class RuleOneOptionsStrategy:
                     continue
 
                 if valuation.current_price < valuation.mos_price:
-                    logger.info(
-                        f"{symbol}: Below MOS ${valuation.mos_price:.2f}, just BUY"
-                    )
+                    logger.info(f"{symbol}: Below MOS ${valuation.mos_price:.2f}, just BUY")
                     continue
 
                 target_strike = valuation.mos_price
@@ -644,9 +632,7 @@ class RuleOneOptionsStrategy:
                     continue
 
                 premium_pct = (
-                    contract.mid / valuation.current_price
-                    if valuation.current_price
-                    else 0
+                    contract.mid / valuation.current_price if valuation.current_price else 0
                 )
                 if premium_pct > self.MAX_PREMIUM_PCT:
                     logger.debug(
@@ -663,9 +649,7 @@ class RuleOneOptionsStrategy:
                 # For bullish credit spreads/CSPs: RSI > 40 confirms uptrend
                 # RSI < 40 = oversold/weak, risky for bullish positions
                 try:
-                    ticker_data = yf.download(
-                        symbol, period="1mo", interval="1d", progress=False
-                    )
+                    ticker_data = yf.download(symbol, period="1mo", interval="1d", progress=False)
                     if ticker_data is not None and len(ticker_data) >= 14:
                         rsi_value = calculate_rsi(ticker_data["Close"])
                         if rsi_value < 40:
@@ -673,17 +657,11 @@ class RuleOneOptionsStrategy:
                                 f"{symbol}: RSI {rsi_value:.1f} < 40 - skipping (wait for strength)"
                             )
                             continue
-                        logger.debug(
-                            f"{symbol}: RSI {rsi_value:.1f} OK for bullish entry"
-                        )
+                        logger.debug(f"{symbol}: RSI {rsi_value:.1f} OK for bullish entry")
                 except Exception as rsi_err:
-                    logger.debug(
-                        f"{symbol}: RSI check failed ({rsi_err}), proceeding anyway"
-                    )
+                    logger.debug(f"{symbol}: RSI check failed ({rsi_err}), proceeding anyway")
 
-                annualized_return = (contract.mid / target_strike) * (
-                    365 / contract.days_to_expiry
-                )
+                annualized_return = (contract.mid / target_strike) * (365 / contract.days_to_expiry)
                 if annualized_return < self.MIN_ANNUALIZED_RETURN:
                     logger.debug(
                         f"{symbol}: Annualized return {annualized_return:.1%} below minimum"
@@ -762,9 +740,9 @@ class RuleOneOptionsStrategy:
                     continue
 
                 # Get valuation
-                valuation = self._valuation_cache.get(
+                valuation = self._valuation_cache.get(symbol) or self.calculate_sticker_price(
                     symbol
-                ) or self.calculate_sticker_price(symbol)
+                )
                 if not valuation:
                     continue
 
@@ -788,9 +766,7 @@ class RuleOneOptionsStrategy:
                     continue
 
                 premium_pct = (
-                    contract.mid / valuation.current_price
-                    if valuation.current_price
-                    else 0
+                    contract.mid / valuation.current_price if valuation.current_price else 0
                 )
                 if premium_pct > self.MAX_PREMIUM_PCT:
                     logger.debug(
@@ -839,9 +815,7 @@ class RuleOneOptionsStrategy:
         signals.sort(key=lambda x: x.annualized_return, reverse=True)
         return signals
 
-    def _find_best_put_option(
-        self, symbol: str, target_strike: float
-    ) -> OptionContract | None:
+    def _find_best_put_option(self, symbol: str, target_strike: float) -> OptionContract | None:
         """
         Find the best put option near target strike.
 
@@ -894,9 +868,7 @@ class RuleOneOptionsStrategy:
             mid = (bid + ask) / 2 if (bid > 0 and ask > 0) else max(bid, ask)
             delta = best_put.get("delta")
             implied_vol = best_put.get("impliedVolatility")
-            vol_series = (
-                puts["impliedVolatility"] if "impliedVolatility" in puts.columns else []
-            )
+            vol_series = puts["impliedVolatility"] if "impliedVolatility" in puts.columns else []
             iv_rank = self._compute_iv_rank(vol_series, implied_vol)
 
             return OptionContract(
@@ -917,9 +889,7 @@ class RuleOneOptionsStrategy:
             logger.debug(f"Could not find put option for {symbol}: {e}")
             return None
 
-    def _find_best_call_option(
-        self, symbol: str, target_strike: float
-    ) -> OptionContract | None:
+    def _find_best_call_option(self, symbol: str, target_strike: float) -> OptionContract | None:
         """
         Find the best call option near target strike.
 
@@ -973,11 +943,7 @@ class RuleOneOptionsStrategy:
             mid = (bid + ask) / 2 if (bid > 0 and ask > 0) else max(bid, ask)
             delta = best_call.get("delta")
             implied_vol = best_call.get("impliedVolatility")
-            vol_series = (
-                calls["impliedVolatility"]
-                if "impliedVolatility" in calls.columns
-                else []
-            )
+            vol_series = calls["impliedVolatility"] if "impliedVolatility" in calls.columns else []
             iv_rank = self._compute_iv_rank(vol_series, implied_vol)
 
             return OptionContract(
@@ -1079,9 +1045,7 @@ class RuleOneOptionsStrategy:
         undervalued = [v for v in valuations.values() if v.current_price <= v.mos_price]
 
         # Find overvalued stocks (above Sticker)
-        overvalued = [
-            v for v in valuations.values() if v.current_price > v.sticker_price * 1.2
-        ]
+        overvalued = [v for v in valuations.values() if v.current_price > v.sticker_price * 1.2]
 
         return {
             "valuations": {s: v.__dict__ for s, v in valuations.items()},

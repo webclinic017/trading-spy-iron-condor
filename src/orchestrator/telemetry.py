@@ -12,9 +12,7 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 # Tax configuration
-TAX_RESERVE_PCT = float(
-    os.getenv("TAX_RESERVE_PCT", "28.0")
-)  # 28% for short-term gains
+TAX_RESERVE_PCT = float(os.getenv("TAX_RESERVE_PCT", "28.0"))  # 28% for short-term gains
 QUARTERLY_SWEEP_ENABLED = os.getenv("QUARTERLY_SWEEP_ENABLED", "true").lower() in {
     "1",
     "true",
@@ -77,9 +75,7 @@ class OrchestratorTelemetry:
         if indicators:
             rec["indicators"].update(indicators)
 
-    def save_session_decisions(
-        self, session_profile: dict[str, Any] | None = None
-    ) -> None:
+    def save_session_decisions(self, session_profile: dict[str, Any] | None = None) -> None:
         """Save all session decisions to a JSON file."""
         end_time = datetime.now(timezone.utc)
         duration = (end_time - self.session_start_time).total_seconds()
@@ -101,9 +97,7 @@ class OrchestratorTelemetry:
             output["session"]["session_type"] = session_profile.get("session_type")
             output["session"]["is_market_day"] = session_profile.get("is_market_day")
 
-        output_path = Path(
-            f"data/session_decisions_{end_time.strftime('%Y-%m-%d')}.json"
-        )
+        output_path = Path(f"data/session_decisions_{end_time.strftime('%Y-%m-%d')}.json")
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
         try:
@@ -118,12 +112,8 @@ class OrchestratorTelemetry:
         end_time = datetime.now(timezone.utc)
         duration = (end_time - self.session_start_time).total_seconds()
 
-        rejected = sum(
-            1 for d in self.session_decisions.values() if d["decision"] == "REJECTED"
-        )
-        executed = sum(
-            1 for d in self.session_decisions.values() if d["decision"] == "EXECUTED"
-        )
+        rejected = sum(1 for d in self.session_decisions.values() if d["decision"] == "REJECTED")
+        executed = sum(1 for d in self.session_decisions.values() if d["decision"] == "EXECUTED")
 
         print("\n" + "=" * 70)
         print(f"TRADING SESSION SUMMARY - {end_time.strftime('%Y-%m-%d %H:%M:%S')} UTC")
@@ -157,9 +147,7 @@ class OrchestratorTelemetry:
             print("RECOMMENDATION: No tickers processed.")
         print("=" * 70 + "\n")
 
-    def record(
-        self, event_type: str, ticker: str, status: str, payload: dict[str, Any]
-    ) -> None:
+    def record(self, event_type: str, ticker: str, status: str, payload: dict[str, Any]) -> None:
         entry = {
             "ts": datetime.now(timezone.utc).isoformat(),
             "session": self.session_id,
@@ -176,14 +164,10 @@ class OrchestratorTelemetry:
             logger.warning("Telemetry write failed: %s", exc)
 
     def gate_pass(self, gate: str, ticker: str, payload: dict[str, Any]) -> None:
-        self.record(
-            event_type=f"gate.{gate}", ticker=ticker, status="pass", payload=payload
-        )
+        self.record(event_type=f"gate.{gate}", ticker=ticker, status="pass", payload=payload)
 
     def gate_reject(self, gate: str, ticker: str, payload: dict[str, Any]) -> None:
-        self.record(
-            event_type=f"gate.{gate}", ticker=ticker, status="reject", payload=payload
-        )
+        self.record(event_type=f"gate.{gate}", ticker=ticker, status="reject", payload=payload)
 
     def order_event(self, ticker: str, payload: dict[str, Any]) -> None:
         self.record(

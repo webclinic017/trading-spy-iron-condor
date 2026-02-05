@@ -67,9 +67,7 @@ def _load_source_from_sqlite(source: str, date_str: str) -> dict | None:
     if _SQLITE_STORE is None:
         return None
 
-    rows = list(
-        _SQLITE_STORE.fetch_by_source_date(source=source, snapshot_date=date_str)
-    )
+    rows = list(_SQLITE_STORE.fetch_by_source_date(source=source, snapshot_date=date_str))
     if not rows:
         return None
 
@@ -174,9 +172,7 @@ def load_latest_sentiment(date: str | None = None, fallback_days: int = 7) -> di
             }
         }
     """
-    target_date = (
-        datetime.now() if date is None else datetime.strptime(date, "%Y-%m-%d")
-    )
+    target_date = datetime.now() if date is None else datetime.strptime(date, "%Y-%m-%d")
 
     logger.info(f"Loading sentiment data for {target_date.strftime('%Y-%m-%d')}")
 
@@ -275,9 +271,7 @@ def load_latest_sentiment(date: str | None = None, fallback_days: int = 7) -> di
             }
 
             combined_sentiment[ticker]["scores"].append(normalized_score)
-            combined_sentiment[ticker]["confidences"].append(
-                data.get("confidence", "low")
-            )
+            combined_sentiment[ticker]["confidences"].append(data.get("confidence", "low"))
 
     # Process News data
     if news_data:
@@ -306,9 +300,7 @@ def load_latest_sentiment(date: str | None = None, fallback_days: int = 7) -> di
             }
 
             combined_sentiment[ticker]["scores"].append(normalized_score)
-            combined_sentiment[ticker]["confidences"].append(
-                ticker_obj.get("confidence", "low")
-            )
+            combined_sentiment[ticker]["confidences"].append(ticker_obj.get("confidence", "low"))
 
     # Calculate final scores and confidence
     final_sentiment = {}
@@ -404,9 +396,7 @@ def get_ticker_sentiment(
     return score, confidence, market_regime
 
 
-def is_sentiment_fresh(
-    sentiment_data: dict, max_age_hours: int = MAX_AGE_HOURS
-) -> bool:
+def is_sentiment_fresh(sentiment_data: dict, max_age_hours: int = MAX_AGE_HOURS) -> bool:
     """
     Check if sentiment data is fresh (recent enough to use).
 
@@ -469,12 +459,8 @@ def get_sentiment_summary(sentiment_data: dict | None = None) -> dict:
     tickers = sentiment_data.get("sentiment_by_ticker", {})
 
     # Count tickers by sentiment
-    bullish = sum(
-        1 for t in tickers.values() if t.get("score", 50) >= BULLISH_THRESHOLD
-    )
-    bearish = sum(
-        1 for t in tickers.values() if t.get("score", 50) <= BEARISH_THRESHOLD
-    )
+    bullish = sum(1 for t in tickers.values() if t.get("score", 50) >= BULLISH_THRESHOLD)
+    bearish = sum(1 for t in tickers.values() if t.get("score", 50) <= BEARISH_THRESHOLD)
     neutral = len(tickers) - bullish - bearish
 
     # Count by confidence
@@ -516,19 +502,13 @@ def print_sentiment_summary(sentiment_data: dict | None = None):
     print(f"Market Regime: {summary['market_regime'].upper()}")
     print()
     pct_bullish = (
-        (summary["bullish"] / summary["total_tickers"] * 100)
-        if summary["total_tickers"] > 0
-        else 0
+        (summary["bullish"] / summary["total_tickers"] * 100) if summary["total_tickers"] > 0 else 0
     )
     pct_neutral = (
-        (summary["neutral"] / summary["total_tickers"] * 100)
-        if summary["total_tickers"] > 0
-        else 0
+        (summary["neutral"] / summary["total_tickers"] * 100) if summary["total_tickers"] > 0 else 0
     )
     pct_bearish = (
-        (summary["bearish"] / summary["total_tickers"] * 100)
-        if summary["total_tickers"] > 0
-        else 0
+        (summary["bearish"] / summary["total_tickers"] * 100) if summary["total_tickers"] > 0 else 0
     )
 
     print(f"Total Tickers: {summary['total_tickers']}")
@@ -603,10 +583,6 @@ if __name__ == "__main__":
         print("-" * 80)
 
         for ticker in tickers:
-            score, confidence, regime = get_ticker_sentiment(
-                ticker.strip(), sentiment_data
-            )
-            print(
-                f"{ticker}: score={score:.1f}, confidence={confidence}, regime={regime}"
-            )
+            score, confidence, regime = get_ticker_sentiment(ticker.strip(), sentiment_data)
+            print(f"{ticker}: score={score:.1f}, confidence={confidence}, regime={regime}")
 # ruff: noqa: UP045

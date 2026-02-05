@@ -152,15 +152,12 @@ class PromptInjectionDefense:
             (re.compile(p, re.IGNORECASE), t) for p, t in self.DIRECT_INJECTION_PATTERNS
         ]
         self._indirect = [
-            (re.compile(p, re.IGNORECASE), t)
-            for p, t in self.INDIRECT_INJECTION_PATTERNS
+            (re.compile(p, re.IGNORECASE), t) for p, t in self.INDIRECT_INJECTION_PATTERNS
         ]
         self._obfuscation = [
             (re.compile(p, re.IGNORECASE), t) for p, t in self.OBFUSCATION_PATTERNS
         ]
-        self._delimiters = [
-            (re.compile(p, re.IGNORECASE), t) for p, t in self.DELIMITER_PATTERNS
-        ]
+        self._delimiters = [(re.compile(p, re.IGNORECASE), t) for p, t in self.DELIMITER_PATTERNS]
 
     def scan(self, text: str) -> SecurityScanResult:
         """
@@ -200,9 +197,7 @@ class PromptInjectionDefense:
                 if threat_type in ("jailbreak", "system_override"):
                     max_threat = ThreatLevel.CRITICAL
                 else:
-                    max_threat = max(
-                        max_threat, ThreatLevel.HIGH, key=lambda x: threat_scores[x]
-                    )
+                    max_threat = max(max_threat, ThreatLevel.HIGH, key=lambda x: threat_scores[x])
 
         # Check indirect injection (MEDIUM-HIGH threat)
         for pattern, threat_type in self._indirect:
@@ -213,25 +208,19 @@ class PromptInjectionDefense:
                         max_threat, ThreatLevel.CRITICAL, key=lambda x: threat_scores[x]
                     )
                 else:
-                    max_threat = max(
-                        max_threat, ThreatLevel.MEDIUM, key=lambda x: threat_scores[x]
-                    )
+                    max_threat = max(max_threat, ThreatLevel.MEDIUM, key=lambda x: threat_scores[x])
 
         # Check obfuscation (MEDIUM threat - suspicious)
         for pattern, threat_type in self._obfuscation:
             if pattern.search(text):
                 threats.append(f"OBFUSCATION:{threat_type}")
-                max_threat = max(
-                    max_threat, ThreatLevel.MEDIUM, key=lambda x: threat_scores[x]
-                )
+                max_threat = max(max_threat, ThreatLevel.MEDIUM, key=lambda x: threat_scores[x])
 
         # Check delimiter abuse (LOW threat - possibly benign)
         for pattern, threat_type in self._delimiters:
             if pattern.search(text):
                 threats.append(f"DELIMITER:{threat_type}")
-                max_threat = max(
-                    max_threat, ThreatLevel.LOW, key=lambda x: threat_scores[x]
-                )
+                max_threat = max(max_threat, ThreatLevel.LOW, key=lambda x: threat_scores[x])
 
         # Determine if we should block
         if self.strict_mode:
@@ -286,9 +275,7 @@ class PromptInjectionDefense:
             sanitized,
             flags=re.IGNORECASE,
         )
-        sanitized = re.sub(
-            r"<\|?/?(system|assistant|user)\|?>", "", sanitized, flags=re.IGNORECASE
-        )
+        sanitized = re.sub(r"<\|?/?(system|assistant|user)\|?>", "", sanitized, flags=re.IGNORECASE)
 
         # Remove excessive delimiters
         sanitized = re.sub(r"-{5,}", "---", sanitized)
@@ -348,9 +335,7 @@ def validate_llm_input(text: str, source: str = "unknown") -> str:
             text[:100] + "..." if len(text) > 100 else text,
             result.threats_detected,
         )
-        raise SecurityError(
-            f"Prompt injection detected from {source}: {result.threats_detected}"
-        )
+        raise SecurityError(f"Prompt injection detected from {source}: {result.threats_detected}")
 
     return text
 
@@ -580,13 +565,9 @@ class LLMOutputValidator:
             try:
                 not_val = float(notional)
                 if not_val < self.MIN_NOTIONAL:
-                    errors.append(
-                        f"Notional too small: ${not_val} < ${self.MIN_NOTIONAL}"
-                    )
+                    errors.append(f"Notional too small: ${not_val} < ${self.MIN_NOTIONAL}")
                 elif not_val > self.MAX_NOTIONAL:
-                    errors.append(
-                        f"Notional too large: ${not_val} > ${self.MAX_NOTIONAL}"
-                    )
+                    errors.append(f"Notional too large: ${not_val} > ${self.MAX_NOTIONAL}")
             except (TypeError, ValueError):
                 errors.append(f"Invalid notional type: {notional}")
 
@@ -911,12 +892,8 @@ class MCPSecurityValidator:
 
     def __init__(self):
         """Initialize MCP security validator."""
-        self._url_allow_patterns = [
-            re.compile(p, re.IGNORECASE) for p in self.ALLOWED_URL_PATTERNS
-        ]
-        self._url_block_patterns = [
-            re.compile(p, re.IGNORECASE) for p in self.BLOCKED_URL_PATTERNS
-        ]
+        self._url_allow_patterns = [re.compile(p, re.IGNORECASE) for p in self.ALLOWED_URL_PATTERNS]
+        self._url_block_patterns = [re.compile(p, re.IGNORECASE) for p in self.BLOCKED_URL_PATTERNS]
 
     def validate_tool_access(
         self, server_id: str, tool_name: str, params: dict[str, Any] | None = None
@@ -946,9 +923,7 @@ class MCPSecurityValidator:
         # Check if server is known
         allowed_tools = self.ALLOWED_TOOLS.get(server_id)
         if allowed_tools is None:
-            logger.warning(
-                "🛡️ MCP: Unknown server '%s' - blocking by default", server_id
-            )
+            logger.warning("🛡️ MCP: Unknown server '%s' - blocking by default", server_id)
             return MCPSecurityResult(
                 is_allowed=False,
                 server_id=server_id,
@@ -1025,9 +1000,7 @@ class MCPSecurityValidator:
         # Default: block unknown URLs for security
         return {"allowed": False, "reason": "URL not in whitelist"}
 
-    def validate_mcp_response(
-        self, server_id: str, tool_name: str, response: Any
-    ) -> bool:
+    def validate_mcp_response(self, server_id: str, tool_name: str, response: Any) -> bool:
         """
         Validate MCP tool response for anomalies.
 

@@ -389,17 +389,11 @@ def main():
     parser.add_argument("--details", default="", help="Detailed technical information")
     parser.add_argument("--files", nargs="*", default=[], help="List of files changed")
     parser.add_argument("--from-results", help="Path to Ralph results JSON file")
-    parser.add_argument(
-        "--iterations", type=int, default=1, help="Number of iterations"
-    )
+    parser.add_argument("--iterations", type=int, default=1, help="Number of iterations")
     parser.add_argument("--cost", type=float, default=0.0, help="API cost in USD")
     parser.add_argument("--reason", default="", help="Termination reason")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Generate but don't publish"
-    )
-    parser.add_argument(
-        "--force", action="store_true", help="Publish even if not significant"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Generate but don't publish")
+    parser.add_argument("--force", action="store_true", help="Publish even if not significant")
 
     args = parser.parse_args()
 

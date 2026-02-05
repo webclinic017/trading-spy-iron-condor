@@ -203,9 +203,7 @@ Examples:
 
     if report.mrr < args.threshold_mrr:
         if not args.json:
-            print(
-                f"\n[FAIL] MRR ({report.mrr:.4f}) below threshold ({args.threshold_mrr})"
-            )
+            print(f"\n[FAIL] MRR ({report.mrr:.4f}) below threshold ({args.threshold_mrr})")
         exit_code = 1
 
     if exit_code == 0 and not args.json:

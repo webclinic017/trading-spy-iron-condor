@@ -150,14 +150,10 @@ def main(dry_run: bool = False, trail_pct: float | None = None):
                 if side == "short":
                     # Calculate stop price: 50% max loss means buy at 1.5x current
                     stop_price = round(current_price * 1.5, 2)
-                    logger.info(
-                        f"    Stop-Loss Price: ${stop_price:.2f} (50% max loss)"
-                    )
+                    logger.info(f"    Stop-Loss Price: ${stop_price:.2f} (50% max loss)")
                 else:
                     stop_price = round(current_price * 0.5, 2)
-                    logger.info(
-                        f"    Stop-Loss Price: ${stop_price:.2f} (50% trailing)"
-                    )
+                    logger.info(f"    Stop-Loss Price: ${stop_price:.2f} (50% trailing)")
 
                 from alpaca.trading.requests import LimitOrderRequest
 
@@ -245,9 +241,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Set trailing stop-loss orders on all open positions"
     )
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Preview without executing orders"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Preview without executing orders")
     parser.add_argument(
         "--trail-pct",
         type=float,

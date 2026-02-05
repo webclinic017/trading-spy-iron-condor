@@ -95,9 +95,7 @@ class ExitConditions:
     enable_atr_stop: bool = True  # Use ATR-based stops
     atr_multiplier: float = 2.5  # 2.5x ATR for stop distance (was 2.0 - Dec 17, 2025)
 
-    def get_thresholds_for_asset(
-        self, asset_class: AssetClass
-    ) -> tuple[float, float, int]:
+    def get_thresholds_for_asset(self, asset_class: AssetClass) -> tuple[float, float, int]:
         """
         Get take_profit, stop_loss, and max_holding_days for an asset class.
 
@@ -191,9 +189,7 @@ class PositionManager:
         self._position_entry_dates[symbol] = entry_date or datetime.now()
         if entry_features:
             self._position_entry_features[symbol] = entry_features
-        logger.info(
-            f"Tracking entry for {symbol} at {self._position_entry_dates[symbol]}"
-        )
+        logger.info(f"Tracking entry for {symbol} at {self._position_entry_dates[symbol]}")
         self._save_entry_dates()  # Persist immediately
 
     def get_entry_date(self, symbol: str) -> datetime | None:
@@ -227,9 +223,7 @@ class PositionManager:
             position_entries = state.get("position_entries", {})
             for symbol, date_str in position_entries.items():
                 try:
-                    self._position_entry_dates[symbol] = datetime.fromisoformat(
-                        date_str
-                    )
+                    self._position_entry_dates[symbol] = datetime.fromisoformat(date_str)
                 except ValueError as e:
                     logger.warning(f"Invalid date format for {symbol}: {e}")
 
@@ -246,9 +240,7 @@ class PositionManager:
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse state file: {e}")
             # Don't silently continue - corrupted state means exit logic is broken
-            raise RuntimeError(
-                f"Position state corrupted - exit checks disabled: {e}"
-            ) from e
+            raise RuntimeError(f"Position state corrupted - exit checks disabled: {e}") from e
         except Exception as e:
             logger.error(f"Failed to load entry dates: {e}")
             # Don't silently continue - missing state means positions could be held indefinitely
@@ -268,8 +260,7 @@ class PositionManager:
 
             # Update position_entries section
             state["position_entries"] = {
-                symbol: dt.isoformat()
-                for symbol, dt in self._position_entry_dates.items()
+                symbol: dt.isoformat() for symbol, dt in self._position_entry_dates.items()
             }
 
             # Update position_entry_features section (for DiscoRL online learning)
@@ -320,8 +311,8 @@ class PositionManager:
 
         # Get asset-class-specific thresholds
         asset_class = get_asset_class(symbol)
-        take_profit_pct, stop_loss_pct, max_holding_days = (
-            self.conditions.get_thresholds_for_asset(asset_class)
+        take_profit_pct, stop_loss_pct, max_holding_days = self.conditions.get_thresholds_for_asset(
+            asset_class
         )
 
         logger.info(f"\n{'=' * 60}")
@@ -380,17 +371,13 @@ class PositionManager:
             else:
                 logger.info(f"  Days held: {days_held}/{max_holding_days}")
         else:
-            logger.warning(
-                f"  ⚠️ No entry date tracked for {symbol} - cannot check time decay"
-            )
+            logger.warning(f"  ⚠️ No entry date tracked for {symbol} - cannot check time decay")
 
         # 4. Check MOMENTUM REVERSAL (if enabled)
         if self.conditions.enable_momentum_exit:
             momentum_exit = self._check_momentum_reversal(symbol)
             if momentum_exit:
-                logger.info(
-                    f"  📉 MOMENTUM REVERSAL: MACD crossed bearish for {symbol}"
-                )
+                logger.info(f"  📉 MOMENTUM REVERSAL: MACD crossed bearish for {symbol}")
                 return ExitSignal(
                     symbol=symbol,
                     should_exit=True,
@@ -401,9 +388,7 @@ class PositionManager:
 
         # 5. Check ATR-based stop (if enabled)
         if self.conditions.enable_atr_stop:
-            atr_exit = self._check_atr_stop(
-                symbol, position.entry_price, position.current_price
-            )
+            atr_exit = self._check_atr_stop(symbol, position.entry_price, position.current_price)
             if atr_exit:
                 return atr_exit
 

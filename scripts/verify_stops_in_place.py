@@ -74,9 +74,7 @@ def get_open_positions(client) -> list[dict]:
                 "qty": float(p.qty),
                 "side": "long" if float(p.qty) > 0 else "short",
                 "asset_class": (
-                    p.asset_class.value
-                    if hasattr(p.asset_class, "value")
-                    else str(p.asset_class)
+                    p.asset_class.value if hasattr(p.asset_class, "value") else str(p.asset_class)
                 ),
                 "unrealized_pl": float(p.unrealized_pl) if p.unrealized_pl else 0,
                 "current_price": float(p.current_price) if p.current_price else 0,

@@ -133,9 +133,7 @@ def identify_iron_condor_legs(positions: list) -> dict:
         # Iron condor: 2 puts, 2 calls
         if len(puts) == 2 and len(calls) == 2:
             iron_condors[key] = [leg["symbol"] for leg in legs]
-            logger.info(
-                f"✅ Iron condor detected: {key[0]} exp {key[1]} with {len(legs)} legs"
-            )
+            logger.info(f"✅ Iron condor detected: {key[0]} exp {key[1]} with {len(legs)} legs")
 
     return iron_condors
 
@@ -208,9 +206,7 @@ def main(dry_run: bool = False):
         )
         for key, legs in iron_condors.items():
             logger.info(f"   {key[0]} exp {key[1]}: {', '.join(legs)}")
-        logger.info(
-            "   These must be managed as a unit via manage_iron_condor_positions.py"
-        )
+        logger.info("   These must be managed as a unit via manage_iron_condor_positions.py")
 
     # Convert Alpaca positions to dict format for PositionManager
     # EXCLUDE iron condor legs - they are managed separately
@@ -239,9 +235,7 @@ def main(dry_run: bool = False):
 
     if not position_dicts:
         logger.info("No non-iron-condor positions to evaluate")
-        logger.info(
-            "Iron condors should be managed via scripts/manage_iron_condor_positions.py"
-        )
+        logger.info("Iron condors should be managed via scripts/manage_iron_condor_positions.py")
         return
 
     # Evaluate non-iron-condor positions only
@@ -334,12 +328,8 @@ def main(dry_run: bool = False):
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Manage open positions with stop-losses"
-    )
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Preview without executing"
-    )
+    parser = argparse.ArgumentParser(description="Manage open positions with stop-losses")
+    parser.add_argument("--dry-run", action="store_true", help="Preview without executing")
     args = parser.parse_args()
 
     main(dry_run=args.dry_run)

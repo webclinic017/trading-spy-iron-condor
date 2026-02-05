@@ -20,9 +20,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -48,9 +46,7 @@ def load_todays_trades(date_str: str | None = None) -> list[dict]:
     # Check all possible trade file formats
     trade_files = [
         Path(f"data/trades_{date_str}.json"),  # Standard format
-        Path(
-            f"data/options_trades_{date_no_hyphens}.json"
-        ),  # Options format (CRITICAL FIX!)
+        Path(f"data/options_trades_{date_no_hyphens}.json"),  # Options format (CRITICAL FIX!)
     ]
 
     for trades_file in trade_files:
@@ -128,9 +124,7 @@ def sync_to_vertex_rag(trades: list[dict]) -> bool:
                         price = notional / qty
                     strategy = trade.get("strategy", "unknown")
                     timestamp_val = (
-                        trade.get("timestamp")
-                        or trade.get("time")
-                        or datetime.now().isoformat()
+                        trade.get("timestamp") or trade.get("time") or datetime.now().isoformat()
                     )
                     pnl = trade.get("pnl")
                     pnl_pct = trade.get("pnl_pct")
@@ -200,9 +194,7 @@ def sync_to_master_ledger(trades: list[dict]) -> bool:
                 # Standard equity trade
                 symbol = trade.get("symbol", "UNKNOWN")
                 timestamp = (
-                    trade.get("timestamp")
-                    or trade.get("time")
-                    or datetime.now().isoformat()
+                    trade.get("timestamp") or trade.get("time") or datetime.now().isoformat()
                 )
                 date_str = timestamp[:10]
                 trade_id = f"{symbol}_STOCK_{date_str.replace('-', '')}"
@@ -325,9 +317,7 @@ Premium Collected: ${premium}
     if price == 0 and qty and notional:
         price = notional / qty
     strategy = trade.get("strategy", "unknown")
-    timestamp = (
-        trade.get("timestamp") or trade.get("time") or trade.get("date") or "unknown"
-    )
+    timestamp = trade.get("timestamp") or trade.get("time") or trade.get("date") or "unknown"
     pnl = trade.get("pnl")
     pnl_pct = trade.get("pnl_pct")
 

@@ -106,9 +106,7 @@ class VIXMonitor:
                     )
                     logger.info("Alpaca client initialized for VIX data")
                 else:
-                    logger.warning(
-                        "Alpaca credentials missing, falling back to yfinance"
-                    )
+                    logger.warning("Alpaca credentials missing, falling back to yfinance")
                     self.alpaca_client = None
             except Exception as e:
                 logger.warning(f"Alpaca initialization failed: {e}, using yfinance")
@@ -191,9 +189,7 @@ class VIXMonitor:
             # Fetch historical VIX data
             vix = yf.Ticker("^VIX")
             end_date = datetime.now()
-            start_date = end_date - timedelta(
-                days=int(lookback_days * 1.4)
-            )  # Account for weekends
+            start_date = end_date - timedelta(days=int(lookback_days * 1.4))  # Account for weekends
 
             hist = vix.history(start=start_date, end=end_date)
 
@@ -203,9 +199,7 @@ class VIXMonitor:
 
             # Calculate percentile
             historical_closes = hist["Close"].values
-            percentile = (
-                np.sum(historical_closes < current_vix) / len(historical_closes)
-            ) * 100
+            percentile = (np.sum(historical_closes < current_vix) / len(historical_closes)) * 100
 
             logger.info(
                 f"VIX Percentile: {percentile:.1f}% "
@@ -374,9 +368,7 @@ class VIXMonitor:
             logger.warning(f"Failed to fetch VVIX: {e}")
             return 0.0
 
-    def get_volatility_regime(
-        self, vix_value: Optional[float] = None
-    ) -> VolatilityRegime:
+    def get_volatility_regime(self, vix_value: Optional[float] = None) -> VolatilityRegime:
         """
         Classify current volatility regime based on VIX level.
 
@@ -391,9 +383,7 @@ class VIXMonitor:
 
         for regime, (low, high) in self.REGIME_THRESHOLDS.items():
             if low <= vix_value < high:
-                logger.info(
-                    f"Volatility Regime: {regime.value.upper()} (VIX: {vix_value:.2f})"
-                )
+                logger.info(f"Volatility Regime: {regime.value.upper()} (VIX: {vix_value:.2f})")
                 return regime
 
         # Fallback to EXTREME if VIX is extremely high
@@ -543,9 +533,7 @@ class VIXMonitor:
             if os.path.exists(self.VIX_HISTORY_FILE):
                 with open(self.VIX_HISTORY_FILE) as f:
                     history = json.load(f)
-                    logger.info(
-                        f"Loaded VIX history: {len(history.get('daily_values', []))} days"
-                    )
+                    logger.info(f"Loaded VIX history: {len(history.get('daily_values', []))} days")
                     return history
         except Exception as e:
             logger.warning(f"Failed to load VIX history: {e}")
@@ -697,9 +685,7 @@ class VIXSignals:
         )
 
         confidence = (
-            "HIGH"
-            if reversion_prob > 0.75
-            else "MEDIUM" if reversion_prob > 0.6 else "LOW"
+            "HIGH" if reversion_prob > 0.75 else "MEDIUM" if reversion_prob > 0.6 else "LOW"
         )
 
         recommendation = {
@@ -751,9 +737,7 @@ class VIXSignals:
         if regime == VolatilityRegime.EXTREME_LOW and percentile < 20:
             should_buy = True
 
-        confidence = (
-            "HIGH" if percentile < 20 else "MEDIUM" if percentile < 40 else "LOW"
-        )
+        confidence = "HIGH" if percentile < 20 else "MEDIUM" if percentile < 40 else "LOW"
 
         recommendation = {
             "should_buy_premium": should_buy,
@@ -806,9 +790,7 @@ class VIXSignals:
         if percentile < 10:
             multiplier = base_multiplier * 1.2  # Extra aggressive in extremely low VIX
         elif percentile > 90:
-            multiplier = (
-                base_multiplier * 0.8
-            )  # Extra conservative in extremely high VIX
+            multiplier = base_multiplier * 0.8  # Extra conservative in extremely high VIX
         else:
             multiplier = base_multiplier
 
@@ -981,8 +963,7 @@ class VIXSignals:
                         "action": "SELL",
                         "priority": (
                             "HIGH"
-                            if regime
-                            in [VolatilityRegime.HIGH, VolatilityRegime.EXTREME]
+                            if regime in [VolatilityRegime.HIGH, VolatilityRegime.EXTREME]
                             else "MEDIUM"
                         ),
                     }
@@ -995,9 +976,7 @@ class VIXSignals:
                         "strategy": strat,
                         "action": "BUY",
                         "priority": (
-                            "HIGH"
-                            if regime == VolatilityRegime.EXTREME_LOW
-                            else "MEDIUM"
+                            "HIGH" if regime == VolatilityRegime.EXTREME_LOW else "MEDIUM"
                         ),
                     }
                 )
@@ -1174,9 +1153,7 @@ if __name__ == "__main__":
     recommendation = signals.get_strategy_recommendation()
     print(f"Primary Action: {recommendation['primary_action']}")
     print(f"Risk Level: {recommendation['risk_level']}")
-    print(
-        f"Position Size Multiplier: {recommendation['position_size_multiplier']:.2f}x"
-    )
+    print(f"Position Size Multiplier: {recommendation['position_size_multiplier']:.2f}x")
 
     print("\nRecommended Strategies:")
     for strat in recommendation["recommended_strategies"]:

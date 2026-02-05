@@ -24,9 +24,7 @@ except ImportError:
     DOTENV_AVAILABLE = False
 
 # Skip all tests if dotenv not available
-pytestmark = pytest.mark.skipif(
-    not DOTENV_AVAILABLE, reason="python-dotenv not available"
-)
+pytestmark = pytest.mark.skipif(not DOTENV_AVAILABLE, reason="python-dotenv not available")
 
 
 class TestMaxPositionsConfig:
@@ -74,9 +72,7 @@ class TestShouldOpenPosition:
     @patch("scripts.simple_daily_trader.datetime")
     @patch("scripts.simple_daily_trader.get_current_positions")
     @patch("scripts.simple_daily_trader.get_account_info")
-    def test_allows_new_position_under_max(
-        self, mock_account, mock_positions, mock_datetime
-    ):
+    def test_allows_new_position_under_max(self, mock_account, mock_positions, mock_datetime):
         """Should allow new position when under max_positions limit."""
         from scripts.simple_daily_trader import CONFIG, should_open_position
 
@@ -175,9 +171,7 @@ class TestTradingIntegration:
 
         assert 0.1 <= CONFIG["target_delta"] <= 0.5, "target_delta should be 0.1-0.5"
         assert 14 <= CONFIG["target_dte"] <= 60, "target_dte should be 14-60 days"
-        assert (
-            0.01 <= CONFIG["position_size_pct"] <= 0.2
-        ), "position_size should be 1-20%"
+        assert 0.01 <= CONFIG["position_size_pct"] <= 0.2, "position_size should be 1-20%"
         assert 0.25 <= CONFIG["take_profit_pct"] <= 0.75, "take_profit should be 25-75%"
 
 

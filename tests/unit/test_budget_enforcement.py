@@ -59,9 +59,7 @@ class TestBudgetEnforcement:
 
         # Sonnet is too expensive for $0.001 budget
         sonnet_config = MODEL_REGISTRY[ModelTier.SONNET]
-        allowed, reason = selector.enforce_budget(
-            sonnet_config.model_id, estimated_tokens=10000
-        )
+        allowed, reason = selector.enforce_budget(sonnet_config.model_id, estimated_tokens=10000)
 
         assert allowed is False
         assert "budget_exceeded" in reason
@@ -121,9 +119,7 @@ class TestBudgetEnforcement:
         selector.daily_spend = 0.0
 
         haiku_config = MODEL_REGISTRY[ModelTier.HAIKU]
-        cost = selector.log_usage(
-            haiku_config.model_id, input_tokens=1000, output_tokens=500
-        )
+        cost = selector.log_usage(haiku_config.model_id, input_tokens=1000, output_tokens=500)
 
         assert cost > 0
         assert selector.daily_spend == cost

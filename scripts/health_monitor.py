@@ -24,15 +24,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from dotenv import load_dotenv
-
 from src.utils.error_monitoring import init_sentry
 
 load_dotenv()
 init_sentry()
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -148,9 +145,7 @@ def check_system_state() -> tuple[bool, str]:
         else:
             updated_dt = datetime.strptime(last_updated, "%Y-%m-%d %H:%M:%S")
 
-        age_hours = (
-            datetime.now() - updated_dt.replace(tzinfo=None)
-        ).total_seconds() / 3600
+        age_hours = (datetime.now() - updated_dt.replace(tzinfo=None)).total_seconds() / 3600
 
         if age_hours > 48:
             return (

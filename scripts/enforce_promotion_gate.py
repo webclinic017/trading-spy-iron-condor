@@ -135,17 +135,11 @@ def evaluate_gate(
     drawdown = abs(float(system_state.get("heuristics", {}).get("max_drawdown", 0.0)))
 
     if win_rate < args.required_win_rate:
-        deficits.append(
-            f"Win rate {win_rate:.2f}% < {args.required_win_rate}% (paper trading)."
-        )
+        deficits.append(f"Win rate {win_rate:.2f}% < {args.required_win_rate}% (paper trading).")
     if sharpe < args.required_sharpe:
-        deficits.append(
-            f"Sharpe ratio {sharpe:.2f} < {args.required_sharpe} (paper trading)."
-        )
+        deficits.append(f"Sharpe ratio {sharpe:.2f} < {args.required_sharpe} (paper trading).")
     if drawdown > args.max_drawdown:
-        deficits.append(
-            f"Max drawdown {drawdown:.2f}% > {args.max_drawdown}% (paper trading)."
-        )
+        deficits.append(f"Max drawdown {drawdown:.2f}% > {args.max_drawdown}% (paper trading).")
 
     aggregate = backtest_summary.get("aggregate_metrics", {})
     min_streak = int(aggregate.get("min_profitable_streak", 0))
@@ -157,9 +151,7 @@ def evaluate_gate(
 
     min_sharpe = float(aggregate.get("min_sharpe_ratio", 0.0))
     if min_sharpe < args.required_sharpe:
-        deficits.append(
-            f"Backtest Sharpe floor {min_sharpe:.2f} < {args.required_sharpe}."
-        )
+        deficits.append(f"Backtest Sharpe floor {min_sharpe:.2f} < {args.required_sharpe}.")
 
     max_drawdown_bt = float(aggregate.get("max_drawdown", 999.0))
     if max_drawdown_bt > args.max_drawdown:
@@ -169,9 +161,7 @@ def evaluate_gate(
 
     min_win_rate = float(aggregate.get("min_win_rate", 0.0))
     if min_win_rate < args.required_win_rate:
-        deficits.append(
-            f"Backtest win-rate floor {min_win_rate:.2f}% < {args.required_win_rate}%."
-        )
+        deficits.append(f"Backtest win-rate floor {min_win_rate:.2f}% < {args.required_win_rate}%.")
 
     # Enforce minimum trade count for statistical significance
     total_trades = int(
@@ -311,9 +301,7 @@ def main() -> None:
         raise
 
     stale_hours = calculate_stale_hours(system_state)
-    stale_override = (
-        stale_hours is not None and stale_hours >= args.stale_threshold_hours
-    )
+    stale_override = stale_hours is not None and stale_hours >= args.stale_threshold_hours
 
     deficits = evaluate_gate(system_state, backtest_summary, args)
 
@@ -324,12 +312,8 @@ def main() -> None:
             or system_state.get("heuristics", {}).get("win_rate")
             or 0.0
         ),
-        "sharpe_ratio": float(
-            system_state.get("heuristics", {}).get("sharpe_ratio", 0.0)
-        ),
-        "max_drawdown": abs(
-            float(system_state.get("heuristics", {}).get("max_drawdown", 0.0))
-        ),
+        "sharpe_ratio": float(system_state.get("heuristics", {}).get("sharpe_ratio", 0.0)),
+        "max_drawdown": abs(float(system_state.get("heuristics", {}).get("max_drawdown", 0.0))),
         "total_trades": int(
             system_state.get("performance", {}).get("total_trades", 0)
             or backtest_summary.get("aggregate_metrics", {}).get("total_trades", 0)
@@ -385,11 +369,7 @@ def main() -> None:
         print("⚠️  Proceeding under manual override flag.")
 
     # Emit capital scaling plan if gate passed (without overrides) and enabled
-    if (
-        args.emit_scaling_plan
-        and not deficits
-        and not (override_flag or stale_override)
-    ):
+    if args.emit_scaling_plan and not deficits and not (override_flag or stale_override):
         scaling_plan = calculate_scaling_recommendation(
             metrics=metrics,
             thresholds=thresholds,

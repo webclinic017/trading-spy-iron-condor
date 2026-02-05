@@ -47,9 +47,7 @@ class TradeMemory:
         """Add a pattern to memory."""
         self.patterns.append(pattern)
 
-    def get_similar_patterns(
-        self, features: dict, limit: int = 5
-    ) -> list[TradePattern]:
+    def get_similar_patterns(self, features: dict, limit: int = 5) -> list[TradePattern]:
         """Find similar historical patterns."""
         # Stub - return empty list
         return []

@@ -31,9 +31,7 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 # Path to pre-trained weights
-WEIGHTS_PATH = (
-    Path(__file__).parent.parent.parent / "models" / "ml" / "rl_filter_weights.json"
-)
+WEIGHTS_PATH = Path(__file__).parent.parent.parent / "models" / "ml" / "rl_filter_weights.json"
 
 
 class RLFilter:
@@ -133,9 +131,7 @@ class RLFilter:
             action = "hold"
             confidence = 0.5
 
-        logger.debug(
-            f"RLFilter: score={score:.3f}, threshold={threshold}, action={action}"
-        )
+        logger.debug(f"RLFilter: score={score:.3f}, threshold={threshold}, action={action}")
 
         return {
             "action": action,

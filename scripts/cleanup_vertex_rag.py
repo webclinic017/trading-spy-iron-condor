@@ -35,9 +35,7 @@ import re
 import sys
 from pathlib import Path
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Documents to delete (Dec 2025 old incidents)
@@ -69,9 +67,7 @@ def get_vertex_rag_client():
             import tempfile
 
             # Write SA key to temp file for auth
-            with tempfile.NamedTemporaryFile(
-                mode="w", suffix=".json", delete=False
-            ) as f:
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
                 f.write(sa_key)
                 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = f.name
 

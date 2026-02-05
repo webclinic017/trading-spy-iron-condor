@@ -28,9 +28,7 @@ from typing import Any
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -71,9 +69,7 @@ class AuditReport:
     @property
     def passed(self) -> bool:
         """Audit passes if no high/critical violations."""
-        critical_count = sum(
-            1 for v in self.violations if v.severity in ["high", "critical"]
-        )
+        critical_count = sum(1 for v in self.violations if v.severity in ["high", "critical"])
         return critical_count == 0
 
 
@@ -113,9 +109,7 @@ class ComplianceAuditor:
                     data = json.load(f)
                     trades = data if isinstance(data, list) else [data]
                     for trade in trades:
-                        violations.extend(
-                            self._check_trade_compliance(trade, str(log_file), None)
-                        )
+                        violations.extend(self._check_trade_compliance(trade, str(log_file), None))
             except Exception as e:
                 self.warnings.append(f"Error reading {log_file}: {e}")
 
@@ -442,10 +436,7 @@ def main():
                 "low": ".",
             }.get(v.severity, "?")
             print(f"\n  [{severity_icon}] {v.category.upper()}: {v.details}")
-            print(
-                f"      Source: {v.file_source}"
-                + (f":{v.line_number}" if v.line_number else "")
-            )
+            print(f"      Source: {v.file_source}" + (f":{v.line_number}" if v.line_number else ""))
             print(f"      Action: {v.recommended_action}")
 
     if report.warnings:

@@ -258,16 +258,8 @@ def extract_discovery_content(lesson_file: Path) -> dict:
         ]
         if non_header_lines:
             problem = " ".join(non_header_lines[:3])[:400]
-            solution = (
-                " ".join(non_header_lines[3:6])[:400]
-                if len(non_header_lines) > 3
-                else ""
-            )
-            impact = (
-                " ".join(non_header_lines[6:8])[:300]
-                if len(non_header_lines) > 6
-                else ""
-            )
+            solution = " ".join(non_header_lines[3:6])[:400] if len(non_header_lines) > 3 else ""
+            impact = " ".join(non_header_lines[6:8])[:300] if len(non_header_lines) > 6 else ""
 
     # Classify severity
     severity = classify_severity(f"{problem} {title}")
@@ -302,7 +294,11 @@ flowchart LR
         icon = (
             "🔴"
             if severity == "critical"
-            else "🟠" if severity == "high" else "🟡" if severity == "medium" else "🟢"
+            else "🟠"
+            if severity == "high"
+            else "🟡"
+            if severity == "medium"
+            else "🟢"
         )
         # Get lesson_id or create short title from title field
         short_title = d.get("lesson_id") or d.get("title", f"Issue{i}")[:15]
@@ -380,9 +376,7 @@ def generate_blog_post(discoveries: list[dict], commits: list[dict]) -> dict:
         d = sorted_discoveries[0]
         sev_badge = SEVERITY_BADGES.get(d.get("severity", "info"), "")
         title = (
-            f"{sev_badge} {d['title'][:50]}"
-            if d.get("title")
-            else "Today's Engineering Discovery"
+            f"{sev_badge} {d['title'][:50]}" if d.get("title") else "Today's Engineering Discovery"
         )
     elif len(sorted_discoveries) > 0:
         d = sorted_discoveries[0]
@@ -542,11 +536,7 @@ Ralph is our AI CTO that autonomously maintains this trading system. It:
         "title": title,
         "content": content,
         "date": date,
-        "tags": (
-            list(all_tags)[:4]
-            if all_tags
-            else ["ralph", "automation", "self-healing", "ai"]
-        ),
+        "tags": (list(all_tags)[:4] if all_tags else ["ralph", "automation", "self-healing", "ai"]),
     }
 
 
@@ -598,9 +588,7 @@ def publish_to_devto(post: dict) -> dict | None:
             print(f"✅ Published to Dev.to: {result.get('url', 'Success')}")
             return result
         else:
-            print(
-                f"⚠️ Dev.to publish failed: {response.status_code} - {response.text[:200]}"
-            )
+            print(f"⚠️ Dev.to publish failed: {response.status_code} - {response.text[:200]}")
             return None
     except Exception as e:
         print(f"⚠️ Dev.to error: {e}")
@@ -614,9 +602,7 @@ def should_publish() -> bool:
 
     # Need at least 1 lesson or 3 significant commits
     significant_commits = [
-        c
-        for c in commits
-        if "fix" in c["message"].lower() or "feat" in c["message"].lower()
+        c for c in commits if "fix" in c["message"].lower() or "feat" in c["message"].lower()
     ]
 
     return len(lessons) >= 1 or len(significant_commits) >= 3

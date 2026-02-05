@@ -54,13 +54,11 @@ def get_equity() -> float:
 def get_recent_commits() -> list[str]:
     """Get recent commits for context."""
     try:
-        result = (
-            subprocess.run(  # nosec B603 B607 - safe git command, no untrusted input
-                ["git", "log", "--oneline", "-5", "--format=%s"],
-                capture_output=True,
-                text=True,
-                timeout=5,
-            )
+        result = subprocess.run(  # nosec B603 B607 - safe git command, no untrusted input
+            ["git", "log", "--oneline", "-5", "--format=%s"],
+            capture_output=True,
+            text=True,
+            timeout=5,
         )
         return result.stdout.strip().split("\n")
     except Exception:
@@ -385,7 +383,9 @@ def generate_engaging_title(signal: str, context: str) -> str:
         elif "bot slop" in ctx:
             return "Fixing Bot Slop: Making AI Content Human-Readable"
         else:
-            return f"Trading System Lesson #{get_rlhf_stats().get('total', 0)}: Learning from Failure"
+            return (
+                f"Trading System Lesson #{get_rlhf_stats().get('total', 0)}: Learning from Failure"
+            )
 
 
 def generate_mermaid_diagram(signal: str, stats: dict, model: dict) -> str:
@@ -425,9 +425,7 @@ def generate_post(signal: str, intensity: float, context: str) -> dict:
     model = get_model_stats()
     equity = get_equity()
 
-    content = generate_engaging_content(
-        signal, intensity, context, stats, model, equity
-    )
+    content = generate_engaging_content(signal, intensity, context, stats, model, equity)
     title = generate_engaging_title(signal, context)
 
     return {
@@ -479,13 +477,11 @@ def publish_to_devto(post: dict) -> dict | None:
 
             two_hours_ago = datetime.now() - timedelta(hours=2)
             for article in articles[:10]:  # Check last 10 articles
-                pub_date = datetime.fromisoformat(
-                    article["published_at"].replace("Z", "+00:00")
-                )
+                pub_date = datetime.fromisoformat(article["published_at"].replace("Z", "+00:00"))
                 # Check if same title published in last 2 hours
-                if article["title"] == post[
-                    "title"
-                ] and pub_date > two_hours_ago.replace(tzinfo=pub_date.tzinfo):
+                if article["title"] == post["title"] and pub_date > two_hours_ago.replace(
+                    tzinfo=pub_date.tzinfo
+                ):
                     print(
                         f"⚠️ Duplicate detected: '{post['title']}' already published at {article['url']}"
                     )
@@ -598,9 +594,7 @@ def post_to_twitter_api(post: dict, devto_url: str = None) -> bool:
 
 def queue_for_linkedin_backup(post: dict, devto_url: str = None) -> bool:
     """BACKUP: Queue for LinkedIn if direct posting fails."""
-    queue_file = (
-        Path(__file__).parent.parent.parent / "docs" / "linkedin_post_queue.json"
-    )
+    queue_file = Path(__file__).parent.parent.parent / "docs" / "linkedin_post_queue.json"
 
     if not queue_file.exists():
         return False
@@ -620,9 +614,7 @@ def queue_for_linkedin_backup(post: dict, devto_url: str = None) -> bool:
         with open(queue_file) as f:
             data = json.load(f)
 
-        next_id = (
-            max([item.get("id", 0) for item in data.get("queue", [])], default=0) + 1
-        )
+        next_id = max([item.get("id", 0) for item in data.get("queue", [])], default=0) + 1
 
         data["queue"].append(
             {

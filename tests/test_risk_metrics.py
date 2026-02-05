@@ -144,9 +144,7 @@ class TestRiskMetrics:
         pnls = [40, 50, 30, 60, 40, 50, 30, 40, 50, 30]
         metrics = calculate_risk_metrics(pnls)
         assert metrics.win_rate == 1.0, "All wins should give 100% win rate"
-        assert metrics.profit_factor == float(
-            "inf"
-        ), "No losses = infinite profit factor"
+        assert metrics.profit_factor == float("inf"), "No losses = infinite profit factor"
 
     def test_all_losers(self):
         """Test with all losing trades."""

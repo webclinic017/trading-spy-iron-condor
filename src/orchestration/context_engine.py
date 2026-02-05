@@ -189,9 +189,7 @@ class ContextEngine:
         logger.debug(f"Saved agent decision: {filepath}")
         return str(filepath)
 
-    def load_recent_trades(
-        self, symbol: str | None = None, days: int = 7
-    ) -> list[dict[str, Any]]:
+    def load_recent_trades(self, symbol: str | None = None, days: int = 7) -> list[dict[str, Any]]:
         """
         Load recent trades from storage
 
@@ -247,9 +245,9 @@ class ContextEngine:
 
                     if entry_timestamp >= cutoff_date:
                         data = entry["data"]
-                        if (
-                            agent_type is None or data.get("agent_type") == agent_type
-                        ) and (symbol is None or data.get("symbol") == symbol):
+                        if (agent_type is None or data.get("agent_type") == agent_type) and (
+                            symbol is None or data.get("symbol") == symbol
+                        ):
                             decisions.append(data)
             except Exception as e:
                 logger.warning(f"Error loading decision {filepath}: {e}")
@@ -303,9 +301,7 @@ class ContextEngine:
             },
         }
 
-    def export_context(
-        self, output_file: Path, symbol: str | None = None, days: int = 30
-    ) -> str:
+    def export_context(self, output_file: Path, symbol: str | None = None, days: int = 30) -> str:
         """
         Export context for analysis (bulk import/export)
 

@@ -32,9 +32,7 @@ def post_to_linkedin(text: str, dry_run: bool = False) -> bool:
     print("🌐 Opening LinkedIn in browser...")
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless=False
-        )  # Visible so you can see what's happening
+        browser = p.chromium.launch(headless=False)  # Visible so you can see what's happening
         context = browser.new_context()
         page = context.new_page()
 
@@ -63,9 +61,7 @@ def post_to_linkedin(text: str, dry_run: bool = False) -> bool:
             # Handle potential 2FA or verification
             current_url = page.url
             if "checkpoint" in current_url or "challenge" in current_url:
-                print(
-                    "   ⚠️  2FA/verification required - waiting 45s for manual completion..."
-                )
+                print("   ⚠️  2FA/verification required - waiting 45s for manual completion...")
                 time.sleep(45)
 
             # Go to feed/home to create post
@@ -96,15 +92,11 @@ def post_to_linkedin(text: str, dry_run: bool = False) -> bool:
                     print("   Clicked 'Start a post'...")
                     time.sleep(3)
                 else:
-                    print(
-                        "   ❌ Could not find 'Start a post' button with any selector"
-                    )
+                    print("   ❌ Could not find 'Start a post' button with any selector")
                     print("   Available buttons:")
                     buttons = page.query_selector_all("button")
                     for btn in buttons[:10]:  # Show first 10 buttons
-                        text = (
-                            btn.inner_text()[:50] if btn.inner_text() else "(no text)"
-                        )
+                        text = btn.inner_text()[:50] if btn.inner_text() else "(no text)"
                         print(f"      - {text}")
                     browser.close()
                     return False
@@ -153,9 +145,7 @@ def post_to_linkedin(text: str, dry_run: bool = False) -> bool:
                 post_btn = None
                 for selector in post_selectors:
                     try:
-                        post_btn = page.wait_for_selector(
-                            selector, state="visible", timeout=5000
-                        )
+                        post_btn = page.wait_for_selector(selector, state="visible", timeout=5000)
                         if post_btn:
                             print(f"   Found Post button: {selector}")
                             break
@@ -175,9 +165,7 @@ def post_to_linkedin(text: str, dry_run: bool = False) -> bool:
                     return True
                 else:
                     print("   ❌ Could not find visible Post button")
-                    print(
-                        "   Keeping browser open for 10s so you can click it manually..."
-                    )
+                    print("   Keeping browser open for 10s so you can click it manually...")
                     time.sleep(10)
                     browser.close()
                     return False
@@ -204,9 +192,7 @@ def main():
 
     parser = argparse.ArgumentParser(description="Post to LinkedIn directly")
     parser.add_argument("--text", required=True, help="Post text")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Don't post, just preview"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Don't post, just preview")
 
     args = parser.parse_args()
 

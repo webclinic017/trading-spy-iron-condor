@@ -27,9 +27,7 @@ def main():
     parser = argparse.ArgumentParser(description="Self-healing health check")
     parser.add_argument("--heal", action="store_true", help="Attempt auto-fix")
     parser.add_argument("--json", action="store_true", help="Output JSON")
-    parser.add_argument(
-        "--fail-on-unhealthy", action="store_true", help="Exit 1 if unhealthy"
-    )
+    parser.add_argument("--fail-on-unhealthy", action="store_true", help="Exit 1 if unhealthy")
     args = parser.parse_args()
 
     project_root = Path(__file__).parent.parent

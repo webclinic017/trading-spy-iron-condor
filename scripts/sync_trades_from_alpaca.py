@@ -84,7 +84,9 @@ def fetch_todays_fills(date_str: str | None = None) -> list[dict]:
 
     try:
         # Query Alpaca account activities for fills
-        activities_url = f"https://paper-api.alpaca.markets/v2/account/activities/FILL?date={date_str}"
+        activities_url = (
+            f"https://paper-api.alpaca.markets/v2/account/activities/FILL?date={date_str}"
+        )
         req = urllib.request.Request(
             activities_url,
             headers={
@@ -121,9 +123,7 @@ def convert_fill_to_trade(fill: dict) -> dict:
         "strategy": "alpaca_sync",  # Indicates this was synced from Alpaca
         "order_id": fill.get("order_id"),
         "activity_type": fill.get("activity_type", "FILL"),
-        "timestamp": fill.get(
-            "transaction_time", datetime.now(timezone.utc).isoformat()
-        ),
+        "timestamp": fill.get("transaction_time", datetime.now(timezone.utc).isoformat()),
         "source": "alpaca_api_sync",
     }
 
@@ -150,9 +150,7 @@ def save_trades_to_json(trades: list[dict], date_str: str) -> bool:
                 existing_trades = []
 
         # Get existing order IDs to avoid duplicates
-        existing_order_ids = {
-            t.get("order_id") for t in existing_trades if t.get("order_id")
-        }
+        existing_order_ids = {t.get("order_id") for t in existing_trades if t.get("order_id")}
 
         # Add new trades (avoid duplicates)
         new_count = 0
@@ -226,9 +224,7 @@ def main() -> int:
     """Main entry point."""
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Sync trades from Alpaca to local files"
-    )
+    parser = argparse.ArgumentParser(description="Sync trades from Alpaca to local files")
     parser.add_argument("--date", help="Date to sync (YYYY-MM-DD), defaults to today")
     args = parser.parse_args()
 

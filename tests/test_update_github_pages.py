@@ -273,30 +273,22 @@ class TestSmokeTests:
     """Smoke tests for the script."""
 
     def test_script_exists(self):
-        script_path = (
-            Path(__file__).parent.parent / "scripts" / "update_github_pages.py"
-        )
+        script_path = Path(__file__).parent.parent / "scripts" / "update_github_pages.py"
         assert script_path.exists()
 
     def test_script_is_valid_python(self):
-        script_path = (
-            Path(__file__).parent.parent / "scripts" / "update_github_pages.py"
-        )
+        script_path = Path(__file__).parent.parent / "scripts" / "update_github_pages.py"
         import py_compile
 
         py_compile.compile(str(script_path), doraise=True)
 
     def test_script_has_shebang(self):
-        script_path = (
-            Path(__file__).parent.parent / "scripts" / "update_github_pages.py"
-        )
+        script_path = Path(__file__).parent.parent / "scripts" / "update_github_pages.py"
         content = script_path.read_text()
         assert content.startswith("#!/usr/bin/env python3")
 
     def test_script_has_docstring(self):
-        script_path = (
-            Path(__file__).parent.parent / "scripts" / "update_github_pages.py"
-        )
+        script_path = Path(__file__).parent.parent / "scripts" / "update_github_pages.py"
         content = script_path.read_text()
         assert '"""' in content
 

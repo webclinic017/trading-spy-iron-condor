@@ -45,9 +45,7 @@ def fetch_account_data(client) -> dict:
             "daytrade_count": account.daytrade_count,
             "pattern_day_trader": account.pattern_day_trader,
             "status": (
-                account.status.value
-                if hasattr(account.status, "value")
-                else str(account.status)
+                account.status.value if hasattr(account.status, "value") else str(account.status)
             ),
         }
     except Exception as e:
@@ -120,9 +118,7 @@ def update_system_state(brokerage_data: dict, paper_data: dict):
         state["account"]["current_equity"] = brokerage_data["equity"]
         state["account"]["cash"] = brokerage_data["cash"]
         state["account"]["buying_power"] = brokerage_data["buying_power"]
-        state["account"]["positions_value"] = (
-            brokerage_data["equity"] - brokerage_data["cash"]
-        )
+        state["account"]["positions_value"] = brokerage_data["equity"] - brokerage_data["cash"]
 
     # Update paper account if exists
     if paper_data:
@@ -155,9 +151,7 @@ def append_to_performance_log(brokerage_data: dict, paper_data: dict):
     now = datetime.now().isoformat()
 
     # Check if we already have an entry for today
-    existing_idx = next(
-        (i for i, entry in enumerate(log) if entry.get("date") == today), None
-    )
+    existing_idx = next((i for i, entry in enumerate(log) if entry.get("date") == today), None)
 
     entry = {
         "date": today,
@@ -175,9 +169,7 @@ def append_to_performance_log(brokerage_data: dict, paper_data: dict):
     # Calculate P/L from previous entry
     if log and len(log) > 0:
         prev = (
-            log[-1]
-            if existing_idx is None
-            else log[existing_idx - 1] if existing_idx > 0 else None
+            log[-1] if existing_idx is None else log[existing_idx - 1] if existing_idx > 0 else None
         )
         if prev and prev.get("equity", 0) > 0:
             entry["pl"] = entry["equity"] - prev["equity"]

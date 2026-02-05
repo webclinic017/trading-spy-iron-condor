@@ -90,9 +90,7 @@ def identify_closed_positions(trade_history: list[dict]) -> list[dict]:
         buy_qty = sum(float(t.get("qty", 0)) for t in buys)
         sell_qty = sum(float(t.get("qty", 0)) for t in sells)
         total_buy = sum(float(t.get("qty", 0)) * float(t.get("price", 0)) for t in buys)
-        total_sell = sum(
-            float(t.get("qty", 0)) * float(t.get("price", 0)) for t in sells
-        )
+        total_sell = sum(float(t.get("qty", 0)) * float(t.get("price", 0)) for t in sells)
 
         # Determine if this is an options contract (longer symbol = option)
         is_option = len(symbol) > 10
@@ -117,12 +115,8 @@ def identify_closed_positions(trade_history: list[dict]) -> list[dict]:
             outcome = "breakeven"
 
         # Get dates
-        entry_date = min(
-            t.get("filled_at", "")[:10] for t in trades if t.get("filled_at")
-        )
-        exit_date = max(
-            t.get("filled_at", "")[:10] for t in trades if t.get("filled_at")
-        )
+        entry_date = min(t.get("filled_at", "")[:10] for t in trades if t.get("filled_at"))
+        exit_date = max(t.get("filled_at", "")[:10] for t in trades if t.get("filled_at"))
 
         closed_positions.append(
             {
@@ -189,9 +183,7 @@ def calculate_stats(trades: list[dict], paper_phase_start: str | None = None) ->
     breakeven = [t for t in closed if t.get("outcome") == "breakeven"]
 
     win_amounts = [t.get("realized_pnl", 0) for t in wins if t.get("realized_pnl")]
-    loss_amounts = [
-        abs(t.get("realized_pnl", 0)) for t in losses if t.get("realized_pnl")
-    ]
+    loss_amounts = [abs(t.get("realized_pnl", 0)) for t in losses if t.get("realized_pnl")]
 
     total_wins = sum(win_amounts) if win_amounts else 0
     total_losses = sum(loss_amounts) if loss_amounts else 0
@@ -206,9 +198,7 @@ def calculate_stats(trades: list[dict], paper_phase_start: str | None = None) ->
         "win_rate_pct": round(len(wins) / len(closed) * 100, 1) if closed else None,
         "avg_win": round(total_wins / len(wins), 2) if wins else None,
         "avg_loss": round(total_losses / len(losses), 2) if losses else None,
-        "profit_factor": (
-            round(total_wins / total_losses, 2) if total_losses > 0 else None
-        ),
+        "profit_factor": (round(total_wins / total_losses, 2) if total_losses > 0 else None),
         "total_pnl": round(total_wins - total_losses, 2),
         "paper_phase_start": paper_phase_start,
         "paper_phase_days": paper_phase_days,
@@ -254,9 +244,7 @@ def sync_closed_positions(dry_run: bool = False) -> dict:
     logger.info("=== CLOSED POSITIONS ===")
     for pos in closed_positions:
         outcome_emoji = (
-            "✅"
-            if pos["outcome"] == "win"
-            else "❌" if pos["outcome"] == "loss" else "➖"
+            "✅" if pos["outcome"] == "win" else "❌" if pos["outcome"] == "loss" else "➖"
         )
         logger.info(
             f"  {outcome_emoji} {pos['symbol']}: ${pos['realized_pnl']:+.2f} ({pos['outcome']})"
@@ -326,9 +314,7 @@ def main() -> int:
     """Main entry point."""
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Sync closed positions for win rate tracking"
-    )
+    parser = argparse.ArgumentParser(description="Sync closed positions for win rate tracking")
     parser.add_argument("--dry-run", action="store_true", help="Preview without saving")
     args = parser.parse_args()
 

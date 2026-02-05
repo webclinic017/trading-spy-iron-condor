@@ -381,9 +381,7 @@ class CEOApprovalGate:
     def __init__(self):
         self.pending_approvals: list[ChangeRequest] = []
 
-    def check_requires_approval(
-        self, change_description: str, affected_code: str
-    ) -> bool:
+    def check_requires_approval(self, change_description: str, affected_code: str) -> bool:
         """Check if a change requires CEO approval."""
         combined = (change_description + affected_code).lower()
         return any(pattern in combined for pattern in self.PROTECTED_PATTERNS)
@@ -419,9 +417,7 @@ Please review and respond with:
 ═══════════════════════════════════════════════════════════
 """
 
-    def process_approval(
-        self, change_id: str, approved: bool, approver: str = "CEO"
-    ) -> bool:
+    def process_approval(self, change_id: str, approved: bool, approver: str = "CEO") -> bool:
         """Process an approval decision."""
         for change in self.pending_approvals:
             if change.change_id == change_id:
@@ -619,7 +615,5 @@ if __name__ == "__main__":
 
     # Demo architecture analysis
     print("\n--- Architecture Analysis Demo ---")
-    analysis = analyze_before_change(
-        ["src/trading/order_executor.py", "src/agents/risk_agent.py"]
-    )
+    analysis = analyze_before_change(["src/trading/order_executor.py", "src/agents/risk_agent.py"])
     print(json.dumps(analysis, indent=2))

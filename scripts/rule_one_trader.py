@@ -38,9 +38,7 @@ try:
 except ImportError:
     pass  # sentry optional
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Phil Town Strategy Configuration
@@ -64,7 +62,6 @@ def get_trading_client():
     """Get Alpaca trading client."""
     try:
         from alpaca.trading.client import TradingClient
-
         from src.utils.alpaca_client import get_alpaca_credentials
 
         api_key, secret_key = get_alpaca_credentials()
@@ -85,16 +82,14 @@ def find_put_option(symbol: str, target_strike: float, client) -> Optional[dict]
         from alpaca.trading.requests import GetOptionContractsRequest
 
         # Calculate target expiration (30 DTE)
-        _target_date = datetime.now() + timedelta(
-            days=CONFIG["target_dte"]
-        )  # noqa: F841
+        _target_date = datetime.now() + timedelta(days=CONFIG["target_dte"])  # noqa: F841
 
         request = GetOptionContractsRequest(
             underlying_symbols=[symbol],
             expiration_date_gte=datetime.now().strftime("%Y-%m-%d"),
-            expiration_date_lte=(
-                datetime.now() + timedelta(days=CONFIG["max_dte"])
-            ).strftime("%Y-%m-%d"),
+            expiration_date_lte=(datetime.now() + timedelta(days=CONFIG["max_dte"])).strftime(
+                "%Y-%m-%d"
+            ),
             strike_price_lte=str(target_strike * 1.05),  # 5% buffer above target
             strike_price_gte=str(target_strike * 0.95),  # 5% buffer below target
             type="put",
@@ -162,9 +157,7 @@ def execute_phil_town_csp(client, symbol: str, analysis: dict) -> Optional[dict]
         # Calculate premium (estimate based on strike distance)
         # In real implementation, fetch actual bid/ask
         distance_pct = (current_price - option["strike"]) / current_price
-        estimated_premium = (
-            current_price * 0.02 * (1 + distance_pct)
-        )  # ~2% base premium
+        estimated_premium = current_price * 0.02 * (1 + distance_pct)  # ~2% base premium
 
         logger.info(f"  Estimated premium: ${estimated_premium:.2f}/share")
 
@@ -260,9 +253,7 @@ def record_trade(trade: dict):
             from src.learning.rlhf_storage import store_trade_trajectory
 
             store_trade_trajectory(
-                episode_id=trade.get(
-                    "order_id", f"phil_town_{datetime.now().timestamp()}"
-                ),
+                episode_id=trade.get("order_id", f"phil_town_{datetime.now().timestamp()}"),
                 entry_state={
                     "price": trade.get("strike", 0),
                     "symbol": trade.get("symbol"),
@@ -339,9 +330,7 @@ def run_rule_one_strategy():
 
                 if "STRONG BUY" in recommendation and "Below MOS" in recommendation:
                     # Stock is already below MOS - consider buying shares directly
-                    logger.info(
-                        f"  🎯 STEAL: {symbol} is below MOS - consider buying shares!"
-                    )
+                    logger.info(f"  🎯 STEAL: {symbol} is below MOS - consider buying shares!")
                     # For now, still sell puts as it's safer with small capital
                     trade = execute_phil_town_csp(client, symbol, analysis)
                     if trade:
@@ -376,9 +365,7 @@ def run_rule_one_strategy():
                 logger.warning(f"  Failed to process {symbol}: {e}")
 
         logger.info("\n" + "=" * 60)
-        logger.info(
-            f"RULE #1 COMPLETE - {len(analyses)} analyzed, {len(trades_executed)} traded"
-        )
+        logger.info(f"RULE #1 COMPLETE - {len(analyses)} analyzed, {len(trades_executed)} traded")
         logger.info("=" * 60)
 
         return {
