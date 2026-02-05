@@ -10,19 +10,19 @@ Validates the Actionable Communication Framework:
 """
 
 import json
-import pytest
+import sys
 from datetime import datetime, timedelta
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-import sys
+import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.orchestration.actionable_task_engine import (
     ActionableTaskEngine,
-    TaskStatus,
     TaskOwner,
+    TaskStatus,
 )
 
 
@@ -43,7 +43,9 @@ class TestTaskCreation:
     def test_create_trade_entry_tasks_creates_7_tasks(self, engine):
         """Trade entry should create 7 sequential tasks."""
         task_ids = engine.create_trade_entry_tasks(
-            ticker="SPY", strategy="iron_condor", parameters={"dte": 35, "max_loss": 500}
+            ticker="SPY",
+            strategy="iron_condor",
+            parameters={"dte": 35, "max_loss": 500},
         )
 
         assert len(task_ids) == 7
@@ -191,7 +193,9 @@ class TestCEOApproval:
         )
 
         # Find approval task
-        approval_tasks = [tid for tid in task_ids if engine.tasks[tid].owner == TaskOwner.CEO]
+        approval_tasks = [
+            tid for tid in task_ids if engine.tasks[tid].owner == TaskOwner.CEO
+        ]
 
         assert len(approval_tasks) > 0
         assert engine.tasks[approval_tasks[0]].status == TaskStatus.AWAITING_APPROVAL
@@ -239,7 +243,9 @@ class TestStatusReport:
 
     def test_status_report_structure(self, engine):
         """Report should have all required sections."""
-        engine.create_trade_entry_tasks(ticker="SPY", strategy="iron_condor", parameters={})
+        engine.create_trade_entry_tasks(
+            ticker="SPY", strategy="iron_condor", parameters={}
+        )
 
         report = engine.get_status_report()
 
@@ -251,7 +257,9 @@ class TestStatusReport:
 
     def test_report_counts_correct(self, engine):
         """Report should count tasks correctly."""
-        engine.create_trade_entry_tasks(ticker="SPY", strategy="iron_condor", parameters={})
+        engine.create_trade_entry_tasks(
+            ticker="SPY", strategy="iron_condor", parameters={}
+        )
 
         report = engine.get_status_report()
 
@@ -264,8 +272,13 @@ class TestPersistence:
 
     def test_tasks_persist_to_file(self, engine, tmp_path):
         """Tasks should be saved to JSON file."""
-        with patch("src.orchestration.actionable_task_engine.TASKS_FILE", tmp_path / "tasks.json"):
-            engine.create_trade_entry_tasks(ticker="SPY", strategy="iron_condor", parameters={})
+        with patch(
+            "src.orchestration.actionable_task_engine.TASKS_FILE",
+            tmp_path / "tasks.json",
+        ):
+            engine.create_trade_entry_tasks(
+                ticker="SPY", strategy="iron_condor", parameters={}
+            )
 
             # Check file exists and has content
             tasks_file = tmp_path / "tasks.json"

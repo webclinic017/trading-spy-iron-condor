@@ -70,7 +70,9 @@ class MomentumAgent:
         # If CRITICAL lessons found, reduce strength/confidence
         if critical_lessons:
             original_strength = strength
-            strength = strength * 0.7  # Reduce strength by 30% when CRITICAL lessons exist
+            strength = (
+                strength * 0.7
+            )  # Reduce strength by 30% when CRITICAL lessons exist
             logger.warning(
                 f"⚠️ {len(critical_lessons)} CRITICAL lessons found for {ticker} - "
                 f"Reducing strength from {original_strength:.2f} to {strength:.2f}"
@@ -104,7 +106,9 @@ class MomentumAgent:
         checks.append(
             f"Volume: {vol_ratio:.2f}x >= {vol_thresh}x {'✓' if vol_ratio >= vol_thresh else '✗ (low volume)'}"
         )
-        checks.append(f"Score: {score:.2f} > {self._min_score} {'✓' if is_buy else '✗'}")
+        checks.append(
+            f"Score: {score:.2f} > {self._min_score} {'✓' if is_buy else '✗'}"
+        )
 
         decision = "BUY" if is_buy else "REJECT"
         logger.info(

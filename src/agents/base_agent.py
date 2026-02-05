@@ -11,6 +11,7 @@ from datetime import datetime
 from typing import Any
 
 from anthropic import Anthropic
+
 from src.orchestration.context_engine import (
     ContextMemory,
     MemoryTimescale,
@@ -80,7 +81,9 @@ class BaseAgent(ABC):
         pass
 
     @with_retry(max_attempts=3, backoff=2.0)
-    def reason_with_llm(self, prompt: str, tools: list[dict] | None = None) -> dict[str, Any]:
+    def reason_with_llm(
+        self, prompt: str, tools: list[dict] | None = None
+    ) -> dict[str, Any]:
         """
         Use LLM reasoning to make decisions.
 
@@ -130,7 +133,9 @@ class BaseAgent(ABC):
                 if block.type == "text":
                     result["reasoning"] = block.text
                 elif block.type == "tool_use":
-                    result["tool_calls"].append({"name": block.name, "input": block.input})
+                    result["tool_calls"].append(
+                        {"name": block.name, "input": block.input}
+                    )
 
             return result
 

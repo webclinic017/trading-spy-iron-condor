@@ -99,7 +99,9 @@ class FREDCollector:
 
                 # FRED uses "." for missing values
                 if value == ".":
-                    logger.warning(f"FRED {series_id}: No data available for date range")
+                    logger.warning(
+                        f"FRED {series_id}: No data available for date range"
+                    )
                     return self._get_fallback(series_id)
 
                 result = {

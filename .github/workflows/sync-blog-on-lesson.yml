@@ -7,7 +7,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'rag_knowledge/lessons_learned/*.md'
+      - "rag_knowledge/lessons_learned/*.md"
 
 permissions:
   contents: write
@@ -23,7 +23,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: pip install requests || true

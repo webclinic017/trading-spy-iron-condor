@@ -179,9 +179,9 @@ def test_workflow_python_versions():
 
         for version in python_versions:
             major, minor = map(int, version.split("."))
-            assert major == 3 and minor >= 9, (
-                f"{workflow_path.name} uses Python {version}. Minimum supported is 3.9."
-            )
+            assert (
+                major == 3 and minor >= 9
+            ), f"{workflow_path.name} uses Python {version}. Minimum supported is 3.9."
             assert major == 3 and minor < 14, (
                 f"{workflow_path.name} uses Python {version}. "
                 f"Python 3.14+ has limited wheel availability."

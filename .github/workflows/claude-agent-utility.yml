@@ -12,13 +12,13 @@ name: Claude Agent Utility
 on:
   push:
     branches:
-      - 'claude/**'
+      - "claude/**"
     paths:
-      - 'TRIGGER_TRADE.md'
+      - "TRIGGER_TRADE.md"
   workflow_dispatch:
     inputs:
       task:
-        description: 'Task to execute'
+        description: "Task to execute"
         required: true
         type: choice
         options:
@@ -38,25 +38,25 @@ on:
           - query-dialogflow
           - execute-paper-trade
           - custom-command
-        default: 'run-tests'
+        default: "run-tests"
       custom_command:
-        description: 'Custom Python command (only if task=custom-command)'
+        description: "Custom Python command (only if task=custom-command)"
         required: false
         type: string
-        default: ''
+        default: ""
       test_pattern:
-        description: 'Test pattern for pytest (e.g., tests/test_*.py)'
+        description: "Test pattern for pytest (e.g., tests/test_*.py)"
         required: false
         type: string
-        default: 'tests/'
+        default: "tests/"
       verbose:
-        description: 'Enable verbose output'
+        description: "Enable verbose output"
         required: false
         type: boolean
         default: true
 
 env:
-  PYTHON_VERSION: '3.11'
+  PYTHON_VERSION: "3.11"
 
 jobs:
   execute-task:
@@ -82,7 +82,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'pip'
+          cache: "pip"
 
       - name: Install dependencies
         run: |

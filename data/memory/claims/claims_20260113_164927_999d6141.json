@@ -5,10 +5,7 @@
   "title": "CI tests passing",
   "content": "Claimed all tests passed. Need to verify coverage thresholds, not just pass/fail.",
   "metadata": {},
-  "tags": [
-    "testing",
-    "verification"
-  ],
+  "tags": ["testing", "verification"],
   "severity": "MEDIUM",
   "verified": false,
   "session_id": "10a4f3f5"

@@ -151,11 +151,16 @@ class MarketRegimeClassifier:
         model_file = MODEL_DIR / "cluster_centers.json"
         data = {
             "updated_at": datetime.now().isoformat(),
-            "centers": {regime.value: center.tolist() for regime, center in self._centers.items()},
+            "centers": {
+                regime.value: center.tolist()
+                for regime, center in self._centers.items()
+            },
         }
         model_file.write_text(json.dumps(data, indent=2))
 
-    def _extract_features(self, market_data: dict[str, Any] | None = None) -> np.ndarray:
+    def _extract_features(
+        self, market_data: dict[str, Any] | None = None
+    ) -> np.ndarray:
         """
         Extract features from market data.
 
@@ -241,7 +246,9 @@ class MarketRegimeClassifier:
 
         return distances
 
-    def classify(self, market_data: dict[str, Any] | None = None) -> RegimeClassification:
+    def classify(
+        self, market_data: dict[str, Any] | None = None
+    ) -> RegimeClassification:
         """
         Classify the current market regime.
 
@@ -268,7 +275,8 @@ class MarketRegimeClassifier:
 
         # Build feature dict for interpretability
         feature_dict = {
-            name: float(val) for name, val in zip(self.FEATURE_NAMES, features, strict=False)
+            name: float(val)
+            for name, val in zip(self.FEATURE_NAMES, features, strict=False)
         }
 
         return RegimeClassification(
@@ -326,7 +334,11 @@ class MarketRegimeClassifier:
             # Update centers
             new_centers = np.array(
                 [
-                    (X[labels == i].mean(axis=0) if (labels == i).sum() > 0 else centers[i])
+                    (
+                        X[labels == i].mean(axis=0)
+                        if (labels == i).sum() > 0
+                        else centers[i]
+                    )
                     for i in range(k)
                 ]
             )

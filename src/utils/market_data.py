@@ -82,7 +82,9 @@ class PerformanceMetrics:
         self.total_latency_ms += latency_ms
         self.avg_latency_ms = self.total_latency_ms / self.total_requests
         self.success_rate = (
-            self.successful_requests / self.total_requests if self.total_requests > 0 else 0.0
+            self.successful_requests / self.total_requests
+            if self.total_requests > 0
+            else 0.0
         )
 
 
@@ -110,7 +112,9 @@ class MarketDataResult:
             "rows": len(self.data),
             "total_attempts": self.total_attempts,
             "total_latency_ms": round(self.total_latency_ms, 2),
-            "cache_age_hours": (round(self.cache_age_hours, 2) if self.cache_age_hours else None),
+            "cache_age_hours": (
+                round(self.cache_age_hours, 2) if self.cache_age_hours else None
+            ),
             "attempts": [
                 {
                     "source": a.source.value,
@@ -133,7 +137,9 @@ class MarketDataProvider:
         session: requests.Session | None = None,
     ) -> None:
         # Configuration (loaded from env vars at instance creation)
-        self.YFINANCE_LOOKBACK_BUFFER_DAYS = int(os.getenv("YFINANCE_LOOKBACK_BUFFER_DAYS", "35"))
+        self.YFINANCE_LOOKBACK_BUFFER_DAYS = int(
+            os.getenv("YFINANCE_LOOKBACK_BUFFER_DAYS", "35")
+        )
         self.YFINANCE_SECONDARY_LOOKBACK_DAYS = int(
             os.getenv("YFINANCE_SECONDARY_LOOKBACK_DAYS", "150")
         )
@@ -154,14 +160,18 @@ class MarketDataProvider:
         self.ALPHAVANTAGE_MIN_INTERVAL_SECONDS = float(
             os.getenv("ALPHAVANTAGE_MIN_INTERVAL_SECONDS", "15")
         )
-        self.ALPHAVANTAGE_BACKOFF_SECONDS = float(os.getenv("ALPHAVANTAGE_BACKOFF_SECONDS", "60"))
+        self.ALPHAVANTAGE_BACKOFF_SECONDS = float(
+            os.getenv("ALPHAVANTAGE_BACKOFF_SECONDS", "60")
+        )
         self.ALPHAVANTAGE_MAX_RETRIES = int(os.getenv("ALPHAVANTAGE_MAX_RETRIES", "4"))
         # CRITICAL: Max total time to spend on Alpha Vantage (fail fast to avoid workflow timeouts)
         self.ALPHAVANTAGE_MAX_TOTAL_SECONDS = float(
             os.getenv("ALPHAVANTAGE_MAX_TOTAL_SECONDS", "90")
         )  # 90s max
 
-        self.CACHE_TTL_SECONDS = int(os.getenv("CACHE_TTL_SECONDS", str(6 * 60 * 60)))  # 6 hours
+        self.CACHE_TTL_SECONDS = int(
+            os.getenv("CACHE_TTL_SECONDS", str(6 * 60 * 60))
+        )  # 6 hours
         self.CACHE_MAX_AGE_DAYS = int(
             os.getenv("CACHE_MAX_AGE_DAYS", "7")
         )  # Use cached data up to 7 days old
@@ -265,7 +275,9 @@ class MarketDataProvider:
             ValueError: if data cannot be fetched from any source.
         """
         end_dt = end_datetime or datetime.now()
-        start_dt = end_dt - timedelta(days=lookback_days + self.YFINANCE_LOOKBACK_BUFFER_DAYS)
+        start_dt = end_dt - timedelta(
+            days=lookback_days + self.YFINANCE_LOOKBACK_BUFFER_DAYS
+        )
         cache_key = (symbol.upper(), lookback_days, end_dt.date())
         result = MarketDataResult(data=pd.DataFrame(), source=DataSource.UNKNOWN)
 
@@ -279,7 +291,9 @@ class MarketDataProvider:
 
         # PRIORITY 2: Try Polygon.io API (reliable paid source) - MOVED UP
         if self.polygon_api_key:
-            logger.info("%s: Fetching from Polygon.io API (primary reliable source)", symbol)
+            logger.info(
+                "%s: Fetching from Polygon.io API (primary reliable source)", symbol
+            )
             data = self._fetch_polygon_with_retries(symbol, lookback_days, result)
             if self._is_valid(data, lookback_days):
                 prepared = self._prepare(data, lookback_days)
@@ -300,11 +314,15 @@ class MarketDataProvider:
                 )
                 return result
             else:
-                logger.warning("%s: Polygon.io returned insufficient data, trying Alpaca", symbol)
+                logger.warning(
+                    "%s: Polygon.io returned insufficient data, trying Alpaca", symbol
+                )
 
         # PRIORITY 3: Try Alpaca API (reliable paid source) - MOVED DOWN
         if self._alpaca_api:
-            logger.info("%s: Fetching from Alpaca API (secondary reliable source)", symbol)
+            logger.info(
+                "%s: Fetching from Alpaca API (secondary reliable source)", symbol
+            )
             data = self._fetch_alpaca_with_retries(symbol, lookback_days, result)
             if self._is_valid(data, lookback_days):
                 prepared = self._prepare(data, lookback_days)
@@ -329,7 +347,9 @@ class MarketDataProvider:
                 )
 
         # PRIORITY 4: Check disk cache (may be stale but better than nothing)
-        cached_data, cache_age_hours = self._load_cached_data_with_age(symbol, lookback_days)
+        cached_data, cache_age_hours = self._load_cached_data_with_age(
+            symbol, lookback_days
+        )
         if (
             cached_data is not None
             and cache_age_hours is not None
@@ -370,7 +390,9 @@ class MarketDataProvider:
 
         # Try Alpha Vantage (last resort live source) - BUT CHECK CACHE FIRST
         # Skip Alpha Vantage if we have cached data (faster and avoids rate limits)
-        cached_data, cache_age_hours = self._load_cached_data_with_age(symbol, lookback_days)
+        cached_data, cache_age_hours = self._load_cached_data_with_age(
+            symbol, lookback_days
+        )
         if (
             cached_data is not None
             and cache_age_hours is not None
@@ -420,7 +442,9 @@ class MarketDataProvider:
             "%s: All live data sources failed. Attempting to use cached data.",
             symbol,
         )
-        cached_data, cache_age_hours = self._load_cached_data_with_age(symbol, lookback_days)
+        cached_data, cache_age_hours = self._load_cached_data_with_age(
+            symbol, lookback_days
+        )
         if cached_data is not None:
             result.data = cached_data
             result.source = DataSource.CACHE
@@ -436,7 +460,11 @@ class MarketDataProvider:
         # Complete failure - log and raise
         self._log_health(symbol, result)
         error_summary = "\n".join(
-            [f"  - {a.source.value}: {a.error_message}" for a in result.attempts if not a.success]
+            [
+                f"  - {a.source.value}: {a.error_message}"
+                for a in result.attempts
+                if not a.success
+            ]
         )
         raise ValueError(
             f"Failed to fetch {lookback_days} days of data for {symbol} from all sources:\n{error_summary}"
@@ -741,7 +769,9 @@ class MarketDataProvider:
 
         # Final attempt: broader lookback to mitigate sparse weekends/holidays
         try:
-            extended_start = end_dt - timedelta(days=self.YFINANCE_SECONDARY_LOOKBACK_DAYS)
+            extended_start = end_dt - timedelta(
+                days=self.YFINANCE_SECONDARY_LOOKBACK_DAYS
+            )
             extended = yf.download(
                 symbol,
                 start=extended_start,
@@ -770,7 +800,9 @@ class MarketDataProvider:
             # Alpaca API: get_stock_bars returns BarSet
             end_dt = datetime.now(timezone.utc)
             # Request a generous window to ensure sufficient bars
-            start_dt = end_dt - timedelta(days=lookback_days + self.YFINANCE_LOOKBACK_BUFFER_DAYS)
+            start_dt = end_dt - timedelta(
+                days=lookback_days + self.YFINANCE_LOOKBACK_BUFFER_DAYS
+            )
             feed = os.getenv("ALPACA_DATA_FEED", "iex")
 
             req = StockBarsRequest(
@@ -785,7 +817,11 @@ class MarketDataProvider:
 
             barset = self._alpaca_api.get_stock_bars(req)
 
-            if not barset.data or symbol not in barset.data or len(barset.data[symbol]) == 0:
+            if (
+                not barset.data
+                or symbol not in barset.data
+                or len(barset.data[symbol]) == 0
+            ):
                 logger.warning("%s: Alpaca API returned no bars", symbol)
                 return None
 
@@ -812,7 +848,9 @@ class MarketDataProvider:
             df.index.name = "Date"
             df = df.sort_index()
 
-            logger.info("%s: Successfully fetched %d bars from Alpaca API", symbol, len(df))
+            logger.info(
+                "%s: Successfully fetched %d bars from Alpaca API", symbol, len(df)
+            )
             return df
 
         except Exception as exc:
@@ -906,7 +944,9 @@ class MarketDataProvider:
                                 )
                                 return cached_data
                     # Exponential backoff: 30s → 60s → 120s
-                    backoff = self.POLYGON_INITIAL_BACKOFF_SECONDS * (2 ** (attempt - 1))
+                    backoff = self.POLYGON_INITIAL_BACKOFF_SECONDS * (
+                        2 ** (attempt - 1)
+                    )
                     logger.info(
                         "%s: Waiting %.0fs before retry (exponential backoff)",
                         symbol,
@@ -955,7 +995,9 @@ class MarketDataProvider:
                     time.sleep(1)  # Brief backoff
 
         # Final fallback: check cache one more time
-        cached_data, cache_age_hours = self._load_cached_data_with_age(symbol, lookback_days)
+        cached_data, cache_age_hours = self._load_cached_data_with_age(
+            symbol, lookback_days
+        )
         if cached_data is not None and cache_age_hours is not None:
             max_age_hours = self.MAX_DATA_AGE_HOURS
             if cache_age_hours <= max_age_hours:
@@ -1053,7 +1095,9 @@ class MarketDataProvider:
             df.index.name = "Date"
             df = df.sort_index()
 
-            logger.info("%s: Successfully fetched %d bars from Polygon.io", symbol, len(df))
+            logger.info(
+                "%s: Successfully fetched %d bars from Polygon.io", symbol, len(df)
+            )
             return df
 
         except Exception as exc:
@@ -1063,7 +1107,9 @@ class MarketDataProvider:
     def _cache_polygon_response(self, symbol: str, data: pd.DataFrame) -> None:
         """Cache successful Polygon response to disk for reuse."""
         try:
-            cache_file = self.cache_dir / f"{symbol.upper()}_{datetime.now().date()}.csv"
+            cache_file = (
+                self.cache_dir / f"{symbol.upper()}_{datetime.now().date()}.csv"
+            )
             data.to_csv(cache_file, index=True)
             logger.debug("%s: Cached Polygon response to %s", symbol, cache_file)
         except Exception as exc:
@@ -1087,7 +1133,9 @@ class MarketDataProvider:
             start_time: Start time for timeout calculation (defaults to now)
         """
         if not self.alpha_vantage_key:
-            logger.warning("%s: Alpha Vantage fallback unavailable (missing API key).", symbol)
+            logger.warning(
+                "%s: Alpha Vantage fallback unavailable (missing API key).", symbol
+            )
             return None
 
         if start_time is None:
@@ -1098,7 +1146,9 @@ class MarketDataProvider:
             age = time.time() - cache_file.stat().st_mtime
             if age <= self.CACHE_TTL_SECONDS:
                 try:
-                    cached_df = pd.read_csv(cache_file, parse_dates=["Date"], index_col="Date")
+                    cached_df = pd.read_csv(
+                        cache_file, parse_dates=["Date"], index_col="Date"
+                    )
                     if not cached_df.empty:
                         logger.debug(
                             "%s: Using cached Alpha Vantage data (%.1f hours old)",
@@ -1107,7 +1157,9 @@ class MarketDataProvider:
                         )
                         return cached_df
                 except Exception as exc:
-                    logger.debug("%s: Failed to load cached Alpha Vantage data: %s", symbol, exc)
+                    logger.debug(
+                        "%s: Failed to load cached Alpha Vantage data: %s", symbol, exc
+                    )
 
         # Throttle to respect free-tier rate limits
         def respect_rate_limit(min_interval: float) -> None:
@@ -1120,7 +1172,9 @@ class MarketDataProvider:
                     raise TimeoutError(
                         f"Would exceed max_total_time ({max_total_time}s) waiting for rate limit"
                     )
-                logger.debug("Sleeping %.2fs to respect Alpha Vantage rate limit", sleep_time)
+                logger.debug(
+                    "Sleeping %.2fs to respect Alpha Vantage rate limit", sleep_time
+                )
                 time.sleep(sleep_time)
 
         params = {
@@ -1185,7 +1239,9 @@ class MarketDataProvider:
                     try:
                         df.to_csv(cache_file, index=True)
                     except Exception as exc:
-                        logger.debug("%s: Unable to cache Alpha Vantage data: %s", symbol, exc)
+                        logger.debug(
+                            "%s: Unable to cache Alpha Vantage data: %s", symbol, exc
+                        )
                     return df
 
             # Handle throttling notices - FAIL FAST INSTEAD OF WAITING
@@ -1193,14 +1249,18 @@ class MarketDataProvider:
             if info_message:
                 # CRITICAL FIX: If rate-limited, FAIL IMMEDIATELY instead of waiting
                 elapsed_total = time.time() - start_time
-                if elapsed_total >= max_total_time * 0.8:  # Fail if we've used 80% of time
+                if (
+                    elapsed_total >= max_total_time * 0.8
+                ):  # Fail if we've used 80% of time
                     raise TimeoutError(
                         f"Alpha Vantage rate-limited after {elapsed_total:.1f}s. "
                         f"Message: {info_message}. Using cached data instead."
                     )
 
                 # Only wait if we have time remaining (max 30s wait)
-                max_wait = min(30.0, max_total_time - elapsed_total - 5)  # Leave 5s buffer
+                max_wait = min(
+                    30.0, max_total_time - elapsed_total - 5
+                )  # Leave 5s buffer
                 if max_wait > 0:
                     logger.warning(
                         "%s: Alpha Vantage rate limit hit (attempt %s). Waiting %ss (max %ss). Message: %s",
@@ -1229,7 +1289,9 @@ class MarketDataProvider:
                 if max_wait > 0:
                     time.sleep(max_wait)
                 else:
-                    raise TimeoutError(f"No time remaining for retry (used {elapsed_total:.1f}s)")
+                    raise TimeoutError(
+                        f"No time remaining for retry (used {elapsed_total:.1f}s)"
+                    )
 
         return None
 
@@ -1269,7 +1331,9 @@ class MarketDataProvider:
                 return None, None
 
             # Load cached data
-            cached_df = pd.read_csv(latest_cache, parse_dates=["Date"], index_col="Date")
+            cached_df = pd.read_csv(
+                latest_cache, parse_dates=["Date"], index_col="Date"
+            )
             if not cached_df.empty and len(cached_df) >= lookback_days * 0.5:
                 logger.info(
                     "%s: Loaded %d rows from cache (%.1f hours old)",

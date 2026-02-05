@@ -50,6 +50,7 @@ def get_voo_price(client) -> float:
     try:
         from alpaca.data.historical import StockHistoricalDataClient
         from alpaca.data.requests import StockLatestQuoteRequest
+
         from src.utils.alpaca_client import get_brokerage_credentials
 
         api_key, secret_key = get_brokerage_credentials()
@@ -153,7 +154,9 @@ def main():
         default=0,
         help="Dollar amount to invest (0 = use all available cash)",
     )
-    parser.add_argument("--dry-run", action="store_true", help="Simulate without placing order")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Simulate without placing order"
+    )
     args = parser.parse_args()
 
     logger.info("=" * 60)

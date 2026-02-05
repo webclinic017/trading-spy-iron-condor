@@ -3,6 +3,7 @@
 ## 1. Daily P/L Report (REQUIRED EVERY SESSION)
 
 ### Format
+
 ```
 📊 Daily Status Report - [DATE]
 
@@ -24,11 +25,13 @@
 ```
 
 ### Data Sources
+
 1. Query Alpaca API directly (or use cached system_state.json)
 2. Query Dialogflow webhook: `curl https://trading-dialogflow-webhook-cqlewkvzdq-uc.a.run.app/test-readiness`
 3. Verify GitHub Pages index.md matches
 
 ### P/L Reason Guidelines
+
 - **One sentence max**
 - Include the **primary driver** (which position moved most)
 - Include **direction** (SPY up/down, IV expansion/contraction)
@@ -51,6 +54,7 @@
 ## 3. Deferred Items
 
 Track items that need attention but aren't blocking:
+
 1. [ITEM] - [REASON DEFERRED]
 2. ...
 

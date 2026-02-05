@@ -14,6 +14,7 @@ Audit of RAG hooks against official Claude Code documentation revealed that `cap
 ## Resolution (Jan 26, 2026)
 
 Created new `lesson_capture_stop_hook.sh` that:
+
 1. Runs as a **Stop** hook (can inject context to Claude)
 2. Uses `"decision": "block"` JSON output to prevent stopping
 3. Prompts Claude to capture lessons before session ends
@@ -22,6 +23,7 @@ Created new `lesson_capture_stop_hook.sh` that:
 ## Root Cause
 
 Per Claude Code hooks documentation:
+
 - **SessionEnd**: "N/A, shows stderr to user only"
 - **Stop**: "Blocks stoppage, shows stderr to Claude"
 
@@ -35,11 +37,11 @@ The `capture_session_learnings.sh` hook outputs to stdout, but SessionEnd hooks 
 
 ## What's Working
 
-| Hook | Event | Status |
-|------|-------|--------|
-| `advise_before_task.sh` | UserPromptSubmit | WORKING - reads JSON stdin, queries lessons |
-| `mandatory_rag_check.sh` | UserPromptSubmit | WORKING - shows critical lessons (static) |
-| `capture_session_learnings.sh` | SessionEnd | INEFFECTIVE - stdout ignored |
+| Hook                           | Event            | Status                                      |
+| ------------------------------ | ---------------- | ------------------------------------------- |
+| `advise_before_task.sh`        | UserPromptSubmit | WORKING - reads JSON stdin, queries lessons |
+| `mandatory_rag_check.sh`       | UserPromptSubmit | WORKING - shows critical lessons (static)   |
+| `capture_session_learnings.sh` | SessionEnd       | INEFFECTIVE - stdout ignored                |
 
 ## Prevention Measures
 
@@ -48,6 +50,7 @@ The `capture_session_learnings.sh` hook outputs to stdout, but SessionEnd hooks 
    - Can use `"decision": "block"` to force continuation
 
 2. **Consider prompt-based hooks** for intelligent evaluation:
+
    ```json
    {
      "type": "prompt",
@@ -62,6 +65,7 @@ The `capture_session_learnings.sh` hook outputs to stdout, but SessionEnd hooks 
 Source: https://code.claude.com/docs/en/hooks
 
 Key insight from docs:
+
 ```
 | Hook Event    | Exit Code 2 Behavior                    |
 |---------------|----------------------------------------|

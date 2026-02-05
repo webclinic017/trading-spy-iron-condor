@@ -3,6 +3,7 @@
 Stop an active Ralph Wiggum autonomous loop.
 
 ## Usage
+
 ```
 /cancel-ralph
 ```
@@ -14,6 +15,7 @@ When this command is invoked:
 1. **Check if Ralph mode is active** by reading `.claude/ralph_state.json`
 
 2. **If active**, update the state:
+
 ```json
 {
   "active": false,

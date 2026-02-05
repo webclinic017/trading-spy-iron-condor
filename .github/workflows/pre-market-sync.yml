@@ -3,11 +3,11 @@ name: Pre-Market Data Sync
 on:
   schedule:
     # Run at 9:25 AM ET (14:25 UTC) - 5 minutes before market open
-    - cron: '25 14 * * 1-5'
-  workflow_dispatch:  # Allow manual trigger
+    - cron: "25 14 * * 1-5"
+  workflow_dispatch: # Allow manual trigger
 
 permissions:
-  contents: write  # Required to push commits
+  contents: write # Required to push commits
 
 jobs:
   sync:
@@ -19,8 +19,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: 'pip'
+          python-version: "3.11"
+          cache: "pip"
 
       - name: Install dependencies
         run: |

@@ -7,12 +7,15 @@
 **Ingested**: 2026-02-01T13:26:25.827311
 
 ## Key Concepts
+
 Rule #1, Options Strategy
 
 ## Strategies
+
 None identified
 
 ## Sentiment
+
 Neutral
 
 ## Transcript

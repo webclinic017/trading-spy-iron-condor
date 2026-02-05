@@ -5,12 +5,12 @@ on:
     branches:
       - main
     paths:
-      - 'src/agents/dialogflow_webhook.py'
-      - 'src/rag/**'
-      - 'rag_knowledge/lessons_learned/**'
-      - 'Dockerfile.webhook'
-      - '.github/workflows/deploy-dialogflow-webhook.yml'
-  workflow_dispatch:  # Manual trigger
+      - "src/agents/dialogflow_webhook.py"
+      - "src/rag/**"
+      - "rag_knowledge/lessons_learned/**"
+      - "Dockerfile.webhook"
+      - ".github/workflows/deploy-dialogflow-webhook.yml"
+  workflow_dispatch: # Manual trigger
 
 env:
   PROJECT_ID: igor-trading-2025-v2

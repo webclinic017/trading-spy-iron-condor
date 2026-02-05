@@ -188,7 +188,10 @@ class TestDashboardNoneHandling:
             "strategy_health": None,  # Entire nested dict can be None
         }
 
-        ai_summary = ai_insights.get("summary", "No summary available.") or "No summary available."
+        ai_summary = (
+            ai_insights.get("summary", "No summary available.")
+            or "No summary available."
+        )
         ai_health = ai_insights.get("strategy_health", {}) or {}
         ai_emoji = ai_health.get("emoji", "❓") or "❓"
         ai_status = ai_health.get("status", "UNKNOWN") or "UNKNOWN"
@@ -209,9 +212,12 @@ class TestDashboardSmokeTest:
             import generate_world_class_dashboard_enhanced
 
             assert hasattr(
-                generate_world_class_dashboard_enhanced, "generate_world_class_dashboard"
+                generate_world_class_dashboard_enhanced,
+                "generate_world_class_dashboard",
             )
-            assert hasattr(generate_world_class_dashboard_enhanced, "calculate_simple_risk_metrics")
+            assert hasattr(
+                generate_world_class_dashboard_enhanced, "calculate_simple_risk_metrics"
+            )
         except ImportError as e:
             skip(f"Could not import dashboard script: {e}")
             return
@@ -219,7 +225,9 @@ class TestDashboardSmokeTest:
     def test_calculate_simple_risk_metrics_empty_input(self):
         """Test risk metrics function with empty input."""
         try:
-            from generate_world_class_dashboard_enhanced import calculate_simple_risk_metrics
+            from generate_world_class_dashboard_enhanced import (
+                calculate_simple_risk_metrics,
+            )
 
             result = calculate_simple_risk_metrics([], [])
             assert result == {}
@@ -230,7 +238,9 @@ class TestDashboardSmokeTest:
     def test_calculate_simple_risk_metrics_minimal_input(self):
         """Test risk metrics function with minimal valid input."""
         try:
-            from generate_world_class_dashboard_enhanced import calculate_simple_risk_metrics
+            from generate_world_class_dashboard_enhanced import (
+                calculate_simple_risk_metrics,
+            )
 
             perf_log = [
                 {"equity": 100000},
@@ -255,7 +265,9 @@ class TestDashboardSmokeTest:
     def test_dashboard_generation_completes(self):
         """Smoke test: verify dashboard generation runs without crashing."""
         try:
-            from generate_world_class_dashboard_enhanced import generate_world_class_dashboard
+            from generate_world_class_dashboard_enhanced import (
+                generate_world_class_dashboard,
+            )
 
             # This should not raise TypeError anymore
             dashboard = generate_world_class_dashboard()
@@ -288,8 +300,14 @@ if __name__ == "__main__":
 
         tests = [
             ("test_none_or_zero_pattern", unit_tests.test_none_or_zero_pattern),
-            ("test_none_format_string_would_fail", unit_tests.test_none_format_string_would_fail),
-            ("test_fixed_format_string_works", unit_tests.test_fixed_format_string_works),
+            (
+                "test_none_format_string_would_fail",
+                unit_tests.test_none_format_string_would_fail,
+            ),
+            (
+                "test_fixed_format_string_works",
+                unit_tests.test_fixed_format_string_works,
+            ),
             ("test_risk_metrics_none_values", unit_tests.test_risk_metrics_none_values),
             (
                 "test_execution_metrics_none_handling",
@@ -303,8 +321,14 @@ if __name__ == "__main__":
                 "test_benchmark_metrics_none_handling",
                 unit_tests.test_benchmark_metrics_none_handling,
             ),
-            ("test_ai_insights_none_handling", unit_tests.test_ai_insights_none_handling),
-            ("test_dashboard_script_imports", smoke_tests.test_dashboard_script_imports),
+            (
+                "test_ai_insights_none_handling",
+                unit_tests.test_ai_insights_none_handling,
+            ),
+            (
+                "test_dashboard_script_imports",
+                smoke_tests.test_dashboard_script_imports,
+            ),
             (
                 "test_calculate_simple_risk_metrics_empty_input",
                 smoke_tests.test_calculate_simple_risk_metrics_empty_input,

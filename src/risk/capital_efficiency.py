@@ -29,10 +29,14 @@ class StrategyTier(Enum):
     """Strategy complexity tiers by capital requirement."""
 
     TIER_1_ACCUMULATION = "accumulation"  # <$1k: Just accumulate, no options
-    TIER_2_COVERED_CALLS = "covered_calls"  # $1k-$5k: Covered calls only (need 100 shares)
+    TIER_2_COVERED_CALLS = (
+        "covered_calls"  # $1k-$5k: Covered calls only (need 100 shares)
+    )
     TIER_3_DEFINED_RISK = "defined_risk"  # $5k-$25k: Vertical spreads, no hedging
     TIER_4_SPREADS = "spreads"  # $25k-$50k: Iron condors, limited hedging
-    TIER_5_FULL_OPTIONS = "full_options"  # $50k+: Full options suite with delta management
+    TIER_5_FULL_OPTIONS = (
+        "full_options"  # $50k+: Full options suite with delta management
+    )
 
 
 @dataclass
@@ -222,7 +226,9 @@ class CapitalEfficiencyCalculator:
             next_tier = tier_order[current_tier_idx + 1]
             next_threshold = self._get_tier_threshold(next_tier)
             capital_gap = next_threshold - account_equity
-            days_to_next_tier = int(capital_gap / self.daily_deposit_rate) if capital_gap > 0 else 0
+            days_to_next_tier = (
+                int(capital_gap / self.daily_deposit_rate) if capital_gap > 0 else 0
+            )
 
         # Generate warnings
         if account_equity < self.THRESHOLDS["min_batch"]:
@@ -231,7 +237,10 @@ class CapitalEfficiencyCalculator:
                 "All deposits will accumulate, no trades executed."
             )
 
-        if "iron_condor" in viable_strategies and account_equity < self.THRESHOLDS["pdt_threshold"]:
+        if (
+            "iron_condor" in viable_strategies
+            and account_equity < self.THRESHOLDS["pdt_threshold"]
+        ):
             warnings.append(
                 "Iron condors viable but SEQUENCE RISK is high. "
                 "One 2x loss wipes ~20 days of deposits."
@@ -282,7 +291,9 @@ class CapitalEfficiencyCalculator:
         strategy = self.STRATEGIES[strategy_id]
         min_capital = strategy["min_capital"]
         capital_gap = max(0, min_capital - account_equity)
-        days_to_viable = int(capital_gap / self.daily_deposit_rate) if capital_gap > 0 else 0
+        days_to_viable = (
+            int(capital_gap / self.daily_deposit_rate) if capital_gap > 0 else 0
+        )
 
         # Check capital requirement
         if account_equity < min_capital:
@@ -294,7 +305,9 @@ class CapitalEfficiencyCalculator:
                 current_capital=account_equity,
                 capital_gap=capital_gap,
                 days_to_viable=days_to_viable,
-                recommended_alternative=self._get_alternative(strategy_id, account_equity),
+                recommended_alternative=self._get_alternative(
+                    strategy_id, account_equity
+                ),
             )
 
         # Check IV rank for premium selling strategies
@@ -349,7 +362,9 @@ class CapitalEfficiencyCalculator:
         max_loss_per_trade = strategy["collateral_per_trade"] * 2
 
         # Calculate impact
-        single_loss_impact = max_loss_per_trade / account_equity if account_equity > 0 else 1.0
+        single_loss_impact = (
+            max_loss_per_trade / account_equity if account_equity > 0 else 1.0
+        )
         days_to_recover = max_loss_per_trade / self.daily_deposit_rate
 
         # Risk assessment
@@ -430,15 +445,24 @@ class CapitalEfficiencyCalculator:
         outlook_strategies = {
             "bullish": ["equity_accumulation", "covered_call", "vertical_spread"],
             "bearish": ["vertical_spread", "cash_secured_put"],
-            "neutral": ["iron_condor", "covered_call", "cash_secured_put", "vertical_spread"],
+            "neutral": [
+                "iron_condor",
+                "covered_call",
+                "cash_secured_put",
+                "vertical_spread",
+            ],
         }
 
-        preferred = outlook_strategies.get(market_outlook, outlook_strategies["neutral"])
+        preferred = outlook_strategies.get(
+            market_outlook, outlook_strategies["neutral"]
+        )
 
         # Find best viable strategy
         for strategy_id in preferred:
             if strategy_id in profile.viable_strategies:
-                viability = self.check_strategy_viability(strategy_id, account_equity, iv_rank)
+                viability = self.check_strategy_viability(
+                    strategy_id, account_equity, iv_rank
+                )
                 if viability.is_viable:
                     return {
                         "optimal_strategy": strategy_id,
@@ -446,7 +470,9 @@ class CapitalEfficiencyCalculator:
                         "reason": f"Best viable strategy for ${account_equity:,.2f} with {market_outlook} outlook",
                         "tier": profile.current_tier.value,
                         "warnings": profile.warnings,
-                        "sequence_risk": self.calculate_sequence_risk(strategy_id, account_equity),
+                        "sequence_risk": self.calculate_sequence_risk(
+                            strategy_id, account_equity
+                        ),
                     }
 
         # Fallback to accumulation
@@ -457,7 +483,8 @@ class CapitalEfficiencyCalculator:
             "tier": StrategyTier.TIER_1_ACCUMULATION.value,
             "warnings": profile.warnings,
             "days_to_first_option": int(
-                (self.THRESHOLDS["covered_call_min"] - account_equity) / self.daily_deposit_rate
+                (self.THRESHOLDS["covered_call_min"] - account_equity)
+                / self.daily_deposit_rate
             ),
         }
 
@@ -503,7 +530,9 @@ class CapitalEfficiencyCalculator:
 _calculator_instance = None
 
 
-def get_capital_calculator(daily_deposit_rate: float = 10.0) -> CapitalEfficiencyCalculator:
+def get_capital_calculator(
+    daily_deposit_rate: float = 10.0,
+) -> CapitalEfficiencyCalculator:
     """Get or create CapitalEfficiencyCalculator instance."""
     global _calculator_instance
     if _calculator_instance is None:
@@ -533,7 +562,9 @@ if __name__ == "__main__":
         )
 
         if profile.next_tier:
-            print(f"Next tier: {profile.next_tier.value} in {profile.days_to_next_tier} days")
+            print(
+                f"Next tier: {profile.next_tier.value} in {profile.days_to_next_tier} days"
+            )
 
         for warning in profile.warnings:
             print(f"⚠️ {warning}")

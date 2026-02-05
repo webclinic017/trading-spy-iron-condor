@@ -11,6 +11,7 @@ The `inject_trading_context.sh` hook reported "Markets: OPEN" on Martin Luther K
 ## Root Cause
 
 The hook only checked:
+
 1. Weekday vs Weekend (Mon-Fri vs Sat-Sun)
 2. Time of day (9:30 AM - 4:00 PM ET)
 
@@ -26,6 +27,7 @@ But **NEVER checked for federal market holidays**.
 ## Fix Applied
 
 Added hardcoded 2026 NYSE/NASDAQ holiday list to hook:
+
 - Jan 1: New Year's Day
 - Jan 19: MLK Day
 - Feb 16: Presidents' Day
@@ -42,6 +44,7 @@ Now returns: `Markets: HOLIDAY_CLOSED - [Holiday Name] - Markets closed all day`
 ## Remaining Gaps
 
 Other workflows that run on `1-5` (weekdays) but lack holiday checks:
+
 - `daily-trading.yml`
 - `cancel-stale-orders.yml`
 - `sync-alpaca-status.yml`
@@ -58,9 +61,11 @@ Only `execute-credit-spread.yml` has proper Alpaca calendar validation.
 ## Phil Town Rule 1 Impact
 
 Incorrect market status could lead to:
+
 - Attempted trades during closed markets
 - Missed opportunities on actual trading days
 - System appearing unreliable
 
 ## Tags
+
 `hooks`, `hallucination`, `market-status`, `holiday`, `critical-bug`

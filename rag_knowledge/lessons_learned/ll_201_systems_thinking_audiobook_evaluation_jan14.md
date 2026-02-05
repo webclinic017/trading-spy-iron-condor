@@ -28,6 +28,7 @@ Abstract academic philosophy about "what is a system" using linguistic analysis.
 ## What We Actually Need
 
 For systems thinking in trading context, better alternatives:
+
 - "Thinking in Systems" by Donella Meadows (practical frameworks)
 - "Trade Your Way to Financial Freedom" by Van Tharp (trading-specific)
 - Engineering books on distributed systems, not philosophy

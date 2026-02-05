@@ -116,7 +116,9 @@ def calculate_stats(
     breakeven = [t for t in closed if t.get("outcome") == "breakeven"]
 
     win_amounts = [t.get("realized_pnl", 0) for t in wins if t.get("realized_pnl")]
-    loss_amounts = [abs(t.get("realized_pnl", 0)) for t in losses if t.get("realized_pnl")]
+    loss_amounts = [
+        abs(t.get("realized_pnl", 0)) for t in losses if t.get("realized_pnl")
+    ]
 
     total_wins = sum(win_amounts) if win_amounts else 0
     total_losses = sum(loss_amounts) if loss_amounts else 0
@@ -131,7 +133,9 @@ def calculate_stats(
         "win_rate_pct": round(len(wins) / len(closed) * 100, 1) if closed else None,
         "avg_win": round(total_wins / len(wins), 2) if wins else None,
         "avg_loss": round(total_losses / len(losses), 2) if losses else None,
-        "profit_factor": round(total_wins / total_losses, 2) if total_losses > 0 else None,
+        "profit_factor": (
+            round(total_wins / total_losses, 2) if total_losses > 0 else None
+        ),
         "total_pnl": round(total_wins - total_losses, 2),
         "paper_phase_start": paper_phase_start,
         "paper_phase_days": paper_phase_days,
@@ -186,7 +190,9 @@ def display_stats(stats: dict) -> None:
     if stats["closed_trades"] >= 30:
         win_rate = stats["win_rate_pct"]
         if win_rate and win_rate < 75:
-            logger.warning("DECISION: WIN RATE <75% - Per CLAUDE.md: REASSESS STRATEGY!")
+            logger.warning(
+                "DECISION: WIN RATE <75% - Per CLAUDE.md: REASSESS STRATEGY!"
+            )
             logger.warning("Credit spread math requires 88% to break even.")
             logger.warning("With early exits at 50% profit, need 80%+ win rate.")
         elif win_rate and win_rate < 80:
@@ -248,16 +254,20 @@ def close_trade(trade_id: str, exit_price: float, exit_date: str = None) -> bool
             # Update trade
             trade["status"] = "closed"
             trade["exit_price"] = exit_price
-            trade["exit_date"] = exit_date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+            trade["exit_date"] = exit_date or datetime.now(timezone.utc).strftime(
+                "%Y-%m-%d"
+            )
             trade["realized_pnl"] = round(pnl, 2)
             trade["unrealized_pnl"] = None
             trade["outcome"] = outcome
 
             # Recalculate stats (iron_condor filter by default per CLAUDE.md)
-            paper_phase_start = data.get("stats", {}).get("paper_phase_start") or data.get(
-                "metadata", {}
-            ).get("paper_phase_start")
-            stats = calculate_stats(trades, paper_phase_start, strategy_filter="iron_condor")
+            paper_phase_start = data.get("stats", {}).get(
+                "paper_phase_start"
+            ) or data.get("metadata", {}).get("paper_phase_start")
+            stats = calculate_stats(
+                trades, paper_phase_start, strategy_filter="iron_condor"
+            )
             update_trades_file(data, stats)
 
             logger.info(f"✅ Closed {trade_id}: ${pnl:.2f} ({outcome})")
@@ -338,7 +348,9 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Calculate win rate statistics")
-    parser.add_argument("--update", action="store_true", help="Update stats in trades.json")
+    parser.add_argument(
+        "--update", action="store_true", help="Update stats in trades.json"
+    )
     parser.add_argument(
         "--strategy",
         choices=["all", "iron_condor"],

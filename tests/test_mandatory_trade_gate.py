@@ -126,7 +126,10 @@ class TestValidateTradeMandatory:
             context={"equity": 5000.0, "positions": existing_positions},
         )
         assert result.approved is False
-        assert "stacking" in result.reason.lower() or "already hold" in result.reason.lower()
+        assert (
+            "stacking" in result.reason.lower()
+            or "already hold" in result.reason.lower()
+        )
         assert "658000" in result.reason
 
     def test_sell_existing_position_allowed(self):

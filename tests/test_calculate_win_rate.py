@@ -267,10 +267,22 @@ class TestWinRateThresholds:
         # Create trades with 60% win rate (18 wins, 12 losses = 30 trades)
         trades = []
         for i in range(18):
-            trades.append({"id": f"w{i}", "status": "closed", "outcome": "win", "realized_pnl": 50})
+            trades.append(
+                {
+                    "id": f"w{i}",
+                    "status": "closed",
+                    "outcome": "win",
+                    "realized_pnl": 50,
+                }
+            )
         for i in range(12):
             trades.append(
-                {"id": f"l{i}", "status": "closed", "outcome": "loss", "realized_pnl": -50}
+                {
+                    "id": f"l{i}",
+                    "status": "closed",
+                    "outcome": "loss",
+                    "realized_pnl": -50,
+                }
             )
 
         stats = calculate_stats(trades)
@@ -286,10 +298,22 @@ class TestWinRateThresholds:
         # 77% win rate (23 wins, 7 losses = 30 trades)
         trades = []
         for i in range(23):
-            trades.append({"id": f"w{i}", "status": "closed", "outcome": "win", "realized_pnl": 50})
+            trades.append(
+                {
+                    "id": f"w{i}",
+                    "status": "closed",
+                    "outcome": "win",
+                    "realized_pnl": 50,
+                }
+            )
         for i in range(7):
             trades.append(
-                {"id": f"l{i}", "status": "closed", "outcome": "loss", "realized_pnl": -50}
+                {
+                    "id": f"l{i}",
+                    "status": "closed",
+                    "outcome": "loss",
+                    "realized_pnl": -50,
+                }
             )
 
         stats = calculate_stats(trades)
@@ -305,10 +329,22 @@ class TestWinRateThresholds:
         # 83% win rate (25 wins, 5 losses = 30 trades)
         trades = []
         for i in range(25):
-            trades.append({"id": f"w{i}", "status": "closed", "outcome": "win", "realized_pnl": 50})
+            trades.append(
+                {
+                    "id": f"w{i}",
+                    "status": "closed",
+                    "outcome": "win",
+                    "realized_pnl": 50,
+                }
+            )
         for i in range(5):
             trades.append(
-                {"id": f"l{i}", "status": "closed", "outcome": "loss", "realized_pnl": -50}
+                {
+                    "id": f"l{i}",
+                    "status": "closed",
+                    "outcome": "loss",
+                    "realized_pnl": -50,
+                }
             )
 
         stats = calculate_stats(trades)

@@ -137,9 +137,11 @@ class DoclingDocument:
             "title": self.title,
             "document_type": self.document_type,
             "content_hash": self.content_hash,
-            "full_text": self.full_text[:1000] + "..."
-            if len(self.full_text) > 1000
-            else self.full_text,
+            "full_text": (
+                self.full_text[:1000] + "..."
+                if len(self.full_text) > 1000
+                else self.full_text
+            ),
             "section_count": len(self.sections),
             "table_count": len(self.tables),
             "metadata": self.metadata,
@@ -180,7 +182,9 @@ class DoclingDocument:
 
         # Standalone tables at the end
         if self.tables:
-            standalone = [t for t in self.tables if not any(t in s.tables for s in self.sections)]
+            standalone = [
+                t for t in self.tables if not any(t in s.tables for s in self.sections)
+            ]
             if standalone:
                 lines.append("## Tables")
                 lines.append("")
@@ -400,7 +404,9 @@ class DoclingFinancialParser:
                                 pages.append(text)
                     full_text = "\n\n".join(pages)
                 except ImportError:
-                    logger.error("No PDF library available. Install PyPDF2 or pdfplumber.")
+                    logger.error(
+                        "No PDF library available. Install PyPDF2 or pdfplumber."
+                    )
                     return None
 
             # Basic section extraction
@@ -698,20 +704,31 @@ class DoclingFinancialParser:
 
         if any(kw in title_lower for kw in ["risk", "factor", "uncertainty"]):
             return "risk_factors"
-        elif any(kw in title_lower for kw in ["financial", "results", "statement", "balance"]):
+        elif any(
+            kw in title_lower for kw in ["financial", "results", "statement", "balance"]
+        ):
             return "financials"
-        elif any(kw in title_lower for kw in ["management", "discussion", "analysis", "md&a"]):
+        elif any(
+            kw in title_lower for kw in ["management", "discussion", "analysis", "md&a"]
+        ):
             return "mda"
-        elif any(kw in title_lower for kw in ["executive", "summary", "overview", "highlight"]):
+        elif any(
+            kw in title_lower
+            for kw in ["executive", "summary", "overview", "highlight"]
+        ):
             return "summary"
-        elif any(kw in title_lower for kw in ["outlook", "guidance", "forward", "projection"]):
+        elif any(
+            kw in title_lower for kw in ["outlook", "guidance", "forward", "projection"]
+        ):
             return "guidance"
         elif any(kw in title_lower for kw in ["note", "footnote", "accounting"]):
             return "notes"
         else:
             return "content"
 
-    def save_parsed(self, doc: DoclingDocument, output_format: str = "markdown") -> Path:
+    def save_parsed(
+        self, doc: DoclingDocument, output_format: str = "markdown"
+    ) -> Path:
         """
         Save parsed document to disk.
 
@@ -812,7 +829,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if not args.file:
-        print("Usage: python docling_parser.py <pdf_file> [--output markdown|json|both]")
+        print(
+            "Usage: python docling_parser.py <pdf_file> [--output markdown|json|both]"
+        )
         print("\nOptions:")
         print("  --extract-financials  Extract key financial metrics")
         print("  --extract-tables      Extract tables as DataFrames")

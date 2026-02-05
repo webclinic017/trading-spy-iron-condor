@@ -16,12 +16,8 @@
     "adjusted_size": "int position size after risk adjustment",
     "risk_score": "float 0-1 risk assessment"
   },
-  "dependencies": [
-    "data_layer"
-  ],
-  "dependents": [
-    "trading_execution"
-  ],
+  "dependencies": ["data_layer"],
+  "dependents": ["trading_execution"],
   "change_category": "risk_management",
   "owner": "CEO",
   "last_updated": "2026-02-03T01:17:59.690163+00:00"

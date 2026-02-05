@@ -4,14 +4,14 @@ on:
   schedule:
     # Run every hour during market hours (9 AM - 5 PM ET, M-F)
     # EST: UTC-5, so 14:00-22:00 UTC
-    - cron: '0 14-22 * * 1-5'
+    - cron: "0 14-22 * * 1-5"
     # Also run daily at 6 AM ET (11:00 UTC) to keep dashboard fresh
-    - cron: '0 11 * * *'
+    - cron: "0 11 * * *"
   workflow_dispatch:
   push:
     paths:
-      - 'data/system_state.json'
-      - 'scripts/generate_world_class_dashboard*.py'
+      - "data/system_state.json"
+      - "scripts/generate_world_class_dashboard*.py"
 
 permissions:
   contents: write

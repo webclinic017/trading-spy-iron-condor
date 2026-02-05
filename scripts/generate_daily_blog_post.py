@@ -53,7 +53,12 @@ def get_treasury_yields() -> dict:
         yields = fred.get_treasury_yields()
         spread = fred.get_yield_curve_spread()
         inverted = fred.is_yield_curve_inverted()
-        return {"yields": yields, "spread": spread, "inverted": inverted, "available": True}
+        return {
+            "yields": yields,
+            "spread": spread,
+            "inverted": inverted,
+            "available": True,
+        }
     except Exception as e:
         print(f"Warning: Could not fetch FRED data: {e}")
         return {"available": False}
@@ -355,11 +360,11 @@ def generate_blog_post(perf: dict, trades: list, day_num: int) -> str:
             qty = float(trade.get("quantity", trade.get("qty", 0)))
             price = float(trade.get("price", 0))
             trade_pl = trade.get("pl", "N/A")
-            trade_summary += f"| {symbol} | {action} | {qty:.2f} | ${price:.2f} | {trade_pl} |\n"
+            trade_summary += (
+                f"| {symbol} | {action} | {qty:.2f} | ${price:.2f} | {trade_pl} |\n"
+            )
     else:
-        trade_summary = (
-            "\n## Today's Trades\n\nNo trades executed today (market closed or no signals).\n"
-        )
+        trade_summary = "\n## Today's Trades\n\nNo trades executed today (market closed or no signals).\n"
 
     # Build Treasury/FRED section with live data
     treasury_data = get_treasury_yields()
@@ -368,7 +373,11 @@ def generate_blog_post(perf: dict, trades: list, day_num: int) -> str:
         spread = treasury_data.get("spread")
         inverted = treasury_data.get("inverted", False)
 
-        curve_status = "**INVERTED** (recession warning)" if inverted else "Normal (positive slope)"
+        curve_status = (
+            "**INVERTED** (recession warning)"
+            if inverted
+            else "Normal (positive slope)"
+        )
         spread_str = f"{spread:+.2f}%" if spread is not None else "N/A"
 
         y2 = f"{yields.get('2Y', 0):.2f}%" if yields.get("2Y") else "N/A"

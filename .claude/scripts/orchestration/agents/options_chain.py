@@ -98,7 +98,9 @@ class OptionsChainAgent(BaseAgent):
         else:
             return "low_premium_wait_for_spike"
 
-    def _validate_setup(self, price: float, put_short: float, call_short: float) -> bool:
+    def _validate_setup(
+        self, price: float, put_short: float, call_short: float
+    ) -> bool:
         """Validate iron condor setup is balanced."""
         put_distance = price - put_short
         call_distance = call_short - price

@@ -8,10 +8,10 @@
 
 Portfolio lost $329.42 (-6.59%) due to position imbalance:
 
-| Position | Qty | P&L |
-|----------|-----|-----|
-| SPY260220P00653000 (short) | -4 | +$402 |
-| SPY260220P00658000 (long) | +6 | -$594 |
+| Position                   | Qty | P&L   |
+| -------------------------- | --- | ----- |
+| SPY260220P00653000 (short) | -4  | +$402 |
+| SPY260220P00658000 (long)  | +6  | -$594 |
 
 **Issue**: 6 long puts vs 4 short puts = **2 orphan long puts**
 

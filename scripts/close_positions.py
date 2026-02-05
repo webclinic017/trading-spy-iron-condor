@@ -98,7 +98,9 @@ def get_option_positions(client: TradingClient, ticker: Optional[str] = None) ->
     return [p for p in positions if is_option_symbol(p.symbol)]
 
 
-def close_position_safely(client: TradingClient, position, dry_run: bool = False) -> bool:
+def close_position_safely(
+    client: TradingClient, position, dry_run: bool = False
+) -> bool:
     """
     Close a single position correctly based on its actual direction.
 
@@ -152,7 +154,9 @@ def close_position_safely(client: TradingClient, position, dry_run: bool = False
             return False
 
 
-def mode_emergency_all(client: TradingClient, ticker: Optional[str], dry_run: bool) -> int:
+def mode_emergency_all(
+    client: TradingClient, ticker: Optional[str], dry_run: bool
+) -> int:
     """
     EMERGENCY: Close ALL positions (stocks AND options) to stop losses.
     Phil Town Rule #1: Don't lose money.
@@ -211,7 +215,9 @@ def mode_emergency_all(client: TradingClient, ticker: Optional[str], dry_run: bo
     return 1 if failed > 0 else 0
 
 
-def mode_excess_only(client: TradingClient, ticker: Optional[str], dry_run: bool) -> int:
+def mode_excess_only(
+    client: TradingClient, ticker: Optional[str], dry_run: bool
+) -> int:
     """
     Close excess spreads to comply with CLAUDE.md position limit.
     Per CLAUDE.md: "Position limit: 1 iron condor at a time (4 legs max)"
@@ -247,7 +253,9 @@ def mode_excess_only(client: TradingClient, ticker: Optional[str], dry_run: bool
 
     # Check if we're over the limit
     if len(option_positions) <= MAX_POSITIONS:
-        logger.info(f"Position count ({len(option_positions)}) within limit ({MAX_POSITIONS})")
+        logger.info(
+            f"Position count ({len(option_positions)}) within limit ({MAX_POSITIONS})"
+        )
         logger.info("No action needed.")
         return 0
 
@@ -294,7 +302,9 @@ def mode_excess_only(client: TradingClient, ticker: Optional[str], dry_run: bool
     return 0
 
 
-def mode_options_only(client: TradingClient, ticker: Optional[str], dry_run: bool) -> int:
+def mode_options_only(
+    client: TradingClient, ticker: Optional[str], dry_run: bool
+) -> int:
     """
     Close all option positions.
     Useful for cleaning up orphan positions from partial fills.
@@ -341,7 +351,9 @@ def mode_options_only(client: TradingClient, ticker: Optional[str], dry_run: boo
     return 0 if success_count == len(option_positions) else 1
 
 
-def mode_shorts_first(client: TradingClient, ticker: Optional[str], dry_run: bool) -> int:
+def mode_shorts_first(
+    client: TradingClient, ticker: Optional[str], dry_run: bool
+) -> int:
     """
     Close SHORT positions first to free up margin, then close longs.
 
@@ -396,7 +408,9 @@ def mode_shorts_first(client: TradingClient, ticker: Optional[str], dry_run: boo
     if not dry_run and shorts:
         logger.info("\n--- Refreshing account data ---")
         account = client.get_account()
-        logger.info(f"Options Buying Power now: ${float(account.options_buying_power):,.2f}")
+        logger.info(
+            f"Options Buying Power now: ${float(account.options_buying_power):,.2f}"
+        )
 
     # Step 2: Close all LONG positions
     logger.info("\n" + "=" * 60)

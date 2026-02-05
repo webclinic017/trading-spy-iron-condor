@@ -98,7 +98,9 @@ class CoreStrategy(BaseStrategy):
     # Risk parameters - FIXED Jan 6 2026: Increased R:R for positive expectancy
     MAX_POSITION_SIZE = 0.02  # 2% of portfolio
     STOP_LOSS_PCT = 0.02  # 2% stop loss
-    TAKE_PROFIT_PCT = 0.06  # 6% take profit (3:1 R:R) - was 4%, caused negative expectancy
+    TAKE_PROFIT_PCT = (
+        0.06  # 6% take profit (3:1 R:R) - was 4%, caused negative expectancy
+    )
 
     def __init__(
         self,
@@ -126,7 +128,9 @@ class CoreStrategy(BaseStrategy):
         if "rsi_period" in self._config:
             self.RSI_PERIOD = self._config["rsi_period"]
 
-        logger.info(f"CoreStrategy initialized: {len(self.universe)} symbols, paper={paper}")
+        logger.info(
+            f"CoreStrategy initialized: {len(self.universe)} symbols, paper={paper}"
+        )
 
     @property
     def name(self) -> str:
@@ -371,4 +375,6 @@ if __name__ == "__main__":
     signals = strategy.generate_signals(mock_data)
     print(f"\nGenerated {len(signals)} signals:")
     for sig in signals:
-        print(f"  {sig.symbol}: {sig.action} (strength={sig.strength:.2f}) - {sig.rationale}")
+        print(
+            f"  {sig.symbol}: {sig.action} (strength={sig.strength:.2f}) - {sig.rationale}"
+        )

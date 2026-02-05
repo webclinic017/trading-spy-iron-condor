@@ -3,17 +3,17 @@ name: Self-Healing Auto-Fix
 on:
   schedule:
     # Run every 2 hours for quick response to issues
-    - cron: '0 */2 * * *'
+    - cron: "0 */2 * * *"
   workflow_dispatch:
   push:
     branches: [main]
     paths:
-      - 'src/**'
-      - 'scripts/**'
-      - 'tests/**'
+      - "src/**"
+      - "scripts/**"
+      - "tests/**"
 
 env:
-  PYTHON_VERSION: '3.11'
+  PYTHON_VERSION: "3.11"
 
 jobs:
   # Job 1: Detect and auto-fix lint issues
@@ -79,7 +79,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main  # Get latest after lint fixes
+          ref: main # Get latest after lint fixes
 
       - name: Set up Python
         uses: actions/setup-python@v5

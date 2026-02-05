@@ -7,12 +7,12 @@
 
 ## Lessons Applied from Jan 14 Loss (-$65.58)
 
-| Lesson | Action |
-|--------|--------|
-| SOFI blackout violation | SPY/IWM ONLY - no individual stocks |
-| Naked puts = 96% risk | Credit SPREADS only - defined risk |
-| Expiration past earnings | Verify exp < any earnings date |
-| $100K account worked with SPY | Focus exclusively on SPY |
+| Lesson                        | Action                              |
+| ----------------------------- | ----------------------------------- |
+| SOFI blackout violation       | SPY/IWM ONLY - no individual stocks |
+| Naked puts = 96% risk         | Credit SPREADS only - defined risk  |
+| Expiration past earnings      | Verify exp < any earnings date      |
+| $100K account worked with SPY | Focus exclusively on SPY            |
 
 ## Pre-Market Checklist
 
@@ -24,6 +24,7 @@
 ## PRIMARY TRADE: SPY Bull Put Spread
 
 **Why SPY:**
+
 - Best liquidity (tightest bid/ask)
 - No individual company earnings risk
 - $100K account made +$16,661 on SPY focus
@@ -53,22 +54,22 @@
 
 Only if SPY spread is unavailable or has poor pricing.
 
-| Parameter | Value |
-|-----------|-------|
-| Underlying | IWM |
-| Short strike | 30-delta (~$215-220) |
-| Long strike | $5 below |
-| DTE | 30-45 days |
-| Premium target | $0.50-0.70 |
+| Parameter      | Value                |
+| -------------- | -------------------- |
+| Underlying     | IWM                  |
+| Short strike   | 30-delta (~$215-220) |
+| Long strike    | $5 below             |
+| DTE            | 30-45 days           |
+| Premium target | $0.50-0.70           |
 
 ## BLACKLIST (DO NOT TRADE)
 
-| Ticker | Reason | Until |
-|--------|--------|-------|
-| SOFI | Earnings Jan 30, blackout active | Feb 1 |
-| F | Earnings Feb 10, approaching | Feb 11 |
-| Any individual stock | Not proven in our $100K testing | N/A |
-| Naked options | Undefined risk | Never |
+| Ticker               | Reason                           | Until  |
+| -------------------- | -------------------------------- | ------ |
+| SOFI                 | Earnings Jan 30, blackout active | Feb 1  |
+| F                    | Earnings Feb 10, approaching     | Feb 11 |
+| Any individual stock | Not proven in our $100K testing  | N/A    |
+| Naked options        | Undefined risk                   | Never  |
 
 ## Order of Operations
 
@@ -81,24 +82,25 @@ Only if SPY spread is unavailable or has poor pricing.
 
 ## Risk Management
 
-| Metric | Value | Status |
-|--------|-------|--------|
-| Max position size | $500 (10% of $4,959) | ENFORCED |
-| Max daily loss | $250 (5% of account) | ENFORCED |
-| Earnings check | trade_gateway.py | AUTOMATED |
-| Phil Town alignment | Defined risk spread | COMPLIANT |
+| Metric              | Value                | Status    |
+| ------------------- | -------------------- | --------- |
+| Max position size   | $500 (10% of $4,959) | ENFORCED  |
+| Max daily loss      | $250 (5% of account) | ENFORCED  |
+| Earnings check      | trade_gateway.py     | AUTOMATED |
+| Phil Town alignment | Defined risk spread  | COMPLIANT |
 
 ## Expected Outcome
 
-| Scenario | Probability | P/L |
-|----------|-------------|-----|
-| SPY stays above short strike | 70% | +$60-80 |
-| SPY drops, close at 50% loss | 20% | -$30-40 |
-| SPY drops hard, max loss | 10% | -$420-440 |
+| Scenario                     | Probability | P/L       |
+| ---------------------------- | ----------- | --------- |
+| SPY stays above short strike | 70%         | +$60-80   |
+| SPY drops, close at 50% loss | 20%         | -$30-40   |
+| SPY drops hard, max loss     | 10%         | -$420-440 |
 
 **Expected Value:** (0.70 × $70) + (0.20 × -$35) + (0.10 × -$430) = $49 - $7 - $43 = **-$1**
 
 This is a NEUTRAL expected value trade - we need 70%+ win rate to profit. Focus on:
+
 1. Proper strike selection (30-delta, not ATM)
 2. Early profit taking (50% rule)
 3. Strict stop loss adherence

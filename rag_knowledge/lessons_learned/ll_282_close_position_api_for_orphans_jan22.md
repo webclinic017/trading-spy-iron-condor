@@ -9,6 +9,7 @@
 ## Summary
 
 When closing options positions via Alpaca API, use `client.close_position(symbol)` instead of `client.submit_order(MarketOrderRequest(...))`. The `close_position()` method automatically handles:
+
 1. Order side detection (SELL for long, BUY for short)
 2. Correct quantity (liquidates entire position)
 3. Proper order parameters
@@ -16,6 +17,7 @@ When closing options positions via Alpaca API, use `client.close_position(symbol
 ## Root Cause
 
 Multiple issues combined to prevent orphan positions from closing:
+
 1. **Wrong API method**: Using `submit_order()` required manual side detection and quantity specification
 2. **Wrong TimeInForce**: Using `TimeInForce.GTC` (Good Till Canceled) which is NOT supported for options - must use `TimeInForce.DAY`
 3. **No scheduled retry**: Workflows only ran on manual trigger, not during market hours
@@ -29,6 +31,7 @@ Multiple issues combined to prevent orphan positions from closing:
 ## Solution
 
 1. Replace `submit_order(MarketOrderRequest(...))` with `close_position(symbol)`:
+
 ```python
 # OLD (broken):
 order_request = MarketOrderRequest(

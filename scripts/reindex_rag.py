@@ -39,7 +39,9 @@ logger = logging.getLogger(__name__)
 # Configuration
 RAG_KNOWLEDGE_DIR = Path(__file__).parent.parent / "rag_knowledge"
 LANCEDB_PATH = Path(__file__).parent.parent / ".claude" / "memory" / "lancedb"
-EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"  # Best balance of speed/accuracy per 2026 research
+EMBEDDING_MODEL = (
+    "BAAI/bge-small-en-v1.5"  # Best balance of speed/accuracy per 2026 research
+)
 CHUNK_SIZE = 500  # ~500 chars per chunk (semantic boundaries preferred)
 CHUNK_OVERLAP = 50  # Overlap to preserve context
 
@@ -83,7 +85,9 @@ def semantic_chunk(
                 current_chunk = ""
                 for sent in sentences:
                     if len(current_chunk) + len(sent) + 1 <= max_size:
-                        current_chunk = f"{current_chunk} {sent}" if current_chunk else sent
+                        current_chunk = (
+                            f"{current_chunk} {sent}" if current_chunk else sent
+                        )
                     else:
                         if current_chunk:
                             chunks.append(current_chunk.strip())
@@ -109,7 +113,8 @@ def extract_metadata(filepath: Path, content: str) -> dict:
 
     # Extract date from filename (e.g., ll_319_..._jan30.md)
     date_match = re.search(
-        r"(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(\d{1,2})", filepath.name.lower()
+        r"(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(\d{1,2})",
+        filepath.name.lower(),
     )
     if date_match:
         metadata["date_hint"] = f"{date_match.group(1)}{date_match.group(2)}"
@@ -142,8 +147,14 @@ def index_documents(force: bool = False) -> dict:
         from lancedb.embeddings import get_registry
         from lancedb.pydantic import LanceModel, Vector
     except ImportError:
-        logger.error("LanceDB not installed. Run: pip install lancedb sentence-transformers")
-        return {"files_processed": 0, "chunks_created": 0, "errors": ["LanceDB not installed"]}
+        logger.error(
+            "LanceDB not installed. Run: pip install lancedb sentence-transformers"
+        )
+        return {
+            "files_processed": 0,
+            "chunks_created": 0,
+            "errors": ["LanceDB not installed"],
+        }
 
     # Create LanceDB directory
     LANCEDB_PATH.mkdir(parents=True, exist_ok=True)
@@ -240,7 +251,9 @@ def index_documents(force: bool = False) -> dict:
         else:
             table = db.create_table("rag_knowledge", data=documents, schema=RAGDocument)
 
-        logger.info(f"Indexed {stats['files_processed']} files, {stats['chunks_created']} chunks")
+        logger.info(
+            f"Indexed {stats['files_processed']} files, {stats['chunks_created']} chunks"
+        )
     else:
         logger.warning("No documents found to index")
 
@@ -261,7 +274,9 @@ def search_rag(query: str, limit: int = 5) -> list[dict]:
     try:
         import lancedb
     except ImportError:
-        logger.error("LanceDB not installed. Run: pip install lancedb sentence-transformers")
+        logger.error(
+            "LanceDB not installed. Run: pip install lancedb sentence-transformers"
+        )
         return []
 
     if not LANCEDB_PATH.exists():

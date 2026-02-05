@@ -5,12 +5,13 @@ Critical safety gate to prevent non-SPY trades.
 """
 
 import pytest
+
 from src.utils.ticker_whitelist import (
+    ALLOWED_UNDERLYING,
+    TickerWhitelistViolation,
+    extract_underlying,
     is_ticker_allowed,
     validate_ticker,
-    extract_underlying,
-    TickerWhitelistViolation,
-    ALLOWED_UNDERLYING,
 )
 
 

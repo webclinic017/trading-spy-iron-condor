@@ -52,7 +52,9 @@ class ExecutionAgent(BaseAgent):
         paper: bool = True,
         options_client: AlpacaOptionsClient | None = None,
     ):
-        super().__init__(name="ExecutionAgent", role="Order execution and timing optimization")
+        super().__init__(
+            name="ExecutionAgent", role="Order execution and timing optimization"
+        )
         self.alpaca_api = alpaca_api
         self.paper = paper
         self.options_client = options_client
@@ -313,14 +315,20 @@ RECOMMENDATION: [EXECUTE/DELAY/CANCEL]"""
             return {
                 "status": "OPEN" if clock.is_open else "CLOSED",
                 "is_open": clock.is_open,
-                "next_open": (str(clock.next_open) if hasattr(clock, "next_open") else None),
-                "next_close": (str(clock.next_close) if hasattr(clock, "next_close") else None),
+                "next_open": (
+                    str(clock.next_open) if hasattr(clock, "next_open") else None
+                ),
+                "next_close": (
+                    str(clock.next_close) if hasattr(clock, "next_close") else None
+                ),
             }
         except Exception as e:
             logger.error(f"Error checking market status: {e}")
             return {"status": "ERROR", "is_open": False, "error": str(e)}
 
-    def _execute_order(self, symbol: str, action: str, position_size: float) -> dict[str, Any]:
+    def _execute_order(
+        self, symbol: str, action: str, position_size: float
+    ) -> dict[str, Any]:
         """
         Execute order via Alpaca API.
 
@@ -358,7 +366,9 @@ RECOMMENDATION: [EXECUTE/DELAY/CANCEL]"""
 
             # Track execution
             self.execution_history.append(result)
-            logger.info(f"Order executed: {order.id} - {symbol} {action} ${position_size}")
+            logger.info(
+                f"Order executed: {order.id} - {symbol} {action} ${position_size}"
+            )
 
             return result
 

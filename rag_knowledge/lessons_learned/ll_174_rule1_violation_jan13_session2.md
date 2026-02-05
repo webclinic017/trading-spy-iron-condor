@@ -8,6 +8,7 @@
 ## Problem
 
 Despite having 26 lessons in RAG about Rule #1 (Don't Lose Money), the system:
+
 1. Held losing short put positions (-$7 unrealized)
 2. Had VIOLATION status recorded but no automatic closure
 3. Required manual intervention to trigger emergency protection
@@ -15,6 +16,7 @@ Despite having 26 lessons in RAG about Rule #1 (Don't Lose Money), the system:
 ## Evidence
 
 From `data/system_state.json`:
+
 ```json
 "risk": {
   "VIOLATION": "System added to losing positions without stop-loss",

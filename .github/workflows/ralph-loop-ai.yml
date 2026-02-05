@@ -16,13 +16,13 @@ name: Ralph Loop - AI Self-Healing (Cost-Optimized)
 on:
   schedule:
     # Run every 6 hours - cost efficient
-    - cron: '30 */6 * * *'
+    - cron: "30 */6 * * *"
   workflow_dispatch:
     inputs:
       task:
-        description: 'Task type'
+        description: "Task type"
         required: false
-        default: 'auto'
+        default: "auto"
         type: choice
         options:
           - auto
@@ -30,18 +30,18 @@ on:
           - fix_lint
           - improve_code
       max_iterations:
-        description: 'Max iterations'
+        description: "Max iterations"
         required: false
-        default: '5'
+        default: "5"
         type: string
       target:
-        description: 'Target directory (optional)'
+        description: "Target directory (optional)"
         required: false
-        default: ''
+        default: ""
         type: string
 
 env:
-  PYTHON_VERSION: '3.11'
+  PYTHON_VERSION: "3.11"
 
 # COST CONTROL: Only one Ralph loop at a time
 concurrency:
@@ -61,8 +61,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: 'pip'
+          python-version: "3.11"
+          cache: "pip"
 
       - name: Quick test check
         id: check
@@ -88,7 +88,6 @@ jobs:
             echo "needs_fixing=true" >> $GITHUB_OUTPUT
           fi
 
-
   ralph-loop:
     runs-on: ubuntu-latest
     needs: health-check
@@ -101,13 +100,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_PAT }}
-          fetch-depth: 2  # For git diff
+          fetch-depth: 2 # For git diff
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'pip'
+          cache: "pip"
 
       - name: Install dependencies
         run: |
@@ -213,7 +212,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
@@ -268,12 +267,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_PAT }}
-          ref: main  # Get latest after Ralph's changes
+          ref: main # Get latest after Ralph's changes
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |

@@ -7,7 +7,7 @@ name: Ralph Weekly Digest
 on:
   schedule:
     # Run every Sunday at 8 AM UTC
-    - cron: '0 8 * * 0'
+    - cron: "0 8 * * 0"
   workflow_dispatch:
 
 env:
@@ -28,12 +28,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_PAT }}
-          fetch-depth: 100  # Get enough history
+          fetch-depth: 100 # Get enough history
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: pip install requests

@@ -40,7 +40,9 @@ class FinnhubClient:
     def __init__(self, api_key: str | None = None) -> None:
         self.api_key = api_key or os.getenv("FINNHUB_API_KEY")
         if not self.api_key:
-            logger.warning("FINNHUB_API_KEY not set. Economic calendar checks will be unavailable.")
+            logger.warning(
+                "FINNHUB_API_KEY not set. Economic calendar checks will be unavailable."
+            )
 
     def get_economic_calendar(
         self, start_date: date | None = None, end_date: date | None = None
@@ -83,7 +85,10 @@ class FinnhubClient:
                 # Check for API errors (plan limitations, etc.)
                 if "error" in data:
                     error_msg = data.get("error", "Unknown error")
-                    if "access" in error_msg.lower() or "permission" in error_msg.lower():
+                    if (
+                        "access" in error_msg.lower()
+                        or "permission" in error_msg.lower()
+                    ):
                         logger.warning(
                             "Finnhub economic calendar requires premium plan - feature unavailable"
                         )
@@ -183,7 +188,9 @@ class FinnhubClient:
                 data = response.json()
 
                 earnings = data.get("earningsCalendar", [])
-                logger.info("Fetched %d earnings announcements from Finnhub", len(earnings))
+                logger.info(
+                    "Fetched %d earnings announcements from Finnhub", len(earnings)
+                )
                 return earnings
             except requests.RequestException as exc:
                 last_error = exc

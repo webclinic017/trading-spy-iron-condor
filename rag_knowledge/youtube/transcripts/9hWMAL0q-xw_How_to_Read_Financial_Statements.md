@@ -7,12 +7,15 @@
 **Ingested**: 2026-02-01T13:25:40.311093
 
 ## Key Concepts
+
 Big Five Numbers, Value Investing
 
 ## Strategies
+
 Value Investing
 
 ## Sentiment
+
 Neutral
 
 ## Transcript

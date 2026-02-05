@@ -10,19 +10,20 @@ This module tests tax tracking including:
 CRITICAL for regulatory compliance and tax efficiency.
 """
 
-import pytest
 from datetime import datetime
 
+import pytest
+
 from src.utils.tax_optimization import (
-    TaxLot,
-    TaxEvent,
-    TaxOptimizer,
-    SHORT_TERM_TAX_RATE,
     LONG_TERM_TAX_RATE,
     LONG_TERM_THRESHOLD_DAYS,
-    PDT_MINIMUM_EQUITY,
     PDT_DAY_TRADE_THRESHOLD,
+    PDT_MINIMUM_EQUITY,
+    SHORT_TERM_TAX_RATE,
     WASH_SALE_WINDOW_DAYS,
+    TaxEvent,
+    TaxLot,
+    TaxOptimizer,
 )
 
 

@@ -6,14 +6,8 @@
   "ingested_at": "2026-02-01T13:25:47.868972",
   "channel": "Phil Town - Rule #1 Investing",
   "stocks_mentioned": [],
-  "strategies": [
-    "Value Investing"
-  ],
-  "key_concepts": [
-    "4 Ms",
-    "Margin of Safety",
-    "Intrinsic Value"
-  ],
+  "strategies": ["Value Investing"],
+  "key_concepts": ["4 Ms", "Margin of Safety", "Intrinsic Value"],
   "sentiment": "neutral",
   "actionable_items": []
 }

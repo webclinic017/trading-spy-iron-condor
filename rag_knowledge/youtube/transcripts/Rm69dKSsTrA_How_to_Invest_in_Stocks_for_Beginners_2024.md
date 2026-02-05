@@ -7,12 +7,15 @@
 **Ingested**: 2026-02-01T13:24:30.287015
 
 ## Key Concepts
+
 4 Ms, Moat, Margin of Safety, Big Five Numbers, Rule #1, Wonderful Company, Intrinsic Value, Value Investing
 
 ## Strategies
+
 Value Investing
 
 ## Sentiment
+
 Neutral
 
 ## Transcript

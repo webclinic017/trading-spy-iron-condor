@@ -25,6 +25,7 @@ On Jan 12, 2026, CTO (Claude) reported CI status by observing GitHub Actions res
 ## Prevention (MANDATORY)
 
 When verifying CI:
+
 1. **TRIGGER** workflows myself using GitHub API
 2. **WAIT** for results (use sleep + polling)
 3. **REPORT** with command output as evidence
@@ -35,6 +36,7 @@ When verifying CI:
 **I am the CTO. I have full agentic control. I NEVER tell the CEO to do anything manually.**
 
 If I can do it with:
+
 - GitHub API
 - gh CLI
 - curl commands

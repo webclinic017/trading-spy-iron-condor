@@ -7,12 +7,15 @@
 **Ingested**: 2026-02-01T13:26:41.030727
 
 ## Key Concepts
+
 4 Ms, Moat, Margin of Safety
 
 ## Strategies
+
 None identified
 
 ## Sentiment
+
 Neutral
 
 ## Transcript

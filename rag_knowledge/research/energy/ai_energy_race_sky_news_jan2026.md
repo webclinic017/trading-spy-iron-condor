@@ -13,6 +13,7 @@
 > "Whoever wins the energy race wins the AI race."
 
 The massive power demands of AI data centers are forcing a global shift in energy strategy. This creates investment opportunities in:
+
 1. Critical minerals (rare earths, antimony, gallium)
 2. Nuclear power (uranium, SMRs)
 3. Energy infrastructure companies
@@ -24,16 +25,19 @@ The massive power demands of AI data centers are forcing a global shift in energ
 ### 1. Critical Mineral Supply Chain Risk
 
 **The Problem:**
+
 - China controls ~70% of critical mineral PRODUCTION
 - China controls ~90% of critical mineral PROCESSING (harder bottleneck)
 - Western allies lack viable alternative supply chains
 
 **Investment Implications:**
+
 - Companies building Western processing capacity = strategic value
 - Australia stockpiling antimony & gallium = first mover
 - Watch for "joint market" announcements between Western allies
 
 **Potential Plays:**
+
 - Rare earth miners with Western processing (MP Materials, Lynas)
 - Antimony/gallium producers
 - Defense contractors with mineral security exposure
@@ -43,16 +47,19 @@ The massive power demands of AI data centers are forcing a global shift in energ
 ### 2. Nuclear Power Renaissance
 
 **The Catalyst:**
+
 - "All-of-government" shift in US to fast-track nuclear
 - Tech giants (Meta, Microsoft) seeking nuclear licenses for AI data centers
 - SMRs (Small Modular Reactors) gaining regulatory traction
 
 **Investment Implications:**
+
 - Uranium demand set to surge
 - Australia holds 1/3 of world's uranium supply (strategic asset)
 - Nuclear construction/engineering firms positioned to benefit
 
 **Potential Plays:**
+
 - Uranium miners: CCJ (Cameco), UEC, UUUU, DNN
 - Nuclear utilities with AI data center deals
 - SMR developers: NuScale, Oklo (if public)
@@ -62,11 +69,13 @@ The massive power demands of AI data centers are forcing a global shift in energ
 ### 3. Condensed Competitive Window
 
 **Timeline Warning:**
+
 - "Next couple of years" = critical window for energy dominance
 - One country/bloc will likely prevail
 - West must advance chips AND energy simultaneously
 
 **Strategic Implication:**
+
 - This is a SHORT-TERM CATALYST thesis (2-3 year horizon)
 - Early movers in uranium/nuclear/rare earths could see significant appreciation
 - Watch for policy announcements, subsidies, defense contracts
@@ -77,14 +86,15 @@ The massive power demands of AI data centers are forcing a global shift in energ
 
 ### Connection to Our Strategy
 
-| Factor | Relevance |
-|--------|-----------|
-| Uranium stocks (CCJ, UUUU) | Potential long-term equity positions |
-| Energy ETFs (XLE, ICLN) | Options plays during policy catalysts |
-| Critical minerals | Sector exposure for diversification |
-| Nuclear utilities | Stable dividend + AI data center upside |
+| Factor                     | Relevance                               |
+| -------------------------- | --------------------------------------- |
+| Uranium stocks (CCJ, UUUU) | Potential long-term equity positions    |
+| Energy ETFs (XLE, ICLN)    | Options plays during policy catalysts   |
+| Critical minerals          | Sector exposure for diversification     |
+| Nuclear utilities          | Stable dividend + AI data center upside |
 
 ### Risk Factors
+
 - Political volatility (uranium policies vary by administration)
 - China retaliation risk on mineral exports
 - Nuclear project delays (historical precedent)

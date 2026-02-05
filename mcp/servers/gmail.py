@@ -50,7 +50,9 @@ def _get_gmail_client():
     global _gmail_service
 
     if not GMAIL_API_AVAILABLE:
-        logger.warning("Gmail API libraries not installed - install google-api-python-client")
+        logger.warning(
+            "Gmail API libraries not installed - install google-api-python-client"
+        )
         return None
 
     if _gmail_service is not None:
@@ -77,10 +79,14 @@ def _get_gmail_client():
                 creds.refresh(Request())
             else:
                 if not os.path.exists(credentials_path):
-                    logger.error(f"Gmail credentials file not found: {credentials_path}")
+                    logger.error(
+                        f"Gmail credentials file not found: {credentials_path}"
+                    )
                     return None
 
-                flow = InstalledAppFlow.from_client_secrets_file(credentials_path, SCOPES)
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    credentials_path, SCOPES
+                )
                 creds = flow.run_local_server(port=0)
 
             # Save credentials for next run
@@ -98,7 +104,9 @@ def _get_gmail_client():
         return None
 
 
-async def monitor_emails_async(query: str = "is:unread", max_results: int = 10) -> dict[str, Any]:
+async def monitor_emails_async(
+    query: str = "is:unread", max_results: int = 10
+) -> dict[str, Any]:
     """
     Monitor emails matching query.
 
@@ -262,7 +270,10 @@ async def send_email_async(
 
         # Send message
         send_message = (
-            service.users().messages().send(userId="me", body={"raw": raw_message}).execute()
+            service.users()
+            .messages()
+            .send(userId="me", body={"raw": raw_message})
+            .execute()
         )
 
         return {

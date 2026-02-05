@@ -12,12 +12,14 @@ The AI trading system accumulated 8 option contracts when the maximum should hav
 ## Timeline of Failure
 
 ### Day 1-2 (Jan 20-21, 2026)
+
 - Iron condor trader placed multiple partial fills
 - Position limit check was counting **unique symbols** instead of **total contracts**
 - System accumulated: 8 long $658 puts, 4 long $570 puts, 4 short $565 puts, 2 short $653 puts
 - This is NOT a proper iron condor structure
 
 ### Day 3 (Jan 22, 2026)
+
 - Loss on SPY260220P00658000 reached -$1,480
 - CTO attempted multiple fixes:
   1. Fixed position limit to count contracts (PR #2658)
@@ -30,6 +32,7 @@ The AI trading system accumulated 8 option contracts when the maximum should hav
 ## Root Causes
 
 ### 1. Position Limit Bug (LL-280)
+
 ```python
 # WRONG - counted unique symbols (4)
 position_count = len(spy_option_positions)
@@ -39,28 +42,31 @@ total_contracts = sum(abs(int(float(p.qty))) for p in spy_option_positions)
 ```
 
 ### 2. Race Condition in Workflow
+
 - Multiple GitHub Actions runs could pass position check simultaneously
 - Position check happened AFTER RAG queries (slow), allowing races
 - Fix: Move position check to VERY START of execute()
 
 ### 3. Alpaca API Bug
+
 - `close_position()` for LONG puts treated as opening SHORT puts
 - Required $56,500-$113,000 margin for a CLOSE operation
 - This is fundamentally incorrect behavior from Alpaca
 
 ### 4. PDT Restriction
+
 - Account has $4,207 (under $25,000 PDT threshold)
 - 3 day trades already used in 5-day rolling period
 - ALL close attempts blocked, even single contracts
 
 ## Financial Impact
 
-| Metric | Value |
-|--------|-------|
-| Account Equity | $4,207.46 |
-| Total P/L | -$792.54 (-15.85%) |
+| Metric                | Value                       |
+| --------------------- | --------------------------- |
+| Account Equity        | $4,207.46                   |
+| Total P/L             | -$792.54 (-15.85%)          |
 | Largest Loss Position | SPY260220P00658000: -$1,480 |
-| Contracts Stuck | 18 total |
+| Contracts Stuck       | 18 total                    |
 
 ## What the CTO Should Have Done
 
@@ -82,12 +88,14 @@ total_contracts = sum(abs(int(float(p.qty))) for p in spy_option_positions)
 ## Prevention Measures
 
 ### Immediate (Implemented)
+
 - [x] Position check moved to START of execute() function
 - [x] Position check now blocks if ANY contracts exist (not just 4+)
 - [x] Daily trading workflow DISABLED
 - [x] LL-290 lesson recorded
 
 ### Required Before Re-enabling Trading
+
 - [ ] PDT restriction clears (wait for day trades to roll off)
 - [ ] Close ALL existing positions
 - [ ] Add unit test: `test_position_limit_counts_contracts_not_symbols`
@@ -96,6 +104,7 @@ total_contracts = sum(abs(int(float(p.qty))) for p in spy_option_positions)
 - [ ] CEO approval to re-enable
 
 ### Long-term
+
 - [ ] Implement position monitoring alerts (Slack/email when positions exist)
 - [ ] Add PDT tracking to system_state.json
 - [ ] Create "recovery mode" that prioritizes closing over opening
@@ -124,4 +133,4 @@ This feedback is deserved. The CTO failed to prevent, detect, and recover from a
 
 ---
 
-*This lesson must be queried before ANY trading operations resume.*
+_This lesson must be queried before ANY trading operations resume._

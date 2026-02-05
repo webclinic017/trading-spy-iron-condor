@@ -51,7 +51,9 @@ def get_account_summary(client=None):
         starting_balance = 20.0  # Live account fresh start Jan 3, 2026
         account_type = "LIVE"
 
-    print(f"📊 Account Type: {account_type} (starting balance: ${starting_balance:,.2f})")
+    print(
+        f"📊 Account Type: {account_type} (starting balance: ${starting_balance:,.2f})"
+    )
 
     return {
         "equity": float(account.equity),
@@ -97,7 +99,8 @@ def sync_daily_trades(client):
                     {
                         "symbol": order.symbol,
                         "action": order.side.name,
-                        "amount": float(order.filled_avg_price or 0) * float(order.filled_qty or 0),
+                        "amount": float(order.filled_avg_price or 0)
+                        * float(order.filled_qty or 0),
                         "quantity": float(order.filled_qty or 0),
                         "price": float(order.filled_avg_price or 0),
                         "timestamp": order.filled_at.isoformat(),
@@ -164,7 +167,9 @@ def update_performance_log():
         print(
             f"   Existing: Equity ${existing_today[0]['equity']:,.2f}, P/L ${existing_today[0]['pl']:+,.2f}"
         )
-        print(f"   New:      Equity ${summary['equity']:,.2f}, P/L ${summary['pl']:+,.2f}")
+        print(
+            f"   New:      Equity ${summary['equity']:,.2f}, P/L ${summary['pl']:+,.2f}"
+        )
 
         # Update existing entry
         for i, entry in enumerate(perf_data):

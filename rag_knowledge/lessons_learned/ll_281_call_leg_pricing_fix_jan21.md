@@ -8,6 +8,7 @@
 ## What Happened
 
 Iron condors were placing PUT legs successfully but CALL legs were failing:
+
 - PUT spreads filled (565/570, 653/658)
 - CALL spreads never filled (no CALL positions in portfolio)
 - Result: Orphan puts with directional downside risk
@@ -21,6 +22,7 @@ Iron condors were placing PUT legs successfully but CALL legs were failing:
 ## Evidence
 
 From system_state.json:
+
 - SPY260220P00565000: -2 contracts (PUT)
 - SPY260220P00570000: +3 contracts (PUT)
 - SPY260220P00653000: -6 contracts (PUT)

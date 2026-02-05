@@ -13,15 +13,18 @@ Position sizing is **the single most important risk management decision**. This 
 ## The Kelly Criterion
 
 ### Formula
+
 ```
 Kelly % = W - [(1-W) / R]
 ```
 
 Where:
+
 - **W** = Win rate (probability of winning)
 - **R** = Win/Loss ratio (average win / average loss)
 
 ### Example: Our Credit Spread Strategy
+
 - Win rate (W): 80% = 0.80
 - Risk/Reward: Risk $210 to make $90 → R = 90/210 = 0.43
 
@@ -36,14 +39,15 @@ Kelly % = 0.335 (33.5%)
 
 ## Why Full Kelly is Dangerous
 
-| Strategy | Max Drawdown | Stress Level | Recovery Time |
-|----------|--------------|--------------|---------------|
-| Full Kelly (33%) | 50-70% | Extreme | Months |
-| Half Kelly (17%) | 25-35% | High | Weeks |
-| Quarter Kelly (8%) | 10-20% | Moderate | Days |
-| 5% Fixed | 5-10% | Low | Minimal |
+| Strategy           | Max Drawdown | Stress Level | Recovery Time |
+| ------------------ | ------------ | ------------ | ------------- |
+| Full Kelly (33%)   | 50-70%       | Extreme      | Months        |
+| Half Kelly (17%)   | 25-35%       | High         | Weeks         |
+| Quarter Kelly (8%) | 10-20%       | Moderate     | Days          |
+| 5% Fixed           | 5-10%        | Low          | Minimal       |
 
 ### The Problem with Full Kelly
+
 - Assumes **perfect** knowledge of probabilities
 - One bad streak can devastate account
 - Most traders can't stomach 50%+ drawdowns
@@ -52,18 +56,22 @@ Kelly % = 0.335 (33.5%)
 ## Practical Position Sizing for $5K Account
 
 ### Our CLAUDE.md Rule: 5% Max Risk
+
 ```
 $4,959.26 x 5% = $247.95 max risk per trade
 ```
 
 This is approximately **Quarter Kelly** (8% would be $397), which is appropriate because:
+
 1. Our win rate estimate has uncertainty
 2. We're in paper trading validation phase
 3. Small accounts can't afford large drawdowns
 4. Consistent small gains compound better than volatile swings
 
 ### Position Size Calculation
+
 With $3-wide spreads and $90 credit:
+
 - Max loss = $300 - $90 = $210
 - Max loss with stop at 2x: $90 (original credit)
 - Risk per trade: $90-$210 depending on management
@@ -73,11 +81,13 @@ With $3-wide spreads and $90 credit:
 ## The 2% Rule (Traditional Alternative)
 
 Many traders use a simpler rule:
+
 ```
 Risk per trade = Account x 2% = $4,959 x 2% = $99
 ```
 
 This is **more conservative** than Kelly and appropriate for:
+
 - Newer traders
 - Accounts under $10K
 - Strategies with uncertain win rates
@@ -85,22 +95,26 @@ This is **more conservative** than Kelly and appropriate for:
 ## Key Insights
 
 ### 1. Small Accounts Need Extra Conservatism
+
 - Single bad trade = significant % loss
 - Recovery math is brutal: 50% loss needs 100% gain to recover
 - Build capital slowly through consistency
 
 ### 2. Fractional Kelly is Optimal
+
 Quarter to Half Kelly provides:
+
 - 75% of Full Kelly returns
 - 50% of Full Kelly variance
 - Much better risk-adjusted returns
 
 ### 3. Our Strategy Alignment
-| Metric | CLAUDE.md | Kelly Optimal | Status |
-|--------|-----------|---------------|--------|
-| Max position | 5% ($248) | Quarter Kelly (~8%) | ✅ Conservative |
-| Positions at once | 1 | 1-2 | ✅ Appropriate |
-| Stop loss | 2x credit | Mandatory | ✅ Risk controlled |
+
+| Metric            | CLAUDE.md | Kelly Optimal       | Status             |
+| ----------------- | --------- | ------------------- | ------------------ |
+| Max position      | 5% ($248) | Quarter Kelly (~8%) | ✅ Conservative    |
+| Positions at once | 1         | 1-2                 | ✅ Appropriate     |
+| Stop loss         | 2x credit | Mandatory           | ✅ Risk controlled |
 
 ## Action Items
 
@@ -112,6 +126,7 @@ Quarter to Half Kelly provides:
 ## Mathematical Reality Check
 
 To reach $100/day with 5% position sizing:
+
 - Need ~$50K account (2% daily on 5% risk is aggressive)
 - Current path: compound gains + deposits over 2.5-3 years
 - This is **realistic** per LL-185 and recovery path in CLAUDE.md

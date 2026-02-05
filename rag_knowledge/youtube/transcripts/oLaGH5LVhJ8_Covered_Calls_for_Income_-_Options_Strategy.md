@@ -7,12 +7,15 @@
 **Ingested**: 2026-02-01T13:26:33.441568
 
 ## Key Concepts
+
 Margin of Safety, Options Strategy
 
 ## Strategies
+
 Cash-Secured Puts, Covered Calls
 
 ## Sentiment
+
 Neutral
 
 ## Transcript

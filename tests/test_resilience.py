@@ -26,7 +26,6 @@ from src.resilience.circuit_breaker import (
 from src.resilience.retry import RetryableOperation, RetryConfig, retry_with_backoff
 from src.resilience.self_healer import HealthCheck, HealthStatus, SelfHealer
 
-
 # =============================================================================
 # Circuit Breaker Tests
 # =============================================================================
@@ -244,7 +243,9 @@ class TestCircuitBreakerMethods:
 
     def test_get_status(self):
         """get_status returns monitoring information."""
-        breaker = CircuitBreaker(name="test_breaker", failure_threshold=5, recovery_timeout=30.0)
+        breaker = CircuitBreaker(
+            name="test_breaker", failure_threshold=5, recovery_timeout=30.0
+        )
 
         status = breaker.get_status()
 
@@ -358,7 +359,9 @@ class TestRetryWithBackoff:
         """Only retryable_exceptions trigger retry."""
         call_count = 0
 
-        @retry_with_backoff(max_attempts=3, base_delay=0.01, retryable_exceptions=(ValueError,))
+        @retry_with_backoff(
+            max_attempts=3, base_delay=0.01, retryable_exceptions=(ValueError,)
+        )
         def raises_runtime_error():
             nonlocal call_count
             call_count += 1
@@ -713,7 +716,9 @@ class TestSelfHealerRunAll:
                 )
             )
 
-            (project / ".claude" / "CLAUDE.md").write_text("## Strategy\nIron condor on SPY")
+            (project / ".claude" / "CLAUDE.md").write_text(
+                "## Strategy\nIron condor on SPY"
+            )
 
             healer = SelfHealer(project_root=project)
             checks = healer.run_all_checks()

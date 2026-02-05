@@ -3,7 +3,7 @@ name: Auto Create PR
 on:
   push:
     branches:
-      - 'claude/**'
+      - "claude/**"
 
 permissions:
   contents: write
@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history for git log comparison
+          fetch-depth: 0 # Full history for git log comparison
 
       - name: Create Pull Request
         env:
@@ -46,7 +46,7 @@ jobs:
           else
             echo "PR #$EXISTING_PR already exists"
           fi
-          
+
       - name: Auto-merge if tests pass
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}

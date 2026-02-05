@@ -9,6 +9,7 @@
 The `execute-credit-spread.yml` workflow checked 15% total exposure but did NOT verify that the NEW trade being placed was within the 5% per-position limit.
 
 **Example of bug**:
+
 - Account equity: $5,000
 - 5% limit = $250 max per position
 - Workflow could place a $300 spread (6% = VIOLATION)
@@ -17,6 +18,7 @@ The `execute-credit-spread.yml` workflow checked 15% total exposure but did NOT 
 ## Root Cause
 
 Compliance check was incomplete:
+
 ```python
 # OLD CODE - Only checked total exposure
 if risk_pct > MAX_EXPOSURE_PCT:  # 15% total
@@ -27,6 +29,7 @@ if risk_pct > MAX_EXPOSURE_PCT:  # 15% total
 ## Fix Applied
 
 Added per-position check BEFORE total exposure check:
+
 ```python
 # Check 5% per-position limit BEFORE placing trade
 if proposed_risk > max_per_position:
@@ -37,6 +40,7 @@ if proposed_risk > max_per_position:
 ## Verification
 
 With $5K account:
+
 - Max per position: $250 (5%)
 - $3 spread = $300 collateral
 - NEW CODE: Blocks trade (6% > 5%)

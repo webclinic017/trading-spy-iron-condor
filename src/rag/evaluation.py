@@ -201,7 +201,10 @@ class RAGEvaluator:
         if hasattr(search, "search"):
             results = search.search(query, top_k=top_k)
             # Handle (LessonResult, score) tuples
-            return [r[0].id.lower() if hasattr(r[0], "id") else r[0].lower() for r in results]
+            return [
+                r[0].id.lower() if hasattr(r[0], "id") else r[0].lower()
+                for r in results
+            ]
 
         # Fallback to query() method
         if hasattr(search, "query"):
@@ -210,7 +213,9 @@ class RAGEvaluator:
 
         raise RuntimeError("Search engine has no search() or query() method")
 
-    def precision_at_k(self, retrieved: list[str], relevant: list[str], k: int) -> float:
+    def precision_at_k(
+        self, retrieved: list[str], relevant: list[str], k: int
+    ) -> float:
         """
         Calculate Precision@k.
 
@@ -355,7 +360,9 @@ class RAGEvaluator:
             failed_queries=failed_queries,
         )
 
-    def save_report(self, report: EvaluationReport, output_dir: Optional[Path] = None) -> Path:
+    def save_report(
+        self, report: EvaluationReport, output_dir: Optional[Path] = None
+    ) -> Path:
         """
         Save evaluation report to JSON file.
 

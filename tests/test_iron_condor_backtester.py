@@ -1,8 +1,9 @@
 """Tests for iron condor backtester."""
 
-import pytest
 from datetime import date
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 # Skip all tests if dependencies not available
 pytest.importorskip("numpy")
@@ -58,7 +59,9 @@ class TestOptionsMath:
         from scripts.backtest.iron_condor_backtester import black_scholes_price
 
         # ATM put with typical SPY params
-        price = black_scholes_price(S=590, K=590, T=30 / 365, r=0.05, sigma=0.18, option_type="put")
+        price = black_scholes_price(
+            S=590, K=590, T=30 / 365, r=0.05, sigma=0.18, option_type="put"
+        )
         assert price > 0
         assert price < 20  # Reasonable range for SPY
 
@@ -77,11 +80,15 @@ class TestOptionsMath:
         from scripts.backtest.iron_condor_backtester import black_scholes_price
 
         # ITM put at expiration
-        put_price = black_scholes_price(S=580, K=590, T=0, r=0.05, sigma=0.18, option_type="put")
+        put_price = black_scholes_price(
+            S=580, K=590, T=0, r=0.05, sigma=0.18, option_type="put"
+        )
         assert put_price == 10  # Intrinsic value
 
         # OTM put at expiration
-        put_price = black_scholes_price(S=600, K=590, T=0, r=0.05, sigma=0.18, option_type="put")
+        put_price = black_scholes_price(
+            S=600, K=590, T=0, r=0.05, sigma=0.18, option_type="put"
+        )
         assert put_price == 0
 
     def test_strike_from_delta(self):
@@ -156,7 +163,9 @@ class TestIronCondorBacktester:
         """Test IV estimation from historical data."""
         from scripts.backtest.iron_condor_backtester import IronCondorBacktester
 
-        with patch.object(IronCondorBacktester, "__init__", lambda x, *args, **kwargs: None):
+        with patch.object(
+            IronCondorBacktester, "__init__", lambda x, *args, **kwargs: None
+        ):
             backtester = IronCondorBacktester.__new__(IronCondorBacktester)
             backtester.config = MagicMock()
 
@@ -167,7 +176,9 @@ class TestIronCondorBacktester:
         """Test IV estimation with insufficient data."""
         from scripts.backtest.iron_condor_backtester import IronCondorBacktester
 
-        with patch.object(IronCondorBacktester, "__init__", lambda x, *args, **kwargs: None):
+        with patch.object(
+            IronCondorBacktester, "__init__", lambda x, *args, **kwargs: None
+        ):
             backtester = IronCondorBacktester.__new__(IronCondorBacktester)
             backtester.config = MagicMock()
 
@@ -178,13 +189,20 @@ class TestIronCondorBacktester:
 
     def test_calculate_summary_empty(self):
         """Test summary calculation with no results."""
-        from scripts.backtest.iron_condor_backtester import IronCondorBacktester, IronCondorConfig
+        from scripts.backtest.iron_condor_backtester import (
+            IronCondorBacktester,
+            IronCondorConfig,
+        )
 
-        with patch.object(IronCondorBacktester, "__init__", lambda x, *args, **kwargs: None):
+        with patch.object(
+            IronCondorBacktester, "__init__", lambda x, *args, **kwargs: None
+        ):
             backtester = IronCondorBacktester.__new__(IronCondorBacktester)
             backtester.config = IronCondorConfig()
 
-            summary = backtester._calculate_summary([], date(2026, 1, 1), date(2026, 1, 22))
+            summary = backtester._calculate_summary(
+                [], date(2026, 1, 1), date(2026, 1, 22)
+            )
             assert summary["total_trades"] == 0
             assert "error" in summary
 
@@ -196,7 +214,9 @@ class TestIronCondorBacktester:
             IronCondorResult,
         )
 
-        with patch.object(IronCondorBacktester, "__init__", lambda x, *args, **kwargs: None):
+        with patch.object(
+            IronCondorBacktester, "__init__", lambda x, *args, **kwargs: None
+        ):
             backtester = IronCondorBacktester.__new__(IronCondorBacktester)
             backtester.config = IronCondorConfig()
 
@@ -257,7 +277,9 @@ class TestIronCondorBacktester:
                 ),
             ]
 
-            summary = backtester._calculate_summary(results, date(2026, 1, 1), date(2026, 1, 22))
+            summary = backtester._calculate_summary(
+                results, date(2026, 1, 1), date(2026, 1, 22)
+            )
 
             assert summary["total_trades"] == 3
             assert summary["wins"] == 2
@@ -273,9 +295,14 @@ class TestGenerateRAGLessons:
 
     def test_generate_lessons_empty(self):
         """Test lesson generation with no results."""
-        from scripts.backtest.iron_condor_backtester import IronCondorBacktester, IronCondorConfig
+        from scripts.backtest.iron_condor_backtester import (
+            IronCondorBacktester,
+            IronCondorConfig,
+        )
 
-        with patch.object(IronCondorBacktester, "__init__", lambda x, *args, **kwargs: None):
+        with patch.object(
+            IronCondorBacktester, "__init__", lambda x, *args, **kwargs: None
+        ):
             backtester = IronCondorBacktester.__new__(IronCondorBacktester)
             backtester.config = IronCondorConfig()
 
@@ -290,7 +317,9 @@ class TestGenerateRAGLessons:
             IronCondorResult,
         )
 
-        with patch.object(IronCondorBacktester, "__init__", lambda x, *args, **kwargs: None):
+        with patch.object(
+            IronCondorBacktester, "__init__", lambda x, *args, **kwargs: None
+        ):
             backtester = IronCondorBacktester.__new__(IronCondorBacktester)
             backtester.config = IronCondorConfig()
 
@@ -324,7 +353,12 @@ class TestGenerateRAGLessons:
                 "sharpe_ratio": 1.5,
                 "start_date": "2026-01-01",
                 "end_date": "2026-01-22",
-                "exit_reasons": {"profit_target": 1, "stop_loss": 0, "time_exit": 0, "expired": 0},
+                "exit_reasons": {
+                    "profit_target": 1,
+                    "stop_loss": 0,
+                    "time_exit": 0,
+                    "expired": 0,
+                },
             }
 
             lessons = backtester.generate_rag_lessons(results, summary)

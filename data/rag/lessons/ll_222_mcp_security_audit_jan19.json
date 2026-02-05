@@ -33,7 +33,12 @@
     "critical_risk": ["alpaca", "trade-agent"],
     "high_risk": ["playwright", "pal"],
     "medium_risk": ["rss", "youtube-transcript", "gmail", "slack", "vertex-ai"],
-    "low_risk": ["trading-ui", "mcp-trader", "options-order-flow", "bogleheads-learner"]
+    "low_risk": [
+      "trading-ui",
+      "mcp-trader",
+      "options-order-flow",
+      "bogleheads-learner"
+    ]
   },
   "implementation": {
     "file": "src/utils/security.py",

@@ -18,6 +18,7 @@ Error: {"code":40310000,"message":"insufficient options buying power for cash-se
 ```
 
 ### Why This Is Wrong
+
 - We are CLOSING an existing LONG position (SELL to close)
 - Alpaca interprets it as OPENING a new SHORT position
 - A short put at $658 strike would require collateral, but we're NOT opening one
@@ -35,10 +36,12 @@ Error: {"code":40310000,"message":"insufficient options buying power for cash-se
 ## PDT Lock Status (Jan 22, 2026)
 
 The account is **fully PDT-locked** today:
+
 - SPY260220P00658000: Blocked by API bug ("insufficient options buying power")
 - All other positions: Blocked by "trade denied due to pattern day trading protection"
 
 **Portfolio Status:**
+
 - Equity: ~$4,231
 - Total unrealized P/L: -$1,341.33
 - All 5 positions locked until Jan 23
@@ -52,12 +55,14 @@ The account is **fully PDT-locked** today:
 ## Resolution
 
 **MANUAL ACTION REQUIRED** - CEO must close position directly via:
+
 1. Alpaca Dashboard: https://app.alpaca.markets/paper/dashboard/positions
 2. Click on SPY260220P00658000 position
 3. Click "Close Position" button
 4. The dashboard may bypass the API bug
 
 **Alternative**: Wait until next trading day (Jan 23) when:
+
 - Position will not be a day trade
 - May bypass PDT restriction
 - API bug may not trigger for non-same-day positions
@@ -71,6 +76,7 @@ The account is **fully PDT-locked** today:
 ## Alpaca Support Ticket
 
 Should file ticket with:
+
 - Account: Paper trading $5K
 - Symbol: SPY260220P00658000
 - Action: SELL to close 8 long contracts
@@ -80,6 +86,7 @@ Should file ticket with:
 ## Resolution (Jan 22, 2026 - RESOLVED)
 
 **Account was reset** - CEO created new $30K paper trading account (PA3PYE0C9MN):
+
 - Old stuck positions abandoned (couldn't close via API)
 - Fresh start with clean slate - 0 positions
 - New account > $25K = NO PDT RESTRICTIONS
@@ -88,4 +95,5 @@ Should file ticket with:
 **Lesson Applied**: Document Alpaca API bugs for future reference. If stuck again, reset account.
 
 ## Tags
+
 `resolved`, `alpaca-api`, `broker-bug`, `position-close`, `pdt`, `account-reset`

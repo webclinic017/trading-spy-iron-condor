@@ -8,10 +8,10 @@
 
 During adversarial audit, discovered multiple trading scripts had hardcoded position limits that violated CLAUDE.md's 5% max per position mandate:
 
-| Script | Setting | Value | CLAUDE.md Limit | Violation |
-|--------|---------|-------|-----------------|-----------|
-| iron_condor_trader.py | position_size_pct | 0.15 (15%) | 5% | **3x over limit** |
-| rule_one_trader.py | max_position_pct | 0.10 (10%) | 5% | **2x over limit** |
+| Script                | Setting           | Value      | CLAUDE.md Limit | Violation         |
+| --------------------- | ----------------- | ---------- | --------------- | ----------------- |
+| iron_condor_trader.py | position_size_pct | 0.15 (15%) | 5%              | **3x over limit** |
+| rule_one_trader.py    | max_position_pct  | 0.10 (10%) | 5%              | **2x over limit** |
 
 Additionally, `iron_condor_trader.py` used SOFI as underlying, which is in blackout until Feb 1 per CLAUDE.md ticker hierarchy.
 
@@ -22,6 +22,7 @@ Configuration drift: Scripts were written with their own position limits without
 ## Fixes Applied
 
 ### iron_condor_trader.py
+
 ```python
 # BEFORE
 "position_size_pct": 0.15,  # 15% of portfolio per IC
@@ -35,6 +36,7 @@ Configuration drift: Scripts were written with their own position limits without
 ```
 
 ### rule_one_trader.py
+
 ```python
 # BEFORE
 "max_position_pct": 0.10,  # 10% per position

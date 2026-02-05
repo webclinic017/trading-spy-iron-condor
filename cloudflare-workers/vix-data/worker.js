@@ -13,12 +13,12 @@
 export default {
   async fetch(request, env) {
     // Handle CORS
-    if (request.method === 'OPTIONS') {
+    if (request.method === "OPTIONS") {
       return new Response(null, {
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
         },
       });
     }
@@ -26,12 +26,12 @@ export default {
     try {
       // Fetch VIX from Yahoo Finance API (free, no auth needed)
       const vixResponse = await fetch(
-        'https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d',
+        "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d",
         {
           headers: {
-            'User-Agent': 'Mozilla/5.0 (compatible; TradingBot/1.0)',
+            "User-Agent": "Mozilla/5.0 (compatible; TradingBot/1.0)",
           },
-        }
+        },
       );
 
       if (!vixResponse.ok) {
@@ -42,13 +42,14 @@ export default {
       const result = data.chart?.result?.[0];
 
       if (!result) {
-        throw new Error('No VIX data returned');
+        throw new Error("No VIX data returned");
       }
 
       const meta = result.meta;
       const quote = result.indicators?.quote?.[0];
 
-      const currentVix = meta.regularMarketPrice || quote?.close?.[quote.close.length - 1];
+      const currentVix =
+        meta.regularMarketPrice || quote?.close?.[quote.close.length - 1];
       const previousClose = meta.chartPreviousClose || meta.previousClose;
       const change = currentVix - previousClose;
       const changePercent = (change / previousClose) * 100;
@@ -57,20 +58,20 @@ export default {
       let signal, reason;
 
       if (currentVix < 15) {
-        signal = 'WAIT';
-        reason = 'VIX < 15: Premiums too thin for profitable iron condors';
+        signal = "WAIT";
+        reason = "VIX < 15: Premiums too thin for profitable iron condors";
       } else if (currentVix >= 15 && currentVix < 20) {
-        signal = 'CAUTION';
-        reason = 'VIX 15-20: Check IV Rank. Enter only if IV Rank > 50%';
+        signal = "CAUTION";
+        reason = "VIX 15-20: Check IV Rank. Enter only if IV Rank > 50%";
       } else if (currentVix >= 20 && currentVix <= 25) {
-        signal = 'OPTIMAL';
-        reason = 'VIX 20-25: OPTIMAL entry zone for iron condors';
+        signal = "OPTIMAL";
+        reason = "VIX 20-25: OPTIMAL entry zone for iron condors";
       } else if (currentVix > 25 && currentVix <= 30) {
-        signal = 'ELEVATED';
-        reason = 'VIX 25-30: Good premiums but increased volatility risk';
+        signal = "ELEVATED";
+        reason = "VIX 25-30: Good premiums but increased volatility risk";
       } else {
-        signal = 'EXTREME';
-        reason = 'VIX > 30: CAUTION - Market stress, may whipsaw';
+        signal = "EXTREME";
+        reason = "VIX > 30: CAUTION - Market stress, may whipsaw";
       }
 
       const response = {
@@ -83,14 +84,14 @@ export default {
         signal,
         reason,
         timestamp: new Date().toISOString(),
-        source: 'Yahoo Finance',
+        source: "Yahoo Finance",
       };
 
       return new Response(JSON.stringify(response, null, 2), {
         headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Cache-Control': 'public, max-age=60', // Cache for 1 minute
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Cache-Control": "public, max-age=60", // Cache for 1 minute
         },
       });
     } catch (error) {
@@ -102,10 +103,10 @@ export default {
         {
           status: 500,
           headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
           },
-        }
+        },
       );
     }
   },
@@ -113,6 +114,6 @@ export default {
   // Scheduled handler - can be set up to run every hour
   async scheduled(event, env, ctx) {
     // Could store VIX history in KV or D1 for trend analysis
-    console.log('Scheduled VIX check at:', new Date().toISOString());
+    console.log("Scheduled VIX check at:", new Date().toISOString());
   },
 };

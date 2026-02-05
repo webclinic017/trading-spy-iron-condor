@@ -8,7 +8,7 @@ name: Detect Contract Accumulation
 on:
   schedule:
     # Every 15 minutes during market hours (9:30 AM - 4 PM ET = 14:30 - 21:00 UTC)
-    - cron: '*/15 14-20 * * 1-5'
+    - cron: "*/15 14-20 * * 1-5"
   workflow_dispatch:
 
 permissions:
@@ -27,7 +27,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: pip install alpaca-py

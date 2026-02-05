@@ -64,7 +64,9 @@ class RiskManager:
         self.portfolio_value = portfolio_value
         self.max_position_pct = max_position_pct or self.DEFAULT_MAX_POSITION_PCT
         self.max_daily_loss_pct = max_daily_loss_pct or self.DEFAULT_MAX_DAILY_LOSS_PCT
-        self.min_cash_reserve_pct = min_cash_reserve_pct or self.DEFAULT_MIN_CASH_RESERVE_PCT
+        self.min_cash_reserve_pct = (
+            min_cash_reserve_pct or self.DEFAULT_MIN_CASH_RESERVE_PCT
+        )
 
         # Track daily P&L
         self._daily_pnl: float = 0.0
@@ -79,7 +81,9 @@ class RiskManager:
         """Reset daily P&L tracker at start of new day."""
         today = date.today()
         if today != self._last_reset_date:
-            logger.info(f"New trading day - resetting daily P&L from ${self._daily_pnl:.2f}")
+            logger.info(
+                f"New trading day - resetting daily P&L from ${self._daily_pnl:.2f}"
+            )
             self._daily_pnl = 0.0
             self._last_reset_date = today
 
@@ -106,7 +110,9 @@ class RiskManager:
             RiskCheck with pass/fail and reason
         """
         max_position = self.portfolio_value * self.max_position_pct
-        position_pct = notional_value / self.portfolio_value if self.portfolio_value > 0 else 1.0
+        position_pct = (
+            notional_value / self.portfolio_value if self.portfolio_value > 0 else 1.0
+        )
 
         if notional_value > max_position:
             return RiskCheck(
@@ -135,7 +141,9 @@ class RiskManager:
 
         max_daily_loss = self.portfolio_value * self.max_daily_loss_pct
         projected_loss = abs(self._daily_pnl) + abs(additional_loss)
-        loss_pct = projected_loss / self.portfolio_value if self.portfolio_value > 0 else 1.0
+        loss_pct = (
+            projected_loss / self.portfolio_value if self.portfolio_value > 0 else 1.0
+        )
 
         if projected_loss > max_daily_loss:
             return RiskCheck(
@@ -239,14 +247,25 @@ class RiskManager:
         cash_check = self.check_cash_reserve(cash_available, notional_value)
 
         all_passed = position_check.passed and daily_check.passed and cash_check.passed
-        avg_risk = (position_check.risk_score + daily_check.risk_score + cash_check.risk_score) / 3
+        avg_risk = (
+            position_check.risk_score + daily_check.risk_score + cash_check.risk_score
+        ) / 3
 
         return {
             "approved": all_passed,
             "risk_score": round(avg_risk, 3),
-            "position_check": {"passed": position_check.passed, "reason": position_check.reason},
-            "daily_loss_check": {"passed": daily_check.passed, "reason": daily_check.reason},
-            "cash_reserve_check": {"passed": cash_check.passed, "reason": cash_check.reason},
+            "position_check": {
+                "passed": position_check.passed,
+                "reason": position_check.reason,
+            },
+            "daily_loss_check": {
+                "passed": daily_check.passed,
+                "reason": daily_check.reason,
+            },
+            "cash_reserve_check": {
+                "passed": cash_check.passed,
+                "reason": cash_check.reason,
+            },
             "portfolio_value": self.portfolio_value,
             "daily_pnl": self._daily_pnl,
             "timestamp": datetime.now().isoformat(),
@@ -271,7 +290,9 @@ class RiskManager:
         Returns:
             Tuple of (approved: bool, reason: str)
         """
-        risk = self.calculate_risk(symbol, notional_value, cash_available, potential_loss)
+        risk = self.calculate_risk(
+            symbol, notional_value, cash_available, potential_loss
+        )
 
         if risk["approved"]:
             return True, f"Trade approved: risk score {risk['risk_score']:.2f}"

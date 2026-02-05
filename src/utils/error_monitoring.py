@@ -80,8 +80,12 @@ def _add_trading_context(event, hint):
 
         # Add GitHub Actions context if available
         if os.getenv("GITHUB_ACTIONS"):
-            event.setdefault("tags", {})["workflow"] = os.getenv("GITHUB_WORKFLOW", "unknown")
-            event.setdefault("tags", {})["run_id"] = os.getenv("GITHUB_RUN_ID", "unknown")
+            event.setdefault("tags", {})["workflow"] = os.getenv(
+                "GITHUB_WORKFLOW", "unknown"
+            )
+            event.setdefault("tags", {})["run_id"] = os.getenv(
+                "GITHUB_RUN_ID", "unknown"
+            )
             event.setdefault("contexts", {})["github"] = {
                 "workflow": os.getenv("GITHUB_WORKFLOW"),
                 "run_id": os.getenv("GITHUB_RUN_ID"),
@@ -208,7 +212,9 @@ def init_slack_alerts(webhook_url: str | None = None) -> bool:
 
     _slack_webhook_url = webhook_url or os.getenv("SLACK_WEBHOOK_URL")
     if not _slack_webhook_url:
-        logger.debug("Slack webhook URL not configured (SLACK_WEBHOOK_URL env var not set)")
+        logger.debug(
+            "Slack webhook URL not configured (SLACK_WEBHOOK_URL env var not set)"
+        )
         return False
 
     logger.info("Slack webhook alerts initialized")

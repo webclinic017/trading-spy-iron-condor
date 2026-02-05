@@ -9,10 +9,7 @@
     "symbol": "SPY",
     "strategy": "iron_condor"
   },
-  "tags": [
-    "options",
-    "risk_management"
-  ],
+  "tags": ["options", "risk_management"],
   "severity": "HIGH",
   "verified": false,
   "session_id": "0a8caf6b"

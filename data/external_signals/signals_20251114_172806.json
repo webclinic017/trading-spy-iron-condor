@@ -1,16 +1,7 @@
 {
   "meta": {
-    "sources": [
-      "YouTube:video_2_top_6_stocks_nov_2025"
-    ],
-    "tickers": [
-      "AMZN",
-      "GOOGL",
-      "LLY",
-      "NVDA",
-      "PINS",
-      "UBER"
-    ],
+    "sources": ["YouTube:video_2_top_6_stocks_nov_2025"],
+    "tickers": ["AMZN", "GOOGL", "LLY", "NVDA", "PINS", "UBER"],
     "generated_at": "2025-11-14T17:28:06.040268+00:00"
   },
   "created_at": "2025-11-14T17:28:06.040281+00:00",

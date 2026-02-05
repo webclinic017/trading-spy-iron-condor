@@ -9,6 +9,7 @@
 The `execute-credit-spread.yml` workflow has a compliance check for the 5% per-position limit. However, `daily-trading.yml` calls `execute_credit_spread.py` DIRECTLY (line 1088), completely bypassing the workflow's compliance check!
 
 **Attack vector**:
+
 - `daily-trading.yml` runs theta harvest step
 - Step calls `python3 scripts/execute_credit_spread.py --symbol SPY --width 2`
 - Script NEVER checks if $200 collateral exceeds 5% of account
@@ -41,6 +42,7 @@ This check runs AFTER finding the spread (so we know collateral) but BEFORE exec
 **ALWAYS enforce critical limits at the lowest level (Python script), not just at workflow level.**
 
 The script can be called from:
+
 1. `execute-credit-spread.yml` workflow (had check)
 2. `daily-trading.yml` workflow (NO check until now)
 3. Manual execution via CLI
@@ -51,6 +53,7 @@ Only enforcing in the Python script guarantees ALL callers are protected.
 ## Verification
 
 With $5K account:
+
 - Max per position: $250 (5%)
 - $3 spread = $300 collateral
 - Script NOW blocks: "POSITION SIZE VIOLATION: $300.00 exceeds 5% limit ($250.00)"

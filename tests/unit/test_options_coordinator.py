@@ -8,9 +8,10 @@ This module tests the options strategy coordination that handles:
 CRITICAL for trade execution path.
 """
 
-import pytest
-from unittest.mock import MagicMock, patch
 import os
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 from src.orchestrator.options_coordinator import OptionsStrategyCoordinator
 

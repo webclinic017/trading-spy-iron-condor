@@ -5,7 +5,7 @@ name: Daily Earnings Position Check
 
 on:
   schedule:
-    - cron: '0 14 * * 1-5'  # 9 AM ET weekdays
+    - cron: "0 14 * * 1-5" # 9 AM ET weekdays
   workflow_dispatch:
 
 permissions:
@@ -22,7 +22,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: pip install alpaca-py

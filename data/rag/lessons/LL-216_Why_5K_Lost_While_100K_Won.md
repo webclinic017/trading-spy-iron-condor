@@ -1,25 +1,29 @@
 # LL-216: Root Cause Analysis - Why $5K Lost While $100K Won
 
 ## Date: January 15, 2026
+
 ## Loss: -$40.74 (-0.81%)
+
 ## Verdict: OPERATOR ERROR + SYSTEM GAPS
 
 ## The Simple Answer
+
 **$100K used SPY with defined risk. $5K used SOFI with naked puts.**
 
 ## Evidence Table
 
-| Factor | $100K Account (Worked) | $5K Account (Failed) |
-|--------|------------------------|----------------------|
-| Ticker | SPY, AMD | SOFI ❌ |
-| Strategy | Iron Condors, Spreads | Naked Puts ❌ |
-| Position Size | ~5% per trade | 96% of account ❌ |
-| Defined Risk | Yes (spreads) | No (unlimited) ❌ |
-| Earnings | Avoided blackouts | During SOFI blackout ❌ |
+| Factor        | $100K Account (Worked) | $5K Account (Failed)    |
+| ------------- | ---------------------- | ----------------------- |
+| Ticker        | SPY, AMD               | SOFI ❌                 |
+| Strategy      | Iron Condors, Spreads  | Naked Puts ❌           |
+| Position Size | ~5% per trade          | 96% of account ❌       |
+| Defined Risk  | Yes (spreads)          | No (unlimited) ❌       |
+| Earnings      | Avoided blackouts      | During SOFI blackout ❌ |
 
 ## Specific Trade That Lost Money
 
 **January 13-14, 2026:**
+
 - Bought SOFI shares + sold 2 naked puts
 - Position grew to 96% of account ($4,800 at risk)
 - CEO emergency intervention required
@@ -37,6 +41,7 @@
 ## System Gaps Fixed
 
 ### 1. Risk Monitor Was Non-Functional
+
 ```python
 # BEFORE: Always returned False (no stop-loss)
 return False, "Position within risk limits"
@@ -47,6 +52,7 @@ if current_loss >= 2 * credit_received:
 ```
 
 ### 2. Win Rate Tracking Missing
+
 - Now tracks: win rate %, avg win, avg loss, profit factor
 - Thresholds per CLAUDE.md:
   - <75%: Reassess (not profitable)
@@ -56,6 +62,7 @@ if current_loss >= 2 * credit_received:
 ## Why RAG Lessons Weren't Applied
 
 The $100K lessons were extracted AFTER the SOFI failure:
+
 - Jan 13-14: SOFI trade executed
 - Jan 14-15: Analysis created lessons LL-196, LL-203, LL-207, LL-208
 
@@ -77,4 +84,5 @@ The $5K failure wasn't bad luck - it was **SOFI with undefined risk**.
 Follow the rules. Trade SPY spreads. Stay small.
 
 ## Tags
+
 #root-cause #failure-analysis #position-sizing #rule-1

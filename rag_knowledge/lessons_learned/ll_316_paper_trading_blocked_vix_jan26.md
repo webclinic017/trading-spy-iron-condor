@@ -38,6 +38,7 @@ VIX_OPTIMAL_MIN = 12  # Allow paper trading even with thin premiums
 ```
 
 Rationale:
+
 - Paper trading is for validation, not profit optimization
 - VIX 12-15 still allows tradeable premiums on SPY
 - Better to trade with smaller premium than not trade at all during validation

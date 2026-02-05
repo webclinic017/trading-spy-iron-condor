@@ -34,7 +34,7 @@ concurrency:
 jobs:
   ingest-phil-town:
     runs-on: ubuntu-latest
-    timeout-minutes: 60  # Increased for backfill mode
+    timeout-minutes: 60 # Increased for backfill mode
 
     steps:
       - name: Checkout repository

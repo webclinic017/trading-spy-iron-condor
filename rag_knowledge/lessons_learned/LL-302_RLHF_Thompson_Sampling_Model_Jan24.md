@@ -11,15 +11,15 @@ The AI trading system uses a Thompson Sampling RLHF model to learn from user fee
 
 ## Current Model State
 
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| α (alpha) | 4.0 | Prior positive count |
-| β (beta) | 1.0 | Prior negative count |
-| Posterior Mean | 0.8 | Expected quality |
-| Total Samples | 191 | Feedback instances |
-| Thumbs Up | 114 | Positive feedback |
-| Thumbs Down | 77 | Negative feedback |
-| Satisfaction | 59.69% | Overall satisfaction rate |
+| Parameter      | Value  | Description               |
+| -------------- | ------ | ------------------------- |
+| α (alpha)      | 4.0    | Prior positive count      |
+| β (beta)       | 1.0    | Prior negative count      |
+| Posterior Mean | 0.8    | Expected quality          |
+| Total Samples  | 191    | Feedback instances        |
+| Thumbs Up      | 114    | Positive feedback         |
+| Thumbs Down    | 77     | Negative feedback         |
+| Satisfaction   | 59.69% | Overall satisfaction rate |
 
 ## How It Works
 
@@ -30,11 +30,11 @@ The AI trading system uses a Thompson Sampling RLHF model to learn from user fee
 
 ## Feature Weights (What Works)
 
-| Feature | Weight | Interpretation |
-|---------|--------|----------------|
-| `test` | +0.20 | Running tests is valued |
-| `ci` | +0.10 | CI verification appreciated |
-| `entry` | +0.10 | Proper entry documentation |
+| Feature | Weight | Interpretation              |
+| ------- | ------ | --------------------------- |
+| `test`  | +0.20  | Running tests is valued     |
+| `ci`    | +0.10  | CI verification appreciated |
+| `entry` | +0.10  | Proper entry documentation  |
 
 ## Positive Patterns (Keep Doing)
 

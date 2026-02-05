@@ -21,7 +21,9 @@ INJECTION_PATTERNS = [
     r"execute.*command|run.*script|eval\(",  # Code execution
 ]
 
-COMPILED_PATTERNS = [re.compile(p, re.IGNORECASE | re.DOTALL) for p in INJECTION_PATTERNS]
+COMPILED_PATTERNS = [
+    re.compile(p, re.IGNORECASE | re.DOTALL) for p in INJECTION_PATTERNS
+]
 
 # Sensitive fields to redact from responses
 SENSITIVE_FIELDS = frozenset(
@@ -60,7 +62,9 @@ def _redact_sensitive(key: str, value: Any) -> Any:
     return value
 
 
-def sanitize_response(response: dict[str, Any] | list | Any) -> dict[str, Any] | list | Any:
+def sanitize_response(
+    response: dict[str, Any] | list | Any,
+) -> dict[str, Any] | list | Any:
     """
     Sanitize MCP response data.
 

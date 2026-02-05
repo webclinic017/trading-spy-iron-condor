@@ -12,6 +12,7 @@ Created dedicated iron condor position management system with proper exit rules 
 ## Gap Identified
 
 **Before**: `manage_positions.py` used:
+
 - 15% profit target (equity %)
 - 8% stop-loss (equity %)
 - 30 days max hold
@@ -22,11 +23,11 @@ Created dedicated iron condor position management system with proper exit rules 
 
 Created `scripts/manage_iron_condor_positions.py` with proper exit rules:
 
-| Rule | Threshold | Research Source |
-|------|-----------|-----------------|
-| Profit Target | 50% of credit received | LL-265 |
-| Stop Loss | 200% of credit (2x) | CLAUDE.md |
-| DTE Exit | 7 days to expiration | LL-268 |
+| Rule          | Threshold              | Research Source |
+| ------------- | ---------------------- | --------------- |
+| Profit Target | 50% of credit received | LL-265          |
+| Stop Loss     | 200% of credit (2x)    | CLAUDE.md       |
+| DTE Exit      | 7 days to expiration   | LL-268          |
 
 ## Components Created
 
@@ -65,6 +66,7 @@ All 15 new tests pass. Total test count increased from 898 to 923.
 ## Prevention
 
 Before creating position management code:
+
 1. Verify threshold type (% of price vs % of credit)
 2. Use research-backed rules (LL-265, LL-268, LL-277)
 3. Test with unit tests before deploying

@@ -3,19 +3,23 @@
 Based on Andrej Karpathy's observations about LLM coding limitations.
 
 ## Triggers
+
 - Any coding task
 - Auto-applies to all implementation work
 
 ## The Four Principles
 
 ### 1. Think Before Coding
+
 Before writing ANY code:
+
 - Ask clarifying questions if requirements are ambiguous
 - Present multiple implementation options when relevant
 - Identify potential edge cases or confusion
 - NEVER silently assume an interpretation
 
 ### 2. Simplicity First
+
 - Write minimal code solving ONLY what's requested
 - No unnecessary abstractions
 - No speculative features
@@ -23,6 +27,7 @@ Before writing ANY code:
 - If 3 lines work, don't write 30
 
 ### 3. Surgical Changes
+
 - Touch ONLY necessary code
 - Don't refactor adjacent code
 - Don't improve formatting elsewhere
@@ -30,7 +35,9 @@ Before writing ANY code:
 - Keep PRs focused on the request
 
 ### 4. Goal-Driven Execution
+
 Instead of imperative instructions, define verifiable success criteria:
+
 - BAD: "add validation"
 - GOOD: "write tests for invalid inputs, then make them pass"
 
@@ -43,6 +50,7 @@ Loop until success criteria are met.
 ## Application
 
 These principles are ALWAYS active. Every coding task should:
+
 1. Clarify before implementing
 2. Minimize code changes
 3. Focus only on what's requested

@@ -145,7 +145,9 @@ def print_report(report: DailyReport):
     days_elapsed = 50  # From the hook data
     target_daily = 1.0  # $1/day target
     expected_profit = days_elapsed * target_daily
-    print(f"   Target:  ${expected_profit:,.2f} (${target_daily}/day × {days_elapsed} days)")
+    print(
+        f"   Target:  ${expected_profit:,.2f} (${target_daily}/day × {days_elapsed} days)"
+    )
     print(f"   Actual:  ${report.total_pnl:,.2f}")
     gap = expected_profit - report.total_pnl
     print(f"   Gap:     ${gap:,.2f} behind target")

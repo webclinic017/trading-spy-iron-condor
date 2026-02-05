@@ -17,11 +17,11 @@ This system runs bull put spread simulations during evenings, weekends, and holi
 
 ### Automatic Schedule
 
-| Time | Day | What Runs |
-|------|-----|-----------|
-| 6 PM ET | Mon-Fri | 30-day backtest |
+| Time    | Day      | What Runs                         |
+| ------- | -------- | --------------------------------- |
+| 6 PM ET | Mon-Fri  | 30-day backtest                   |
 | 8 AM ET | Saturday | 60-day backtest + parameter sweep |
-| 8 AM ET | Sunday | 60-day backtest |
+| 8 AM ET | Sunday   | 60-day backtest                   |
 
 ## Files
 
@@ -45,16 +45,16 @@ data/backtests/
 
 ### Default Parameters
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `short_put_delta_min` | -0.60 | Short put minimum delta |
-| `short_put_delta_max` | -0.20 | Short put maximum delta |
-| `long_put_delta_min` | -0.40 | Long put minimum delta |
-| `long_put_delta_max` | -0.20 | Long put maximum delta |
-| `spread_width_min` | $2.00 | Minimum spread width |
-| `spread_width_max` | $4.00 | Maximum spread width |
-| `target_profit_pct` | 50% | Take profit at % of credit |
-| `delta_stop_loss_multiplier` | 2.0x | Stop when delta doubles |
+| Parameter                    | Default | Description                |
+| ---------------------------- | ------- | -------------------------- |
+| `short_put_delta_min`        | -0.60   | Short put minimum delta    |
+| `short_put_delta_max`        | -0.20   | Short put maximum delta    |
+| `long_put_delta_min`         | -0.40   | Long put minimum delta     |
+| `long_put_delta_max`         | -0.20   | Long put maximum delta     |
+| `spread_width_min`           | $2.00   | Minimum spread width       |
+| `spread_width_max`           | $4.00   | Maximum spread width       |
+| `target_profit_pct`          | 50%     | Take profit at % of credit |
+| `delta_stop_loss_multiplier` | 2.0x    | Stop when delta doubles    |
 
 ### Custom Config
 
@@ -66,7 +66,7 @@ python scripts/backtest/bull_put_spread_backtester.py --config my_config.json
 
 ```json
 {
-  "short_put_delta_min": -0.50,
+  "short_put_delta_min": -0.5,
   "short_put_delta_max": -0.25,
   "target_profit_pct": 0.75
 }
@@ -75,6 +75,7 @@ python scripts/backtest/bull_put_spread_backtester.py --config my_config.json
 ## RAG Integration
 
 Every backtest generates lessons that are:
+
 1. Saved to `data/backtests/backtest_lessons_*.json`
 2. Formatted for RAG in `data/rag_staging/`
 3. Ingested to Vertex AI RAG (when configured)
@@ -88,6 +89,7 @@ Every backtest generates lessons that are:
 ## Metrics Tracked
 
 ### Performance
+
 - Total P&L
 - Win Rate
 - Average Trade
@@ -95,6 +97,7 @@ Every backtest generates lessons that are:
 - Max Drawdown
 
 ### Strategy Health
+
 - Parameter stability over time
 - Regime detection (when strategy fails)
 - Trade execution quality
@@ -104,12 +107,14 @@ Every backtest generates lessons that are:
 ### "No data available for date range"
 
 Alpaca may not have data for the requested dates. Try:
+
 - Reducing the date range
 - Using more recent dates
 
 ### "Market is OPEN - skipping backtest"
 
 The workflow detected market hours. Wait until:
+
 - After 4 PM ET on weekdays
 - Weekend (any time)
 - Market holiday

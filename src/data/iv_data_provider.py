@@ -153,8 +153,8 @@ class IVDataProvider:
             return
 
         try:
-            from alpaca.data.historical.option import OptionHistoricalDataClient
             from alpaca.data.historical import StockHistoricalDataClient
+            from alpaca.data.historical.option import OptionHistoricalDataClient
 
             # Options data client (for IV from option chain)
             self._alpaca_options_client = OptionHistoricalDataClient(
@@ -380,7 +380,9 @@ class IVDataProvider:
                     continue
 
             if not call_ivs or not put_ivs:
-                logger.warning(f"{symbol}: Insufficient ATM options for skew calculation")
+                logger.warning(
+                    f"{symbol}: Insufficient ATM options for skew calculation"
+                )
                 return {
                     "call_iv": np.mean(call_ivs) if call_ivs else None,
                     "put_iv": np.mean(put_ivs) if put_ivs else None,
@@ -461,8 +463,9 @@ class IVDataProvider:
             }
 
         try:
-            from alpaca.data.requests import OptionChainRequest
             from datetime import datetime
+
+            from alpaca.data.requests import OptionChainRequest
 
             # Fetch option chain
             req = OptionChainRequest(underlying_symbol=symbol)
@@ -497,11 +500,15 @@ class IVDataProvider:
                         expiration_ivs[exp_date] = []
                     expiration_ivs[exp_date].append(snapshot.implied_volatility)
                 except Exception as e:
-                    logger.debug(f"Failed to parse expiration from {option_symbol}: {e}")
+                    logger.debug(
+                        f"Failed to parse expiration from {option_symbol}: {e}"
+                    )
                     continue
 
             if len(expiration_ivs) < 2:
-                logger.warning(f"{symbol}: Need at least 2 expirations for term structure")
+                logger.warning(
+                    f"{symbol}: Need at least 2 expirations for term structure"
+                )
                 return {
                     "expirations": list(expiration_ivs.keys()),
                     "ivs": [float(np.mean(ivs)) for ivs in expiration_ivs.values()],
@@ -513,7 +520,9 @@ class IVDataProvider:
 
             # Calculate average IV per expiration
             sorted_expirations = sorted(expiration_ivs.keys())
-            avg_ivs = [float(np.mean(expiration_ivs[exp])) for exp in sorted_expirations]
+            avg_ivs = [
+                float(np.mean(expiration_ivs[exp])) for exp in sorted_expirations
+            ]
 
             # Determine structure type
             front_iv = avg_ivs[0]
@@ -624,8 +633,16 @@ class IVDataProvider:
                         continue
 
                     # Extract data from snapshot
-                    bid = snapshot.latest_quote.bid_price if snapshot.latest_quote else 0.0
-                    ask = snapshot.latest_quote.ask_price if snapshot.latest_quote else 0.0
+                    bid = (
+                        snapshot.latest_quote.bid_price
+                        if snapshot.latest_quote
+                        else 0.0
+                    )
+                    ask = (
+                        snapshot.latest_quote.ask_price
+                        if snapshot.latest_quote
+                        else 0.0
+                    )
                     last = snapshot.latest_trade.price if snapshot.latest_trade else 0.0
 
                     # Greeks
@@ -660,7 +677,11 @@ class IVDataProvider:
                     # Calculate liquidity score (higher is better)
                     liquidity_score = volume + (open_interest * 2)  # Weight OI 2x
 
-                    iv = snapshot.implied_volatility if snapshot.implied_volatility else 0.0
+                    iv = (
+                        snapshot.implied_volatility
+                        if snapshot.implied_volatility
+                        else 0.0
+                    )
 
                     option = {
                         "symbol": option_symbol,
@@ -791,7 +812,9 @@ class IVDataProvider:
         # Find optimal strikes based on strategy
         if strategy == "covered_call":
             # Find call closest to +0.30 delta
-            calls = [opt for opt in options if opt["type"] == "call" and opt["delta"] > 0]
+            calls = [
+                opt for opt in options if opt["type"] == "call" and opt["delta"] > 0
+            ]
             if not calls:
                 return {"error": "No call options available"}
 
@@ -805,7 +828,11 @@ class IVDataProvider:
                 "contract": best_call,
                 "expected_credit": best_call["bid"],
                 "max_profit": (best_call["strike"] - current_price) + best_call["bid"],
-                "max_loss": "unlimited" if current_price == 0 else current_price - best_call["bid"],
+                "max_loss": (
+                    "unlimited"
+                    if current_price == 0
+                    else current_price - best_call["bid"]
+                ),
                 "break_even": current_price - best_call["bid"],
             }
 
@@ -831,7 +858,9 @@ class IVDataProvider:
 
         elif strategy == "iron_condor":
             # Find 16 delta wings on both sides
-            calls = [opt for opt in options if opt["type"] == "call" and opt["delta"] > 0]
+            calls = [
+                opt for opt in options if opt["type"] == "call" and opt["delta"] > 0
+            ]
             puts = [opt for opt in options if opt["type"] == "put" and opt["delta"] < 0]
 
             if not calls or not puts:
@@ -886,9 +915,7 @@ class IVDataProvider:
             is_call = strategy == "credit_spread_call"
             option_type = "call" if is_call else "put"
 
-            filtered_options = [
-                opt for opt in options if opt["type"] == option_type
-            ]
+            filtered_options = [opt for opt in options if opt["type"] == option_type]
 
             if not filtered_options:
                 return {"error": f"No {option_type} options available"}
@@ -1352,7 +1379,9 @@ class IVDataProvider:
         except Exception as e:
             logger.error(f"Failed to cache IV data for {symbol}: {e}")
 
-    def load_cached_iv(self, symbol: str, max_age_minutes: int = 5) -> dict[str, Any] | None:
+    def load_cached_iv(
+        self, symbol: str, max_age_minutes: int = 5
+    ) -> dict[str, Any] | None:
         """
         Load cached IV data for a symbol if fresh enough.
 
@@ -1396,9 +1425,7 @@ class IVDataProvider:
                     )
                     return data
                 else:
-                    logger.debug(
-                        f"{symbol}: Disk cache expired (age: {file_age:.1f}s)"
-                    )
+                    logger.debug(f"{symbol}: Disk cache expired (age: {file_age:.1f}s)")
             except Exception as e:
                 logger.debug(f"Failed to load disk cache for {symbol}: {e}")
 
@@ -1481,10 +1508,14 @@ if __name__ == "__main__":
             # Get full metrics
             metrics = provider.get_full_metrics(symbol)
 
-            print(f"\nCurrent IV: {metrics.current_iv:.4f} ({metrics.current_iv * 100:.2f}%)")
+            print(
+                f"\nCurrent IV: {metrics.current_iv:.4f} ({metrics.current_iv * 100:.2f}%)"
+            )
             print(f"IV Rank: {metrics.iv_rank:.2f}/100")
             print(f"IV Percentile: {metrics.iv_percentile:.2f}%")
-            print(f"52-Week Range: {metrics.iv_52w_low:.4f} - {metrics.iv_52w_high:.4f}")
+            print(
+                f"52-Week Range: {metrics.iv_52w_low:.4f} - {metrics.iv_52w_high:.4f}"
+            )
             print(f"30-Day Average: {metrics.iv_30d_avg:.4f}")
             print(f"Data Source: {metrics.data_source}")
             print(f"Confidence: {metrics.confidence:.0%}")

@@ -2,34 +2,34 @@ name: Off-Market Backtesting
 
 on:
   schedule:
-    - cron: '0 23 * * 1-5'  # 6 PM ET weekdays
-    - cron: '0 13 * * 6'    # 8 AM ET Saturday
-    - cron: '0 13 * * 0'    # 8 AM ET Sunday
+    - cron: "0 23 * * 1-5" # 6 PM ET weekdays
+    - cron: "0 13 * * 6" # 8 AM ET Saturday
+    - cron: "0 13 * * 0" # 8 AM ET Sunday
   workflow_dispatch:
     inputs:
       days:
-        description: 'Days to backtest'
+        description: "Days to backtest"
         required: false
-        default: '30'
+        default: "30"
         type: string
       strategy:
-        description: 'Strategy to backtest'
+        description: "Strategy to backtest"
         required: false
-        default: 'iron_condor'
+        default: "iron_condor"
         type: choice
         options:
           - iron_condor
           - bull_put_spread
           - both
       parameter_sweep:
-        description: 'Run parameter optimization'
+        description: "Run parameter optimization"
         required: false
         default: false
         type: boolean
       max_combinations:
-        description: 'Max parameter combinations'
+        description: "Max parameter combinations"
         required: false
-        default: '25'
+        default: "25"
         type: string
 
 permissions:
@@ -40,7 +40,7 @@ env:
   ALPACA_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
   ALPACA_SECRET_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}
   GOOGLE_CLOUD_PROJECT: ${{ vars.GCP_PROJECT_ID || 'igor-trading-2025-v2' }}
-  PAPER_TRADING: 'true'
+  PAPER_TRADING: "true"
 
 jobs:
   verify-market-closed:
@@ -76,7 +76,7 @@ jobs:
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
           # Disabled cache to ensure fresh installs (alpaca-py import failures)
 
       - name: Install dependencies

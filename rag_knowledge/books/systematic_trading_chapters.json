@@ -35,7 +35,12 @@
       "chapter_num": 4,
       "title": "Portfolio Allocation",
       "pages": "65-95",
-      "topics": ["instrument_weights", "diversification", "correlation", "handcrafting"],
+      "topics": [
+        "instrument_weights",
+        "diversification",
+        "correlation",
+        "handcrafting"
+      ],
       "summary": "Portfolio weights should account for correlation. The 'handcrafting' method groups correlated assets, applies inverse-volatility within groups, then weights groups by diversification potential. This avoids optimized weights that overfit.",
       "key_points": [
         "Inverse volatility weighting: weight ∝ 1/volatility - gives equal risk contribution",
@@ -62,7 +67,12 @@
       "chapter_num": 6,
       "title": "Volatility Targeting",
       "pages": "120-150",
-      "topics": ["volatility_targeting", "position_sizing", "leverage", "risk_scaling"],
+      "topics": [
+        "volatility_targeting",
+        "position_sizing",
+        "leverage",
+        "risk_scaling"
+      ],
       "summary": "Position size should target a constant portfolio volatility (e.g., 15% annualized). When volatility is low, take larger positions; when high, reduce exposure. This prevents ruin and improves risk-adjusted returns significantly.",
       "key_points": [
         "CRITICAL: Without volatility targeting, you're taking random-sized bets - this DESTROYS Sharpe",
@@ -95,7 +105,11 @@
       "chapter_num": 7,
       "title": "Combining Forecasts",
       "pages": "151-180",
-      "topics": ["forecast_combination", "forecast_weights", "diversification_multiplier"],
+      "topics": [
+        "forecast_combination",
+        "forecast_weights",
+        "diversification_multiplier"
+      ],
       "summary": "Multiple trading rules should be combined with proper weights. Forecast weights should be based on Sharpe ratio estimates (bootstrapped) and correlation. Apply a forecast diversification multiplier to account for correlation between rules.",
       "key_points": [
         "Don't equally weight forecasts - weight by estimated Sharpe, but shrink toward equal weights",
@@ -122,7 +136,12 @@
       "chapter_num": 8,
       "title": "Position Sizing",
       "pages": "181-210",
-      "topics": ["kelly_criterion", "half_kelly", "position_limits", "capital_allocation"],
+      "topics": [
+        "kelly_criterion",
+        "half_kelly",
+        "position_limits",
+        "capital_allocation"
+      ],
       "summary": "Kelly criterion gives mathematically optimal position size for growth, but is too aggressive for real trading. Use half-Kelly or less. Position limits prevent blowups. Capital should be allocated across strategies by estimated risk-adjusted return.",
       "key_points": [
         "Kelly: f* = (p*W - (1-p)*L) / (W*L) where p=win rate, W=avg win, L=avg loss",
@@ -154,7 +173,12 @@
       "chapter_num": 10,
       "title": "Speed and Costs",
       "pages": "240-270",
-      "topics": ["transaction_costs", "turnover", "slippage", "optimal_holding_period"],
+      "topics": [
+        "transaction_costs",
+        "turnover",
+        "slippage",
+        "optimal_holding_period"
+      ],
       "summary": "Transaction costs eat returns. Optimal holding period depends on strategy Sharpe and costs. Faster strategies need much higher raw Sharpe to overcome costs. For retail, daily or weekly rebalancing is usually optimal.",
       "key_points": [
         "Total cost = commission + half spread + market impact + slippage",
@@ -181,7 +205,13 @@
       "chapter_num": 11,
       "title": "Evaluating Performance",
       "pages": "271-300",
-      "topics": ["sharpe_ratio", "sortino", "calmar", "drawdown", "statistical_significance"],
+      "topics": [
+        "sharpe_ratio",
+        "sortino",
+        "calmar",
+        "drawdown",
+        "statistical_significance"
+      ],
       "summary": "Sharpe ratio is the primary metric but must be annualized consistently and requires ~3 years of data for statistical significance. Drawdown metrics (Calmar, max drawdown) capture tail risk. Never trust a Sharpe from less than 2 years of live trading.",
       "key_points": [
         "Annualized Sharpe = daily_sharpe * sqrt(252) - but beware autocorrelation adjustment",

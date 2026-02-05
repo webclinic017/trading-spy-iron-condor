@@ -34,7 +34,12 @@
       "chapter_num": 3,
       "title": "Labeling",
       "pages": "43-60",
-      "topics": ["triple_barrier", "meta_labeling", "fixed_time_horizon", "labels"],
+      "topics": [
+        "triple_barrier",
+        "meta_labeling",
+        "fixed_time_horizon",
+        "labels"
+      ],
       "summary": "The triple-barrier method labels observations based on which of three barriers is touched first: upper horizontal (profit-take), lower horizontal (stop-loss), or vertical (max holding period). Meta-labeling uses a secondary model to size positions from a primary model's signals, dramatically improving Sharpe ratios.",
       "key_points": [
         "Fixed-time horizon labeling ignores path dependency - a trade that hits stop-loss then recovers is mislabeled as win",
@@ -61,7 +66,12 @@
       "chapter_num": 4,
       "title": "Sample Weights",
       "pages": "61-78",
-      "topics": ["sample_weights", "uniqueness", "sequential_bootstrap", "decay"],
+      "topics": [
+        "sample_weights",
+        "uniqueness",
+        "sequential_bootstrap",
+        "decay"
+      ],
       "summary": "Overlapping labels cause samples to be non-IID. Sequential bootstrap and sample uniqueness weights correct for this. Without proper weighting, backtests dramatically overfit because they reuse the same information multiple times.",
       "key_points": [
         "Labels that span overlapping periods share information - treating them as IID causes massive overfitting",
@@ -88,7 +98,12 @@
       "chapter_num": 5,
       "title": "Fractionally Differentiated Features",
       "pages": "79-96",
-      "topics": ["stationarity", "fractional_differentiation", "memory", "adf_test"],
+      "topics": [
+        "stationarity",
+        "fractional_differentiation",
+        "memory",
+        "adf_test"
+      ],
       "summary": "Price series are non-stationary (unit root) which breaks ML assumptions. Standard differencing (returns) loses all memory. Fractional differentiation with d<1 achieves stationarity while preserving memory - the sweet spot is the minimum d that passes ADF test.",
       "key_points": [
         "Non-stationary series violate OLS assumptions, causing spurious regression and overfitting",
@@ -169,7 +184,12 @@
       "chapter_num": 11,
       "title": "The Dangers of Backtesting",
       "pages": "169-186",
-      "topics": ["backtest_overfitting", "selection_bias", "multiple_testing", "deflated_sharpe"],
+      "topics": [
+        "backtest_overfitting",
+        "selection_bias",
+        "multiple_testing",
+        "deflated_sharpe"
+      ],
       "summary": "Most backtests are overfit due to selection bias (testing many strategies, reporting winners) and improper cross-validation. The Deflated Sharpe Ratio adjusts for the number of trials. The probability of backtest overfitting (PBO) should be reported for every strategy.",
       "key_points": [
         "CRITICAL: A Sharpe of 2.0 from 100 backtests is statistically worthless - expected by chance",

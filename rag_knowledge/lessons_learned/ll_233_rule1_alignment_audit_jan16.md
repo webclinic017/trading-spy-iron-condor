@@ -10,20 +10,20 @@
 
 ## Passes (What We're Doing Right)
 
-| Check | Status | Evidence |
-|-------|--------|----------|
-| Defined risk | PASS | All shorts have protective longs |
-| Stop-loss rule | PASS | 2x credit rule in CLAUDE.md |
-| Approved ticker | PASS | SPY only (no SOFI, no individuals) |
-| DTE range | PASS | Feb 20 expiry = 35 DTE (within 30-45) |
+| Check           | Status | Evidence                              |
+| --------------- | ------ | ------------------------------------- |
+| Defined risk    | PASS   | All shorts have protective longs      |
+| Stop-loss rule  | PASS   | 2x credit rule in CLAUDE.md           |
+| Approved ticker | PASS   | SPY only (no SOFI, no individuals)    |
+| DTE range       | PASS   | Feb 20 expiry = 35 DTE (within 30-45) |
 
 ## Violations (What Must Be Fixed)
 
-| Check | Rule | Actual | Violation |
-|-------|------|--------|-----------|
-| Spread width | $3-wide ($300 max risk) | $5-wide ($500 risk) | **2x over limit** |
-| Position count | 1 spread at a time | 3 spreads open | **3x over limit** |
-| Position pairing | All legs paired | 4 longs, 3 shorts | **Orphan put** |
+| Check            | Rule                    | Actual              | Violation         |
+| ---------------- | ----------------------- | ------------------- | ----------------- |
+| Spread width     | $3-wide ($300 max risk) | $5-wide ($500 risk) | **2x over limit** |
+| Position count   | 1 spread at a time      | 3 spreads open      | **3x over limit** |
+| Position pairing | All legs paired         | 4 longs, 3 shorts   | **Orphan put**    |
 
 ## Root Cause Analysis
 
@@ -37,6 +37,7 @@
 ### The Psychology
 
 This is classic **revenge trading** behavior:
+
 - Lost money on SOFI
 - Felt pressure to recover
 - Opened too many positions
@@ -61,13 +62,13 @@ Phil Town explicitly warns against this.
 
 ## Math Validation
 
-| Metric | Current | Correct |
-|--------|---------|---------|
-| Account | $4,974.08 | $4,974.08 |
-| 5% max risk | $248.70 | $248.70 |
-| Spread width | $5 ($500 risk) | $3 ($300 risk) |
-| Position count | 3 | 1 |
-| Total exposure | $1,500 (30%) | $300 (6%) |
+| Metric         | Current        | Correct        |
+| -------------- | -------------- | -------------- |
+| Account        | $4,974.08      | $4,974.08      |
+| 5% max risk    | $248.70        | $248.70        |
+| Spread width   | $5 ($500 risk) | $3 ($300 risk) |
+| Position count | 3              | 1              |
+| Total exposure | $1,500 (30%)   | $300 (6%)      |
 
 ## Key Lesson
 
@@ -80,6 +81,7 @@ Rule #1 isn't just about the math - it's about the discipline to follow the rule
 ## Prevention
 
 Add to pre-trade checklist:
+
 - [ ] Is this revenge trading? (Emotionally motivated?)
 - [ ] Have I waited 24 hours after a loss?
 - [ ] Am I following position limits or making excuses?

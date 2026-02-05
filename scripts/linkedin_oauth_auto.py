@@ -30,7 +30,14 @@ try:
 except ImportError:
     print("📦 Installing playwright...")
     subprocess.run(
-        [sys.executable, "-m", "pip", "install", "playwright", "--break-system-packages"],
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "playwright",
+            "--break-system-packages",
+        ],
         check=True,
     )
     subprocess.run(["playwright", "install", "chromium"], check=True)
@@ -219,7 +226,9 @@ def save_credentials(token_data: dict, user_info: dict | None):
     if not env_content.endswith("\n"):
         env_content += "\n"
 
-    env_content += f"\n# LinkedIn OAuth Token (Generated {time.strftime('%Y-%m-%d %H:%M:%S')})\n"
+    env_content += (
+        f"\n# LinkedIn OAuth Token (Generated {time.strftime('%Y-%m-%d %H:%M:%S')})\n"
+    )
     env_content += f"LINKEDIN_ACCESS_TOKEN={access_token}\n"
     env_content += f"LINKEDIN_PERSON_URN={person_urn}\n"
 

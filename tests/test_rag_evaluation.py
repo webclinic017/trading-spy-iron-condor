@@ -84,19 +84,31 @@ class TestRAGRetrievalAccuracy:
                 continue
 
             response_text = " ".join(r.get("text", "") for r in response).lower()
-            found_keywords = [kw for kw in expected_keywords if kw.lower() in response_text]
+            found_keywords = [
+                kw for kw in expected_keywords if kw.lower() in response_text
+            ]
 
-            coverage = len(found_keywords) / len(expected_keywords) if expected_keywords else 1.0
+            coverage = (
+                len(found_keywords) / len(expected_keywords)
+                if expected_keywords
+                else 1.0
+            )
 
             if coverage >= 0.5:  # At least 50% keyword coverage
                 passed += 1
-                results.append({"id": case["id"], "status": "passed", "coverage": coverage})
+                results.append(
+                    {"id": case["id"], "status": "passed", "coverage": coverage}
+                )
             else:
                 failed += 1
-                results.append({"id": case["id"], "status": "failed", "coverage": coverage})
+                results.append(
+                    {"id": case["id"], "status": "failed", "coverage": coverage}
+                )
 
         precision = passed / (passed + failed) if (passed + failed) > 0 else 0
-        assert precision >= 0.6, f"Retrieval precision too low: {precision:.2%}. Results: {results}"
+        assert (
+            precision >= 0.6
+        ), f"Retrieval precision too low: {precision:.2%}. Results: {results}"
 
 
 class TestRAGGrounding:
@@ -127,9 +139,9 @@ class TestRAGGrounding:
         strategy_terms = ["spy", "iron condor", "delta", "option", "spread"]
         found_terms = sum(1 for term in strategy_terms if term in response_text)
 
-        assert found_terms >= 2, (
-            f"Response lacks grounding in strategy docs. Found terms: {found_terms}"
-        )
+        assert (
+            found_terms >= 2
+        ), f"Response lacks grounding in strategy docs. Found terms: {found_terms}"
 
 
 class TestRAGContextLeakage:
@@ -168,9 +180,9 @@ class TestRAGContextLeakage:
             response_text = " ".join(r.get("text", "") for r in response)
 
             for pattern in forbidden_patterns:
-                assert pattern not in response_text, (
-                    f"Context leakage detected! Pattern '{pattern}' found in response to: {query}"
-                )
+                assert (
+                    pattern not in response_text
+                ), f"Context leakage detected! Pattern '{pattern}' found in response to: {query}"
 
 
 class TestLocalRAGFallback:
@@ -265,7 +277,9 @@ class TestRAGASIntegration:
 
             assert ragas is not None
         except ImportError:
-            pytest.skip("RAGAS not installed - add to requirements.txt and run pip install")
+            pytest.skip(
+                "RAGAS not installed - add to requirements.txt and run pip install"
+            )
 
     @pytest.mark.skip(reason="RAGAS requires LangChain and OpenAI setup - run manually")
     def test_ragas_faithfulness_metric(self):
@@ -282,10 +296,10 @@ class TestRAGEvaluatorModule:
     def test_evaluator_imports(self):
         """Evaluation module should be importable."""
         from src.rag.evaluation import (
-            RAGEvaluator,
             EvaluationQuery,
             EvaluationReport,
             QueryResult,
+            RAGEvaluator,
             get_evaluator,
         )
 

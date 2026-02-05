@@ -24,13 +24,13 @@ URL: https://youtu.be/WNx-s-RxVxk
 
 ## How We Already Implement This
 
-| Video Concept | Our Implementation |
-|---------------|-------------------|
-| Plan Mode | TodoWrite + research phase before coding |
-| Sub-agents | Task tool with subagent_type=Explore + model=haiku |
-| Iterative loop | TodoWrite → Code → pytest → commit |
-| Concise output | CLAUDE.md directives |
-| Clarifying questions | AskUserQuestion tool |
+| Video Concept        | Our Implementation                                 |
+| -------------------- | -------------------------------------------------- |
+| Plan Mode            | TodoWrite + research phase before coding           |
+| Sub-agents           | Task tool with subagent_type=Explore + model=haiku |
+| Iterative loop       | TodoWrite → Code → pytest → commit                 |
+| Concise output       | CLAUDE.md directives                               |
+| Clarifying questions | AskUserQuestion tool                               |
 
 ## Why No Action Needed
 

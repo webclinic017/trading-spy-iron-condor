@@ -8,6 +8,7 @@ Tests the Phil Town Rule #1 investment strategy including:
 
 from dataclasses import dataclass
 from unittest.mock import MagicMock
+
 import pytest
 
 # Skip if numpy is not available (rule_one_options requires it)

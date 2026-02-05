@@ -3,11 +3,13 @@
 Start an autonomous Ralph Wiggum loop that iterates on a task until completion.
 
 ## Usage
+
 ```
 /ralph-loop "<your task prompt>" --max-iterations <n> --completion-promise "<text>"
 ```
 
 ## Arguments
+
 - `prompt` (required): The task to iterate on
 - `--max-iterations` (optional): Maximum iterations before stopping (default: 50)
 - `--completion-promise` (optional): Text that signals completion (default: "COMPLETE")
@@ -22,6 +24,7 @@ When this command is invoked:
    - Extract --completion-promise value (default: "COMPLETE")
 
 2. **Initialize Ralph state** by creating `.claude/ralph_state.json`:
+
 ```json
 {
   "active": true,

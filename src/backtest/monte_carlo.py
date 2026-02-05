@@ -80,7 +80,10 @@ class MonteCarloResults:
         """
         # Must have >50% probability of profit
         if self.probability_of_profit < 0.50:
-            return False, f"Probability of profit {self.probability_of_profit:.1%} < 50%"
+            return (
+                False,
+                f"Probability of profit {self.probability_of_profit:.1%} < 50%",
+            )
 
         # 5th percentile should not be catastrophic (< -25% of trades)
         if self.ci_5 < -self.n_trades_per_sim * 50:  # Assuming $50 max loss per trade
@@ -304,7 +307,26 @@ def stress_test_strategy(
 # CLI for testing
 if __name__ == "__main__":
     # Example usage with sample data
-    sample_pnls = [40, 40, 40, -80, 60, 40, 40, -120, 40, 40, 80, 40, -40, 60, 40, 40, 40, 40]
+    sample_pnls = [
+        40,
+        40,
+        40,
+        -80,
+        60,
+        40,
+        40,
+        -120,
+        40,
+        40,
+        80,
+        40,
+        -40,
+        60,
+        40,
+        40,
+        40,
+        40,
+    ]
 
     print("Running Monte Carlo simulation...")
     results = run_monte_carlo(sample_pnls, n_simulations=10000, random_seed=42)

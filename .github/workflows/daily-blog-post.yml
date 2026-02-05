@@ -3,13 +3,13 @@ name: Daily Revenue Blog Post
 on:
   # Run at 5:00 PM ET (22:00 UTC) every weekday after market close
   schedule:
-    - cron: '0 22 * * 1-5'
+    - cron: "0 22 * * 1-5"
 
   # Manual trigger
   workflow_dispatch:
     inputs:
       date:
-        description: 'Report date (YYYY-MM-DD, leave empty for today)'
+        description: "Report date (YYYY-MM-DD, leave empty for today)"
         required: false
         type: string
 
@@ -62,7 +62,7 @@ jobs:
         if: steps.market_check.outputs.skip != 'true'
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         if: steps.market_check.outputs.skip != 'true'

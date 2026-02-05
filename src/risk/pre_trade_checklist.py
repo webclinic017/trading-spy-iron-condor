@@ -98,7 +98,9 @@ class PreTradeChecklist:
 
         # 2. Position size check
         if max_loss > self.max_risk:
-            failures.append(f"Max loss ${max_loss:.2f} exceeds 5% limit (${self.max_risk:.2f})")
+            failures.append(
+                f"Max loss ${max_loss:.2f} exceeds 5% limit (${self.max_risk:.2f})"
+            )
 
         # 3. Spread check
         if not is_spread:
@@ -111,7 +113,9 @@ class PreTradeChecklist:
             start = datetime.strptime(blackout["start"], "%Y-%m-%d").date()
             end = datetime.strptime(blackout["end"], "%Y-%m-%d").date()
             if start <= today <= end:
-                failures.append(f"{underlying} in earnings blackout until {blackout['end']}")
+                failures.append(
+                    f"{underlying} in earnings blackout until {blackout['end']}"
+                )
 
         # 5. DTE check
         if not (self.MIN_DTE <= dte <= self.MAX_DTE):
@@ -222,7 +226,9 @@ class PreTradeChecklist:
             end = datetime.strptime(blackout["end"], "%Y-%m-%d").date()
             if start <= today <= end:
                 status["earnings_blackout"]["passed"] = False
-                status["earnings_blackout"]["value"] = f"Blackout until {blackout['end']}"
+                status["earnings_blackout"][
+                    "value"
+                ] = f"Blackout until {blackout['end']}"
 
         return status
 

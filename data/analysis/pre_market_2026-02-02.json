@@ -94,14 +94,8 @@
                 "strength": 1.0
               }
             ],
-            "optimal_put_zone": [
-              560.71,
-              567.2
-            ],
-            "optimal_call_zone": [
-              609.65,
-              628.68
-            ],
+            "optimal_put_zone": [560.71, 567.2],
+            "optimal_call_zone": [609.65, 628.68],
             "current_price": 582.93
           }
         }

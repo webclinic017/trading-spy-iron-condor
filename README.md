@@ -25,11 +25,13 @@
 ## Why This Project?
 
 Most trading bots fail because they:
+
 - Chase complex strategies that don't work
 - Ignore risk management
 - Don't learn from mistakes
 
 **This system is different:**
+
 - **Radically simplified** - Deleted 90% of bloat, kept what works
 - **Thompson Sampling** - Mathematically optimal strategy selection (~80 lines)
 - **SQLite trade memory** - Query past trades before new ones (~150 lines)
@@ -39,15 +41,15 @@ Most trading bots fail because they:
 
 ## Current Performance (Day 72/90 - Jan 8, 2026)
 
-| Account | Equity | P/L | Status |
-|---------|--------|-----|--------|
-| Live | $30.00 | $0.00 | Accumulating $25/day |
+| Account     | Equity    | P/L   | Status                    |
+| ----------- | --------- | ----- | ------------------------- |
+| Live        | $30.00    | $0.00 | Accumulating $25/day      |
 | Paper (R&D) | $5,000.00 | $0.00 | FRESH START (reset Jan 7) |
 
-| Metric | Value | Target |
-|--------|-------|--------|
-| Win Rate | N/A | 55%+ |
-| Positions | 0 | - |
+| Metric        | Value | Target    |
+| ------------- | ----- | --------- |
+| Win Rate      | N/A   | 55%+      |
+| Positions     | 0     | -         |
 | Backtest Pass | 19/13 | Scenarios |
 
 **Honest Assessment**: Live trading started Jan 3, 2026 with fresh $20 deposit. Accumulating $25/day for defined-risk options spreads ($500 minimum for CSPs). Paper account was RESET to $5,000 on Jan 7, 2026 by CEO to match realistic 6-month capital milestone. Previous $100K+ paper results were unrealistic for actual capital trajectory.
@@ -127,25 +129,27 @@ python3 scripts/daily_verification.py
 
 ### Key Components
 
-| Component | Purpose | Location |
-|-----------|---------|----------|
-| **Orchestrator** | Main trading logic | `src/orchestrator/main.py` |
-| **Thompson Sampler** | Strategy selection | `src/learning/thompson_sampler.py` |
-| **Trade Memory** | SQLite journal | `src/learning/trade_memory.py` |
-| **Risk Manager** | Position sizing | `src/risk/` |
-| **Daily Verification** | Honest reporting | `scripts/daily_verification.py` |
+| Component              | Purpose            | Location                           |
+| ---------------------- | ------------------ | ---------------------------------- |
+| **Orchestrator**       | Main trading logic | `src/orchestrator/main.py`         |
+| **Thompson Sampler**   | Strategy selection | `src/learning/thompson_sampler.py` |
+| **Trade Memory**       | SQLite journal     | `src/learning/trade_memory.py`     |
+| **Risk Manager**       | Position sizing    | `src/risk/`                        |
+| **Daily Verification** | Honest reporting   | `scripts/daily_verification.py`    |
 
 ---
 
 ## Learning System
 
 ### Thompson Sampling (replaces complex RL)
+
 - Beta distribution for each strategy
 - Sample to select best strategy
 - Update based on win/loss outcomes
 - Proven optimal for <100 decisions
 
 ### Trade Memory (replaces RAG)
+
 - SQLite database of past trades
 - Query BEFORE each new trade
 - Pattern recognition: "This setup has 30% win rate - AVOID"
@@ -157,29 +161,30 @@ python3 scripts/daily_verification.py
 
 **This is NOT financial advice. Paper trade first!**
 
-| Safeguard | Description |
-|-----------|-------------|
-| **Position Limits** | Max 5% per position |
-| **Daily Loss Limit** | 2% max daily loss |
+| Safeguard            | Description                       |
+| -------------------- | --------------------------------- |
+| **Position Limits**  | Max 5% per position               |
+| **Daily Loss Limit** | 2% max daily loss                 |
 | **Circuit Breakers** | Auto-halt on 3 consecutive losses |
-| **Paper Mode** | 90-day validation before live |
+| **Paper Mode**       | 90-day validation before live     |
 
 ---
 
 ## Follow Our Journey
 
-| Platform | Link | Description |
-|----------|------|-------------|
+| Platform              | Link                                                                          | Description                            |
+| --------------------- | ----------------------------------------------------------------------------- | -------------------------------------- |
 | **GitHub Pages Blog** | [igorganapolsky.github.io/trading](https://igorganapolsky.github.io/trading/) | Daily trading reports, lessons learned |
-| **Dev.to** | [@igorganapolsky](https://dev.to/igorganapolsky) | AI trading insights, tutorials |
-| **Daily Reports** | [/reports/](https://igorganapolsky.github.io/trading/reports/) | Transparent P/L tracking |
-| **Lessons Learned** | [/lessons/](https://igorganapolsky.github.io/trading/lessons/) | 101+ documented lessons |
+| **Dev.to**            | [@igorganapolsky](https://dev.to/igorganapolsky)                              | AI trading insights, tutorials         |
+| **Daily Reports**     | [/reports/](https://igorganapolsky.github.io/trading/reports/)                | Transparent P/L tracking               |
+| **Lessons Learned**   | [/lessons/](https://igorganapolsky.github.io/trading/lessons/)                | 101+ documented lessons                |
 
 ---
 
 ## For AI Agents & LLMs
 
 This repo is optimized for AI agent collaboration:
+
 - Quick context: `.claude/CLAUDE.md`
 - Rules: `.claude/rules/MANDATORY_RULES.md`
 - RAG knowledge base: `rag_knowledge/`

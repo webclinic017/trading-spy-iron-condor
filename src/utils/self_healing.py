@@ -45,7 +45,9 @@ def save_state(state: dict[str, Any]) -> None:
         logger.error(f"Failed to save state: {e}")
 
 
-def with_retry(max_attempts: int = 3, backoff: float = 1.0, exceptions: tuple = (Exception,)):
+def with_retry(
+    max_attempts: int = 3, backoff: float = 1.0, exceptions: tuple = (Exception,)
+):
     """
     Decorator for automatic retry with exponential backoff.
 
@@ -95,7 +97,9 @@ def with_retry(max_attempts: int = 3, backoff: float = 1.0, exceptions: tuple = 
                         logger.info(f"Retrying in {delay:.1f}s...")
                         time.sleep(delay)
                     else:
-                        logger.error(f"All {max_attempts} attempts failed for {func.__name__}")
+                        logger.error(
+                            f"All {max_attempts} attempts failed for {func.__name__}"
+                        )
                         raise last_exception
 
             return None
@@ -191,7 +195,9 @@ def health_check(threshold: int = 5, window_seconds: int = 3600) -> bool:
 
     # Count recent errors within the time window
     recent_errors = [
-        e for e in state.get("errors", []) if current_time - e.get("ts", 0) < window_seconds
+        e
+        for e in state.get("errors", [])
+        if current_time - e.get("ts", 0) < window_seconds
     ]
 
     if len(recent_errors) >= threshold:

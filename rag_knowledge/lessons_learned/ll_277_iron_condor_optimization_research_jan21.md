@@ -5,15 +5,16 @@
 **Severity**: HIGH
 
 ## Source
+
 - [Options Trading IQ: Iron Condor Success Rate](https://optionstradingiq.com/iron-condor-success-rate/)
 - [Project Finance: Iron Condor Management (71,417 trades)](https://www.projectfinance.com/iron-condor-management/)
 
 ## Key Finding: Delta Selection Is CRITICAL
 
 | Short Strike Delta | Win Rate |
-|-------------------|----------|
-| **10-15 delta** | **86%** |
-| 30 delta | 34% |
+| ------------------ | -------- |
+| **10-15 delta**    | **86%**  |
+| 30 delta           | 34%      |
 
 **Our current strategy uses 15-20 delta. This research validates our approach.**
 
@@ -25,6 +26,7 @@
 4. **Stop losses**: 2x premium received as max loss threshold
 
 ## Trade Statistics (Backtest)
+
 - Average win: $460
 - Average loss: $677
 - Win rate: 86%
@@ -32,17 +34,19 @@
 
 ## Recommendation Updates for CLAUDE.md
 
-| Current Rule | Recommended Change |
-|--------------|-------------------|
-| Close at 21 DTE | Close at **7 DTE** (tighter) |
-| 15-20 delta short | Keep 15 delta (validated) |
-| 50% profit target | ✅ Correct |
-| 200% stop-loss | Consider 2x credit (~200%) ✅ |
+| Current Rule      | Recommended Change            |
+| ----------------- | ----------------------------- |
+| Close at 21 DTE   | Close at **7 DTE** (tighter)  |
+| 15-20 delta short | Keep 15 delta (validated)     |
+| 50% profit target | ✅ Correct                    |
+| 200% stop-loss    | Consider 2x credit (~200%) ✅ |
 
 ## Action Items
+
 - [x] Record this lesson
 - [ ] Consider updating DTE exit from 21 to 7-14 days
 - [ ] Validate with paper trades before changing
 
 ## Prevention
+
 Always research best practices before finalizing strategy parameters.

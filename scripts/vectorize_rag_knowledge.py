@@ -20,7 +20,9 @@ import logging
 from datetime import datetime
 from pathlib import Path
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 # Paths
@@ -197,7 +199,9 @@ def index_all(rebuild: bool = False) -> dict:
     return stats
 
 
-def query_rag(query: str, n_results: int = 5, filter_options: bool = False) -> list[dict]:
+def query_rag(
+    query: str, n_results: int = 5, filter_options: bool = False
+) -> list[dict]:
     """Query the Phil Town knowledge base using keyword search."""
     try:
         from src.rag.lessons_search import LessonsSearch
@@ -210,14 +214,19 @@ def query_rag(query: str, n_results: int = 5, filter_options: bool = False) -> l
             # Filter options content if requested
             if filter_options:
                 content_lower = lesson.snippet.lower()
-                if not any(term in content_lower for term in ["put", "call", "option", "premium"]):
+                if not any(
+                    term in content_lower
+                    for term in ["put", "call", "option", "premium"]
+                ):
                     continue
 
             formatted.append(
                 {
-                    "content": lesson.snippet[:500] + "..."
-                    if len(lesson.snippet) > 500
-                    else lesson.snippet,
+                    "content": (
+                        lesson.snippet[:500] + "..."
+                        if len(lesson.snippet) > 500
+                        else lesson.snippet
+                    ),
                     "source": lesson.id,
                     "type": "lesson_learned",
                     "concepts": [],
@@ -233,10 +242,16 @@ def query_rag(query: str, n_results: int = 5, filter_options: bool = False) -> l
 
 def main():
     parser = argparse.ArgumentParser(description="Phil Town RAG Indexing")
-    parser.add_argument("--rebuild", action="store_true", help="Full rebuild of local index")
-    parser.add_argument("--update", action="store_true", help="Update with new content only")
+    parser.add_argument(
+        "--rebuild", action="store_true", help="Full rebuild of local index"
+    )
+    parser.add_argument(
+        "--update", action="store_true", help="Update with new content only"
+    )
     parser.add_argument("--query", type=str, help="Query the RAG")
-    parser.add_argument("--options-only", action="store_true", help="Filter to options content")
+    parser.add_argument(
+        "--options-only", action="store_true", help="Filter to options content"
+    )
     parser.add_argument("--stats", action="store_true", help="Show indexing stats")
     args = parser.parse_args()
 

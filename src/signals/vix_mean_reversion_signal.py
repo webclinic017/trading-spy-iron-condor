@@ -211,7 +211,11 @@ class VIXMeanReversionSignal:
 
         # NEUTRAL: VIX elevated but not dropping (wait for better entry)
         if current_vix > self.VIX_OPTIMAL_MAX:
-            return ("NEUTRAL", f"VIX {current_vix:.1f} elevated - wait for mean reversion", 0.3)
+            return (
+                "NEUTRAL",
+                f"VIX {current_vix:.1f} elevated - wait for mean reversion",
+                0.3,
+            )
 
         # Default: NEUTRAL
         return ("NEUTRAL", f"VIX {current_vix:.1f} - no clear signal", 0.5)

@@ -23,6 +23,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from alpaca.trading.enums import OrderSide, TimeInForce
 from alpaca.trading.requests import MarketOrderRequest
+
 from src.core.alpaca_trader import AlpacaTrader
 
 logging.basicConfig(
@@ -39,7 +40,9 @@ def get_option_positions(trader) -> list:
     positions = trader.trading_client.get_all_positions()
 
     # Filter for SPY options only (symbol length > 5 for options)
-    option_positions = [p for p in positions if p.symbol.startswith("SPY") and len(p.symbol) > 5]
+    option_positions = [
+        p for p in positions if p.symbol.startswith("SPY") and len(p.symbol) > 5
+    ]
 
     return option_positions
 
@@ -123,7 +126,9 @@ def main():
 
     # Check if we're over the limit
     if len(option_positions) <= MAX_POSITIONS:
-        logger.info(f"✅ Position count ({len(option_positions)}) within limit ({MAX_POSITIONS})")
+        logger.info(
+            f"✅ Position count ({len(option_positions)}) within limit ({MAX_POSITIONS})"
+        )
         logger.info("No action needed.")
         return 0
 

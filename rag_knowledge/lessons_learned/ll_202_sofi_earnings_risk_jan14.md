@@ -12,20 +12,21 @@ Short puts on SOFI (strike $24, exp Feb 6) held through earnings date (Jan 30).
 ## Violation
 
 CLAUDE.md clearly states:
+
 > "SOFI | **AVOID until Feb 1** | Jan 23-30 (earnings Jan 30, IV 55%)"
 
 Position was opened despite this directive.
 
 ## Risk Analysis
 
-| Factor | Status |
-|--------|--------|
-| Position | -2 SOFI260206P00024000 |
-| Strike | $24.00 |
-| Expiration | Feb 6, 2026 (AFTER earnings) |
-| Buying Power | $16.34 |
-| Assignment Cost | $4,800 |
-| **CAN COVER?** | **NO** |
+| Factor          | Status                       |
+| --------------- | ---------------------------- |
+| Position        | -2 SOFI260206P00024000       |
+| Strike          | $24.00                       |
+| Expiration      | Feb 6, 2026 (AFTER earnings) |
+| Buying Power    | $16.34                       |
+| Assignment Cost | $4,800                       |
+| **CAN COVER?**  | **NO**                       |
 
 ## Potential Outcomes
 

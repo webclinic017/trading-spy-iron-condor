@@ -87,6 +87,7 @@ if RATE_LIMITING_ENABLED:
     def rate_limit(limit_string: str):
         """Apply rate limit decorator when slowapi is available."""
         return limiter.limit(limit_string)
+
 else:
     limiter = None
     logger.warning("Rate limiting DISABLED (slowapi not installed)")
@@ -126,7 +127,9 @@ if VERTEX_RAG_AVAILABLE:
         logger.warning(vertex_rag_init_error)
         vertex_rag = None
 else:
-    vertex_rag_init_error = "VERTEX_RAG_AVAILABLE=False - vertexai package import failed"
+    vertex_rag_init_error = (
+        "VERTEX_RAG_AVAILABLE=False - vertexai package import failed"
+    )
 
 # Local RAG as fallback
 local_rag = LessonsLearnedRAG()
@@ -262,9 +265,7 @@ def query_alpaca_api_direct() -> dict | None:
 
             today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
-        activities_url = (
-            f"https://paper-api.alpaca.markets/v2/account/activities/FILL?date={today_str}"
-        )
+        activities_url = f"https://paper-api.alpaca.markets/v2/account/activities/FILL?date={today_str}"
         req = urllib.request.Request(
             activities_url,
             headers={
@@ -358,7 +359,9 @@ def get_current_portfolio_status() -> dict:
                 "win_rate": 0,  # Not tracked via API
                 "daily_change": alpaca_data["daily_change"],
             },
-            "last_trade_date": today_str if alpaca_data["trades_today"] > 0 else "unknown",
+            "last_trade_date": (
+                today_str if alpaca_data["trades_today"] > 0 else "unknown"
+            ),
             "trades_today": alpaca_data["trades_today"],
             "actual_today": today_str,
             # FIX Jan 16, 2026: Calculate challenge day from start date (Oct 30, 2025)
@@ -398,7 +401,9 @@ def get_current_portfolio_status() -> dict:
             )
             # Security: Use verified SSL context (fixes MitM vulnerability)
             ssl_context = ssl.create_default_context()
-            with urllib.request.urlopen(req, timeout=5, context=ssl_context) as response:
+            with urllib.request.urlopen(
+                req, timeout=5, context=ssl_context
+            ) as response:
                 api_response = json.loads(response.read().decode("utf-8"))
                 # GitHub API returns base64-encoded content
                 content_b64 = api_response.get("content", "")
@@ -493,7 +498,10 @@ def check_ci_status() -> dict:
         url = "https://api.github.com/repos/IgorGanapolsky/trading/actions/runs?branch=main&per_page=10"
         req = urllib.request.Request(
             url,
-            headers={"Accept": "application/vnd.github.v3+json", "User-Agent": "TradingBot/1.0"},
+            headers={
+                "Accept": "application/vnd.github.v3+json",
+                "User-Agent": "TradingBot/1.0",
+            },
         )
         ssl_context = ssl.create_default_context()
 
@@ -711,7 +719,10 @@ def is_trade_query(query: str) -> bool:
     ]
     query_lower = query.lower()
     # Use word boundary matching to avoid "learned" matching "earn"
-    return any(re.search(rf"\b{re.escape(keyword)}\b", query_lower) for keyword in trade_keywords)
+    return any(
+        re.search(rf"\b{re.escape(keyword)}\b", query_lower)
+        for keyword in trade_keywords
+    )
 
 
 def assess_trading_readiness(
@@ -783,7 +794,9 @@ def assess_trading_readiness(
             checks.append("Market opens tomorrow at 9:30 AM ET")
             score += 20
         else:
-            blockers.append(f"Market CLOSED - After hours ({now_et.strftime('%I:%M %p')} ET)")
+            blockers.append(
+                f"Market CLOSED - After hours ({now_et.strftime('%I:%M %p')} ET)"
+            )
     else:
         checks.append(f"Market OPEN ({now_et.strftime('%I:%M %p')} ET)")
         score += 20
@@ -820,7 +833,9 @@ def assess_trading_readiness(
             )
             # Security: Use verified SSL context (fixes MitM vulnerability)
             ssl_context = ssl.create_default_context()
-            with urllib.request.urlopen(req, timeout=5, context=ssl_context) as response:
+            with urllib.request.urlopen(
+                req, timeout=5, context=ssl_context
+            ) as response:
                 api_response = json.loads(response.read().decode("utf-8"))
                 # GitHub API returns base64-encoded content
                 content_b64 = api_response.get("content", "")
@@ -829,14 +844,18 @@ def assess_trading_readiness(
             checks.append("System state loaded (GitHub API)")
             score += 10
         except Exception as e:
-            warnings.append(f"System state not found (local or GitHub API): {str(e)[:30]}")
+            warnings.append(
+                f"System state not found (local or GitHub API): {str(e)[:30]}"
+            )
 
     # Check state freshness
     if state:
         last_updated = state.get("meta", {}).get("last_updated", "")
         if last_updated:
             try:
-                update_time = datetime.fromisoformat(last_updated.replace("Z", "+00:00"))
+                update_time = datetime.fromisoformat(
+                    last_updated.replace("Z", "+00:00")
+                )
                 hours_old = (
                     datetime.now(update_time.tzinfo or None) - update_time
                 ).total_seconds() / 3600
@@ -844,10 +863,14 @@ def assess_trading_readiness(
                     checks.append(f"State fresh ({hours_old:.1f}h old)")
                     score += 10
                 elif hours_old < 4:
-                    warnings.append(f"State aging ({hours_old:.1f}h old) - consider refreshing")
+                    warnings.append(
+                        f"State aging ({hours_old:.1f}h old) - consider refreshing"
+                    )
                     score += 5
                 else:
-                    warnings.append(f"State STALE ({hours_old:.1f}h old) - data may be outdated")
+                    warnings.append(
+                        f"State STALE ({hours_old:.1f}h old) - data may be outdated"
+                    )
             except Exception as e:
                 logger.debug(f"State freshness check failed: {e}")
                 warnings.append("Could not verify state freshness")
@@ -859,9 +882,9 @@ def assess_trading_readiness(
         paper_equity = state.get("paper_account", {}).get("equity", 0) or state.get(
             "paper_account", {}
         ).get("cash", 0)
-        live_equity = state.get("account", {}).get("equity", 0) or state.get("account", {}).get(
-            "cash", 0
-        )
+        live_equity = state.get("account", {}).get("equity", 0) or state.get(
+            "account", {}
+        ).get("cash", 0)
 
         if is_paper:
             # Paper trading mode - realistic thresholds for $5K paper account (CEO reset Jan 7, 2026)
@@ -873,7 +896,9 @@ def assess_trading_readiness(
                 warnings.append(f"Paper equity moderate: ${paper_equity:,.2f}")
                 score += 10
             elif paper_equity > 0:
-                warnings.append(f"Paper equity low: ${paper_equity:,.2f} (building track record)")
+                warnings.append(
+                    f"Paper equity low: ${paper_equity:,.2f} (building track record)"
+                )
                 score += 5
             else:
                 blockers.append(f"Paper equity zero: ${paper_equity:,.2f}")
@@ -934,12 +959,16 @@ def assess_trading_readiness(
             checks.append(f"Win rate strong: {win_rate:.0f}% ({sample_size} trades)")
             score += 20
         elif win_rate >= 50:
-            warnings.append(f"Win rate marginal: {win_rate:.0f}% ({sample_size} trades)")
+            warnings.append(
+                f"Win rate marginal: {win_rate:.0f}% ({sample_size} trades)"
+            )
             score += 10
         else:
             # Only block if we have enough trades to be meaningful
             if sample_size >= 10:
-                blockers.append(f"Win rate poor: {win_rate:.0f}% ({sample_size} trades)")
+                blockers.append(
+                    f"Win rate poor: {win_rate:.0f}% ({sample_size} trades)"
+                )
             else:
                 warnings.append(
                     f"Win rate {win_rate:.0f}% (only {sample_size} trades - need more data)"
@@ -954,7 +983,9 @@ def assess_trading_readiness(
         score += 10  # Partial credit - we tried
     elif ci_status["is_passing"]:
         if ci_status["running_workflows"]:
-            checks.append(f"CI passing ({len(ci_status['running_workflows'])} workflows running)")
+            checks.append(
+                f"CI passing ({len(ci_status['running_workflows'])} workflows running)"
+            )
         else:
             checks.append("CI passing (all workflows green)")
         score += 20
@@ -1023,9 +1054,15 @@ def assess_trading_readiness(
                         diagnosis.append(
                             "  • Market hours: Trades only execute 9:35 AM ET on trading days"
                         )
-                        diagnosis.append("  • Bug in trading logic: Check simple_daily_trader.py")
-                        diagnosis.append("  • Alpaca API: Check GitHub Actions logs for API errors")
-                        diagnosis.append("**Action:** Monitor next 9:35 AM ET workflow run")
+                        diagnosis.append(
+                            "  • Bug in trading logic: Check simple_daily_trader.py"
+                        )
+                        diagnosis.append(
+                            "  • Alpaca API: Check GitHub Actions logs for API errors"
+                        )
+                        diagnosis.append(
+                            "**Action:** Monitor next 9:35 AM ET workflow run"
+                        )
 
                         blockers.append("\n".join(diagnosis))
             except Exception as e:
@@ -1112,7 +1149,9 @@ def format_readiness_response(assessment: dict) -> str:
 
     # Add actionable recommendation
     if status == "NOT_READY":
-        response_parts.append("📌 **Recommendation:** Do NOT trade until blockers are resolved.")
+        response_parts.append(
+            "📌 **Recommendation:** Do NOT trade until blockers are resolved."
+        )
     elif status == "CAUTION":
         response_parts.append(
             "📌 **Recommendation:** Proceed with reduced position sizes. Monitor closely."
@@ -1232,7 +1271,11 @@ def query_trades(query: str, limit: int = 10) -> list[dict]:
                 # FIX Jan 22, 2026: Add timestamp and source fields
                 # Note: system_state.json trades are order FILLS, not matched trades
                 # They don't have P/L data - that would require matching buy/sell pairs
-                filled_at = str(trade.get("filled_at", ""))[:10] if trade.get("filled_at") else ""
+                filled_at = (
+                    str(trade.get("filled_at", ""))[:10]
+                    if trade.get("filled_at")
+                    else ""
+                )
                 trades.append(
                     {
                         "document": document,
@@ -1248,7 +1291,9 @@ def query_trades(query: str, limit: int = 10) -> list[dict]:
                     }
                 )
             if trades:
-                logger.info(f"Loaded {len(trades)} trades from system_state.json (Alpaca fills)")
+                logger.info(
+                    f"Loaded {len(trades)} trades from system_state.json (Alpaca fills)"
+                )
 
         # PRIORITY 2: Fallback to trades_*.json files (legacy/local sync)
         if not trades:
@@ -1261,7 +1306,11 @@ def query_trades(query: str, limit: int = 10) -> list[dict]:
                     file_trades = json.load(f)
                     for trade in file_trades:
                         pnl = trade.get("pnl") or 0
-                        outcome = "profitable" if pnl > 0 else ("loss" if pnl < 0 else "breakeven")
+                        outcome = (
+                            "profitable"
+                            if pnl > 0
+                            else ("loss" if pnl < 0 else "breakeven")
+                        )
                         document = (
                             f"Trade: {trade.get('side', '').upper()} {trade.get('qty', 0)} "
                             f"{trade.get('symbol', '')} at ${trade.get('price', 0):.2f} "
@@ -1285,7 +1334,9 @@ def query_trades(query: str, limit: int = 10) -> list[dict]:
                         if len(trades) >= limit:
                             break
             if trades:
-                logger.info(f"Loaded {len(trades)} trades from trades_*.json files (fallback)")
+                logger.info(
+                    f"Loaded {len(trades)} trades from trades_*.json files (fallback)"
+                )
 
         return trades[:limit]
 
@@ -1329,7 +1380,9 @@ def format_trades_response(trades: list, query: str) -> str:
             outcome = meta.get("outcome", "unknown")
             pnl = meta.get("pnl", 0)
             outcome_emoji = (
-                "✅" if outcome == "profitable" else ("❌" if outcome == "loss" else "➖")
+                "✅"
+                if outcome == "profitable"
+                else ("❌" if outcome == "loss" else "➖")
             )
             response_parts.append(
                 f"\n{i}. {outcome_emoji} **{symbol}** {side} | P/L: ${pnl:.2f} | {timestamp}\n"
@@ -1471,15 +1524,13 @@ async def webhook(
 
                 if trades_today > 0:
                     if daily_change > 0:
-                        pl_response = (
-                            f"**Today's P/L:** +${daily_change:,.2f} from {trades_today} trade(s)"
-                        )
+                        pl_response = f"**Today's P/L:** +${daily_change:,.2f} from {trades_today} trade(s)"
                     elif daily_change < 0:
-                        pl_response = (
-                            f"**Today's P/L:** ${daily_change:,.2f} from {trades_today} trade(s)"
-                        )
+                        pl_response = f"**Today's P/L:** ${daily_change:,.2f} from {trades_today} trade(s)"
                     else:
-                        pl_response = f"**Today's P/L:** Flat from {trades_today} trade(s)"
+                        pl_response = (
+                            f"**Today's P/L:** Flat from {trades_today} trade(s)"
+                        )
                 else:
                     pl_response = f"**Today ({actual_today}):** No trades executed yet"
             else:
@@ -1490,7 +1541,9 @@ async def webhook(
             # User query "How much money did we make" was matching random failure lessons
             if trades_today == 0:
                 # Query for reasons why no trades (more relevant than user query)
-                rag_query = "trading signals market conditions iron condor entry criteria"
+                rag_query = (
+                    "trading signals market conditions iron condor entry criteria"
+                )
             else:
                 rag_query = user_query
             results, source = query_rag_hybrid(rag_query, top_k=3)
@@ -1517,7 +1570,9 @@ async def webhook(
                             insights.append(f"- **{lesson_id}**: {content}")
 
                 if insights:
-                    rag_explanation = "\n**Analysis from lessons learned:**\n" + "\n".join(insights)
+                    rag_explanation = (
+                        "\n**Analysis from lessons learned:**\n" + "\n".join(insights)
+                    )
 
             # If no insights extracted, provide default explanation
             if not rag_explanation:
@@ -1534,7 +1589,9 @@ async def webhook(
 {rag_explanation}
 
 💡 *Ask "are we ready to trade?" for full status*"""
-            logger.info(f"Returning compound P/L + analytical response (RAG source: {source})")
+            logger.info(
+                f"Returning compound P/L + analytical response (RAG source: {source})"
+            )
 
         elif is_trade_query(user_query):
             # Query trade history from local JSON files
@@ -1547,7 +1604,9 @@ async def webhook(
             elif is_analytical_query(user_query):
                 # FIX Jan 13, 2026: Analytical questions (WHY, explain, etc.)
                 # should go to RAG for semantic understanding, not portfolio status
-                logger.info(f"Detected ANALYTICAL trade query: {user_query} - routing to RAG")
+                logger.info(
+                    f"Detected ANALYTICAL trade query: {user_query} - routing to RAG"
+                )
                 results, source = query_rag_hybrid(user_query, top_k=5)
 
                 # Get portfolio context to include in response
@@ -1659,9 +1718,7 @@ async def webhook(
 
                     # Build trading activity message based on whether trades happened today
                     if trades_today > 0:
-                        activity_msg = (
-                            f"**Today ({actual_today}):** {trades_today} trades executed ✅"
-                        )
+                        activity_msg = f"**Today ({actual_today}):** {trades_today} trades executed ✅"
                     else:
                         activity_msg = f"**Today ({actual_today}):** No trades yet\n**Last Trade:** {last_trade}"
 
@@ -1700,7 +1757,9 @@ Or ask me about **lessons learned** instead (e.g., "What lessons did we learn ab
 
             if not results:
                 # Try broader search
-                results, source = query_rag_hybrid("trading operational failure", top_k=3)
+                results, source = query_rag_hybrid(
+                    "trading operational failure", top_k=3
+                )
 
             # Format response based on source (Vertex AI or local)
             response_text = format_rag_response(results, user_query, source)
@@ -1752,14 +1811,16 @@ async def diagnostics():
                 "GOOGLE_CLOUD_PROJECT": os.getenv("GOOGLE_CLOUD_PROJECT", "NOT SET"),
                 "VERTEX_AI_LOCATION": os.getenv("VERTEX_AI_LOCATION", "NOT SET"),
                 "GCP_PROJECT_ID": os.getenv("GCP_PROJECT_ID", "NOT SET"),
-                "GOOGLE_APPLICATION_CREDENTIALS": "SET"
-                if os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-                else "NOT SET",
+                "GOOGLE_APPLICATION_CREDENTIALS": (
+                    "SET" if os.getenv("GOOGLE_APPLICATION_CREDENTIALS") else "NOT SET"
+                ),
             },
         },
         "local_rag": {
             "lessons_loaded": len(local_rag.lessons) if local_rag else 0,
-            "critical_lessons": len(local_rag.get_critical_lessons()) if local_rag else 0,
+            "critical_lessons": (
+                len(local_rag.get_critical_lessons()) if local_rag else 0
+            ),
         },
         "system": {
             "python_path": os.getenv("PYTHONPATH", "NOT SET"),
@@ -1800,7 +1861,8 @@ async def test_rag(query: str = "critical lessons"):
     if source == "vertex_ai":
         # Vertex AI returns [{text: str}]
         formatted_results = [
-            {"text_preview": r.get("text", "")[:500], "source": "vertex_ai"} for r in results
+            {"text_preview": r.get("text", "")[:500], "source": "vertex_ai"}
+            for r in results
         ]
     else:
         # Local RAG returns [{id, severity, score, snippet, content}]

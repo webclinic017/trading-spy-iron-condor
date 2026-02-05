@@ -167,7 +167,9 @@ def fact_check_sentiment(
         if sim < threshold:
             veto_reason = f"cosine_sim {sim:.3f} < threshold {threshold}"
         elif not same_direction:
-            veto_reason = f"direction_mismatch: LLM={llm_sentiment:.2f}, VADER={vader_score:.2f}"
+            veto_reason = (
+                f"direction_mismatch: LLM={llm_sentiment:.2f}, VADER={vader_score:.2f}"
+            )
 
     # Compute blended score (only used if accepted)
     blended = blend_sentiment_scores(llm_sentiment, vader_score, weight=0.6)

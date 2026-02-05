@@ -68,9 +68,7 @@ class RejectionReason(Enum):
     ILLIQUID_OPTION = "Option is illiquid (bid-ask spread > 5%)"
     RAG_LESSON_CRITICAL = "CRITICAL lesson learned blocks this trade"
     PORTFOLIO_NEGATIVE_PL = "Portfolio P/L is negative - Rule #1: Don't lose money"
-    RULE_ONE_VIOLATION = (
-        "Phil Town Rule #1 validation failed - not a wonderful company at attractive price"
-    )
+    RULE_ONE_VIOLATION = "Phil Town Rule #1 validation failed - not a wonderful company at attractive price"
     EARNINGS_BLACKOUT = "Ticker is in earnings blackout period - avoid new positions"
     POSITION_SIZE_TOO_LARGE = "Position max loss exceeds 5% of portfolio"
     TICKER_NOT_ALLOWED = "Ticker not in whitelist - SPY ONLY per CLAUDE.md Jan 19, 2026"
@@ -149,9 +147,7 @@ class TradeGateway:
     MAX_SYMBOL_ALLOCATION_PCT = 0.05  # 5% max per symbol per CLAUDE.md
     MAX_CORRELATION_THRESHOLD = 0.80  # 80% correlation threshold
     MAX_TRADES_PER_HOUR = 5  # Frequency limit
-    MIN_TRADE_BATCH = (
-        10.0  # $10 minimum for paper trading - FIXED Jan 12, 2026 (was $50, blocked all trades)
-    )
+    MIN_TRADE_BATCH = 10.0  # $10 minimum for paper trading - FIXED Jan 12, 2026 (was $50, blocked all trades)
     MIN_TRADE_BATCH_LIVE = 50.0  # $50 for live trading - fee protection
     # FIXED Jan 19, 2026: Import from central constants for consistency
     try:
@@ -272,7 +268,9 @@ class TradeGateway:
         self.state_file = Path("data/trade_gateway_state.json")
         self._load_state()
 
-        logger.info("🔒 Trade Gateway initialized - ALL trades must pass through this gateway")
+        logger.info(
+            "🔒 Trade Gateway initialized - ALL trades must pass through this gateway"
+        )
 
     def _load_state(self) -> None:
         """Load persisted state."""
@@ -284,7 +282,9 @@ class TradeGateway:
                     self.daily_pnl = state.get("daily_pnl", 0.0)
                     self.peak_equity = state.get("peak_equity", 0.0)
                     if state.get("daily_pnl_date"):
-                        self.daily_pnl_date = datetime.fromisoformat(state["daily_pnl_date"])
+                        self.daily_pnl_date = datetime.fromisoformat(
+                            state["daily_pnl_date"]
+                        )
             except Exception as e:
                 logger.warning(f"Failed to load gateway state: {e}")
 
@@ -297,9 +297,11 @@ class TradeGateway:
                     {
                         "accumulated_cash": self.accumulated_cash,
                         "daily_pnl": self.daily_pnl,
-                        "daily_pnl_date": self.daily_pnl_date.isoformat()
-                        if self.daily_pnl_date
-                        else None,
+                        "daily_pnl_date": (
+                            self.daily_pnl_date.isoformat()
+                            if self.daily_pnl_date
+                            else None
+                        ),
                         "peak_equity": self.peak_equity,
                     },
                     f,
@@ -447,7 +449,11 @@ class TradeGateway:
 
         # Fallback: estimate based on strategy type
         contracts = request.quantity or 1
-        if request.strategy_type in ["bull_put_spread", "bear_call_spread", "credit_spread"]:
+        if request.strategy_type in [
+            "bull_put_spread",
+            "bear_call_spread",
+            "credit_spread",
+        ]:
             # Default $5 spread, $0.50 premium = $450 max loss per contract
             return 450.0 * contracts
         elif request.strategy_type == "iron_condor":
@@ -495,7 +501,9 @@ class TradeGateway:
                 if unrealized_pl < 0:
                     existing_risk += abs(unrealized_pl)  # Already losing
                 else:
-                    existing_risk += mkt_val * 0.5  # Estimate half of market value as risk
+                    existing_risk += (
+                        mkt_val * 0.5
+                    )  # Estimate half of market value as risk
 
         # Calculate new trade risk
         new_risk = self._calculate_credit_spread_max_loss(request)
@@ -597,7 +605,9 @@ class TradeGateway:
                     request=request,
                     rejection_reasons=[RejectionReason.FREQUENCY_LIMIT],
                     risk_score=1.0,
-                    metadata={"error": "Trade lock timeout - another trade in progress"},
+                    metadata={
+                        "error": "Trade lock timeout - another trade in progress"
+                    },
                 )
         else:
             # Fallback if safety features not available
@@ -620,7 +630,9 @@ class TradeGateway:
         # This prevents position accumulation disasters.
         # ============================================================
         if SAFETY_FEATURES_AVAILABLE:
-            was_halted, conditions = monitor_and_halt_if_needed(positions, account_equity)
+            was_halted, conditions = monitor_and_halt_if_needed(
+                positions, account_equity
+            )
             if was_halted:
                 logger.critical("🚨 AUTO-HALT TRIGGERED - Crisis conditions detected!")
                 for c in conditions:
@@ -661,7 +673,9 @@ class TradeGateway:
                 for p in positions
                 if float(p.get("unrealized_pl", 0)) < 0
             )
-            loss_pct = abs(total_unrealized_loss) / account_equity if account_equity > 0 else 0
+            loss_pct = (
+                abs(total_unrealized_loss) / account_equity if account_equity > 0 else 0
+            )
             if loss_pct > 0.25:
                 logger.error(
                     f"🚨 CIRCUIT BREAKER: Unrealized loss ${abs(total_unrealized_loss):.2f} "
@@ -708,10 +722,9 @@ class TradeGateway:
         # This allows recovery trading while still protecting against runaway losses.
         # ============================================================
         total_pl = self._get_total_pl()
-        is_risk_increasing = (
-            request.side.lower() == "buy"
-            or (request.is_option and request.side.lower() == "sell")  # Short puts/calls
-        )
+        is_risk_increasing = request.side.lower() == "buy" or (
+            request.is_option and request.side.lower() == "sell"
+        )  # Short puts/calls
 
         # ONLY block if DAILY loss exceeds limit - not total P/L
         # This allows trading to recover from previous losses
@@ -768,12 +781,16 @@ class TradeGateway:
             pre_trade_checklist = PreTradeChecklist(account_equity=account_equity)
 
             # Determine if stop-loss is defined
-            stop_loss_defined = request.stop_price is not None or request.strategy_type in [
-                "bull_put_spread",
-                "bear_call_spread",
-                "credit_spread",
-                "iron_condor",
-            ]  # Spreads have built-in max loss
+            stop_loss_defined = (
+                request.stop_price is not None
+                or request.strategy_type
+                in [
+                    "bull_put_spread",
+                    "bear_call_spread",
+                    "credit_spread",
+                    "iron_condor",
+                ]
+            )  # Spreads have built-in max loss
 
             # Run checklist validation
             checklist_passed, checklist_failures = pre_trade_checklist.validate(
@@ -870,7 +887,9 @@ class TradeGateway:
         # CHECK 0.6: POSITION SIZE RISK (LL-190)
         # Max loss cannot exceed 10% of portfolio
         # ============================================================
-        is_too_risky, risk_reason = self._check_position_size_risk(request, account_equity)
+        is_too_risky, risk_reason = self._check_position_size_risk(
+            request, account_equity
+        )
         if is_too_risky:
             rejection_reasons.append(RejectionReason.POSITION_SIZE_TOO_LARGE)
             logger.warning(f"🛑 POSITION SIZE: {risk_reason}")
@@ -900,7 +919,9 @@ class TradeGateway:
         # CHECK 0.8: MAX IRON CONDORS (CLAUDE.md: 1 at a time)
         # ============================================================
         if request.strategy_type == "iron_condor" or request.is_option:
-            has_existing_condor, condor_reason = self._check_iron_condor_limit(positions)
+            has_existing_condor, condor_reason = self._check_iron_condor_limit(
+                positions
+            )
             if has_existing_condor and request.side.lower() in ["buy", "sell"]:
                 rejection_reasons.append(RejectionReason.MAX_IRON_CONDORS_EXCEEDED)
                 logger.warning(f"🛑 IRON CONDOR LIMIT: {condor_reason}")
@@ -914,12 +935,16 @@ class TradeGateway:
         # CHECK 1: Insufficient Funds
         # ============================================================
         trade_value = request.notional or (
-            request.quantity * self._get_price(request.symbol) if request.quantity else 0
+            request.quantity * self._get_price(request.symbol)
+            if request.quantity
+            else 0
         )
 
         if request.side == "buy" and trade_value > account_equity * 0.95:
             rejection_reasons.append(RejectionReason.INSUFFICIENT_FUNDS)
-            logger.warning(f"❌ REJECTED: Insufficient funds for ${trade_value:.2f} trade")
+            logger.warning(
+                f"❌ REJECTED: Insufficient funds for ${trade_value:.2f} trade"
+            )
 
         # ============================================================
         # CHECK 2: Maximum Allocation per Symbol (15%)
@@ -1014,7 +1039,9 @@ class TradeGateway:
                 self.accumulated_cash += trade_value
                 self._save_state()
                 rejection_reasons.append(RejectionReason.MINIMUM_BATCH_NOT_MET)
-                logger.info(f"⏳ Accumulating: ${self.accumulated_cash:.2f} / ${min_batch}")
+                logger.info(
+                    f"⏳ Accumulating: ${self.accumulated_cash:.2f} / ${min_batch}"
+                )
             else:
                 # Use accumulated cash
                 logger.info(
@@ -1098,7 +1125,9 @@ class TradeGateway:
         # If (Ask - Bid) / Ask > 5%, you lose 10%+ immediately.
         if request.is_option and request.bid_price and request.ask_price:
             if request.ask_price > 0:
-                bid_ask_spread_pct = (request.ask_price - request.bid_price) / request.ask_price
+                bid_ask_spread_pct = (
+                    request.ask_price - request.bid_price
+                ) / request.ask_price
 
                 if bid_ask_spread_pct > self.MAX_BID_ASK_SPREAD_PCT:
                     rejection_reasons.append(RejectionReason.ILLIQUID_OPTION)
@@ -1130,7 +1159,9 @@ class TradeGateway:
         # This requires knowing the stop price.
         if request.side == "buy":
             entry_price = self._get_price(request.symbol)
-            qty = request.quantity or (request.notional / entry_price if entry_price > 0 else 0)
+            qty = request.quantity or (
+                request.notional / entry_price if entry_price > 0 else 0
+            )
 
             # If stop price is not provided, we must assume a default or reject
             # Here we enforce that a stop price MUST be part of the strategy or we use a default 5%
@@ -1140,7 +1171,9 @@ class TradeGateway:
                 # If no stop provided, assume default 5% risk for calculation
                 # But warn that explicit stop is better
                 stop_price = entry_price * 0.95
-                warnings.append("No stop_price provided. Assuming 5% risk for calculation.")
+                warnings.append(
+                    "No stop_price provided. Assuming 5% risk for calculation."
+                )
 
             risk_per_share = max(0, entry_price - stop_price)
             total_risk = risk_per_share * qty
@@ -1187,7 +1220,10 @@ class TradeGateway:
             lesson_content = lesson.get("content", "") + lesson.get("snippet", "")
             lesson_id = lesson.get("id", "").upper()
             # Only block if ticker appears in lesson content or ID
-            if underlying.upper() in lesson_content.upper() or underlying.upper() in lesson_id:
+            if (
+                underlying.upper() in lesson_content.upper()
+                or underlying.upper() in lesson_id
+            ):
                 critical_rag_lessons.append(lesson)
             else:
                 # Log that we skipped this lesson (not ticker-specific)
@@ -1215,7 +1251,9 @@ class TradeGateway:
             }
             # Log each critical lesson
             for lesson in critical_rag_lessons:
-                logger.warning(f"  - CRITICAL: {lesson['id']}: {lesson['snippet'][:150]}...")
+                logger.warning(
+                    f"  - CRITICAL: {lesson['id']}: {lesson['snippet'][:150]}..."
+                )
             risk_score += 0.5  # Significant risk increase for CRITICAL lessons
         elif rag_lessons:
             # Non-critical lessons - just add warnings
@@ -1277,7 +1315,9 @@ class TradeGateway:
         if approved and risk_score > self.MAX_RISK_SCORE:
             rejection_reasons.append(RejectionReason.RISK_SCORE_TOO_HIGH)
             approved = False
-            logger.warning(f"❌ REJECTED: Risk score {risk_score:.2f} exceeds threshold")
+            logger.warning(
+                f"❌ REJECTED: Risk score {risk_score:.2f} exceeds threshold"
+            )
 
         decision = GatewayDecision(
             approved=approved,
@@ -1353,7 +1393,9 @@ class TradeGateway:
                     order = result.get("order")
                     if result.get("stop_loss"):
                         stop_price = result.get("stop_loss_price", 0)
-                        logger.info(f"🛡️ Stop-loss set: {request.symbol} @ ${stop_price:.2f}")
+                        logger.info(
+                            f"🛡️ Stop-loss set: {request.symbol} @ ${stop_price:.2f}"
+                        )
                     elif result.get("error"):
                         logger.warning(
                             f"⚠️ Order placed but stop-loss failed: {result.get('error')}"
@@ -1402,7 +1444,9 @@ class TradeGateway:
                 "message": f"Ready to trade ${self.accumulated_cash:.2f}",
             }
         else:
-            logger.info(f"⏳ Accumulating: ${self.accumulated_cash:.2f} / ${self.MIN_TRADE_BATCH}")
+            logger.info(
+                f"⏳ Accumulating: ${self.accumulated_cash:.2f} / ${self.MIN_TRADE_BATCH}"
+            )
             return {
                 "status": "accumulating",
                 "accumulated": self.accumulated_cash,
@@ -1422,7 +1466,9 @@ class TradeGateway:
         Returns:
             GatewayDecision showing rejection reasons
         """
-        logger.info(f"🧪 STRESS TEST: {request.side.upper()} {request.symbol} ${request.notional}")
+        logger.info(
+            f"🧪 STRESS TEST: {request.side.upper()} {request.symbol} ${request.notional}"
+        )
         decision = self.evaluate(request)
 
         if decision.approved:
@@ -1445,7 +1491,9 @@ class TradeGateway:
             try:
                 return float(self.executor.account_equity or 5000)
             except Exception as e:
-                logger.warning(f"Failed to get account equity from executor: {e}, using default")
+                logger.warning(
+                    f"Failed to get account equity from executor: {e}, using default"
+                )
         # Default to $5K (our paper trading account size) not $100K
         return float(os.getenv("ACCOUNT_EQUITY", "5000"))
 
@@ -1460,7 +1508,9 @@ class TradeGateway:
             Total P/L in dollars. Negative means losing money.
         """
         try:
-            state_file = Path(__file__).parent.parent.parent / "data" / "system_state.json"
+            state_file = (
+                Path(__file__).parent.parent.parent / "data" / "system_state.json"
+            )
             if state_file.exists():
                 with open(state_file, encoding="utf-8") as f:
                     state = json.load(f)
@@ -1478,7 +1528,9 @@ class TradeGateway:
             try:
                 return self.executor.get_positions() or []
             except Exception as e:
-                logger.warning(f"Failed to get positions from executor: {e}, returning empty list")
+                logger.warning(
+                    f"Failed to get positions from executor: {e}, returning empty list"
+                )
         return []
 
     def _get_price(self, symbol: str) -> float:
@@ -1525,7 +1577,9 @@ class TradeGateway:
 
         # Find which groups the new symbol belongs to
         symbol_groups = [
-            group for group, members in self.CORRELATION_GROUPS.items() if symbol in members
+            group
+            for group, members in self.CORRELATION_GROUPS.items()
+            if symbol in members
         ]
 
         if not symbol_groups:
@@ -1620,7 +1674,9 @@ class TradeGateway:
                 blackout = self.EARNINGS_BLACKOUTS[underlying.upper()]
                 blackout_start = datetime.strptime(blackout["start"], "%Y-%m-%d").date()
                 blackout_end = datetime.strptime(blackout["end"], "%Y-%m-%d").date()
-                earnings_date = datetime.strptime(blackout["earnings"], "%Y-%m-%d").date()
+                earnings_date = datetime.strptime(
+                    blackout["earnings"], "%Y-%m-%d"
+                ).date()
 
                 days_to_blackout = (blackout_start - today).days
                 days_to_earnings = (earnings_date - today).days
@@ -1637,7 +1693,9 @@ class TradeGateway:
                         "blackout_end": str(blackout_end),
                         "days_to_blackout": days_to_blackout,
                         "days_to_earnings": days_to_earnings,
-                        "status": "IN_BLACKOUT" if days_to_blackout <= 0 else "APPROACHING",
+                        "status": (
+                            "IN_BLACKOUT" if days_to_blackout <= 0 else "APPROACHING"
+                        ),
                         "action": self._get_earnings_action(
                             days_to_blackout, unrealized_pl, symbol
                         ),
@@ -1650,7 +1708,9 @@ class TradeGateway:
 
         return alerts
 
-    def _get_earnings_action(self, days_to_blackout: int, unrealized_pl: float, symbol: str) -> str:
+    def _get_earnings_action(
+        self, days_to_blackout: int, unrealized_pl: float, symbol: str
+    ) -> str:
         """Determine recommended action for position approaching earnings."""
         is_option = len(symbol) > 10  # Options have longer symbols
 

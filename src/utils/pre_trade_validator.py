@@ -62,7 +62,9 @@ class PreTradeValidator:
         errors = []
 
         # Check 1: SPY-ONLY mandate (from CLAUDE.md, LL-203, LL-247)
-        base_symbol = symbol.split("2")[0] if "2" in symbol else symbol  # Extract base from options
+        base_symbol = (
+            symbol.split("2")[0] if "2" in symbol else symbol
+        )  # Extract base from options
         if base_symbol not in ALLOWED_TICKERS:
             errors.append(
                 f"BLOCKED: {symbol} violates SPY-ONLY mandate. "
@@ -85,7 +87,12 @@ class PreTradeValidator:
                 )
 
         # Check 4: Strategy must be defined risk (from LL-203)
-        allowed_strategies = ["iron_condor", "credit_spread", "put_spread", "call_spread"]
+        allowed_strategies = [
+            "iron_condor",
+            "credit_spread",
+            "put_spread",
+            "call_spread",
+        ]
         if strategy not in allowed_strategies:
             errors.append(
                 f"BLOCKED: Strategy '{strategy}' not allowed. "

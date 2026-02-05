@@ -13,12 +13,14 @@ Weekend research synthesized best practices for credit spread exit strategies. K
 ## The Three Exit Rules
 
 ### Rule 1: 50% Profit Target (Primary)
+
 - **Action**: Close position when profit reaches 50% of maximum (credit received)
 - **Why**: Frees capital for redeployment, reduces exposure to reversals
 - **Example**: Sold for $90 credit → Close at $45 debit = $45 profit (50%)
 - **Win Rate Impact**: Increases win rate from ~70% to ~80%+ (per TastyTrade research)
 
 ### Rule 2: 21 DTE Exit (Time-Based)
+
 - **Action**: Close position at 21 days to expiration regardless of P/L
 - **Why**: After 21 DTE, gamma risk increases dramatically; theta decay benefit diminishes
 - **Decision Matrix at 21 DTE**:
@@ -27,6 +29,7 @@ Weekend research synthesized best practices for credit spread exit strategies. K
   - Large loss → Evaluate roll vs. close based on thesis
 
 ### Rule 3: 2x Credit Stop Loss (Defensive)
+
 - **Action**: Close if spread price reaches 2x the credit received
 - **Example**: Sold for $90 → Close if spread reaches $180 = $90 loss
 - **Why**: Limits max loss to ~1:1 risk/reward, prevents catastrophic losses
@@ -34,11 +37,11 @@ Weekend research synthesized best practices for credit spread exit strategies. K
 
 ## Backtest Evidence (Option Alpha SPY Research)
 
-| Strategy | Win Rate | Avg Return | Notes |
-|----------|----------|------------|-------|
-| Hold to expiration | 65% | Higher per trade | High variance, stress |
-| 50% profit target | 80%+ | Lower per trade | Consistent, scalable |
-| 75% profit target | 72% | 9% higher RoR | More risk exposure |
+| Strategy           | Win Rate | Avg Return       | Notes                 |
+| ------------------ | -------- | ---------------- | --------------------- |
+| Hold to expiration | 65%      | Higher per trade | High variance, stress |
+| 50% profit target  | 80%+     | Lower per trade  | Consistent, scalable  |
+| 75% profit target  | 72%      | 9% higher RoR    | More risk exposure    |
 
 **Key Insight**: 50% target has highest win rate; higher targets increase RoR but at cost of consistency.
 
@@ -47,10 +50,12 @@ Weekend research synthesized best practices for credit spread exit strategies. K
 Scenario: $5,000 account, 45 DTE trades
 
 **Without Early Exit (Hold to Expiration)**:
+
 - Trades per year: ~8 (45 DTE each)
 - Capital tied up: Full duration
 
 **With 50% Profit Exit**:
+
 - Average hold time: ~20-25 days
 - Trades per year: ~15-18
 - Capital turns faster = more opportunity for profits
@@ -65,6 +70,7 @@ Scenario: $5,000 account, 45 DTE trades
 ## Our System Alignment
 
 From CLAUDE.md:
+
 > **Expiration**: 30-45 DTE, close at 50% max profit (improves win rate to ~80%)
 > **Stop-loss**: Close at 2x credit received ($120 max loss) - MANDATORY
 

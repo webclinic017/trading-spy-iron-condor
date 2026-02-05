@@ -3,14 +3,14 @@ name: 📸 Capture Trading Screenshots
 on:
   # Run daily at market close (4:15 PM ET = 9:15 PM UTC)
   schedule:
-    - cron: "15 21 * * 1-5"  # Mon-Fri only (trading days)
+    - cron: "15 21 * * 1-5" # Mon-Fri only (trading days)
   # Manual trigger
   workflow_dispatch:
     inputs:
       dashboard:
-        description: 'Which dashboard to capture'
+        description: "Which dashboard to capture"
         required: false
-        default: 'all'
+        default: "all"
         type: choice
         options:
           - all
@@ -33,8 +33,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          python-version: "3.12"
+          cache: "pip"
 
       - name: Install dependencies
         run: |

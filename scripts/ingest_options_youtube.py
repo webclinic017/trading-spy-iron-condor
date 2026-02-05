@@ -23,7 +23,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 # Options-focused channels (using handles, not IDs - more reliable)
@@ -111,7 +113,10 @@ def get_transcript(video_id: str) -> Optional[str]:
     """Fetch transcript for a video using youtube-transcript-api v1.0+."""
     try:
         from youtube_transcript_api import YouTubeTranscriptApi
-        from youtube_transcript_api._errors import NoTranscriptFound, TranscriptsDisabled
+        from youtube_transcript_api._errors import (
+            NoTranscriptFound,
+            TranscriptsDisabled,
+        )
     except ImportError:
         logger.error("youtube-transcript-api not installed")
         return None
@@ -207,7 +212,9 @@ def save_cache(cache: dict):
     CACHE_FILE.write_text(json.dumps(cache, indent=2))
 
 
-def ingest_channel(channel_key: str, mode: str = "recent", max_videos: int = 10) -> dict:
+def ingest_channel(
+    channel_key: str, mode: str = "recent", max_videos: int = 10
+) -> dict:
     """Ingest videos from a single channel."""
     if channel_key not in CHANNELS:
         logger.error(f"Unknown channel: {channel_key}")
@@ -258,11 +265,18 @@ def ingest_channel(channel_key: str, mode: str = "recent", max_videos: int = 10)
 def main():
     parser = argparse.ArgumentParser(description="Options YouTube Ingestion")
     parser.add_argument(
-        "--channel", type=str, choices=list(CHANNELS.keys()), help="Specific channel to ingest"
+        "--channel",
+        type=str,
+        choices=list(CHANNELS.keys()),
+        help="Specific channel to ingest",
     )
     parser.add_argument("--all", action="store_true", help="Ingest from all channels")
     parser.add_argument(
-        "--mode", type=str, default="recent", choices=["recent", "backfill"], help="Ingestion mode"
+        "--mode",
+        type=str,
+        default="recent",
+        choices=["recent", "backfill"],
+        help="Ingestion mode",
     )
     parser.add_argument("--max", type=int, default=10, help="Max videos per channel")
     parser.add_argument("--list", action="store_true", help="List available channels")

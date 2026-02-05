@@ -53,7 +53,9 @@ class TickerResult:
     processing_time_ms: float = 0.0
     indicators: dict[str, Any] = field(default_factory=dict)
     order_details: dict[str, Any] | None = None
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
 
 
 @dataclass
@@ -171,7 +173,9 @@ class ParallelTickerProcessor:
         )
 
         # Use ThreadPoolExecutor for parallel execution
-        with ThreadPoolExecutor(max_workers=min(self.max_workers, len(tickers))) as executor:
+        with ThreadPoolExecutor(
+            max_workers=min(self.max_workers, len(tickers))
+        ) as executor:
             # Fan-out: Submit all tasks
             future_to_ticker = {
                 executor.submit(self._process_single, ticker, rl_threshold): ticker
@@ -179,7 +183,9 @@ class ParallelTickerProcessor:
             }
 
             # Gather: Collect results as they complete
-            for future in as_completed(future_to_ticker, timeout=self.timeout_seconds * 2):
+            for future in as_completed(
+                future_to_ticker, timeout=self.timeout_seconds * 2
+            ):
                 ticker = future_to_ticker[future]
                 try:
                     ticker_result = future.result(timeout=self.timeout_seconds)
@@ -196,7 +202,9 @@ class ParallelTickerProcessor:
                         result.skipped += 1
 
                 except TimeoutError:
-                    logger.error("Ticker %s timed out after %.1fs", ticker, self.timeout_seconds)
+                    logger.error(
+                        "Ticker %s timed out after %.1fs", ticker, self.timeout_seconds
+                    )
                     result.results[ticker] = TickerResult(
                         ticker=ticker,
                         outcome=TickerOutcome.ERROR,
@@ -205,7 +213,9 @@ class ParallelTickerProcessor:
                     result.errors += 1
 
                 except Exception as e:
-                    logger.error("Ticker %s failed with unexpected error: %s", ticker, e)
+                    logger.error(
+                        "Ticker %s failed with unexpected error: %s", ticker, e
+                    )
                     result.results[ticker] = TickerResult(
                         ticker=ticker,
                         outcome=TickerOutcome.ERROR,

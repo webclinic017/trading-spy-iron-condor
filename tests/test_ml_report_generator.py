@@ -15,6 +15,7 @@ from datetime import datetime
 from pathlib import Path
 
 import pytest
+
 from src.orchestrator.ml_report_generator import (
     DailyMLReport,
     GateSignal,
@@ -282,7 +283,9 @@ class TestMLReportGenerator:
         assert report.rejected == 2
         assert report.gate_1_pass_rate == pytest.approx(2 / 3, rel=0.01)
         assert report.gate_2_pass_rate == pytest.approx(1 / 3, rel=0.01)
-        assert report.avg_rl_confidence == pytest.approx(0.5, rel=0.01)  # (0.68 + 0.32) / 2
+        assert report.avg_rl_confidence == pytest.approx(
+            0.5, rel=0.01
+        )  # (0.68 + 0.32) / 2
         assert "transformer" in report.rl_mode_distribution
         assert "strength" in report.feature_importance
 

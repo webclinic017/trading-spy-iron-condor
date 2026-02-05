@@ -8,6 +8,7 @@
 ## Problem
 
 CTO (Claude) repeatedly triggered close-put-position.yml workflow without:
+
 1. Checking why previous runs failed
 2. Looking at actual GitHub Actions logs
 3. Understanding the root cause
@@ -37,6 +38,7 @@ This violated CEO directive: "Learn from your mistakes in RAG"
 ## Lesson
 
 "Insanity is doing the same thing over and over expecting different results."
+
 - Stop and investigate failures
 - Check logs before retrying
 - Record lessons and learn

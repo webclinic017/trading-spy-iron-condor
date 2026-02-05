@@ -7,12 +7,15 @@
 **Ingested**: 2026-02-01T13:25:08.290746
 
 ## Key Concepts
+
 4 Ms, Margin of Safety, Rule #1, Options Strategy, Value Investing
 
 ## Strategies
+
 Cash-Secured Puts, Value Investing
 
 ## Sentiment
+
 Neutral
 
 ## Transcript

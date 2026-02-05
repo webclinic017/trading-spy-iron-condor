@@ -14,26 +14,29 @@ Our current strategy focuses on PUT credit spreads (bullish bias). Call credit s
 ## When to Use Call Credit Spreads
 
 ### Market Conditions
+
 - Stock has rallied aggressively and appears to be "peaking"
 - Bearish or neutral outlook on underlying
 - Technical indicators suggest overbought conditions
 - Ideal for generating passive income on overextended stocks
 
 ### Technical Entry Signals
+
 1. **Bollinger Bands**: Enter when stock is near or above upper band (20-day, 2 std dev)
 2. **RSI**: Overbought conditions (RSI > 70) suggest reversal or sideways movement likely
 3. **Use technical levels as "buffer"** for strike selection - resistance levels add safety
 
 ## Contract Specifications (Invest with Henry Method)
 
-| Parameter | Recommendation | Notes |
-|-----------|----------------|-------|
-| Expiration | 60+ DTE (2 months) | Longer expiry = higher premiums, more passive |
-| Delta | 0.15-0.20 | 85% implied win rate |
-| Spread Width | $300-$500 | Narrow spreads have poor liquidity |
-| Position Size | 10% max capital | More aggressive than our 5% rule |
+| Parameter     | Recommendation     | Notes                                         |
+| ------------- | ------------------ | --------------------------------------------- |
+| Expiration    | 60+ DTE (2 months) | Longer expiry = higher premiums, more passive |
+| Delta         | 0.15-0.20          | 85% implied win rate                          |
+| Spread Width  | $300-$500          | Narrow spreads have poor liquidity            |
+| Position Size | 10% max capital    | More aggressive than our 5% rule              |
 
 ### Note on Delta Selection
+
 - 0.15 delta = ~85% probability of profit (OTM at expiration)
 - This is MORE conservative than our 0.30 delta for put spreads
 - Henry targets higher win rate with lower premium per trade
@@ -48,27 +51,32 @@ Our current strategy focuses on PUT credit spreads (bullish bias). Call credit s
 ## Trade Management
 
 ### If Trade Goes Against You (Stock Rallies)
+
 - **Roll "Up and Out"**: Higher strike, further expiration
 - Collect additional credit on the roll if possible
 - Accept losses objectively - 1 in 20 losing trades is normal for professionals
 
 ### Key Difference from Put Spreads
-| Aspect | Put Credit Spread | Call Credit Spread |
-|--------|-------------------|-------------------|
-| Bias | Bullish | Bearish/Neutral |
-| Threatened by | Market drops | Market rallies |
-| Roll direction | Down and out | Up and out |
-| When to use | Support levels | Resistance/overbought |
+
+| Aspect         | Put Credit Spread | Call Credit Spread    |
+| -------------- | ----------------- | --------------------- |
+| Bias           | Bullish           | Bearish/Neutral       |
+| Threatened by  | Market drops      | Market rallies        |
+| Roll direction | Down and out      | Up and out            |
+| When to use    | Support levels    | Resistance/overbought |
 
 ## Integration with Our Current Strategy
 
 ### Complementary Approach
+
 - **PUT credit spreads**: Use when market/stock at support, bullish outlook
 - **CALL credit spreads**: Use when market/stock at resistance, overbought
 - **Combined**: Market-neutral income generation regardless of direction
 
 ### Modifications for Our $5K Account
+
 Given our capital constraints:
+
 - Stick to 5% position sizing (not 10%)
 - Focus on SPY/IWM for liquidity
 - Use 45-60 DTE (balance premium vs. time risk)

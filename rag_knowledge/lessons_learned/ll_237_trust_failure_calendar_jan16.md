@@ -24,6 +24,7 @@ CEO cannot trust CTO to make autonomous decisions if CTO does not know what day 
 ## Required Fix
 
 Before ANY scheduling decision:
+
 1. Call user_time_v0 to get current date
 2. Calculate target date
 3. Verify target is a trading day using Alpaca calendar API
@@ -43,4 +44,5 @@ calendar = client.get_calendar(start=start_date, end=end_date)
 Trust is earned through consistent correct behavior, not apologies.
 
 ## Tags
+
 `trust`, `failure`, `calendar`, `competence`

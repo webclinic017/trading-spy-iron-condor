@@ -21,7 +21,9 @@ import re
 import sys
 from pathlib import Path
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 # Path to lessons
@@ -50,7 +52,9 @@ def parse_lesson_file(filepath: Path) -> dict | None:
         severity = severity_match.group(1).upper() if severity_match else "MEDIUM"
 
         # Extract category
-        category_match = re.search(r"\*\*Category\*\*:\s*(.+?)(?:\n|$)", content, re.IGNORECASE)
+        category_match = re.search(
+            r"\*\*Category\*\*:\s*(.+?)(?:\n|$)", content, re.IGNORECASE
+        )
         category = category_match.group(1).strip() if category_match else "trading"
 
         return {
@@ -121,7 +125,9 @@ def sync_lessons_to_vertex_rag(dry_run: bool = False, limit: int | None = None) 
             continue
 
         if dry_run:
-            logger.info(f"  Would sync: {lesson['lesson_id']} - {lesson['title'][:50]}...")
+            logger.info(
+                f"  Would sync: {lesson['lesson_id']} - {lesson['title'][:50]}..."
+            )
             results["synced"] += 1
             results["lessons"].append(lesson["lesson_id"])
             continue
@@ -155,7 +161,9 @@ def sync_lessons_to_vertex_rag(dry_run: bool = False, limit: int | None = None) 
 def main():
     parser = argparse.ArgumentParser(description="Sync lessons to Vertex AI RAG")
     parser.add_argument(
-        "--dry-run", action="store_true", help="Don't actually sync, just show what would happen"
+        "--dry-run",
+        action="store_true",
+        help="Don't actually sync, just show what would happen",
     )
     parser.add_argument("--limit", type=int, help="Limit number of lessons to sync")
     args = parser.parse_args()

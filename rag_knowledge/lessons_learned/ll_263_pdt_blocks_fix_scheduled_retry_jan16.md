@@ -30,6 +30,7 @@ The fix_653_spread.py script works correctly but PDT (Pattern Day Trading) prote
 ## Automated Resolution
 
 Created scheduled workflow: `scheduled-fix-653-spread.yml`
+
 - Runs tomorrow (Jan 17, 2026) at 9:35 AM ET
 - Will automatically attempt to fix the spread
 - If PDT still blocks, will log and retry next day
@@ -37,6 +38,7 @@ Created scheduled workflow: `scheduled-fix-653-spread.yml`
 ## No Manual Work Required
 
 The system will automatically:
+
 1. Retry the fix tomorrow morning
 2. Log results to GitHub Actions
 3. If successful, the spread will be balanced
@@ -44,6 +46,7 @@ The system will automatically:
 ## Prevention
 
 To avoid PDT issues in future:
+
 1. Limit day trades to 3 per 5-day window
 2. Use swing trades (hold overnight) when possible
 3. Size positions correctly so emergency closes are rare
@@ -51,10 +54,11 @@ To avoid PDT issues in future:
 ## Phil Town Alignment
 
 This constraint actually aligns with Rule #1 thinking:
+
 - PDT forces us to think before trading
 - Prevents impulsive day trading
 - Encourages longer-term holding
 
 ## Tags
-pdt, constraint, regulatory, automated-retry
 
+pdt, constraint, regulatory, automated-retry

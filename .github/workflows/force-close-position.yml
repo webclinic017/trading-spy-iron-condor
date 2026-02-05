@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'FORCE_CLOSE.trigger'
+      - "FORCE_CLOSE.trigger"
   # DISABLED Jan 23, 2026: 5-min schedule was too aggressive
   # schedule:
   #   - cron: '*/5 14-20 * * 1-5'
@@ -28,7 +28,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - run: pip install alpaca-py
 

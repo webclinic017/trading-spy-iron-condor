@@ -2,17 +2,17 @@ name: "CodeQL Config for Trading System"
 
 # Disable default queries for paths that use our sanitizer
 paths-ignore:
-  - '**/*.md'
-  - 'venv/**'
-  - '.venv/**'
-  - 'node_modules/**'
-  - '**/__pycache__/**'
+  - "**/*.md"
+  - "venv/**"
+  - ".venv/**"
+  - "node_modules/**"
+  - "**/__pycache__/**"
   # Exclude test and verification files from clear-text logging alerts
-  - 'scripts/test_*.py'
-  - 'scripts/test-*.py'
-  - 'scripts/verify_*.py'
-  - 'scripts/validate_*.py'
-  - 'src/agents/issue_resolution_agent.py'
+  - "scripts/test_*.py"
+  - "scripts/test-*.py"
+  - "scripts/verify_*.py"
+  - "scripts/validate_*.py"
+  - "src/agents/issue_resolution_agent.py"
 
 queries:
   - uses: security-extended

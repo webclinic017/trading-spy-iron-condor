@@ -66,7 +66,9 @@ def send_slack_notification(message: str, alert_type: str = "critical") -> bool:
 
     try:
         data = json.dumps(payload).encode("utf-8")
-        req = Request(webhook_url, data=data, headers={"Content-Type": "application/json"})
+        req = Request(
+            webhook_url, data=data, headers={"Content-Type": "application/json"}
+        )
         with urlopen(req, timeout=10) as response:
             if response.status == 200:
                 print("  ✅ Slack notification sent")
@@ -105,7 +107,9 @@ def send_discord_notification(message: str, alert_type: str = "critical") -> boo
 
     try:
         data = json.dumps(payload).encode("utf-8")
-        req = Request(webhook_url, data=data, headers={"Content-Type": "application/json"})
+        req = Request(
+            webhook_url, data=data, headers={"Content-Type": "application/json"}
+        )
         with urlopen(req, timeout=10) as response:
             if response.status in (200, 204):
                 print("  ✅ Discord notification sent")
@@ -189,7 +193,9 @@ def create_github_issue(message: str, alert_type: str = "critical") -> bool:
 
     # Only create issues for critical alerts
     if alert_type != "critical":
-        print(f"  ⚠️  GitHub issues only created for critical alerts (got: {alert_type})")
+        print(
+            f"  ⚠️  GitHub issues only created for critical alerts (got: {alert_type})"
+        )
         return False
 
     labels = ["alert", "automated", alert_type]
@@ -333,7 +339,9 @@ def main():
         print(f"    - Slack: {bool(os.getenv('SLACK_WEBHOOK_URL'))}")
         print(f"    - Discord: {bool(os.getenv('DISCORD_WEBHOOK_URL'))}")
         print(f"    - Email: {bool(os.getenv('SENDGRID_API_KEY'))}")
-        print(f"    - GitHub: {bool(os.getenv('GITHUB_TOKEN') or os.getenv('GH_TOKEN'))}")
+        print(
+            f"    - GitHub: {bool(os.getenv('GITHUB_TOKEN') or os.getenv('GH_TOKEN'))}"
+        )
         return 0
 
     success = notify_ceo(args.message, args.type)

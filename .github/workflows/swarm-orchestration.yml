@@ -4,21 +4,21 @@ on:
   # Scheduled triggers (Eastern Time - GitHub uses UTC)
   schedule:
     # 9:25 AM ET = 14:25 UTC (EST) / 13:25 UTC (EDT)
-    - cron: '25 14 * * 1-5'  # Pre-market analysis (Mon-Fri)
+    - cron: "25 14 * * 1-5" # Pre-market analysis (Mon-Fri)
     # 9:35 AM ET = 14:35 UTC (EST) / 13:35 UTC (EDT)
-    - cron: '35 14 * * 1-5'  # Trading execution (Mon-Fri)
+    - cron: "35 14 * * 1-5" # Trading execution (Mon-Fri)
     # 3:45 PM ET = 20:45 UTC (EST) / 19:45 UTC (EDT)
-    - cron: '45 20 * * 1-5'  # EOD review (Mon-Fri)
+    - cron: "45 20 * * 1-5" # EOD review (Mon-Fri)
     # 8:00 PM ET = 01:00 UTC (next day, EST) / 00:00 UTC (EDT)
-    - cron: '0 1 * * 2-6'    # Daily cleanup (Tue-Sat, for Mon-Fri nights)
+    - cron: "0 1 * * 2-6" # Daily cleanup (Tue-Sat, for Mon-Fri nights)
     # Sunday 8:00 AM ET = 13:00 UTC (EST) / 12:00 UTC (EDT)
-    - cron: '0 13 * * 0'     # Weekend research (Sunday)
+    - cron: "0 13 * * 0" # Weekend research (Sunday)
 
   # Manual trigger
   workflow_dispatch:
     inputs:
       mode:
-        description: 'Swarm mode to execute'
+        description: "Swarm mode to execute"
         required: true
         type: choice
         options:
@@ -28,7 +28,7 @@ on:
           - cleanup
           - research
       force:
-        description: 'Force execution even outside schedule'
+        description: "Force execution even outside schedule"
         required: false
         type: boolean
         default: false
@@ -95,8 +95,8 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          python-version: "3.12"
+          cache: "pip"
 
       - name: Install dependencies
         run: |

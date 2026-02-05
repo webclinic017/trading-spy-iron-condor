@@ -11,23 +11,23 @@ This lesson documents Phil Town valuations generated on December 4, 2025 during 
 
 ## Valuations Generated
 
-| Symbol | Current Price | Sticker Price | MOS Price | Recommendation |
-|--------|---------------|---------------|-----------|----------------|
-| AAPL | $280.70 | $859.83 | $429.91 | STRONG BUY - Below MOS |
-| GOOGL | $317.62 | $1,166.01 | $583.00 | STRONG BUY - Below MOS |
-| AMZN | $229.13 | $816.09 | $408.04 | STRONG BUY - Below MOS |
-| NVDA | $183.38 | $465.02 | $232.51 | STRONG BUY - Below MOS |
-| KO | $70.54 | $227.73 | $113.87 | STRONG BUY - Below MOS |
-| JNJ | $202.12 | $1,191.33 | $595.67 | STRONG BUY - Below MOS |
-| MA | $542.01 | $910.33 | $455.17 | BUY - Below Sticker |
-| PG | $145.30 | $211.73 | $105.86 | BUY - Below Sticker |
-| BRK-B | $503.05 | $589.70 | $294.85 | BUY - Below Sticker |
-| MSFT | $480.84 | $315.36 | $157.68 | SELL - Overvalued |
-| COST | $895.86 | $209.41 | $104.70 | SELL - Overvalued |
-| V | $326.76 | $156.48 | $78.24 | SELL - Overvalued |
-| UNH | $333.61 | $246.07 | $123.03 | SELL - Overvalued |
-| HD | $350.73 | $188.11 | $94.05 | SELL - Overvalued |
-| MCD | $308.05 | $27.78 | $13.89 | SELL - Overvalued |
+| Symbol | Current Price | Sticker Price | MOS Price | Recommendation         |
+| ------ | ------------- | ------------- | --------- | ---------------------- |
+| AAPL   | $280.70       | $859.83       | $429.91   | STRONG BUY - Below MOS |
+| GOOGL  | $317.62       | $1,166.01     | $583.00   | STRONG BUY - Below MOS |
+| AMZN   | $229.13       | $816.09       | $408.04   | STRONG BUY - Below MOS |
+| NVDA   | $183.38       | $465.02       | $232.51   | STRONG BUY - Below MOS |
+| KO     | $70.54        | $227.73       | $113.87   | STRONG BUY - Below MOS |
+| JNJ    | $202.12       | $1,191.33     | $595.67   | STRONG BUY - Below MOS |
+| MA     | $542.01       | $910.33       | $455.17   | BUY - Below Sticker    |
+| PG     | $145.30       | $211.73       | $105.86   | BUY - Below Sticker    |
+| BRK-B  | $503.05       | $589.70       | $294.85   | BUY - Below Sticker    |
+| MSFT   | $480.84       | $315.36       | $157.68   | SELL - Overvalued      |
+| COST   | $895.86       | $209.41       | $104.70   | SELL - Overvalued      |
+| V      | $326.76       | $156.48       | $78.24    | SELL - Overvalued      |
+| UNH    | $333.61       | $246.07       | $123.03   | SELL - Overvalued      |
+| HD     | $350.73       | $188.11       | $94.05    | SELL - Overvalued      |
+| MCD    | $308.05       | $27.78        | $13.89    | SELL - Overvalued      |
 
 ## Options Signal Generated
 

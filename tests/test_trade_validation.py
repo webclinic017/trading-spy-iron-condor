@@ -98,7 +98,9 @@ class TestDashboardOutputValidation:
                 continue
             filtered_trades.append(trade)
 
-        assert len(filtered_trades) == 2, f"Expected 2 trades, got {len(filtered_trades)}"
+        assert (
+            len(filtered_trades) == 2
+        ), f"Expected 2 trades, got {len(filtered_trades)}"
         for trade in filtered_trades:
             assert trade["qty"] > 0, "All filtered trades must have qty > 0"
             assert "FAILED" not in trade["status"].upper()
@@ -127,8 +129,12 @@ class TestDashboardOutputValidation:
 | 2025-12-23 | **SPY** | BUY | 0.735530 | Market | ✅ FILLED |
 | 2025-12-23 | **SPY** | BUY | 0.734400 | Market | ✅ FILLED |
 """
-        assert "0.000000" not in sample_dashboard, "Dashboard should not contain 0.000000 qty"
-        assert "LIVE_FAILED" not in sample_dashboard, "Dashboard should not contain LIVE_FAILED"
+        assert (
+            "0.000000" not in sample_dashboard
+        ), "Dashboard should not contain 0.000000 qty"
+        assert (
+            "LIVE_FAILED" not in sample_dashboard
+        ), "Dashboard should not contain LIVE_FAILED"
 
 
 class TestOptionsTradeValidation:

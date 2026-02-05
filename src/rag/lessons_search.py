@@ -129,11 +129,19 @@ class LessonsSearch:
     def _extract_severity(self, content: str) -> str:
         """Extract severity from lesson content."""
         content_lower = content.lower()
-        if "severity**: critical" in content_lower or "**severity:** critical" in content_lower:
+        if (
+            "severity**: critical" in content_lower
+            or "**severity:** critical" in content_lower
+        ):
             return "CRITICAL"
-        elif "severity**: high" in content_lower or "**severity:** high" in content_lower:
+        elif (
+            "severity**: high" in content_lower or "**severity:** high" in content_lower
+        ):
             return "HIGH"
-        elif "severity**: medium" in content_lower or "**severity:** medium" in content_lower:
+        elif (
+            "severity**: medium" in content_lower
+            or "**severity:** medium" in content_lower
+        ):
             return "MEDIUM"
         return "LOW"
 
@@ -286,7 +294,9 @@ if __name__ == "__main__":
         print(f"\n--- Searching: '{query}' ---")
         results = search.search(query, top_k=3)
         for lesson, score in results:
-            print(f"  [{lesson.severity}] {lesson.id}: {lesson.title[:50]}... (score: {score:.2f})")
+            print(
+                f"  [{lesson.severity}] {lesson.id}: {lesson.title[:50]}... (score: {score:.2f})"
+            )
 
     # Test critical lessons
     critical = search.get_critical_lessons()

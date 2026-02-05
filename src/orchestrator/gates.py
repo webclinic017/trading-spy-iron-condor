@@ -180,13 +180,20 @@ class RAGPreTradeQuery:
             Dict with lessons, warnings, and should_block flag
         """
         if not self.lessons_rag:
-            return {"available": False, "lessons": [], "warnings": [], "should_block": False}
+            return {
+                "available": False,
+                "lessons": [],
+                "warnings": [],
+                "should_block": False,
+            }
 
         try:
             # Build context-aware query
             momentum_label = "bullish" if ctx.momentum_strength > 0.5 else "bearish"
             regime = ctx.regime_snapshot.get("label", "unknown")
-            query = f"{ticker} {momentum_label} {regime} trading mistakes errors lessons"
+            query = (
+                f"{ticker} {momentum_label} {regime} trading mistakes errors lessons"
+            )
 
             results = self.lessons_rag.search(query=query, top_k=3)
 
@@ -214,17 +221,15 @@ class RAGPreTradeQuery:
                         # ENFORCEMENT: Block on CRITICAL with high relevance, or HIGH with very high relevance
                         if severity == "CRITICAL" and score > 0.5:
                             should_block = True
-                            block_reason = (
-                                f"CRITICAL lesson matched (score={score:.2f}): {lesson.title}"
-                            )
+                            block_reason = f"CRITICAL lesson matched (score={score:.2f}): {lesson.title}"
                         elif severity == "HIGH" and score > 0.7:
                             should_block = True
-                            block_reason = (
-                                f"HIGH lesson matched (score={score:.2f}): {lesson.title}"
-                            )
+                            block_reason = f"HIGH lesson matched (score={score:.2f}): {lesson.title}"
 
             if lessons:
-                logger.info("RAG Query (%s): Found %d relevant lessons", ticker, len(lessons))
+                logger.info(
+                    "RAG Query (%s): Found %d relevant lessons", ticker, len(lessons)
+                )
                 self.telemetry.record(
                     event_type="rag.pre_trade",
                     ticker=ticker,
@@ -439,7 +444,9 @@ class GateSecurity:
                 if content:
                     result = self.scan_for_injection(content)
                     if result.blocked:
-                        threats_found.extend([f"{source}:{t}" for t in result.threats_detected])
+                        threats_found.extend(
+                            [f"{source}:{t}" for t in result.threats_detected]
+                        )
                         blocked = True
                         logger.warning(
                             "🛡️ Gate S (%s): BLOCKED %s - %s",
@@ -489,7 +496,9 @@ class GateSecurity:
             gate_name="security",
             status=GateStatus.PASS,
             ticker=ticker,
-            data={"scanned_sources": list(external_data.keys()) if external_data else []},
+            data={
+                "scanned_sources": list(external_data.keys()) if external_data else []
+            },
         )
 
 
@@ -730,16 +739,22 @@ class Gate0Psychology:
             # Readiness check
             ready, blocking_intervention = self.mental_coach.is_ready_to_trade()
             if not ready:
-                reason = blocking_intervention.headline if blocking_intervention else "Mental state"
+                reason = (
+                    blocking_intervention.headline
+                    if blocking_intervention
+                    else "Mental state"
+                )
                 logger.warning("Gate 0 (%s): SKIPPED - Not ready: %s", ticker, reason)
                 self.telemetry.gate_reject(
                     "coaching",
                     ticker,
                     {
                         "reason": reason,
-                        "severity": blocking_intervention.severity
-                        if blocking_intervention
-                        else "critical",
+                        "severity": (
+                            blocking_intervention.severity
+                            if blocking_intervention
+                            else "critical"
+                        ),
                     },
                 )
                 return GateResult(
@@ -794,7 +809,11 @@ class Gate1Momentum:
         )
 
         if not outcome.ok:
-            logger.error("Gate 1 (%s): Momentum analysis failed: %s", ticker, outcome.failure.error)
+            logger.error(
+                "Gate 1 (%s): Momentum analysis failed: %s",
+                ticker,
+                outcome.failure.error,
+            )
             return GateResult(
                 gate_name="momentum",
                 status=GateStatus.ERROR,
@@ -891,9 +910,11 @@ class Gate15Debate:
                 "rsi": indicators.get("rsi", 50),
                 "macd_histogram": indicators.get("macd_histogram", 0),
                 "volume_ratio": indicators.get("volume_ratio", 1.0),
-                "trend": "BULLISH"
-                if ctx.momentum_signal and ctx.momentum_signal.is_buy
-                else "BEARISH",
+                "trend": (
+                    "BULLISH"
+                    if ctx.momentum_signal and ctx.momentum_signal.is_buy
+                    else "BEARISH"
+                ),
                 "ma_50": indicators.get("sma_20", 0),
                 "ma_200": indicators.get("sma_50", 0),
             }
@@ -924,7 +945,11 @@ class Gate15Debate:
 
             # Strong bear rejection
             if outcome.winner == "BEAR" and outcome.confidence > 0.7:
-                logger.info("Gate 1.5 (%s): REJECTED by Bear - %s", ticker, outcome.dissenting_view)
+                logger.info(
+                    "Gate 1.5 (%s): REJECTED by Bear - %s",
+                    ticker,
+                    outcome.dissenting_view,
+                )
                 self.telemetry.gate_reject(
                     "debate",
                     ticker,
@@ -946,7 +971,10 @@ class Gate15Debate:
                 status=GateStatus.PASS,
                 ticker=ticker,
                 confidence=outcome.confidence,
-                data={"winner": outcome.winner, "recommendation": outcome.final_recommendation},
+                data={
+                    "winner": outcome.winner,
+                    "recommendation": outcome.final_recommendation,
+                },
             )
 
         except Exception as e:
@@ -979,7 +1007,9 @@ class Gate2RLFilter:
         self.telemetry = telemetry
         self.rl_filter_enabled = rl_filter_enabled
 
-    def evaluate(self, ticker: str, ctx: TradeContext, rl_threshold: float) -> GateResult:
+    def evaluate(
+        self, ticker: str, ctx: TradeContext, rl_threshold: float
+    ) -> GateResult:
         """
         Run RL inference on market features.
 
@@ -1013,7 +1043,9 @@ class Gate2RLFilter:
         )
 
         if not outcome.ok:
-            logger.error("Gate 2 (%s): RL filter failed: %s", ticker, outcome.failure.error)
+            logger.error(
+                "Gate 2 (%s): RL filter failed: %s", ticker, outcome.failure.error
+            )
             return GateResult(
                 gate_name="rl_filter",
                 status=GateStatus.ERROR,
@@ -1027,7 +1059,10 @@ class Gate2RLFilter:
 
         if confidence < rl_threshold:
             logger.info(
-                "Gate 2 (%s): REJECTED (confidence=%.2f < %.2f)", ticker, confidence, rl_threshold
+                "Gate 2 (%s): REJECTED (confidence=%.2f < %.2f)",
+                ticker,
+                confidence,
+                rl_threshold,
             )
             self.telemetry.gate_reject("rl_filter", ticker, decision)
             return GateResult(
@@ -1080,7 +1115,9 @@ class Gate3Sentiment:
         self.telemetry = telemetry
         self.llm_sentiment_enabled = llm_sentiment_enabled
 
-    def evaluate(self, ticker: str, ctx: TradeContext, session_profile: dict | None) -> GateResult:
+    def evaluate(
+        self, ticker: str, ctx: TradeContext, session_profile: dict | None
+    ) -> GateResult:
         """
         Analyze sentiment from LLM and web sources.
 
@@ -1139,7 +1176,9 @@ class Gate3Sentiment:
 
         if score < threshold:
             logger.info("Gate 3 (%s): REJECTED by bias (score=%.2f)", ticker, score)
-            self.telemetry.gate_reject("llm", ticker, {"score": score, "reason": bias.reason})
+            self.telemetry.gate_reject(
+                "llm", ticker, {"score": score, "reason": bias.reason}
+            )
             return GateResult(
                 gate_name="llm_sentiment",
                 status=GateStatus.REJECT,
@@ -1149,7 +1188,9 @@ class Gate3Sentiment:
             )
 
         logger.info("Gate 3 (%s): PASSED via bias (sentiment=%.2f)", ticker, score)
-        self.telemetry.gate_pass("llm", ticker, {"score": score, "source": "bias_store"})
+        self.telemetry.gate_pass(
+            "llm", ticker, {"score": score, "source": "bias_store"}
+        )
         return GateResult(
             gate_name="llm_sentiment",
             status=GateStatus.PASS,
@@ -1273,7 +1314,9 @@ class Gate35Introspection:
             }
 
             result = asyncio.get_event_loop().run_until_complete(
-                self.introspective_council.analyze_trade(symbol=ticker, market_data=market_data)
+                self.introspective_council.analyze_trade(
+                    symbol=ticker, market_data=market_data
+                )
             )
 
             self.telemetry.record(
@@ -1347,7 +1390,9 @@ class Gate4Risk:
         self.failure_manager = failure_manager
         self.telemetry = telemetry
 
-    def evaluate(self, ticker: str, ctx: TradeContext, allocation_cap: float) -> GateResult:
+    def evaluate(
+        self, ticker: str, ctx: TradeContext, allocation_cap: float
+    ) -> GateResult:
         """
         Calculate risk-adjusted position size.
 
@@ -1373,7 +1418,9 @@ class Gate4Risk:
         )
 
         if not outcome.ok:
-            logger.error("Gate 4 (%s): Risk sizing failed: %s", ticker, outcome.failure.error)
+            logger.error(
+                "Gate 4 (%s): Risk sizing failed: %s", ticker, outcome.failure.error
+            )
             return GateResult(
                 gate_name="risk",
                 status=GateStatus.ERROR,
@@ -1501,7 +1548,10 @@ class TradingGatePipeline:
         result = _timed_gate_execution(self.gate0.evaluate, ticker)
         results.append(result)
         _trace_gate(
-            "psychology", ticker, {"gate": 0, "latency_ms": result.execution_time_ms}, result
+            "psychology",
+            ticker,
+            {"gate": 0, "latency_ms": result.execution_time_ms},
+            result,
         )
         if result.rejected:
             return False, ctx, results
@@ -1526,7 +1576,12 @@ class TradingGatePipeline:
         # Gate 1.5: Debate (with latency tracking)
         result = _timed_gate_execution(self.gate15.evaluate, ticker, ctx)
         results.append(result)
-        _trace_gate("debate", ticker, {"gate": 1.5, "latency_ms": result.execution_time_ms}, result)
+        _trace_gate(
+            "debate",
+            ticker,
+            {"gate": 1.5, "latency_ms": result.execution_time_ms},
+            result,
+        )
         if result.rejected:
             return False, ctx, results
 
@@ -1536,14 +1591,20 @@ class TradingGatePipeline:
         _trace_gate(
             "rl_filter",
             ticker,
-            {"gate": 2, "rl_threshold": rl_threshold, "latency_ms": result.execution_time_ms},
+            {
+                "gate": 2,
+                "rl_threshold": rl_threshold,
+                "latency_ms": result.execution_time_ms,
+            },
             result,
         )
         if result.rejected or result.status == GateStatus.ERROR:
             return False, ctx, results
 
         # Gate 3: Sentiment (with latency tracking)
-        result = _timed_gate_execution(self.gate3.evaluate, ticker, ctx, session_profile)
+        result = _timed_gate_execution(
+            self.gate3.evaluate, ticker, ctx, session_profile
+        )
         results.append(result)
         _trace_gate(
             "sentiment",
@@ -1563,7 +1624,10 @@ class TradingGatePipeline:
         result = _timed_gate_execution(self.gate35.evaluate, ticker, ctx)
         results.append(result)
         _trace_gate(
-            "introspection", ticker, {"gate": 3.5, "latency_ms": result.execution_time_ms}, result
+            "introspection",
+            ticker,
+            {"gate": 3.5, "latency_ms": result.execution_time_ms},
+            result,
         )
         if result.rejected:
             return False, ctx, results
@@ -1574,7 +1638,11 @@ class TradingGatePipeline:
         _trace_gate(
             "risk",
             ticker,
-            {"gate": 4, "allocation_cap": allocation_cap, "latency_ms": result.execution_time_ms},
+            {
+                "gate": 4,
+                "allocation_cap": allocation_cap,
+                "latency_ms": result.execution_time_ms,
+            },
             result,
         )
         self._checkpoint(thread_id, 4, "risk", ticker, ctx, results)
@@ -1638,11 +1706,16 @@ class Gate5Execution:
         if not gateway_decision.approved:
             rejection_reasons = [r.value for r in gateway_decision.rejection_reasons]
             # Release allocation unless it's a batch minimum issue
-            if RejectionReason.MINIMUM_BATCH_NOT_MET not in gateway_decision.rejection_reasons:
+            if (
+                RejectionReason.MINIMUM_BATCH_NOT_MET
+                not in gateway_decision.rejection_reasons
+            ):
                 if ctx.allocation_plan:
                     self.smart_dca.release(ctx.allocation_plan.bucket, order_size)
 
-            logger.warning("Gate 5 (%s): REJECTED by gateway - %s", ticker, rejection_reasons)
+            logger.warning(
+                "Gate 5 (%s): REJECTED by gateway - %s", ticker, rejection_reasons
+            )
             self.telemetry.gate_reject(
                 "gateway",
                 ticker,
@@ -1669,7 +1742,9 @@ class Gate5Execution:
         if not order_outcome.ok:
             if ctx.allocation_plan:
                 self.smart_dca.release(ctx.allocation_plan.bucket, order_size)
-            logger.error("Gate 5 (%s): Execution failed: %s", ticker, order_outcome.failure.error)
+            logger.error(
+                "Gate 5 (%s): Execution failed: %s", ticker, order_outcome.failure.error
+            )
             return GateResult(
                 gate_name="execution",
                 status=GateStatus.ERROR,
@@ -1722,7 +1797,9 @@ class Gate5Execution:
                     hist=ctx.hist,
                 )
                 qty = order.get("filled_qty") or (order_size / float(ctx.current_price))
-                stop_order = self.executor.set_stop_loss(ticker, float(qty), float(stop_price))
+                stop_order = self.executor.set_stop_loss(
+                    ticker, float(qty), float(stop_price)
+                )
                 self.telemetry.record(
                     event_type="execution.stop",
                     ticker=ticker,
@@ -1730,7 +1807,9 @@ class Gate5Execution:
                     payload={
                         "stop": stop_order,
                         "atr_pct": ctx.atr_pct,
-                        "atr_multiplier": float(os.getenv("ATR_STOP_MULTIPLIER", "2.0")),
+                        "atr_multiplier": float(
+                            os.getenv("ATR_STOP_MULTIPLIER", "2.0")
+                        ),
                     },
                 )
         except Exception as exc:
@@ -1790,15 +1869,21 @@ class Gate5Execution:
                 payload={
                     "order_id": order_id,
                     "verified": verification.verified,
-                    "screenshot": str(verification.screenshot_path)
-                    if verification.screenshot_path
-                    else None,
+                    "screenshot": (
+                        str(verification.screenshot_path)
+                        if verification.screenshot_path
+                        else None
+                    ),
                     "errors": verification.errors,
                 },
             )
             if verification.verified:
-                logger.info("Trade verification PASSED for %s (order=%s)", ticker, order_id)
+                logger.info(
+                    "Trade verification PASSED for %s (order=%s)", ticker, order_id
+                )
             else:
-                logger.warning("Trade verification FAILED for %s: %s", ticker, verification.errors)
+                logger.warning(
+                    "Trade verification FAILED for %s: %s", ticker, verification.errors
+                )
         except Exception as verify_exc:
             logger.warning("Trade verification skipped for %s: %s", ticker, verify_exc)

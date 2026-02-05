@@ -174,7 +174,8 @@ class TestLessonsLearnedRAGWithTestData:
         with tempfile.TemporaryDirectory() as tmpdir:
             # Create test lesson file
             lesson_path = Path(tmpdir) / "test_lesson.md"
-            lesson_path.write_text("""# Test Lesson
+            lesson_path.write_text(
+                """# Test Lesson
 
 **Severity**: HIGH
 
@@ -186,7 +187,8 @@ Always run tests before committing.
 
 ## Tags
 `testing`, `smoke`
-""")
+"""
+            )
 
             with patch("src.rag.lessons_learned_rag.LESSONS_SEARCH_AVAILABLE", False):
                 from src.rag.lessons_learned_rag import LessonsLearnedRAG
@@ -202,20 +204,24 @@ Always run tests before committing.
         with tempfile.TemporaryDirectory() as tmpdir:
             # Create test lesson files
             lesson1 = Path(tmpdir) / "trading_error.md"
-            lesson1.write_text("""# Trading Error
+            lesson1.write_text(
+                """# Trading Error
 
 **Severity**: CRITICAL
 
 Stop loss was not set correctly. Always verify stop loss orders.
-""")
+"""
+            )
 
             lesson2 = Path(tmpdir) / "deployment_fix.md"
-            lesson2.write_text("""# Deployment Fix
+            lesson2.write_text(
+                """# Deployment Fix
 
 **Severity**: MEDIUM
 
 CI pipeline needs proper configuration.
-""")
+"""
+            )
 
             with patch("src.rag.lessons_learned_rag.LESSONS_SEARCH_AVAILABLE", False):
                 from src.rag.lessons_learned_rag import LessonsLearnedRAG

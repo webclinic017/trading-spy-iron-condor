@@ -90,7 +90,9 @@ def retry_with_backoff(
 
                 except TimeoutException:
                     if attempt == max_retries - 1:
-                        logger.error(f"{func.__name__} timed out after {max_retries} attempts")
+                        logger.error(
+                            f"{func.__name__} timed out after {max_retries} attempts"
+                        )
                         raise
                     logger.warning(
                         f"{func.__name__} attempt {attempt + 1}/{max_retries} timed out. "
@@ -101,7 +103,9 @@ def retry_with_backoff(
 
                 except exceptions as e:
                     if attempt == max_retries - 1:
-                        logger.error(f"{func.__name__} failed after {max_retries} attempts: {e}")
+                        logger.error(
+                            f"{func.__name__} failed after {max_retries} attempts: {e}"
+                        )
                         raise
 
                     logger.warning(

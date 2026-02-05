@@ -19,6 +19,7 @@ Message: "insufficient options buying power for cash-secured put
 ```
 
 **What happens:**
+
 1. We own LONG 8x SPY260220P00658000 puts
 2. We submit SELL order to close position
 3. Alpaca calculates margin as if we're OPENING 8 SHORT puts
@@ -28,18 +29,19 @@ Message: "insufficient options buying power for cash-secured put
 
 ## What We Tried (All Failed)
 
-| Method | Result |
-|--------|--------|
-| `DELETE /v2/positions/{symbol}` | 403 - insufficient buying power |
-| `POST /v2/orders` (market sell) | 403 - insufficient buying power |
+| Method                             | Result                           |
+| ---------------------------------- | -------------------------------- |
+| `DELETE /v2/positions/{symbol}`    | 403 - insufficient buying power  |
+| `POST /v2/orders` (market sell)    | 403 - insufficient buying power  |
 | Set `pdt_check="entry"` then close | Still 403 - not PDT, it's margin |
-| `close_position()` via alpaca-py | 403 - same error |
+| `close_position()` via alpaca-py   | 403 - same error                 |
 
 ## Root Cause
 
 Alpaca's options API doesn't properly recognize that selling an existing LONG position is a CLOSING trade, not an OPENING trade. It calculates margin requirements as if opening a new short position.
 
 This is likely related to:
+
 - `closing_transactions_only: true` setting
 - Options-specific margin calculations
 - Possible bug in position netting logic

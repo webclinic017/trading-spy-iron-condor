@@ -14,7 +14,7 @@ on:
   schedule:
     # Run daily at 6 AM ET (before market open) to cleanup overnight stale orders
     # EST: 11:00 UTC, EDT: 10:00 UTC
-    - cron: '0 10,11 * * 1-5'
+    - cron: "0 10,11 * * 1-5"
 
 permissions:
   contents: read
@@ -32,7 +32,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |

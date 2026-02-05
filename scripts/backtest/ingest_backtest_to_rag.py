@@ -30,7 +30,9 @@ def find_lesson_files(lessons_dir: Path) -> list[Path]:
     if not lessons_dir.exists():
         return []
 
-    return list(lessons_dir.glob("*_lessons_*.json")) + list(lessons_dir.glob("*_lesson_*.json"))
+    return list(lessons_dir.glob("*_lessons_*.json")) + list(
+        lessons_dir.glob("*_lesson_*.json")
+    )
 
 
 def load_lessons(file_path: Path) -> list[dict]:
@@ -85,7 +87,9 @@ def ingest_to_vertex_rag(
         try:
             # Format the lesson content (call validates lesson structure)
             _ = format_lesson_for_rag(lesson)
-            lesson_id = lesson.get("id", f"lesson_{datetime.now().strftime('%Y%m%d_%H%M%S')}")
+            lesson_id = lesson.get(
+                "id", f"lesson_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            )
 
             # In production, this would use the RAG API
             # For now, we'll save to a staging file for manual ingestion
@@ -124,15 +128,28 @@ def save_for_manual_ingestion(lessons: list[dict], output_dir: Path) -> Path:
 def main():
     parser = argparse.ArgumentParser(description="Ingest backtest lessons to RAG")
     parser.add_argument(
-        "--lessons-dir", type=str, default="data/backtests", help="Directory with lesson files"
+        "--lessons-dir",
+        type=str,
+        default="data/backtests",
+        help="Directory with lesson files",
     )
     parser.add_argument(
-        "--project", type=str, default=os.environ.get("GOOGLE_CLOUD_PROJECT"), help="GCP project ID"
+        "--project",
+        type=str,
+        default=os.environ.get("GOOGLE_CLOUD_PROJECT"),
+        help="GCP project ID",
     )
-    parser.add_argument("--location", type=str, default="us-central1", help="GCP location")
-    parser.add_argument("--corpus", type=str, default="trading-lessons", help="RAG corpus name")
     parser.add_argument(
-        "--output", type=str, default="data/rag_staging", help="Output for manual ingestion"
+        "--location", type=str, default="us-central1", help="GCP location"
+    )
+    parser.add_argument(
+        "--corpus", type=str, default="trading-lessons", help="RAG corpus name"
+    )
+    parser.add_argument(
+        "--output",
+        type=str,
+        default="data/rag_staging",
+        help="Output for manual ingestion",
     )
 
     args = parser.parse_args()
@@ -161,7 +178,9 @@ def main():
     ingested = 0
     if args.project and HAS_VERTEX:
         print("\n🚀 Attempting Vertex AI RAG ingestion...")
-        ingested = ingest_to_vertex_rag(all_lessons, args.project, args.location, args.corpus)
+        ingested = ingest_to_vertex_rag(
+            all_lessons, args.project, args.location, args.corpus
+        )
         print(f"✅ Ingested {ingested} lessons to RAG")
 
     # Always save for manual ingestion as backup

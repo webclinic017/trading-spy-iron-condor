@@ -276,7 +276,10 @@ class PerplexityNewsAgent:
         """
         # Standard queries (unlimited)
         standard_queries = [
-            ("fed_speakers", "Are there any Federal Reserve speakers or FOMC events today?"),
+            (
+                "fed_speakers",
+                "Are there any Federal Reserve speakers or FOMC events today?",
+            ),
             (
                 "economic_data",
                 "What economic data releases are scheduled today? GDP, jobs, CPI, etc.",
@@ -299,11 +302,18 @@ class PerplexityNewsAgent:
             # Assess risk from answer
             if result.get("answer"):
                 answer_lower = result["answer"].lower()
-                if any(word in answer_lower for word in ["fed", "fomc", "powell", "rate"]):
+                if any(
+                    word in answer_lower for word in ["fed", "fomc", "powell", "rate"]
+                ):
                     risk_score += 0.3
-                if any(word in answer_lower for word in ["cpi", "jobs", "gdp", "inflation"]):
+                if any(
+                    word in answer_lower for word in ["cpi", "jobs", "gdp", "inflation"]
+                ):
                     risk_score += 0.2
-                if any(word in answer_lower for word in ["earnings", "guidance", "beat", "miss"]):
+                if any(
+                    word in answer_lower
+                    for word in ["earnings", "guidance", "beat", "miss"]
+                ):
                     risk_score += 0.15
 
         # Premium queries (if budget available)
@@ -315,7 +325,9 @@ class PerplexityNewsAgent:
             # Adjust risk based on VIX forecast
             if vix_forecast.get("answer"):
                 answer = vix_forecast["answer"].lower()
-                if any(word in answer for word in ["spike", "surge", "elevated", "high"]):
+                if any(
+                    word in answer for word in ["spike", "surge", "elevated", "high"]
+                ):
                     risk_score += 0.25
                 elif any(word in answer for word in ["low", "stable", "calm", "range"]):
                     risk_score -= 0.1  # Favorable for iron condors
@@ -353,9 +365,14 @@ class PerplexityNewsAgent:
             answer = result["answer"]
             impact = "low"
 
-            if any(word in answer.lower() for word in ["crash", "surge", "halt", "breaking"]):
+            if any(
+                word in answer.lower()
+                for word in ["crash", "surge", "halt", "breaking"]
+            ):
                 impact = "high"
-            elif any(word in answer.lower() for word in ["rise", "fall", "move", "change"]):
+            elif any(
+                word in answer.lower() for word in ["rise", "fall", "move", "change"]
+            ):
                 impact = "medium"
 
             events.append(

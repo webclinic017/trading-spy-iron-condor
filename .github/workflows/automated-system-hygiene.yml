@@ -6,13 +6,13 @@ name: Automated System Hygiene (24/7)
 on:
   schedule:
     # Run tests every 6 hours
-    - cron: '0 */6 * * *'
+    - cron: "0 */6 * * *"
   workflow_dispatch:
     inputs:
       run_all:
-        description: 'Run all checks (tests, lint, cleanup)'
+        description: "Run all checks (tests, lint, cleanup)"
         required: false
-        default: 'true'
+        default: "true"
 
 permissions:
   contents: write
@@ -30,7 +30,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
@@ -116,7 +116,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |

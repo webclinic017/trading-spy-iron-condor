@@ -8,6 +8,7 @@
 ## Executive Summary
 
 The AI trading system failed catastrophically over three days (Jan 20-22, 2026):
+
 - Accumulated 8 contracts of SPY260220P00658000 when max should be 4
 - Unrealized loss grew to -$1,472 (35% of account equity)
 - All attempts to close positions blocked by Alpaca API bug + PDT restriction
@@ -16,7 +17,9 @@ The AI trading system failed catastrophically over three days (Jan 20-22, 2026):
 ## What Went Wrong
 
 ### Root Cause 1: Individual vs Cumulative Risk
+
 The trade gateway checked individual trade risk (5% max) but NOT cumulative exposure.
+
 - Trade 1: $248 risk (5% of $4,986) - APPROVED
 - Trade 2: $248 risk (5% of $4,986) - APPROVED
 - Trade 3: $248 risk (5% of $4,986) - APPROVED
@@ -25,27 +28,31 @@ The trade gateway checked individual trade risk (5% max) but NOT cumulative expo
 **Fix Applied**: `_check_cumulative_position_risk()` added to trade_gateway.py
 
 ### Root Cause 2: No Circuit Breaker
+
 When positions started bleeding, the system continued evaluating new trades.
 There was no hard stop that said "STOP - portfolio in crisis mode."
 
 **Fix Applied**: CIRCUIT BREAKER check at start of evaluate() method:
+
 1. TRADING_HALTED flag file check
 2. Block when unrealized loss > 25% of equity
 3. Block when option positions > 4
 
 ### Root Cause 3: Over-reliance on RAG
+
 CEO quote: "Our system has been in crisis mode for three days. I don't trust you."
 The system was designed to "learn from RAG" but:
+
 - RAG lessons are advisory, not preventive
 - Hard-coded risk limits are the actual safety net
 - RAG can't override code that doesn't exist
 
 ## Timeline
 
-| Date | Event | P/L |
-|------|-------|-----|
-| Jan 20 | First excess position opened | -$200 |
-| Jan 21 | More positions accumulated, no closure | -$800 |
+| Date   | Event                                   | P/L     |
+| ------ | --------------------------------------- | ------- |
+| Jan 20 | First excess position opened            | -$200   |
+| Jan 21 | More positions accumulated, no closure  | -$800   |
 | Jan 22 | 8 contracts, PDT + API bug blocks close | -$1,472 |
 
 ## Fixes Implemented
@@ -101,4 +108,5 @@ The system was designed to "learn from RAG" but:
 - Circuit breaker triggers: Track for false positives
 
 ## Tags
+
 `critical`, `trust-breach`, `circuit-breaker`, `risk-management`, `position-accumulation`, `pdt`, `crisis-mode`

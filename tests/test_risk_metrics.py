@@ -144,7 +144,9 @@ class TestRiskMetrics:
         pnls = [40, 50, 30, 60, 40, 50, 30, 40, 50, 30]
         metrics = calculate_risk_metrics(pnls)
         assert metrics.win_rate == 1.0, "All wins should give 100% win rate"
-        assert metrics.profit_factor == float("inf"), "No losses = infinite profit factor"
+        assert metrics.profit_factor == float(
+            "inf"
+        ), "No losses = infinite profit factor"
 
     def test_all_losers(self):
         """Test with all losing trades."""
@@ -155,7 +157,26 @@ class TestRiskMetrics:
 
     def test_mixed_trades(self):
         """Test with realistic mixed P/L."""
-        pnls = [40, 40, 40, -80, 60, 40, 40, -120, 40, 40, 80, 40, -40, 60, 40, 40, 40, 40]
+        pnls = [
+            40,
+            40,
+            40,
+            -80,
+            60,
+            40,
+            40,
+            -120,
+            40,
+            40,
+            80,
+            40,
+            -40,
+            60,
+            40,
+            40,
+            40,
+            40,
+        ]
         metrics = calculate_risk_metrics(pnls)
 
         assert metrics.total_return > 0, "Sample should be profitable"

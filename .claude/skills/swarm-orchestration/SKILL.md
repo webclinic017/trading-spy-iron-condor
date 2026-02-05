@@ -48,16 +48,16 @@ Master multi-agent orchestration for the AI Trading System using parallel task e
 
 ### Agent Types
 
-| Type | Purpose | Used In |
-|------|---------|---------|
-| `sentiment` | Market sentiment analysis via news/social | Pre-market |
-| `technicals` | Technical indicators (RSI, MACD, Bollinger) | Pre-market |
-| `risk` | Position risk assessment, Phil Town Rule #1 | Pre-market, EOD |
-| `options-chain` | Options chain analysis, IV, Greeks | Pre-market |
-| `news` | Breaking news, earnings, macro events | Pre-market |
-| `cleanup` | Dead code, test runner, RAG reindex | Maintenance |
-| `research` | YouTube learning, strategy backtesting | Weekend |
-| `backtest` | Strategy validation against historical data | Weekend |
+| Type            | Purpose                                     | Used In         |
+| --------------- | ------------------------------------------- | --------------- |
+| `sentiment`     | Market sentiment analysis via news/social   | Pre-market      |
+| `technicals`    | Technical indicators (RSI, MACD, Bollinger) | Pre-market      |
+| `risk`          | Position risk assessment, Phil Town Rule #1 | Pre-market, EOD |
+| `options-chain` | Options chain analysis, IV, Greeks          | Pre-market      |
+| `news`          | Breaking news, earnings, macro events       | Pre-market      |
+| `cleanup`       | Dead code, test runner, RAG reindex         | Maintenance     |
+| `research`      | YouTube learning, strategy backtesting      | Weekend         |
+| `backtest`      | Strategy validation against historical data | Weekend         |
 
 ### Task System
 
@@ -124,6 +124,7 @@ else:
 ```
 
 **Checklist validation**:
+
 - SPY only
 - 5% max position size ($5,000)
 - Iron condor structure verified
@@ -142,6 +143,7 @@ TaskCreate("Log daily performance", agent: "cleanup")
 ```
 
 **Exit triggers**:
+
 - 50% max profit reached
 - 7 DTE approaching
 - Stop-loss at 200% of credit
@@ -170,11 +172,11 @@ TaskCreate("Generate weekly insights", agent: "research")
 
 ## Execution Backends
 
-| Backend | Description | When Used |
-|---------|-------------|-----------|
+| Backend      | Description               | When Used                |
+| ------------ | ------------------------- | ------------------------ |
 | `in-process` | Fast, invisible execution | Default for CI/scheduled |
-| `tmux` | Visible panes, persistent | Local development |
-| `background` | Async with notifications | Long-running tasks |
+| `tmux`       | Visible panes, persistent | Local development        |
+| `background` | Async with notifications  | Long-running tasks       |
 
 ## Signal Aggregation
 
@@ -280,4 +282,4 @@ Every swarm mode enforces Rule #1:
 
 ---
 
-*Swarm orchestration adapted from Kieran Klaassen's multi-agent patterns*
+_Swarm orchestration adapted from Kieran Klaassen's multi-agent patterns_

@@ -10,8 +10,8 @@ on:
   #   - cron: '*/3 14-21 * * 1-5'
   push:
     paths:
-      - '.github/workflows/close-shorts-first.yml'
-      - 'scripts/close_shorts_first.py'
+      - ".github/workflows/close-shorts-first.yml"
+      - "scripts/close_shorts_first.py"
 
 # Prevent concurrent trade execution (LL-281 race condition fix)
 concurrency:
@@ -31,7 +31,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - run: pip install alpaca-py
 

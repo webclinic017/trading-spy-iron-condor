@@ -169,7 +169,11 @@ class SessionManager:
             smart_dca: SmartDCAAllocator instance.
             telemetry: OrchestratorTelemetry instance.
         """
-        if os.getenv("WEEKEND_PROXY_REALLOCATE", "true").lower() not in {"true", "1", "yes"}:
+        if os.getenv("WEEKEND_PROXY_REALLOCATE", "true").lower() not in {
+            "true",
+            "1",
+            "yes",
+        }:
             return None
 
         bucket = "weekend"

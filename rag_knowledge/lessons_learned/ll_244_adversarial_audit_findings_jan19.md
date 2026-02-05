@@ -12,38 +12,43 @@ Comprehensive adversarial audit revealed 10 critical findings in the trading sys
 
 ## Key Findings (Executive Summary)
 
-| Finding | Severity | Status |
-|---------|----------|--------|
-| Strategy mismatch (naked puts vs iron condors) | CRITICAL | FIXED (PR #2193) |
-| Position sizing bypass (15-30% vs 5% limit) | CRITICAL | PARTIALLY FIXED |
-| Data corruption (null symbols, negative prices) | CRITICAL | KNOWN |
-| Holiday trading without validation | HIGH | KNOWN |
-| Multiple uncoordinated traders | HIGH | FIXED (disabled) |
-| Naked puts execution | CRITICAL | FIXED (disabled) |
+| Finding                                         | Severity | Status           |
+| ----------------------------------------------- | -------- | ---------------- |
+| Strategy mismatch (naked puts vs iron condors)  | CRITICAL | FIXED (PR #2193) |
+| Position sizing bypass (15-30% vs 5% limit)     | CRITICAL | PARTIALLY FIXED  |
+| Data corruption (null symbols, negative prices) | CRITICAL | KNOWN            |
+| Holiday trading without validation              | HIGH     | KNOWN            |
+| Multiple uncoordinated traders                  | HIGH     | FIXED (disabled) |
+| Naked puts execution                            | CRITICAL | FIXED (disabled) |
 
 ## Critical Fix Applied (PR #2193)
 
 ### Disabled Conflicting Traders in daily-trading.yml:
+
 - `simple_daily_trader.py` - Sells NAKED puts (undefined risk)
 - `rule_one_trader.py` - Trades individual stocks (F, SOFI, etc.)
 - `guaranteed_trader.py` - Buys SPY shares (not iron condors)
 
 ### Added Compliance Test
+
 - `tests/test_claudemd_compliance.py` - Validates code matches CLAUDE.md
 - 10/12 tests pass
 - 2 xfail tests for known position limit violations
 
 ### Added Position Closer
+
 - `scripts/close_excess_spreads.py` - Closes excess positions when market opens
 
 ## Root Cause
 
 The $5K account failed because:
+
 1. **74 days of zero trades** - Over-engineered gates blocked all opportunities
 2. **Panic pivot to SOFI** - Picked blacklisted stock, violated 5% rule
 3. **Code/strategy mismatch** - 4 traders made independent decisions
 
 The $100K account succeeded because:
+
 1. Human decisions (not over-automated)
 2. SPY only
 3. Iron condors (defined risk)
@@ -64,6 +69,7 @@ The $100K account succeeded because:
 ## Phil Town Alignment
 
 This audit enforces Rule #1: "Don't Lose Money"
+
 - Naked puts: Unlimited loss → DISABLED
 - Iron condors: Defined risk → ENABLED
 - 5% position limit: Maximum loss capped

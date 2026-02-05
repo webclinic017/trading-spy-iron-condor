@@ -51,7 +51,10 @@ if qty <= 1:
 # Sell 1 to fix
 print("Selling 1 contract to reduce from " + str(qty) + " to " + str(qty - 1) + "...")
 order = MarketOrderRequest(
-    symbol="SPY260220P00653000", qty=1, side=OrderSide.SELL, time_in_force=TimeInForce.DAY
+    symbol="SPY260220P00653000",
+    qty=1,
+    side=OrderSide.SELL,
+    time_in_force=TimeInForce.DAY,
 )
 result = client.submit_order(order)
 print("Order submitted: " + str(result.id))

@@ -72,7 +72,9 @@ class CircuitBreaker:
             if self._state == CircuitState.OPEN:
                 # Check if we should transition to half-open
                 if time.time() - self._last_failure_time >= self.recovery_timeout:
-                    logger.info(f"[{self.name}] Circuit transitioning OPEN -> HALF_OPEN")
+                    logger.info(
+                        f"[{self.name}] Circuit transitioning OPEN -> HALF_OPEN"
+                    )
                     self._state = CircuitState.HALF_OPEN
                     self._success_count = 0
             return self._state
@@ -98,7 +100,9 @@ class CircuitBreaker:
 
             if self._state == CircuitState.HALF_OPEN:
                 # Any failure in half-open reopens the circuit
-                logger.warning(f"[{self.name}] Circuit OPEN - failure in half-open: {error}")
+                logger.warning(
+                    f"[{self.name}] Circuit OPEN - failure in half-open: {error}"
+                )
                 self._state = CircuitState.OPEN
             elif self._state == CircuitState.CLOSED:
                 if self._failure_count >= self.failure_threshold:

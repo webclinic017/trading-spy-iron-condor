@@ -21,7 +21,9 @@ def main():
     print(f"PDT BYPASS CLOSE ATTEMPT - {datetime.now()}")
     print("=" * 60)
 
-    api_key = os.environ.get("ALPACA_API_KEY") or os.environ.get("ALPACA_PAPER_TRADING_5K_API_KEY")
+    api_key = os.environ.get("ALPACA_API_KEY") or os.environ.get(
+        "ALPACA_PAPER_TRADING_5K_API_KEY"
+    )
     api_secret = os.environ.get("ALPACA_SECRET_KEY") or os.environ.get(
         "ALPACA_PAPER_TRADING_5K_API_SECRET"
     )
@@ -48,7 +50,9 @@ def main():
     # Step 2: Set pdt_check to "entry" (only block opening trades, not closing)
     print("\n2️⃣ Setting pdt_check to 'entry' (allow closing trades)...")
     resp = requests.patch(
-        f"{base_url}/v2/account/configurations", headers=headers, json={"pdt_check": "entry"}
+        f"{base_url}/v2/account/configurations",
+        headers=headers,
+        json={"pdt_check": "entry"},
     )
     if resp.status_code == 200:
         print(f"   ✅ Config updated: {resp.json()}")
@@ -111,13 +115,17 @@ def main():
         # Method C: close_position with percentage
         print("      Method C: Close position request...")
         resp = requests.delete(
-            f"{base_url}/v2/positions/{symbol}", headers=headers, params={"qty": str(qty)}
+            f"{base_url}/v2/positions/{symbol}",
+            headers=headers,
+            params={"qty": str(qty)},
         )
         if resp.status_code in [200, 204]:
             print("      ✅ CLOSED via close_position!")
             continue
         else:
-            print(f"      ❌ close_position failed: {resp.status_code} - {resp.text[:100]}")
+            print(
+                f"      ❌ close_position failed: {resp.status_code} - {resp.text[:100]}"
+            )
 
     # Step 5: Verify
     print("\n5️⃣ Verifying remaining positions...")
@@ -134,7 +142,9 @@ def main():
     # Step 6: Reset pdt_check to "both" for safety
     print("\n6️⃣ Resetting pdt_check to 'both' for safety...")
     requests.patch(
-        f"{base_url}/v2/account/configurations", headers=headers, json={"pdt_check": "both"}
+        f"{base_url}/v2/account/configurations",
+        headers=headers,
+        json={"pdt_check": "both"},
     )
 
     print("\n" + "=" * 60)

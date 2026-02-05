@@ -9,12 +9,14 @@
 Original target: **$100/day with $5K capital = 2% daily return**
 
 Research revealed:
+
 - 2% daily = 500% annually (unsustainable)
 - Professional fund managers target 15-25% ANNUALLY
 - Credit spread win rates: 60-70% realistic
 - Our math assumed ~100% win rate (flawed)
 
 ### Original Flawed Math
+
 ```
 10 spreads x $100 = $1,000/week
 Assumed: All 10 win
@@ -31,6 +33,7 @@ Revised target: **$25/day (~$500/month = 10% monthly = 120% annually)**
 - Conservative position sizing: 2-3 spreads/week
 
 ### New Realistic Math
+
 ```
 2 spreads x $100 x 70% = $140 wins
 0.6 losses x $125 (stop-loss) = $75 losses
@@ -41,6 +44,7 @@ Upside: $25-40/day with good execution
 ## Decision Framework
 
 **Data-driven, not projection-driven:**
+
 1. Paper trade for 90 days
 2. Track every trade in `data/spread_performance.json`
 3. Use `scripts/track_spread_performance.py` for metrics

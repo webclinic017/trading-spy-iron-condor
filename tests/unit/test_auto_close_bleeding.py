@@ -10,12 +10,12 @@ from datetime import datetime, timedelta
 from unittest.mock import MagicMock
 
 from src.safety.auto_close_bleeding import (
+    LOSS_THRESHOLD,
+    SINGLE_POSITION_LOSS_THRESHOLD,
     PositionCloseRecommendation,
     analyze_positions_for_closure,
-    get_pdt_safe_close_qty,
     execute_auto_close,
-    SINGLE_POSITION_LOSS_THRESHOLD,
-    LOSS_THRESHOLD,
+    get_pdt_safe_close_qty,
 )
 
 
@@ -61,7 +61,12 @@ class TestAnalyzePositionsForClosure:
     def test_no_recommendations_for_profitable_positions(self):
         """Should not recommend closing profitable positions."""
         positions = [
-            {"symbol": "SPY260227P00660000", "qty": 1, "unrealized_pl": 100, "cost_basis": 500}
+            {
+                "symbol": "SPY260227P00660000",
+                "qty": 1,
+                "unrealized_pl": 100,
+                "cost_basis": 500,
+            }
         ]
         recs = analyze_positions_for_closure(positions, account_equity=30000)
         assert len(recs) == 0
@@ -69,7 +74,12 @@ class TestAnalyzePositionsForClosure:
     def test_recommends_closing_50pct_loss(self):
         """Should recommend closing when single position loses > 50%."""
         positions = [
-            {"symbol": "SPY260227P00660000", "qty": 1, "unrealized_pl": -600, "cost_basis": 1000}
+            {
+                "symbol": "SPY260227P00660000",
+                "qty": 1,
+                "unrealized_pl": -600,
+                "cost_basis": 1000,
+            }
         ]
         recs = analyze_positions_for_closure(positions, account_equity=30000)
         assert len(recs) == 1
@@ -79,7 +89,12 @@ class TestAnalyzePositionsForClosure:
     def test_recommends_closing_at_portfolio_threshold(self):
         """Should recommend closing when portfolio loss > 25%."""
         positions = [
-            {"symbol": "SPY260227P00660000", "qty": 1, "unrealized_pl": -8000, "cost_basis": 10000}
+            {
+                "symbol": "SPY260227P00660000",
+                "qty": 1,
+                "unrealized_pl": -8000,
+                "cost_basis": 10000,
+            }
         ]
         recs = analyze_positions_for_closure(positions, account_equity=30000)
         # 8000/30000 = 26.7% > 25%
@@ -89,7 +104,12 @@ class TestAnalyzePositionsForClosure:
     def test_no_recommendation_below_thresholds(self):
         """Should not recommend if below all thresholds."""
         positions = [
-            {"symbol": "SPY260227P00660000", "qty": 1, "unrealized_pl": -100, "cost_basis": 500}
+            {
+                "symbol": "SPY260227P00660000",
+                "qty": 1,
+                "unrealized_pl": -100,
+                "cost_basis": 500,
+            }
         ]
         # Loss is 20% (below 50%) and 100/30000 = 0.3% (below 25%)
         recs = analyze_positions_for_closure(positions, account_equity=30000)
@@ -98,8 +118,18 @@ class TestAnalyzePositionsForClosure:
     def test_sorts_by_priority(self):
         """Should sort recommendations by priority (CRITICAL first)."""
         positions = [
-            {"symbol": "SPY1", "qty": 1, "unrealized_pl": -600, "cost_basis": 1000},  # 60% loss
-            {"symbol": "SPY2", "qty": 1, "unrealized_pl": -5000, "cost_basis": 10000},  # 50% loss
+            {
+                "symbol": "SPY1",
+                "qty": 1,
+                "unrealized_pl": -600,
+                "cost_basis": 1000,
+            },  # 60% loss
+            {
+                "symbol": "SPY2",
+                "qty": 1,
+                "unrealized_pl": -5000,
+                "cost_basis": 10000,
+            },  # 50% loss
         ]
         recs = analyze_positions_for_closure(positions, account_equity=30000)
         assert len(recs) >= 1
@@ -111,7 +141,12 @@ class TestAnalyzePositionsForClosure:
     def test_handles_zero_cost_basis(self):
         """Should handle positions with zero cost basis gracefully."""
         positions = [
-            {"symbol": "SPY260227P00660000", "qty": 1, "unrealized_pl": -100, "cost_basis": 0}
+            {
+                "symbol": "SPY260227P00660000",
+                "qty": 1,
+                "unrealized_pl": -100,
+                "cost_basis": 0,
+            }
         ]
         # Should not crash
         recs = analyze_positions_for_closure(positions, account_equity=30000)
@@ -172,7 +207,12 @@ class TestGetPDTSafeCloseQty:
         """Should only count BUY trades, not SELL."""
         today = datetime.now().isoformat()
         trade_history = [
-            {"symbol": "SPY260227P00660000", "side": "SELL", "filled_qty": 1, "filled_at": today}
+            {
+                "symbol": "SPY260227P00660000",
+                "side": "SELL",
+                "filled_qty": 1,
+                "filled_at": today,
+            }
         ]
         safe_qty = get_pdt_safe_close_qty("SPY260227P00660000", 2.0, trade_history)
         assert safe_qty == 2.0

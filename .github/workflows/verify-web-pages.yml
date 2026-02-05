@@ -2,12 +2,12 @@ name: Verify Web Pages (Agent-Browser)
 
 on:
   schedule:
-    - cron: '0 14 * * 1-5'  # 2 PM UTC daily (market hours)
+    - cron: "0 14 * * 1-5" # 2 PM UTC daily (market hours)
   workflow_dispatch:
     inputs:
       pages:
-        description: 'Pages to verify (comma-separated: github-pages,devto)'
-        default: 'github-pages,devto'
+        description: "Pages to verify (comma-separated: github-pages,devto)"
+        default: "github-pages,devto"
         type: string
 
 env:
@@ -25,7 +25,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install agent-browser
         run: |
@@ -126,7 +126,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: pip install requests

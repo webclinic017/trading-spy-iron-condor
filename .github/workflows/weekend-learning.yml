@@ -5,7 +5,7 @@ on:
   # COST-OPTIMIZED: Once per weekend (Sunday only) to stay under $50/mo GCP budget
   schedule:
     # Run Sunday at 8:00 AM Eastern (once per weekend, not twice)
-    - cron: '0 13 * * 0'  # 13:00 UTC = 8:00 AM ET, Sunday only
+    - cron: "0 13 * * 0" # 13:00 UTC = 8:00 AM ET, Sunday only
   workflow_dispatch:
     inputs:
       full_rebuild:
@@ -94,8 +94,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history for analysis
-          ref: main  # Always build from latest main (prevents stale code)
+          fetch-depth: 0 # Full history for analysis
+          ref: main # Always build from latest main (prevents stale code)
 
       - name: Set up Python
         uses: actions/setup-python@v5

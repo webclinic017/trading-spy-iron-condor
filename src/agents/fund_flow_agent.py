@@ -333,7 +333,9 @@ async def get_fund_flow_signal() -> dict[str, Any]:
             "is_bullish": result.is_bullish,
             "is_bearish": result.is_bearish,
             "recommendation": (
-                "FAVORABLE" if result.is_bullish else "CAUTION" if result.is_bearish else "NEUTRAL"
+                "FAVORABLE"
+                if result.is_bullish
+                else "CAUTION" if result.is_bearish else "NEUTRAL"
             ),
         },
     }

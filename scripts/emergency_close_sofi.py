@@ -18,7 +18,9 @@ import logging
 import os
 import sys
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
@@ -71,11 +73,15 @@ def close_all_sofi_positions(dry_run: bool = True):
 
         logger.info(f"Found {len(sofi_positions)} SOFI position(s):")
         for pos in sofi_positions:
-            logger.info(f"  {pos['symbol']}: {pos['qty']} shares, P/L: ${pos['unrealized_pl']:.2f}")
+            logger.info(
+                f"  {pos['symbol']}: {pos['qty']} shares, P/L: ${pos['unrealized_pl']:.2f}"
+            )
 
         if dry_run:
             logger.info("\n=== DRY RUN - No trades executed ===")
-            logger.info("To execute: python scripts/emergency_close_sofi.py (without --dry-run)")
+            logger.info(
+                "To execute: python scripts/emergency_close_sofi.py (without --dry-run)"
+            )
             return True
 
         # Execute closes

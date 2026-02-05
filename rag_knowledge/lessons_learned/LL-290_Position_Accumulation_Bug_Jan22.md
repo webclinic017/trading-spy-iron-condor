@@ -14,6 +14,7 @@ iron_condor_trader.py was placing partial fills that accumulated to 8 contracts 
 Position limit check happened inside execute() but multiple workflow runs could race. Partial fills were not properly cleaned up.
 
 **Key failures:**
+
 1. Position check was INSIDE execute() - too late
 2. No file-based lock to prevent concurrent executions
 3. Partial fills accumulated without detection
@@ -27,12 +28,12 @@ This is a Phil Town Rule #1 violation - the system lost money due to a preventab
 
 ## Root Cause Analysis
 
-| Component | Failure |
-|-----------|---------|
-| Position check timing | Inside execute(), not before |
-| Concurrency control | No lock file |
-| Partial fill handling | Not cleaned up |
-| Workflow orchestration | Race conditions possible |
+| Component              | Failure                      |
+| ---------------------- | ---------------------------- |
+| Position check timing  | Inside execute(), not before |
+| Concurrency control    | No lock file                 |
+| Partial fill handling  | Not cleaned up               |
+| Workflow orchestration | Race conditions possible     |
 
 ## Prevention
 

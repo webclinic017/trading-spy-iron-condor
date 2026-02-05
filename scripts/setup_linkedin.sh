@@ -12,8 +12,8 @@ source "$(dirname "$0")/../../.env"
 
 # Check credentials
 if [ -z "$LINKEDIN_CLIENT_ID" ] || [ -z "$LINKEDIN_CLIENT_SECRET" ]; then
-    echo "❌ LINKEDIN_CLIENT_ID and LINKEDIN_CLIENT_SECRET must be set in .env"
-    exit 1
+	echo "❌ LINKEDIN_CLIENT_ID and LINKEDIN_CLIENT_SECRET must be set in .env"
+	exit 1
 fi
 
 # LinkedIn OAuth URLs
@@ -43,8 +43,8 @@ echo -n "5. Paste the CODE here and press Enter: "
 read AUTH_CODE
 
 if [ -z "$AUTH_CODE" ]; then
-    echo "❌ No code provided"
-    exit 1
+	echo "❌ No code provided"
+	exit 1
 fi
 
 echo ""
@@ -52,20 +52,20 @@ echo "🔄 Exchanging code for access token..."
 
 # Exchange code for token
 RESPONSE=$(curl -s -X POST "$TOKEN_URL" \
-    -H "Content-Type: application/x-www-form-urlencoded" \
-    -d "grant_type=authorization_code" \
-    -d "code=$AUTH_CODE" \
-    -d "redirect_uri=$REDIRECT_URI" \
-    -d "client_id=$LINKEDIN_CLIENT_ID" \
-    -d "client_secret=$LINKEDIN_CLIENT_SECRET")
+	-H "Content-Type: application/x-www-form-urlencoded" \
+	-d "grant_type=authorization_code" \
+	-d "code=$AUTH_CODE" \
+	-d "redirect_uri=$REDIRECT_URI" \
+	-d "client_id=$LINKEDIN_CLIENT_ID" \
+	-d "client_secret=$LINKEDIN_CLIENT_SECRET")
 
 # Extract access token
 ACCESS_TOKEN=$(echo "$RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin).get('access_token', ''))" 2>/dev/null || echo "")
 
 if [ -z "$ACCESS_TOKEN" ]; then
-    echo "❌ Failed to get access token"
-    echo "Response: $RESPONSE"
-    exit 1
+	echo "❌ Failed to get access token"
+	echo "Response: $RESPONSE"
+	exit 1
 fi
 
 echo "✅ Got access token"
@@ -73,14 +73,14 @@ echo "✅ Got access token"
 # Get user info for person URN
 echo "🔄 Getting user info..."
 USER_INFO=$(curl -s -X GET "https://api.linkedin.com/v2/userinfo" \
-    -H "Authorization: Bearer $ACCESS_TOKEN")
+	-H "Authorization: Bearer $ACCESS_TOKEN")
 
 PERSON_ID=$(echo "$USER_INFO" | python3 -c "import sys,json; print(json.load(sys.stdin).get('sub', ''))" 2>/dev/null || echo "")
 NAME=$(echo "$USER_INFO" | python3 -c "import sys,json; print(json.load(sys.stdin).get('name', ''))" 2>/dev/null || echo "")
 
 if [ -z "$PERSON_ID" ]; then
-    echo "❌ Failed to get user info"
-    exit 1
+	echo "❌ Failed to get user info"
+	exit 1
 fi
 
 PERSON_URN="urn:li:person:$PERSON_ID"
@@ -88,15 +88,15 @@ echo "✅ User: $NAME"
 echo "✅ Person URN: $PERSON_URN"
 
 # Save to .env
-echo "" >> "$(dirname "$0")/../../.env"
-echo "# LinkedIn OAuth Token (Generated $(date))" >> "$(dirname "$0")/../../.env"
-echo "LINKEDIN_ACCESS_TOKEN=$ACCESS_TOKEN" >> "$(dirname "$0")/../../.env"
-echo "LINKEDIN_PERSON_URN=$PERSON_URN" >> "$(dirname "$0")/../../.env"
+echo "" >>"$(dirname "$0")/../../.env"
+echo "# LinkedIn OAuth Token (Generated $(date))" >>"$(dirname "$0")/../../.env"
+echo "LINKEDIN_ACCESS_TOKEN=$ACCESS_TOKEN" >>"$(dirname "$0")/../../.env"
+echo "LINKEDIN_PERSON_URN=$PERSON_URN" >>"$(dirname "$0")/../../.env"
 
 # Save to token file
 TOKEN_FILE="$(dirname "$0")/../data/linkedin_token.json"
 mkdir -p "$(dirname "$TOKEN_FILE")"
-cat > "$TOKEN_FILE" << EOF
+cat >"$TOKEN_FILE" <<EOF
 {
   "access_token": "$ACCESS_TOKEN",
   "person_urn": "$PERSON_URN",

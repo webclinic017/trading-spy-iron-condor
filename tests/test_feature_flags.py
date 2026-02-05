@@ -56,9 +56,9 @@ class TestFeatureFlagsDefaults:
 
             reload(trader)
 
-            assert trader.precious_metals_enabled() is False, (
-                "Precious Metals must be DISABLED by default!"
-            )
+            assert (
+                trader.precious_metals_enabled() is False
+            ), "Precious Metals must be DISABLED by default!"
 
     def test_prediction_always_disabled(self):
         """Prediction markets (Kalshi) were removed Dec 2025."""
@@ -71,7 +71,9 @@ class TestFeatureFlagsDefaults:
 class TestFeatureFlagsEnvOverride:
     """Test that env vars can enable features when explicitly set."""
 
-    @pytest.mark.parametrize("value", ["1", "true", "True", "TRUE", "yes", "Yes", "YES"])
+    @pytest.mark.parametrize(
+        "value", ["1", "true", "True", "TRUE", "yes", "Yes", "YES"]
+    )
     def test_reit_enabled_via_env(self, value):
         """REIT can be enabled via environment variable."""
         with patch.dict(os.environ, {"ENABLE_REIT_STRATEGY": value}):
@@ -81,11 +83,13 @@ class TestFeatureFlagsEnvOverride:
 
             reload(trader)
 
-            assert trader.reit_enabled() is True, (
-                f"REIT should be enabled when ENABLE_REIT_STRATEGY={value}"
-            )
+            assert (
+                trader.reit_enabled() is True
+            ), f"REIT should be enabled when ENABLE_REIT_STRATEGY={value}"
 
-    @pytest.mark.parametrize("value", ["0", "false", "False", "FALSE", "no", "No", "NO", ""])
+    @pytest.mark.parametrize(
+        "value", ["0", "false", "False", "FALSE", "no", "No", "NO", ""]
+    )
     def test_reit_disabled_via_env(self, value):
         """REIT stays disabled with falsy values."""
         with patch.dict(os.environ, {"ENABLE_REIT_STRATEGY": value}):
@@ -95,11 +99,13 @@ class TestFeatureFlagsEnvOverride:
 
             reload(trader)
 
-            assert trader.reit_enabled() is False, (
-                f"REIT should be disabled when ENABLE_REIT_STRATEGY={value}"
-            )
+            assert (
+                trader.reit_enabled() is False
+            ), f"REIT should be disabled when ENABLE_REIT_STRATEGY={value}"
 
-    @pytest.mark.parametrize("value", ["1", "true", "True", "TRUE", "yes", "Yes", "YES"])
+    @pytest.mark.parametrize(
+        "value", ["1", "true", "True", "TRUE", "yes", "Yes", "YES"]
+    )
     def test_precious_metals_enabled_via_env(self, value):
         """Precious Metals can be enabled via environment variable."""
         with patch.dict(os.environ, {"ENABLE_PRECIOUS_METALS": value}):
@@ -109,9 +115,9 @@ class TestFeatureFlagsEnvOverride:
 
             reload(trader)
 
-            assert trader.precious_metals_enabled() is True, (
-                f"Precious Metals should be enabled when ENABLE_PRECIOUS_METALS={value}"
-            )
+            assert (
+                trader.precious_metals_enabled() is True
+            ), f"Precious Metals should be enabled when ENABLE_PRECIOUS_METALS={value}"
 
 
 class TestFeatureFlagsIntegration:

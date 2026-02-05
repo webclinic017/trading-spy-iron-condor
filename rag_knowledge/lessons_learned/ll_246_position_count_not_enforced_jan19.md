@@ -13,6 +13,7 @@ Adversarial audit discovered that position COUNT was only validated in tests, no
 ## Vulnerability
 
 The `mandatory_trade_gate.py` validated:
+
 - ✓ Ticker whitelist
 - ✓ Position SIZE (5%)
 - ✓ Daily loss limit
@@ -23,11 +24,13 @@ This allowed unlimited position accumulation.
 ## Evidence
 
 From system_state.json:
+
 ```json
 "positions_count": 6,  // Should be max 4
 ```
 
 From test failure:
+
 ```
 Position limit exceeded: 6 positions (max 4 per CLAUDE.md)
 ```
@@ -39,6 +42,7 @@ The compliance test checked position count AFTER trades executed, but the mandat
 ## Fix Applied
 
 Added to `mandatory_trade_gate.py`:
+
 ```python
 # CHECK 2.5: Position COUNT limit (Jan 19, 2026 - LL-246)
 MAX_POSITIONS = 4  # 1 iron condor = 4 legs (HARDCODED per CLAUDE.md)

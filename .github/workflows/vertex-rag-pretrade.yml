@@ -21,29 +21,29 @@ on:
   workflow_call:
     inputs:
       symbols:
-        description: 'Comma-separated symbols to query advice for'
+        description: "Comma-separated symbols to query advice for"
         required: false
         type: string
-        default: 'SPY,IWM'
+        default: "SPY,IWM"
     outputs:
       advice_file:
-        description: 'Path to the generated advice file'
+        description: "Path to the generated advice file"
         value: ${{ jobs.query-rag.outputs.advice_file }}
       has_warnings:
-        description: 'Whether critical warnings were found'
+        description: "Whether critical warnings were found"
         value: ${{ jobs.query-rag.outputs.has_warnings }}
 
   # Manual trigger for testing
   workflow_dispatch:
     inputs:
       symbols:
-        description: 'Comma-separated symbols to query advice for'
+        description: "Comma-separated symbols to query advice for"
         required: false
-        default: 'SPY,IWM'
+        default: "SPY,IWM"
       custom_query:
-        description: 'Custom query (optional)'
+        description: "Custom query (optional)"
         required: false
-        default: ''
+        default: ""
 
   # DISABLED Jan 23, 2026 - Cost reduction ($200/month GCP bill)
   # push:
@@ -53,7 +53,7 @@ on:
   #     - '.github/workflows/vertex-rag-pretrade.yml'
 
 env:
-  PYTHON_VERSION: '3.11'
+  PYTHON_VERSION: "3.11"
 
 jobs:
   query-rag:
@@ -73,7 +73,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'pip'
+          cache: "pip"
 
       - name: Install dependencies
         run: |

@@ -27,7 +27,9 @@ class RiskAgent(BaseAgent):
 
     def __init__(self, project_dir: Path | None = None):
         super().__init__("risk")
-        self.project_dir = project_dir or Path(__file__).parent.parent.parent.parent.parent
+        self.project_dir = (
+            project_dir or Path(__file__).parent.parent.parent.parent.parent
+        )
 
     async def analyze(self) -> dict[str, Any]:
         """Analyze risk parameters and compliance."""
@@ -39,7 +41,9 @@ class RiskAgent(BaseAgent):
         if state_file.exists():
             try:
                 state = json.loads(state_file.read_text())
-                account_equity = float(state.get("account", {}).get("current_equity", 100000))
+                account_equity = float(
+                    state.get("account", {}).get("current_equity", 100000)
+                )
                 positions = state.get("positions", [])
             except (json.JSONDecodeError, KeyError):
                 pass
@@ -57,9 +61,11 @@ class RiskAgent(BaseAgent):
             "position_size_ok": True,  # Will be checked per trade
             "exposure_under_limit": exposure_pct <= self.MAX_PORTFOLIO_HEAT,
             "stop_loss_defined": True,  # Required for each trade
-            "spy_only": all(p.get("symbol", "").startswith("SPY") for p in positions)
-            if positions
-            else True,
+            "spy_only": (
+                all(p.get("symbol", "").startswith("SPY") for p in positions)
+                if positions
+                else True
+            ),
         }
 
         all_compliant = all(compliance_checks.values())

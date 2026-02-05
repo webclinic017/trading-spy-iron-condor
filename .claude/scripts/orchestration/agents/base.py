@@ -49,6 +49,8 @@ class BaseAgent(ABC):
             }
 
         self.completed_at = datetime.now(timezone.utc)
-        result["duration_ms"] = (self.completed_at - self.started_at).total_seconds() * 1000
+        result["duration_ms"] = (
+            self.completed_at - self.started_at
+        ).total_seconds() * 1000
 
         return result

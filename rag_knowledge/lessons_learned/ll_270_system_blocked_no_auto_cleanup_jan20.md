@@ -37,6 +37,7 @@ This violates Core Directive: "Never tell CEO to do manual work"
 ## Evidence
 
 From trade_gateway.py logs:
+
 ```
 CHECK 0.7: MAX_POSITIONS_EXCEEDED - Blocked
 CHECK 0.8: TOTAL_PORTFOLIO_RISK_EXCEEDED - Blocked
@@ -49,19 +50,25 @@ System was in "blocked state" all day - correct behavior, but no recovery path.
 Created automated position compliance system:
 
 ### 1. Emergency Cleanup Script
+
 `scripts/emergency_position_cleanup.py`
+
 - Identifies all spreads in portfolio
 - Calculates excess (current - max allowed)
 - Closes worst-performing spreads first
 - Can be run manually or via workflow
 
 ### 2. Manual Trigger Workflow
+
 `.github/workflows/emergency-position-cleanup.yml`
+
 - Dispatch trigger for immediate cleanup
 - Includes dry_run option
 
 ### 3. Automated Scheduled Workflow (KEY FIX)
+
 `.github/workflows/auto-position-compliance.yml`
+
 - Runs every 30 minutes during market hours
 - Automatically detects limit violations
 - Closes excess spreads without human intervention

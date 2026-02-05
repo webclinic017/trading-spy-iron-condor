@@ -9,8 +9,9 @@ Tests the CLAUDE.md trading rule:
 Created: January 15, 2026
 """
 
-import pytest
 from datetime import date, datetime
+
+import pytest
 
 from src.risk.options_risk_monitor import (
     DEFAULT_STOP_LOSS_MULTIPLIER,
@@ -171,7 +172,9 @@ class TestShouldClosePosition:
         assert "stop-loss triggered" in reason.lower()
         assert "2x credit" in reason.lower()
 
-    def test_position_exceeds_max_loss_triggers_close(self, monitor, credit_spread_position):
+    def test_position_exceeds_max_loss_triggers_close(
+        self, monitor, credit_spread_position
+    ):
         """Position exceeding 2x credit loss should trigger close."""
         # Beyond stop-loss: spread costs $2.40 to close (loss = $1.80 > 2x credit)
         credit_spread_position.current_price = 2.40
@@ -181,7 +184,9 @@ class TestShouldClosePosition:
         assert should_close is True
         assert "stop-loss triggered" in reason.lower()
 
-    def test_position_just_below_max_loss_no_close(self, monitor, credit_spread_position):
+    def test_position_just_below_max_loss_no_close(
+        self, monitor, credit_spread_position
+    ):
         """Position just below 2x credit should not trigger close."""
         # Just below stop-loss: spread costs $1.79 (loss = $1.19 < $1.20)
         credit_spread_position.current_price = 1.79

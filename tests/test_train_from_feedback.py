@@ -277,12 +277,22 @@ class TestTrainFromFeedback:
                 ts = datetime.now().isoformat()
                 with open(fb_dir / "feedback_2026-01-29.jsonl", "w") as f:
                     f.write(
-                        json.dumps({"timestamp": ts, "type": "positive", "summary": "test passed"})
+                        json.dumps(
+                            {
+                                "timestamp": ts,
+                                "type": "positive",
+                                "summary": "test passed",
+                            }
+                        )
                         + "\n"
                     )
                     f.write(
                         json.dumps(
-                            {"timestamp": ts, "type": "negative", "summary": "CI workflow broke"}
+                            {
+                                "timestamp": ts,
+                                "type": "negative",
+                                "summary": "CI workflow broke",
+                            }
                         )
                         + "\n"
                     )

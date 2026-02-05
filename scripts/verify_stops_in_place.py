@@ -73,9 +73,11 @@ def get_open_positions(client) -> list[dict]:
                 "symbol": p.symbol,
                 "qty": float(p.qty),
                 "side": "long" if float(p.qty) > 0 else "short",
-                "asset_class": p.asset_class.value
-                if hasattr(p.asset_class, "value")
-                else str(p.asset_class),
+                "asset_class": (
+                    p.asset_class.value
+                    if hasattr(p.asset_class, "value")
+                    else str(p.asset_class)
+                ),
                 "unrealized_pl": float(p.unrealized_pl) if p.unrealized_pl else 0,
                 "current_price": float(p.current_price) if p.current_price else 0,
             }
@@ -127,7 +129,11 @@ def identify_short_options(positions: list[dict]) -> list[dict]:
 def check_stop_exists(symbol: str, orders: list[dict]) -> dict | None:
     """Check if a stop-loss order exists for this symbol."""
     for order in orders:
-        if order["symbol"] == symbol and order["type"] in ["stop", "stop_limit", "trailing_stop"]:
+        if order["symbol"] == symbol and order["type"] in [
+            "stop",
+            "stop_limit",
+            "trailing_stop",
+        ]:
             return order
     return None
 

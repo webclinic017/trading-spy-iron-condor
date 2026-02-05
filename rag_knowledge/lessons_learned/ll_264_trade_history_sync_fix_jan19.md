@@ -9,19 +9,21 @@
 `sync_alpaca_state.py` was overwriting `data/system_state.json` WITHOUT the `trade_history` field. This caused ALL trade data to be lost on every sync.
 
 **Evidence:**
+
 ```
 Trade history recorded: 0
 ```
+
 ...despite having 6 open SPY positions.
 
 ## Root Cause
 
 Two competing sync processes with different schemas:
 
-| Script | trade_history | positions |
-|--------|--------------|-----------|
-| `sync_alpaca_state.py` | NO | YES |
-| `sync-system-state.yml` | YES | YES |
+| Script                  | trade_history | positions |
+| ----------------------- | ------------- | --------- |
+| `sync_alpaca_state.py`  | NO            | YES       |
+| `sync-system-state.yml` | YES           | YES       |
 
 The local script ran more frequently and overwrote the GitHub Actions sync data.
 
@@ -37,11 +39,13 @@ Added trade_history fetching to `sync_alpaca_state.py`:
 ## Why This Matters
 
 This is EXACTLY how we lost the $100K account lessons:
+
 - No trade recording
 - No win/loss tracking
 - Same mistakes repeated
 
 Without trade_history, we cannot:
+
 - Calculate real win rate
 - Learn from past trades
 - Validate strategy alignment

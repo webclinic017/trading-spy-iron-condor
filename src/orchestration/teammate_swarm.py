@@ -126,13 +126,17 @@ class SwarmAgent:
     retry_count: int = 2
     is_gate_keeper: bool = False  # Gate-keepers can halt pipeline
 
-    async def execute(self, inputs: dict[str, Any], messages: list[AgentMessage]) -> AgentResult:
+    async def execute(
+        self, inputs: dict[str, Any], messages: list[AgentMessage]
+    ) -> AgentResult:
         """Execute agent with inputs and accumulated messages."""
         start_time = datetime.now(timezone.utc)
         self.status = AgentStatus.RUNNING
 
         # Gather relevant messages for this agent
-        agent_messages = [m for m in messages if m.receiver == self.name or m.receiver == "*"]
+        agent_messages = [
+            m for m in messages if m.receiver == self.name or m.receiver == "*"
+        ]
 
         # Merge message content into inputs
         for msg in agent_messages:
@@ -143,11 +147,15 @@ class SwarmAgent:
             try:
                 # Execute agent function (sync or async)
                 if asyncio.iscoroutinefunction(self.fn):
-                    result = await asyncio.wait_for(self.fn(**inputs), timeout=self.timeout_seconds)
+                    result = await asyncio.wait_for(
+                        self.fn(**inputs), timeout=self.timeout_seconds
+                    )
                 else:
                     result = self.fn(**inputs)
 
-                execution_time = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+                execution_time = (
+                    datetime.now(timezone.utc) - start_time
+                ).total_seconds() * 1000
                 self.status = AgentStatus.COMPLETED
 
                 return AgentResult(
@@ -165,7 +173,9 @@ class SwarmAgent:
                 logger.warning(f"{self.name} attempt {attempt + 1} failed: {e}")
 
         # All retries failed
-        execution_time = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+        execution_time = (
+            datetime.now(timezone.utc) - start_time
+        ).total_seconds() * 1000
         self.status = AgentStatus.FAILED
 
         return AgentResult(
@@ -230,7 +240,9 @@ class TradingSwarm:
                     },
                 },
                 "recommendation": (
-                    "BULLISH" if signal > 0.6 else "NEUTRAL" if signal > 0.4 else "BEARISH"
+                    "BULLISH"
+                    if signal > 0.6
+                    else "NEUTRAL" if signal > 0.4 else "BEARISH"
                 ),
             }
 
@@ -382,7 +394,9 @@ class TradingSwarm:
                     f"Position {p.get('symbol', 'UNKNOWN')} at stop-loss"
                     for p in unhealthy_positions
                 ],
-                "recommendation": ("HEALTHY" if health_score >= 0.8 else "ATTENTION_NEEDED"),
+                "recommendation": (
+                    "HEALTHY" if health_score >= 0.8 else "ATTENTION_NEEDED"
+                ),
             }
 
         self.add_agent(
@@ -563,12 +577,15 @@ class TradingSwarm:
 
                 # Check dependencies
                 deps_met = all(
-                    dep in self.results and self.results[dep].success for dep in agent.dependencies
+                    dep in self.results and self.results[dep].success
+                    for dep in agent.dependencies
                 )
 
                 if not deps_met:
                     agent.status = AgentStatus.BLOCKED
-                    print(f"  [{agent.role.value.upper()}] {agent_name}: BLOCKED (dependencies)")
+                    print(
+                        f"  [{agent.role.value.upper()}] {agent_name}: BLOCKED (dependencies)"
+                    )
                     continue
 
                 # Pass outputs from dependencies as messages
@@ -604,7 +621,9 @@ class TradingSwarm:
                     if not result.success:
                         agent = self.agents.get(result.agent_name)
                         if agent and agent.is_gate_keeper:
-                            print(f"\n  PIPELINE HALTED: Gate-keeper {result.agent_name} failed")
+                            print(
+                                f"\n  PIPELINE HALTED: Gate-keeper {result.agent_name} failed"
+                            )
                             await self._spawn_fixer(result.agent_name, result.error)
                             break
 
@@ -625,7 +644,9 @@ class TradingSwarm:
 
         return self.results
 
-    async def _execute_agent(self, agent: SwarmAgent, inputs: dict[str, Any]) -> AgentResult:
+    async def _execute_agent(
+        self, agent: SwarmAgent, inputs: dict[str, Any]
+    ) -> AgentResult:
         """Execute a single agent."""
         try:
             return await agent.execute(inputs, self.messages)
@@ -640,7 +661,9 @@ class TradingSwarm:
                 error=str(e),
             )
 
-    async def _spawn_fixer(self, failed_agent: str, error: str | None) -> AgentResult | None:
+    async def _spawn_fixer(
+        self, failed_agent: str, error: str | None
+    ) -> AgentResult | None:
         """
         Watchdog pattern: Spawn Fixer agent on errors.
 
@@ -690,7 +713,8 @@ class TradingSwarm:
         total_weight = sum(confidences)
         if total_weight > 0:
             consensus_signal = (
-                sum(s * c for s, c in zip(signals, confidences, strict=False)) / total_weight
+                sum(s * c for s, c in zip(signals, confidences, strict=False))
+                / total_weight
             )
         else:
             consensus_signal = sum(signals) / len(signals)
@@ -721,7 +745,9 @@ class TradingSwarm:
             "successful": sum(1 for r in self.results.values() if r.success),
             "failed": sum(1 for r in self.results.values() if not r.success),
             "fixer_spawned": self.fixer_spawned,
-            "total_execution_time_ms": sum(r.execution_time_ms for r in self.results.values()),
+            "total_execution_time_ms": sum(
+                r.execution_time_ms for r in self.results.values()
+            ),
             "consensus": self.get_consensus(),
             "agent_results": {name: r.to_dict() for name, r in self.results.items()},
         }
@@ -875,7 +901,9 @@ async def integrate_with_daggr() -> dict[str, Any]:
     )
 
     # Execute workflow
-    await workflow.execute({"sentiment": 0.6, "technicals": 0.65, "news": 0.55, "vix": 18})
+    await workflow.execute(
+        {"sentiment": 0.6, "technicals": 0.65, "news": 0.55, "vix": 18}
+    )
 
     return workflow.get_state_summary()
 

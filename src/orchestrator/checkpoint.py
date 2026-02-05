@@ -63,7 +63,8 @@ class PipelineCheckpointer:
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
 
         with sqlite3.connect(self.db_path) as conn:
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS checkpoints (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     thread_id TEXT NOT NULL,
@@ -77,13 +78,18 @@ class PipelineCheckpointer:
                     status TEXT NOT NULL,
                     UNIQUE(thread_id, checkpoint_id)
                 )
-            """)
-            conn.execute("""
+            """
+            )
+            conn.execute(
+                """
                 CREATE INDEX IF NOT EXISTS idx_thread_id ON checkpoints(thread_id)
-            """)
-            conn.execute("""
+            """
+            )
+            conn.execute(
+                """
                 CREATE INDEX IF NOT EXISTS idx_ticker_date ON checkpoints(ticker, created_at)
-            """)
+            """
+            )
             conn.commit()
 
     def generate_thread_id(self, ticker: str, strategy: str = "gate_pipeline") -> str:
@@ -224,7 +230,8 @@ class PipelineCheckpointer:
             rows = cursor.fetchall()
 
         return [
-            PipelineCheckpoint(**{k: v for k, v in dict(row).items() if k != "id"}) for row in rows
+            PipelineCheckpoint(**{k: v for k, v in dict(row).items() if k != "id"})
+            for row in rows
         ]
 
     def get_recent_checkpoints(
@@ -255,7 +262,8 @@ class PipelineCheckpointer:
             rows = cursor.fetchall()
 
         return [
-            PipelineCheckpoint(**{k: v for k, v in dict(row).items() if k != "id"}) for row in rows
+            PipelineCheckpoint(**{k: v for k, v in dict(row).items() if k != "id"})
+            for row in rows
         ]
 
     def cleanup_old_checkpoints(self, days_to_keep: int = 30) -> int:
@@ -275,7 +283,9 @@ class PipelineCheckpointer:
             deleted = cursor.rowcount
             conn.commit()
 
-        logger.info("Cleaned up %d old checkpoints (older than %d days)", deleted, days_to_keep)
+        logger.info(
+            "Cleaned up %d old checkpoints (older than %d days)", deleted, days_to_keep
+        )
         return deleted
 
     def _serialize_context(self, context: Any) -> dict[str, Any]:

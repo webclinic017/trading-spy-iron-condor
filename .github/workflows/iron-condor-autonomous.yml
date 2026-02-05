@@ -6,13 +6,13 @@ name: Iron Condor Autonomous System
 on:
   schedule:
     # Scan at 9:45 AM ET (14:45 UTC) Mon-Fri
-    - cron: '45 14 * * 1-5'
+    - cron: "45 14 * * 1-5"
   workflow_dispatch:
     inputs:
       action:
-        description: 'Action to take'
+        description: "Action to take"
         required: true
-        default: 'scan'
+        default: "scan"
         type: choice
         options:
           - scan
@@ -27,7 +27,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: pip install alpaca-py python-dotenv

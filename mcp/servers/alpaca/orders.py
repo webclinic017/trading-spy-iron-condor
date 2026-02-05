@@ -16,7 +16,9 @@ from mcp.utils import ensure_env_var
 
 
 def _get_trader(paper: bool = True):
-    return ensure_env_var(lambda: get_alpaca_trader(paper=paper), "AlpacaTrader (check API keys)")
+    return ensure_env_var(
+        lambda: get_alpaca_trader(paper=paper), "AlpacaTrader (check API keys)"
+    )
 
 
 def validate_order_amount(

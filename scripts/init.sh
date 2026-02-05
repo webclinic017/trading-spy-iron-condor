@@ -17,9 +17,9 @@ echo ""
 
 # Check Python environment
 echo "🐍 Checking Python environment..."
-if ! command -v python3 &> /dev/null; then
-    echo "❌ ERROR: python3 not found"
-    exit 1
+if ! command -v python3 &>/dev/null; then
+	echo "❌ ERROR: python3 not found"
+	exit 1
 fi
 PYTHON_VERSION=$(python3 --version)
 echo "✅ Python: $PYTHON_VERSION"
@@ -27,11 +27,11 @@ echo ""
 
 # Check virtual environment
 if [ -d "venv" ]; then
-    echo "📦 Activating virtual environment..."
-    source venv/bin/activate
-    echo "✅ Virtual environment activated"
+	echo "📦 Activating virtual environment..."
+	source venv/bin/activate
+	echo "✅ Virtual environment activated"
 else
-    echo "⚠️  Warning: No venv directory found. Using system Python."
+	echo "⚠️  Warning: No venv directory found. Using system Python."
 fi
 echo ""
 
@@ -40,24 +40,24 @@ echo "🔐 Checking environment variables..."
 MISSING_VARS=0
 
 if [ -z "$ALPACA_API_KEY" ]; then
-    echo "⚠️  Warning: ALPACA_API_KEY not set"
-    MISSING_VARS=$((MISSING_VARS + 1))
+	echo "⚠️  Warning: ALPACA_API_KEY not set"
+	MISSING_VARS=$((MISSING_VARS + 1))
 else
-    echo "✅ ALPACA_API_KEY set"
+	echo "✅ ALPACA_API_KEY set"
 fi
 
 if [ -z "$ALPACA_SECRET_KEY" ]; then
-    echo "⚠️  Warning: ALPACA_SECRET_KEY not set"
-    MISSING_VARS=$((MISSING_VARS + 1))
+	echo "⚠️  Warning: ALPACA_SECRET_KEY not set"
+	MISSING_VARS=$((MISSING_VARS + 1))
 else
-    echo "✅ ALPACA_SECRET_KEY set"
+	echo "✅ ALPACA_SECRET_KEY set"
 fi
 
 if [ -z "$ANTHROPIC_API_KEY" ]; then
-    echo "⚠️  Warning: ANTHROPIC_API_KEY not set"
-    MISSING_VARS=$((MISSING_VARS + 1))
+	echo "⚠️  Warning: ANTHROPIC_API_KEY not set"
+	MISSING_VARS=$((MISSING_VARS + 1))
 else
-    echo "✅ ANTHROPIC_API_KEY set"
+	echo "✅ ANTHROPIC_API_KEY set"
 fi
 
 echo ""
@@ -65,11 +65,11 @@ echo ""
 # Check system state file
 echo "📊 Checking system state..."
 if [ -f "data/system_state.json" ]; then
-    echo "✅ system_state.json exists"
+	echo "✅ system_state.json exists"
 
-    # Check if state is stale
-    if command -v python3 &> /dev/null; then
-        python3 -c "
+	# Check if state is stale
+	if command -v python3 &>/dev/null; then
+		python3 -c "
 import json
 from datetime import datetime
 from pathlib import Path
@@ -84,49 +84,49 @@ if state_file.exists():
     else:
         print(f'✅ State is {hours_old:.1f} hours old')
 " || echo "⚠️  Could not check state freshness"
-    fi
+	fi
 else
-    echo "⚠️  Warning: system_state.json not found (will be created on first run)"
+	echo "⚠️  Warning: system_state.json not found (will be created on first run)"
 fi
 echo ""
 
 # Run basic health check if available
 if [ -f "scripts/pre_market_health_check.py" ]; then
-    echo "🏥 Running pre-market health check..."
-    python3 scripts/pre_market_health_check.py || {
-        echo "⚠️  Health check had warnings (this is OK for development)"
-    }
-    echo ""
+	echo "🏥 Running pre-market health check..."
+	python3 scripts/pre_market_health_check.py || {
+		echo "⚠️  Health check had warnings (this is OK for development)"
+	}
+	echo ""
 fi
 
 # Berkshire letters auto-download removed (script no longer exists)
 
 # Check git status
 echo "📝 Checking git status..."
-if command -v git &> /dev/null; then
-    git status --short || echo "⚠️  Not a git repository or git not available"
-    echo ""
+if command -v git &>/dev/null; then
+	git status --short || echo "⚠️  Not a git repository or git not available"
+	echo ""
 
-    echo "📜 Recent commits:"
-    git log --oneline -5 || echo "⚠️  Could not read git log"
+	echo "📜 Recent commits:"
+	git log --oneline -5 || echo "⚠️  Could not read git log"
 else
-    echo "⚠️  Git not available"
+	echo "⚠️  Git not available"
 fi
 echo ""
 
 # Summary
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 if [ $MISSING_VARS -eq 0 ]; then
-    echo "✅ Environment initialized successfully"
-    echo ""
-    echo "Next steps:"
-    echo "1. Read claude-progress.txt to understand recent work"
-    echo "2. Read feature_list.json to see feature status"
-    echo "3. Choose ONE feature to work on"
-    echo "4. Test end-to-end before marking feature complete"
+	echo "✅ Environment initialized successfully"
+	echo ""
+	echo "Next steps:"
+	echo "1. Read claude-progress.txt to understand recent work"
+	echo "2. Read feature_list.json to see feature status"
+	echo "3. Choose ONE feature to work on"
+	echo "4. Test end-to-end before marking feature complete"
 else
-    echo "⚠️  Environment initialized with $MISSING_VARS missing environment variable(s)"
-    echo "   System may not function correctly without all API keys"
+	echo "⚠️  Environment initialized with $MISSING_VARS missing environment variable(s)"
+	echo "   System may not function correctly without all API keys"
 fi
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""

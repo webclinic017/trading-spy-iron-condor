@@ -8,13 +8,13 @@
 
 ### Optimal Entry Conditions
 
-| Parameter | Recommended Range | Our Current Setup |
-|-----------|------------------|-------------------|
-| IV Rank | 50-70% (≥70% preferred) | Not tracked |
-| VIX Level | 15-25 | Not filtered |
-| DTE | 30-45 days | ✅ 30-45 DTE |
-| Short Strike Delta | 15-25 | ✅ 15-20 delta |
-| Profit Target | 50% max profit | ✅ 50% exit |
+| Parameter          | Recommended Range       | Our Current Setup |
+| ------------------ | ----------------------- | ----------------- |
+| IV Rank            | 50-70% (≥70% preferred) | Not tracked       |
+| VIX Level          | 15-25                   | Not filtered      |
+| DTE                | 30-45 days              | ✅ 30-45 DTE      |
+| Short Strike Delta | 15-25                   | ✅ 15-20 delta    |
+| Profit Target      | 50% max profit          | ✅ 50% exit       |
 
 ### Why VIX Timing Matters
 
@@ -53,6 +53,7 @@
 ## Risk Note
 
 Even with optimal VIX timing, maintain:
+
 - 5% max position size
 - 200% stop-loss on credit
 - 7 DTE exit for gamma protection

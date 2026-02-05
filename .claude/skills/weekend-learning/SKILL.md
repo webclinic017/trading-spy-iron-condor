@@ -3,6 +3,7 @@
 Trigger continuous learning during market-closed hours.
 
 ## Trigger
+
 - `/weekend-learn` - Manually trigger weekend learning
 - Automatic: Sunday 8 AM ET via GitHub Actions
 
@@ -57,6 +58,7 @@ cat data/weekend_insights.json
 ## North Star Connection
 
 Continuous learning helps us:
+
 - Improve trading discipline
 - Learn from Phil Town's wisdom
 - Refine our iron condor strategy

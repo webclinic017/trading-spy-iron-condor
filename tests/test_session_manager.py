@@ -22,7 +22,9 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 # Skip if holidays module not available (sandbox environments)
-holidays = pytest.importorskip("holidays", reason="holidays module required for this test")
+holidays = pytest.importorskip(
+    "holidays", reason="holidays module required for this test"
+)
 
 from src.orchestrator.session_manager import (
     SessionManager,
@@ -60,9 +62,9 @@ class TestIsUsMarketDay:
             date(2026, 12, 6),  # Sunday
         ]
         for weekend_date in weekends:
-            assert is_us_market_day(weekend_date) is False, (
-                f"{weekend_date} (weekday={weekend_date.weekday()}) should not be a market day"
-            )
+            assert (
+                is_us_market_day(weekend_date) is False
+            ), f"{weekend_date} (weekday={weekend_date.weekday()}) should not be a market day"
 
     # US Holiday Tests
     def test_mlk_day_is_not_market_day(self):
@@ -164,9 +166,9 @@ class TestIsUsMarketDay:
             date(2026, 1, 9),  # Friday
         ]
         for trading_day in trading_days:
-            assert is_us_market_day(trading_day) is True, (
-                f"{trading_day} (weekday={trading_day.weekday()}) should be a market day"
-            )
+            assert (
+                is_us_market_day(trading_day) is True
+            ), f"{trading_day} (weekday={trading_day.weekday()}) should be a market day"
 
     def test_defaults_to_today(self):
         """When no date is provided, should use today's date."""

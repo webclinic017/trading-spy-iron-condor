@@ -23,23 +23,28 @@
 ## Lessons Learned
 
 ### 1. Always Query RAG First
+
 Before ANY work, query RAG for:
+
 - Current system state
 - Active repos and their purposes
 - Recent lessons that may be relevant
 
 ### 2. Repo Responsibilities
-| Repo | Purpose | Has Alpaca? |
-|------|---------|-------------|
-| `trading` | Main trading system, strategies, RAG | ✅ YES |
-| `ai-promo-agent` | CI/CD, monitoring, alerts | ❌ NO |
+
+| Repo             | Purpose                              | Has Alpaca? |
+| ---------------- | ------------------------------------ | ----------- |
+| `trading`        | Main trading system, strategies, RAG | ✅ YES      |
+| `ai-promo-agent` | CI/CD, monitoring, alerts            | ❌ NO       |
 
 ### 3. Revenue Data Location
+
 - `trading` repo: `data/system_state.json`
 - Contains: equity, P&L, positions, trade history
 - Updated by: `sync-alpaca-status.yml` workflow
 
 ### 4. North Star Reminder
+
 **Goal**: $6K/month after-tax (Financial Independence)
 **Strategy**: Phil Town Rule #1 + Iron Condors
 **Current**: $29,986.20 equity, Day 5 of paper validation
@@ -53,16 +58,17 @@ Before ANY work, query RAG for:
 
 ## Session Metrics
 
-| Metric | Value |
-|--------|-------|
-| Today's P&L | +$32.78 |
-| Total P&L | -$13.80 (-0.05%) |
-| Positions | 4 (SPY Iron Condor) |
-| Win Rate | 0% (no closes yet) |
+| Metric      | Value               |
+| ----------- | ------------------- |
+| Today's P&L | +$32.78             |
+| Total P&L   | -$13.80 (-0.05%)    |
+| Positions   | 4 (SPY Iron Condor) |
+| Win Rate    | 0% (no closes yet)  |
 
 ## Protocol Update
 
 **CTO Session Start Checklist:**
+
 - [ ] Read CLAUDE.md
 - [ ] Query RAG for recent lessons
 - [ ] Verify working in `trading` repo for trading tasks
@@ -70,4 +76,5 @@ Before ANY work, query RAG for:
 - [ ] Confirm North Star: $6K/month after-tax
 
 ## Tags
+
 `cto-protocol`, `wrong-repo`, `rag-query`, `process-improvement`

@@ -13,12 +13,14 @@ When a credit spread trade goes against us (stock drops toward or below sold str
 ## Rolling Strategy: "Down and Out"
 
 ### When to Consider Rolling
+
 - Stock is trending toward your short strike
 - You believe the underlying will recover (fundamentals intact)
 - Days to expiration are low (can gain more time)
 - NOT when fundamentals have changed or stock is in freefall
 
 ### How to Roll Down and Out
+
 1. **Close** the existing spread (buy back the sold put, sell the bought put)
 2. **Open** a new spread simultaneously:
    - **Lower strike prices** (further OTM)
@@ -26,6 +28,7 @@ When a credit spread trade goes against us (stock drops toward or below sold str
 3. Ideally, collect small net credit or break-even on the roll
 
 ### Example
+
 ```
 Original: Sold $580 put, bought $575 put, 14 DTE
 Stock drops to $582 (getting close)
@@ -34,6 +37,7 @@ Result: Extended time, lower strikes, small credit received
 ```
 
 ### When NOT to Roll
+
 - Stock has broken through support with high volume
 - Fundamental thesis is broken
 - Would require rolling for a net debit (throwing good money after bad)
@@ -42,19 +46,21 @@ Result: Extended time, lower strikes, small credit received
 ## Assignment Risk Warning
 
 If stock is BETWEEN your two strike prices on expiration day:
+
 - **HIGH RISK** of assignment (forced to buy 100 shares)
 - **MUST close position manually** before market close
 - Do not let spreads expire when pinned between strikes
 
 ## Integration with Our Strategy
 
-| Our Rule | Rolling Consideration |
-|----------|----------------------|
-| 2x credit stop-loss | Roll BEFORE hitting 2x loss if thesis intact |
-| 50% profit exit | Take profits early; don't give back gains |
-| SPY/IWM only | These have high liquidity for efficient rolls |
+| Our Rule            | Rolling Consideration                         |
+| ------------------- | --------------------------------------------- |
+| 2x credit stop-loss | Roll BEFORE hitting 2x loss if thesis intact  |
+| 50% profit exit     | Take profits early; don't give back gains     |
+| SPY/IWM only        | These have high liquidity for efficient rolls |
 
 ## Prevention (How to Avoid Needing to Roll)
+
 1. Use 30-delta (not ATM) for margin of safety
 2. Exit at 50% profit — don't hold to expiration
 3. Honor stop-loss (2x credit) — don't hope and pray

@@ -155,16 +155,16 @@ class FearGreedIndex:
             action = "HOLD"  # Changed from BUY - wait for trend confirmation
             size_multiplier = 1.0  # Changed from 1.5 - no size increase during fear
             confidence = 0.3  # Low confidence - fear can continue
-            reasoning = (
-                f"Extreme Fear ({value}) - WAITING for trend confirmation. Fear can persist."
-            )
+            reasoning = f"Extreme Fear ({value}) - WAITING for trend confirmation. Fear can persist."
 
         elif value <= self.FEAR_THRESHOLD:
             # FEAR = Wait, don't chase
             action = "HOLD"  # Changed from BUY
             size_multiplier = 1.0  # Changed from 1.25
             confidence = 0.4
-            reasoning = f"Fear ({value}) - Accumulation zone but requires trend confirmation."
+            reasoning = (
+                f"Fear ({value}) - Accumulation zone but requires trend confirmation."
+            )
 
         elif value <= self.GREED_THRESHOLD:
             # NEUTRAL = Hold, normal DCA
@@ -211,7 +211,9 @@ class FearGreedIndex:
 
         for attempt in range(MAX_RETRIES):
             try:
-                response = requests.get(f"{self.API_URL}?limit={min(days, 100)}", timeout=15)
+                response = requests.get(
+                    f"{self.API_URL}?limit={min(days, 100)}", timeout=15
+                )
                 response.raise_for_status()
                 data = response.json()
 

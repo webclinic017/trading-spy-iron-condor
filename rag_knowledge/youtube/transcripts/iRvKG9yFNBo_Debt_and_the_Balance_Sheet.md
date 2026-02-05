@@ -7,12 +7,15 @@
 **Ingested**: 2026-02-01T13:26:56.147485
 
 ## Key Concepts
+
 Rule #1
 
 ## Strategies
+
 None identified
 
 ## Sentiment
+
 Neutral
 
 ## Transcript

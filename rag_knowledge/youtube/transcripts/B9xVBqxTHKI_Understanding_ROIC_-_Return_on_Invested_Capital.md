@@ -7,12 +7,15 @@
 **Ingested**: 2026-02-01T13:26:18.203945
 
 ## Key Concepts
+
 4 Ms, Moat, Big Five Numbers, Rule #1, Wonderful Company
 
 ## Strategies
+
 None identified
 
 ## Sentiment
+
 Neutral
 
 ## Transcript

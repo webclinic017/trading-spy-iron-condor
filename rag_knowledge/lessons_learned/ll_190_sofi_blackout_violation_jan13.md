@@ -11,6 +11,7 @@ A SOFI $24 CSP expiring Feb 6 was opened on or around Jan 13, 2026.
 **Problem**: Per LL-188 and CLAUDE.md, SOFI has an earnings blackout Jan 23-30 (earnings Jan 30, IV at 55%).
 
 **Position details**:
+
 - Symbol: SOFI260206P00024000
 - Strike: $24
 - Expiration: Feb 6, 2026
@@ -25,6 +26,7 @@ A SOFI $24 CSP expiring Feb 6 was opened on or around Jan 13, 2026.
 ## Immediate Action Required
 
 **Convert to credit spread at market open Jan 14:**
+
 - BUY 1x SOFI Feb 6 $19 put (~$0.15-0.20)
 - This creates a $24/$19 bull put spread
 - Max loss reduced: $2,400 → $500 (10% of portfolio)

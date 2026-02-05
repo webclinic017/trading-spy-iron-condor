@@ -11,6 +11,7 @@ CEO Directive: "Execute" - Stop researching, start trading.
 ## Pre-Execution Checklist (VERIFIED)
 
 ### Infrastructure Ready
+
 - [x] `iron_condor_trader.py` - Complete with all safeguards
 - [x] Position check (blocks if ANY existing positions)
 - [x] RAG check before trading
@@ -22,6 +23,7 @@ CEO Directive: "Execute" - Stop researching, start trading.
 - [x] Daily trade limit (4 legs max)
 
 ### Mandatory Trade Gate Ready
+
 - [x] Ticker whitelist (SPY only)
 - [x] Position size limit (5% max)
 - [x] Daily loss limit (5% max)
@@ -30,6 +32,7 @@ CEO Directive: "Execute" - Stop researching, start trading.
 - [x] Market regime check
 
 ### Workflow Ready
+
 - [x] `daily-trading.yml` runs at 9:35 AM ET
 - [x] Calls `iron_condor_trader.py --symbol SPY`
 - [x] Supports `--force` flag for CEO directive mode

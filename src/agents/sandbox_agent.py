@@ -143,7 +143,7 @@ class SandboxAgent:
         script_file = self.workspace / f"script_{datetime.now().strftime('%H%M%S')}.py"
 
         # Wrap code with safety measures
-        wrapped_code = f'''
+        wrapped_code = f"""
 import sys
 import json
 from pathlib import Path
@@ -168,7 +168,7 @@ except Exception as e:
 
 # Output results
 print(json.dumps({{"output": _sandbox_output}}))
-'''
+"""
 
         script_file.write_text(wrapped_code)
 
@@ -204,7 +204,9 @@ print(json.dumps({{"output": _sandbox_output}}))
 
             # Check for files created
             files_created = [
-                f.name for f in self.workspace.glob("*") if f.is_file() and f != script_file
+                f.name
+                for f in self.workspace.glob("*")
+                if f.is_file() and f != script_file
             ]
 
             result = SandboxResult(
@@ -300,7 +302,9 @@ print(f"Recommended IC: {result['recommended_put_strike']}/{result['recommended_
 
         return {"error": result.error or "Analysis failed"}
 
-    async def fetch_external_resource(self, url: str, resource_type: str) -> dict[str, Any]:
+    async def fetch_external_resource(
+        self, url: str, resource_type: str
+    ) -> dict[str, Any]:
         """
         Fetch external resource using sandbox.
 
@@ -321,7 +325,7 @@ print(f"Recommended IC: {result['recommended_put_strike']}/{result['recommended_
         if not is_allowed:
             return {"error": "Domain not in allowlist"}
 
-        fetch_code = f'''
+        fetch_code = f"""
 import requests
 import json
 from pathlib import Path
@@ -339,7 +343,7 @@ try:
     print(f"Fetched {{len(str(data))}} bytes from {url}")
 except Exception as e:
     print(f"Fetch failed: {{e}}")
-'''
+"""
 
         result = await self.execute_code(fetch_code, f"Fetch {resource_type}")
 
@@ -361,7 +365,7 @@ except Exception as e:
         data_file = self.workspace / "historical_data.json"
         data_file.write_text(json.dumps(historical_data, indent=2))
 
-        discovery_code = f'''
+        discovery_code = f"""
 import json
 import statistics
 from pathlib import Path
@@ -400,9 +404,11 @@ result_file.write_text(json.dumps(result, indent=2))
 
 print(f"Pattern validation: {{'VALID' if is_valid else 'INVALID'}}")
 print(f"Win rate: {{win_rate:.1%}}, Profit factor: {{profit_factor:.2f}}")
-'''
+"""
 
-        result = await self.execute_code(discovery_code, f"Pattern discovery: {hypothesis}")
+        result = await self.execute_code(
+            discovery_code, f"Pattern discovery: {hypothesis}"
+        )
 
         result_file = self.workspace / "pattern_result.json"
         if result_file.exists():

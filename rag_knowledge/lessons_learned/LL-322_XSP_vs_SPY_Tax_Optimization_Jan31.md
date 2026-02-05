@@ -11,59 +11,62 @@ XSP (Mini-SPX) options qualify for Section 1256 tax treatment (60/40), potential
 
 ## The Tax Difference
 
-| Metric | SPY Options | XSP Options |
-|--------|-------------|-------------|
-| Tax Treatment | 100% short-term | 60/40 blended |
-| Long-term portion | 0% | 60% |
-| Short-term portion | 100% | 40% |
-| Form | Schedule D | Form 6781 |
-| Wash Sale Rules | YES | NO |
+| Metric             | SPY Options     | XSP Options   |
+| ------------------ | --------------- | ------------- |
+| Tax Treatment      | 100% short-term | 60/40 blended |
+| Long-term portion  | 0%              | 60%           |
+| Short-term portion | 100%            | 40%           |
+| Form               | Schedule D      | Form 6781     |
+| Wash Sale Rules    | YES             | NO            |
 
 ## Concrete Tax Savings Example
 
 **Investor in 35% tax bracket with $15,000 profit:**
 
-| | SPY | XSP | Savings |
-|---|-----|-----|---------|
-| Tax owed | $5,250 | $3,900 | **$1,350** |
-| Effective rate | 35% | 26% | **25.7% savings** |
+|                | SPY    | XSP    | Savings           |
+| -------------- | ------ | ------ | ----------------- |
+| Tax owed       | $5,250 | $3,900 | **$1,350**        |
+| Effective rate | 35%    | 26%    | **25.7% savings** |
 
 **For our North Star ($6K/month = $72K/year):**
+
 - SPY taxes: ~$25,200 (35%)
 - XSP taxes: ~$18,720 (26%)
 - **Annual savings: ~$6,480**
 
 ## Why This Matters for North Star
 
-| Scenario | SPY Path | XSP Path |
-|----------|----------|----------|
-| Gross income needed | $72,000 | $72,000 |
-| Taxes (35% vs 26%) | $25,200 | $18,720 |
-| After-tax | $46,800 | $53,280 |
+| Scenario                         | SPY Path               | XSP Path               |
+| -------------------------------- | ---------------------- | ---------------------- |
+| Gross income needed              | $72,000                | $72,000                |
+| Taxes (35% vs 26%)               | $25,200                | $18,720                |
+| After-tax                        | $46,800                | $53,280                |
 | **To reach $6K/month after-tax** | **Need $92,308 gross** | **Need $81,081 gross** |
 
 **XSP path requires 12% less gross income** to hit the same after-tax target.
 
 ## XSP vs SPY Comparison
 
-| Feature | SPY | XSP |
-|---------|-----|-----|
-| Notional size | ~$600 | ~$600 (same) |
-| Liquidity | Excellent | Good (lower volume) |
-| Settlement | Physical shares | **Cash** |
-| Early assignment | Yes (American) | **No (European)** |
-| Tax treatment | Short-term | **60/40 Section 1256** |
-| Wash sale rules | Apply | **Don't apply** |
-| Trading hours | Regular | **Extended (GTH)** |
+| Feature          | SPY             | XSP                    |
+| ---------------- | --------------- | ---------------------- |
+| Notional size    | ~$600           | ~$600 (same)           |
+| Liquidity        | Excellent       | Good (lower volume)    |
+| Settlement       | Physical shares | **Cash**               |
+| Early assignment | Yes (American)  | **No (European)**      |
+| Tax treatment    | Short-term      | **60/40 Section 1256** |
+| Wash sale rules  | Apply           | **Don't apply**        |
+| Trading hours    | Regular         | **Extended (GTH)**     |
 
 ## The Liquidity Trade-off
 
 **SPY advantages:**
+
 - Tighter bid-ask spreads (~$0.01-0.02)
 - Higher volume = better fills
 - More strike prices available
 
 **XSP advantages:**
+
 - 60/40 tax treatment
 - No wash sale rules
 - No early assignment risk
@@ -71,11 +74,11 @@ XSP (Mini-SPX) options qualify for Section 1256 tax treatment (60/40), potential
 
 ## Recommendation
 
-| Phase | Strategy |
-|-------|----------|
-| Paper trading | Use SPY (better liquidity for learning) |
-| Live trading < $25K profit | Use SPY (tax savings minimal) |
-| **Live trading > $25K profit** | **Switch to XSP** |
+| Phase                          | Strategy                                |
+| ------------------------------ | --------------------------------------- |
+| Paper trading                  | Use SPY (better liquidity for learning) |
+| Live trading < $25K profit     | Use SPY (tax savings minimal)           |
+| **Live trading > $25K profit** | **Switch to XSP**                       |
 
 **Break-even analysis**: At ~$10K annual profits, XSP tax savings (~$1,000) start to outweigh slightly worse fills.
 

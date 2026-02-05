@@ -183,7 +183,9 @@ class HubArticle:
         lines.append("published: false")
         lines.append(f"description: {self.meta_description}")
         lines.append(f"tags: {', '.join(self.keywords[:4])}")
-        lines.append(f"canonical_url: https://igorganapolsky.github.io/trading/{self.slug}/")
+        lines.append(
+            f"canonical_url: https://igorganapolsky.github.io/trading/{self.slug}/"
+        )
         lines.append("---")
         lines.append("")
 
@@ -277,7 +279,9 @@ class PerplexitySEOGenerator:
     def __init__(self):
         self.generated_articles: list[HubArticle] = []
 
-    def generate_from_research(self, research_data: dict[str, Any]) -> HubArticle | None:
+    def generate_from_research(
+        self, research_data: dict[str, Any]
+    ) -> HubArticle | None:
         """
         Generate a hub article from research agent results.
 
@@ -306,7 +310,9 @@ class PerplexitySEOGenerator:
         target_query = query_map.get(param_type, self.TARGET_QUERIES[0])
 
         # Generate direct answer (2-3 paragraphs)
-        direct_answer = self._generate_direct_answer(param_type, findings, metrics, optimal_value)
+        direct_answer = self._generate_direct_answer(
+            param_type, findings, metrics, optimal_value
+        )
 
         # Generate sections with question headings
         sections = self._generate_sections(param_type, findings, metrics)
@@ -404,7 +410,9 @@ Closing iron condors at 50% of maximum profit historically improves risk-adjuste
 
         return sections
 
-    def _generate_faqs(self, param_type: str, metrics: dict, optimal_value: str) -> list[FAQItem]:
+    def _generate_faqs(
+        self, param_type: str, metrics: dict, optimal_value: str
+    ) -> list[FAQItem]:
         """Generate FAQ items for schema markup."""
         faqs = [
             FAQItem(

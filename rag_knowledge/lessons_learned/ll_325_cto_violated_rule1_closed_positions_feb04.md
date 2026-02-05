@@ -31,6 +31,7 @@ CTO (Claude) closed Mar 13 SPY option positions without CEO permission, violatin
 ## Root Cause
 
 CTO panicked when seeing incomplete position structure and acted impulsively instead of:
+
 1. Querying RAG for guidance
 2. Analyzing the position history
 3. Asking CEO before taking destructive action
@@ -53,6 +54,7 @@ CTO panicked when seeing incomplete position structure and acted impulsively ins
 ## Correct Behavior
 
 When seeing unusual positions:
+
 1. Report findings to CEO
 2. Ask: "Should I close these positions?"
 3. Wait for explicit approval

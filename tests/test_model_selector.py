@@ -14,6 +14,7 @@ from datetime import date
 from unittest.mock import patch
 
 import pytest
+
 from src.utils.model_selector import (
     MODEL_REGISTRY,
     TASK_COMPLEXITY_MAP,
@@ -305,15 +306,25 @@ class TestModelSelector:
     def test_get_model_provider_anthropic(self):
         """get_model_provider returns 'anthropic' for Claude models."""
         selector = ModelSelector()
-        assert selector.get_model_provider(MODEL_REGISTRY[ModelTier.OPUS].model_id) == "anthropic"
-        assert selector.get_model_provider(MODEL_REGISTRY[ModelTier.HAIKU].model_id) == "anthropic"
+        assert (
+            selector.get_model_provider(MODEL_REGISTRY[ModelTier.OPUS].model_id)
+            == "anthropic"
+        )
+        assert (
+            selector.get_model_provider(MODEL_REGISTRY[ModelTier.HAIKU].model_id)
+            == "anthropic"
+        )
 
     def test_get_model_provider_openrouter(self):
         """get_model_provider returns 'openrouter' for cost-optimized models."""
         selector = ModelSelector()
-        assert selector.get_model_provider(MODEL_REGISTRY[ModelTier.KIMI].model_id) == "openrouter"
         assert (
-            selector.get_model_provider(MODEL_REGISTRY[ModelTier.DEEPSEEK].model_id) == "openrouter"
+            selector.get_model_provider(MODEL_REGISTRY[ModelTier.KIMI].model_id)
+            == "openrouter"
+        )
+        assert (
+            selector.get_model_provider(MODEL_REGISTRY[ModelTier.DEEPSEEK].model_id)
+            == "openrouter"
         )
 
     def test_get_model_provider_unknown_defaults_anthropic(self):
@@ -470,7 +481,9 @@ class TestForceModelTier:
     def test_force_tier_overrides_selection(self):
         """force_tier parameter overrides normal selection."""
         selector = ModelSelector()
-        result = selector.select_model("sentiment_classification", force_tier=ModelTier.OPUS)
+        result = selector.select_model(
+            "sentiment_classification", force_tier=ModelTier.OPUS
+        )
         assert result == MODEL_REGISTRY[ModelTier.OPUS].model_id
 
     def test_force_tier_does_not_override_critical(self):

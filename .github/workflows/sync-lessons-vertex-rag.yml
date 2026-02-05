@@ -15,17 +15,17 @@ on:
   workflow_dispatch:
     inputs:
       limit:
-        description: 'Limit number of lessons to sync (empty for all)'
+        description: "Limit number of lessons to sync (empty for all)"
         required: false
-        default: ''
+        default: ""
       dry_run:
-        description: 'Dry run (no actual sync)'
+        description: "Dry run (no actual sync)"
         required: false
-        default: 'false'
+        default: "false"
         type: choice
         options:
-          - 'false'
-          - 'true'
+          - "false"
+          - "true"
 
   # Auto-trigger when new lessons are added
   # DISABLED Jan 23, 2026 - Cost reduction ($200/month GCP bill)
@@ -41,7 +41,7 @@ on:
   #   - cron: '0 6 * * 0'  # Every Sunday at 6 AM UTC
 
 env:
-  PYTHON_VERSION: '3.11'
+  PYTHON_VERSION: "3.11"
 
 jobs:
   sync-lessons:
@@ -57,7 +57,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'pip'
+          cache: "pip"
 
       - name: Install dependencies
         run: |
@@ -99,30 +99,30 @@ jobs:
           echo "SYNCING LESSONS TO VERTEX AI RAG"
           echo "======================================================================="
           echo ""
-          
+
           # Build command
           CMD="python3 scripts/sync_lessons_to_vertex_rag.py"
-          
+
           if [ "${{ inputs.dry_run }}" == "true" ]; then
             CMD="$CMD --dry-run"
             echo "🔍 DRY RUN MODE"
           fi
-          
+
           if [ -n "${{ inputs.limit }}" ]; then
             CMD="$CMD --limit ${{ inputs.limit }}"
             echo "📊 Limiting to ${{ inputs.limit }} lessons"
           fi
-          
+
           echo ""
           echo "Running: $CMD"
           echo ""
-          
+
           $CMD 2>&1 | tee /tmp/sync_output.txt
-          
+
           # Extract results
           SYNCED=$(grep -oP 'Synced:\s+\K\d+' /tmp/sync_output.txt || echo "0")
           FAILED=$(grep -oP 'Failed:\s+\K\d+' /tmp/sync_output.txt || echo "0")
-          
+
           echo "synced=$SYNCED" >> $GITHUB_OUTPUT
           echo "failed=$FAILED" >> $GITHUB_OUTPUT
 

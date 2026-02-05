@@ -15,19 +15,19 @@ on:
 
   # Also run daily to catch any missed discoveries
   schedule:
-    - cron: '0 18 * * *'  # 6 PM UTC daily
+    - cron: "0 18 * * *" # 6 PM UTC daily
 
   # Manual trigger
   workflow_dispatch:
     inputs:
       force_publish:
-        description: 'Publish even if no new discoveries'
+        description: "Publish even if no new discoveries"
         required: false
-        default: 'false'
+        default: "false"
         type: boolean
 
 env:
-  PYTHON_VERSION: '3.11'
+  PYTHON_VERSION: "3.11"
 
 jobs:
   check-discoveries:
@@ -37,7 +37,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 50  # Get enough history for commit analysis
+          fetch-depth: 50 # Get enough history for commit analysis
 
       - name: Set up Python
         uses: actions/setup-python@v5

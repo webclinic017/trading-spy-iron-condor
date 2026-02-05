@@ -6,13 +6,13 @@ name: Scheduled Position Close (Jan 23)
 on:
   schedule:
     # Run at 9:45 AM ET (14:45 UTC) on Jan 23, 2026
-    - cron: '45 14 23 1 *'
+    - cron: "45 14 23 1 *"
   workflow_dispatch:
     inputs:
       target_symbol:
-        description: 'Symbol to close (leave empty for SPY260220P00658000)'
+        description: "Symbol to close (leave empty for SPY260220P00658000)"
         required: false
-        default: 'SPY260220P00658000'
+        default: "SPY260220P00658000"
 
 permissions:
   contents: write
@@ -35,7 +35,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: pip install alpaca-py

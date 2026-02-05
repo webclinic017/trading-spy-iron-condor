@@ -34,9 +34,9 @@ def calculate_friday_expiry(target_dte: int = 30) -> datetime:
 def test_expiry_is_friday():
     """Expiry MUST be a Friday (weekday=4)."""
     expiry = calculate_friday_expiry(30)
-    assert expiry.weekday() == 4, (
-        f"Expected Friday (4), got {expiry.weekday()} ({expiry.strftime('%A')})"
-    )
+    assert (
+        expiry.weekday() == 4
+    ), f"Expected Friday (4), got {expiry.weekday()} ({expiry.strftime('%A')})"
 
 
 def test_expiry_not_weekend():
@@ -75,8 +75,8 @@ def test_jan23_2026_bug():
         days_until_friday = (4 - target.weekday()) % 7
     corrected = target + timedelta(days=days_until_friday)
 
-    assert corrected.weekday() == 4, (
-        f"Corrected date should be Friday, got {corrected.strftime('%A')}"
-    )
+    assert (
+        corrected.weekday() == 4
+    ), f"Corrected date should be Friday, got {corrected.strftime('%A')}"
     assert corrected.month == 2, "Should still be February"
     assert corrected.day >= 27, "Should be Feb 27 or 28"

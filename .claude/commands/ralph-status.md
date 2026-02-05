@@ -3,6 +3,7 @@
 Check the status of an active or recent Ralph Wiggum loop.
 
 ## Usage
+
 ```
 /ralph-status
 ```

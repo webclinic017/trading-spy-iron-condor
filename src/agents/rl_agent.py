@@ -31,7 +31,9 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 # Path to pre-trained weights
-WEIGHTS_PATH = Path(__file__).parent.parent.parent / "models" / "ml" / "rl_filter_weights.json"
+WEIGHTS_PATH = (
+    Path(__file__).parent.parent.parent / "models" / "ml" / "rl_filter_weights.json"
+)
 
 
 class RLFilter:
@@ -102,7 +104,11 @@ class RLFilter:
             dict with action and confidence
         """
         if not self.enabled or not self.weights:
-            return {"action": signal.get("action", "hold"), "confidence": 0.5, "is_stub": True}
+            return {
+                "action": signal.get("action", "hold"),
+                "confidence": 0.5,
+                "is_stub": True,
+            }
 
         # Extract features from signal
         features = signal.get("features", signal)
@@ -127,9 +133,15 @@ class RLFilter:
             action = "hold"
             confidence = 0.5
 
-        logger.debug(f"RLFilter: score={score:.3f}, threshold={threshold}, action={action}")
+        logger.debug(
+            f"RLFilter: score={score:.3f}, threshold={threshold}, action={action}"
+        )
 
-        return {"action": action, "confidence": round(confidence, 3), "score": round(score, 3)}
+        return {
+            "action": action,
+            "confidence": round(confidence, 3),
+            "score": round(score, 3),
+        }
 
     def get_action(self, state: dict, ticker: str = "SPY") -> tuple:
         """

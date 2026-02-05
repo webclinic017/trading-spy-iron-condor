@@ -112,7 +112,10 @@ def main():
             if qty > 0:
                 try:
                     order = MarketOrderRequest(
-                        symbol=symbol, qty=qty, side=OrderSide.SELL, time_in_force=TimeInForce.DAY
+                        symbol=symbol,
+                        qty=qty,
+                        side=OrderSide.SELL,
+                        time_in_force=TimeInForce.DAY,
                     )
                     result = client.submit_order(order)
                     logger.info("  ✅ SOLD %s: Order %s submitted", symbol, result.id)
@@ -149,7 +152,9 @@ def main():
         "total_pl_liquidated": total_pl_liquidated,
     }
 
-    output_file = Path("data") / f"liquidation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    output_file = (
+        Path("data") / f"liquidation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    )
     output_file.parent.mkdir(exist_ok=True)
     with open(output_file, "w") as f:
         json.dump(results, f, indent=2)

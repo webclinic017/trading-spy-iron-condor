@@ -8,15 +8,15 @@ name: Sync Alpaca Status
 # FIX (Jan 22, 2026): Consolidated from 3 separate sync workflows (hourly-state-sync, sync-system-state)
 on:
   schedule:
-    - cron: '*/15 15-19 * * 1-5'  # Every 15 min, 10 AM - 3 PM ET (peak hours)
-    - cron: '30,0 14,20 * * 1-5'  # Every 30 min at market open (9:30 AM) and close (4 PM)
-    - cron: '0 15 * * 0,6'        # Once daily on weekends at 10 AM ET
-  workflow_dispatch:  # Manual trigger
+    - cron: "*/15 15-19 * * 1-5" # Every 15 min, 10 AM - 3 PM ET (peak hours)
+    - cron: "30,0 14,20 * * 1-5" # Every 30 min at market open (9:30 AM) and close (4 PM)
+    - cron: "0 15 * * 0,6" # Once daily on weekends at 10 AM ET
+  workflow_dispatch: # Manual trigger
     inputs:
       force_sync:
-        description: 'Force sync even if no changes'
+        description: "Force sync even if no changes"
         required: false
-        default: 'false'
+        default: "false"
         type: boolean
 
 permissions:
@@ -35,7 +35,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: pip install alpaca-py

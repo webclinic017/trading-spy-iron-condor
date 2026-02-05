@@ -17,7 +17,9 @@ from datetime import datetime
 def main():
     """Close excess positions to restore compliance."""
     # Check for required environment variables
-    api_key = os.environ.get("ALPACA_API_KEY") or os.environ.get("ALPACA_PAPER_TRADING_5K_API_KEY")
+    api_key = os.environ.get("ALPACA_API_KEY") or os.environ.get(
+        "ALPACA_PAPER_TRADING_5K_API_KEY"
+    )
     api_secret = os.environ.get("ALPACA_SECRET_KEY") or os.environ.get(
         "ALPACA_PAPER_TRADING_5K_API_SECRET"
     )
@@ -89,7 +91,8 @@ def main():
                             "long_strike": lower_strike,
                             "long_symbol": lower_pos["symbol"],
                             "width": strike - lower_strike,
-                            "combined_pl": pos["unrealized_pl"] + lower_pos["unrealized_pl"],
+                            "combined_pl": pos["unrealized_pl"]
+                            + lower_pos["unrealized_pl"],
                         }
                     )
                     break
@@ -109,7 +112,9 @@ def main():
         print(f"\n✅ Position count OK ({len(spreads)} spreads, max {max_spreads})")
         return
 
-    print(f"\n⚠️  EXCESS SPREADS: {excess_spreads} (have {len(spreads)}, max {max_spreads})")
+    print(
+        f"\n⚠️  EXCESS SPREADS: {excess_spreads} (have {len(spreads)}, max {max_spreads})"
+    )
 
     # Close the spreads with worst P/L first
     spreads_to_close = sorted(spreads, key=lambda x: x["combined_pl"])[:excess_spreads]

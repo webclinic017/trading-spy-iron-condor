@@ -18,7 +18,7 @@ rules:
 
   # Truthy values - allow 'on' for GitHub Actions triggers
   truthy:
-    allowed-values: ['true', 'false', 'on', 'off', 'yes', 'no']
+    allowed-values: ["true", "false", "on", "off", "yes", "no"]
     check-keys: false
 
   # Document start (---) is optional for GitHub Actions

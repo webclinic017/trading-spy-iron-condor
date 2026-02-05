@@ -12,6 +12,7 @@ Audit of all crisis prevention systems implemented after the Jan 20-22, 2026 pos
 ## Crisis Root Causes (Historical)
 
 From LL-282 and LL-291:
+
 1. **Position limit bug**: Counted symbols instead of contracts
 2. **No cumulative risk check**: Individual trades passed but cumulative exposure exceeded limits
 3. **No circuit breaker**: System continued trading during bleeding
@@ -21,25 +22,28 @@ From LL-282 and LL-291:
 ## Safeguards Implemented
 
 ### 1. Crisis Monitor (`src/safety/crisis_monitor.py`)
-| Check | Threshold | Action |
-|-------|-----------|--------|
-| Excess positions | > 4 option positions | Trigger TRADING_HALTED |
-| Unrealized loss | > 25% of equity | Trigger TRADING_HALTED |
-| Single position loss | > 50% of cost basis | Trigger TRADING_HALTED |
+
+| Check                | Threshold            | Action                 |
+| -------------------- | -------------------- | ---------------------- |
+| Excess positions     | > 4 option positions | Trigger TRADING_HALTED |
+| Unrealized loss      | > 25% of equity      | Trigger TRADING_HALTED |
+| Single position loss | > 50% of cost basis  | Trigger TRADING_HALTED |
 
 **Status**: ✅ Implemented and functional
 
 ### 2. Mandatory Trade Gate (`src/safety/mandatory_trade_gate.py`)
-| Check | Limit | Bypass |
-|-------|-------|--------|
-| Ticker whitelist | SPY only | None |
-| Position size | 5% max per trade | None (hardcoded) |
-| Daily loss | 5% max | Thread-safe lock |
-| Blind trading | Requires equity > 0 | None |
+
+| Check            | Limit               | Bypass           |
+| ---------------- | ------------------- | ---------------- |
+| Ticker whitelist | SPY only            | None             |
+| Position size    | 5% max per trade    | None (hardcoded) |
+| Daily loss       | 5% max              | Thread-safe lock |
+| Blind trading    | Requires equity > 0 | None             |
 
 **Status**: ✅ Implemented with security fixes (Jan 19)
 
 ### 3. TRADING_HALTED Flag System
+
 - **File**: `data/TRADING_HALTED`
 - **Automatic creation**: When crisis conditions detected
 - **Manual clear required**: CEO approval needed
@@ -48,6 +52,7 @@ From LL-282 and LL-291:
 **Status**: ✅ Implemented
 
 ### 4. Circuit Breaker (`src/resilience/circuit_breaker.py`)
+
 - Tracks API failures
 - Opens circuit after threshold failures
 - Half-open state for recovery testing
@@ -55,6 +60,7 @@ From LL-282 and LL-291:
 **Status**: ✅ Implemented
 
 ### 5. Position Limit Fix
+
 ```python
 # CORRECT (Jan 22 fix)
 total_contracts = sum(abs(int(float(p.qty))) for p in positions)
@@ -65,37 +71,40 @@ total_contracts = sum(abs(int(float(p.qty))) for p in positions)
 
 ## Current Account Status
 
-| Metric | Value | Status |
-|--------|-------|--------|
-| Account balance | $29,977.39 | ✅ >$25K (no PDT) |
-| Open positions | 0 | ✅ Clean |
-| TRADING_HALTED | Not present | ✅ Ready to trade |
-| Paper trading day | N/A of 90 | ⚠️ Not tracking yet |
+| Metric            | Value       | Status              |
+| ----------------- | ----------- | ------------------- |
+| Account balance   | $29,977.39  | ✅ >$25K (no PDT)   |
+| Open positions    | 0           | ✅ Clean            |
+| TRADING_HALTED    | Not present | ✅ Ready to trade   |
+| Paper trading day | N/A of 90   | ⚠️ Not tracking yet |
 
 ## Remaining Gaps
 
 ### Gap 1: Paper Trading Day Counter
+
 - CLAUDE.md specifies 90-day paper phase
 - No automated tracking of paper days
 - **Recommendation**: Add `paper_trading_start_date` to system_state.json
 
 ### Gap 2: Position Monitoring Alerts
+
 - No real-time alerts when positions opened
 - Crisis detected only on next check
 - **Recommendation**: Slack/email webhook on position change
 
 ### Gap 3: PDT Tracking
+
 - No tracking of day trades in 5-day rolling window
 - Account is >$25K now, but could drop below
 - **Recommendation**: Add `day_trades` array to system_state.json
 
 ## Test Coverage
 
-| Test | Status |
-|------|--------|
-| test_crisis_monitor.py | ✅ 8 tests passing |
+| Test                         | Status              |
+| ---------------------------- | ------------------- |
+| test_crisis_monitor.py       | ✅ 8 tests passing  |
 | test_mandatory_trade_gate.py | ✅ 43 tests passing |
-| test_trade_gateway.py | ✅ 12 tests passing |
+| test_trade_gateway.py        | ✅ 12 tests passing |
 
 ## Verification Commands
 

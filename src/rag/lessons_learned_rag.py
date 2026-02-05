@@ -90,7 +90,9 @@ class LessonsLearnedRAG:
             return re.findall(r"`([^`]+)`", tags_line)
         return []
 
-    def query(self, query: str, top_k: int = 5, severity_filter: Optional[str] = None) -> list:
+    def query(
+        self, query: str, top_k: int = 5, severity_filter: Optional[str] = None
+    ) -> list:
         """Search lessons using keyword matching."""
         # Use LessonsSearch if available
         if self.search_engine is not None:

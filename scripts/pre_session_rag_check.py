@@ -42,11 +42,15 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
-def check_recent_critical_lessons(days_back: int = 7, include_high: bool = False) -> list[dict]:
+def check_recent_critical_lessons(
+    days_back: int = 7, include_high: bool = False
+) -> list[dict]:
     """
     Check for CRITICAL (and optionally HIGH) severity lessons learned in the past N days.
 
@@ -101,7 +105,9 @@ def check_recent_critical_lessons(days_back: int = 7, include_high: bool = False
                     date_match = re.search(r"(\d{4}-\d{2}-\d{2})", line)
                     if date_match:
                         try:
-                            lesson_date = datetime.strptime(date_match.group(1), "%Y-%m-%d")
+                            lesson_date = datetime.strptime(
+                                date_match.group(1), "%Y-%m-%d"
+                            )
                         except ValueError:
                             pass
                     break
@@ -208,7 +214,10 @@ def main():
         help="Allow HIGH severity lessons but still block on CRITICAL (default: block on both)",
     )
     parser.add_argument(
-        "--days", type=int, default=7, help="Days to look back for recent lessons (default: 7)"
+        "--days",
+        type=int,
+        default=7,
+        help="Days to look back for recent lessons (default: 7)",
     )
     parser.add_argument(
         "--no-block",
@@ -231,10 +240,14 @@ def main():
     severity_desc = "CRITICAL and HIGH" if check_high else "CRITICAL"
     print(f"📚 Checking for {severity_desc} lessons learned...")
 
-    all_lessons = check_recent_critical_lessons(days_back=args.days, include_high=check_high)
+    all_lessons = check_recent_critical_lessons(
+        days_back=args.days, include_high=check_high
+    )
 
     # Separate by severity
-    critical_lessons = [lesson for lesson in all_lessons if lesson["severity"] == "CRITICAL"]
+    critical_lessons = [
+        lesson for lesson in all_lessons if lesson["severity"] == "CRITICAL"
+    ]
     high_lessons = [lesson for lesson in all_lessons if lesson["severity"] == "HIGH"]
 
     if critical_lessons:
@@ -322,15 +335,21 @@ def main():
                 print(f"   - {reason}")
             print("\n   Options:")
             print("   1. Review and fix the issues")
-            print("   2. Use --allow-warnings to permit HIGH severity but block CRITICAL")
+            print(
+                "   2. Use --allow-warnings to permit HIGH severity but block CRITICAL"
+            )
             print("   3. Use --no-block to override (NOT RECOMMENDED)")
             print("=" * 70)
             sys.exit(1)
         else:
             if args.no_block:
-                print("\n⚠️  WARNING: --no-block flag set, proceeding anyway (NOT RECOMMENDED)")
+                print(
+                    "\n⚠️  WARNING: --no-block flag set, proceeding anyway (NOT RECOMMENDED)"
+                )
             elif args.allow_warnings:
-                print("\n⚠️  WARNING: --allow-warnings flag set, allowing HIGH severity issues")
+                print(
+                    "\n⚠️  WARNING: --allow-warnings flag set, allowing HIGH severity issues"
+                )
                 if has_critical_recent:
                     print("   But CRITICAL issues were found - this should NOT happen!")
             print("=" * 70)

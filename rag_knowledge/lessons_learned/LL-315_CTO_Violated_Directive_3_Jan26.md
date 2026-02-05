@@ -9,11 +9,13 @@
 CLAUDE.md Directive #3: **"Never tell CEO to do manual work - If I can do it, I MUST do it myself."**
 
 I gave the CEO three options and asked them to choose:
+
 1. Wait for scheduled execution
 2. Trigger manually
 3. Update TRIGGER_TRADE.md
 
 **This is WRONG.** I should have:
+
 - Made the decision myself
 - Executed it myself
 - Only informed CEO of what I did
@@ -26,6 +28,7 @@ No action needed. I'll monitor and report results."
 ```
 
 Not:
+
 ```
 "Do you want me to:
 1. Wait...

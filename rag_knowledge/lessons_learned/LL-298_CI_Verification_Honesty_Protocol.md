@@ -50,6 +50,7 @@ else:
 ### Verification Checklist
 
 Before saying "CI passing":
+
 - [ ] Check GitHub Actions runs (not just local tests)
 - [ ] Verify Deploy GitHub Pages specifically (prone to link errors)
 - [ ] Look for ANY failure status, not just success counts
@@ -57,11 +58,11 @@ Before saying "CI passing":
 
 ## Correct Phrasing
 
-| Wrong | Right |
-|-------|-------|
-| "CI passing" | "Let me verify CI status..." then show evidence |
-| "Done!" | "I believe this is done, verifying now..." |
-| "System hygiene complete" | "Checking all workflows... [show output]" |
+| Wrong                     | Right                                           |
+| ------------------------- | ----------------------------------------------- |
+| "CI passing"              | "Let me verify CI status..." then show evidence |
+| "Done!"                   | "I believe this is done, verifying now..."      |
+| "System hygiene complete" | "Checking all workflows... [show output]"       |
 
 ## Impact
 

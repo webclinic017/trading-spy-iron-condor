@@ -8,6 +8,7 @@
 ## What Happened
 
 Iron condors were being placed with only PUT legs filling. CALL legs were failing silently, leaving dangerous directional positions:
+
 - Long puts + short puts = bull put spreads only
 - Missing bear call spreads = no upside protection
 - Result: Orphan puts causing losses when market rises
@@ -21,6 +22,7 @@ Iron condors were being placed with only PUT legs filling. CALL legs were failin
 ## Evidence
 
 From `system_state.json` positions:
+
 - SPY260220P00565000: -2 (short put)
 - SPY260220P00570000: +3 (long put)
 - SPY260220P00653000: -6 (short put)
@@ -32,6 +34,7 @@ Unrealized P/L on options: ~-$181 (net loss)
 ## Fix Applied
 
 Added auto-close logic to `scripts/iron_condor_trader.py`:
+
 1. When only 2-3 legs fill (instead of 4), immediately cancel/close
 2. First try to cancel pending orders
 3. If already filled, submit market order to reverse position

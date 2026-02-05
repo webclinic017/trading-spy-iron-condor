@@ -25,6 +25,7 @@ from enum import Enum
 from typing import Any, TypeVar
 
 from pydantic import BaseModel, Field
+
 from src.utils.model_selector import ModelSelector, get_model_selector
 from src.utils.self_healing import get_anthropic_api_key
 from src.utils.token_monitor import record_llm_usage
@@ -74,7 +75,9 @@ class TradeDecision(BaseModel):
 
     decision: TradeSignal = Field(description="The trading signal/decision")
     signal_strength: float = Field(ge=0.0, le=1.0, description="Signal confidence 0-1")
-    confidence: float = Field(ge=0.0, le=1.0, description="Overall confidence in decision")
+    confidence: float = Field(
+        ge=0.0, le=1.0, description="Overall confidence in decision"
+    )
     reasoning: str = Field(description="Explanation of the decision")
     params: dict[str, Any] = Field(
         default_factory=dict, description="Trade parameters (strike, expiry, etc.)"
@@ -85,7 +88,9 @@ class MarketAnalysis(BaseModel):
     """Structured output for market analysis."""
 
     sentiment: float = Field(ge=-1.0, le=1.0, description="Market sentiment -1 to 1")
-    technicals: dict[str, float] = Field(default_factory=dict, description="Technical indicators")
+    technicals: dict[str, float] = Field(
+        default_factory=dict, description="Technical indicators"
+    )
     regime: MarketRegime = Field(description="Current market regime")
     key_levels: dict[str, float] = Field(
         default_factory=dict, description="Support/resistance levels"
@@ -98,9 +103,13 @@ class RiskAssessment(BaseModel):
 
     risk_level: RiskLevel = Field(description="Overall risk level")
     max_loss: float = Field(ge=0.0, description="Maximum potential loss in dollars")
-    probability_of_loss: float = Field(ge=0.0, le=1.0, description="Probability of loss")
+    probability_of_loss: float = Field(
+        ge=0.0, le=1.0, description="Probability of loss"
+    )
     recommendation: str = Field(description="Risk management recommendation")
-    mitigations: list[str] = Field(default_factory=list, description="Suggested risk mitigations")
+    mitigations: list[str] = Field(
+        default_factory=list, description="Suggested risk mitigations"
+    )
 
 
 class LLMProvider(str, Enum):
@@ -164,7 +173,9 @@ class MirascopeTradingClient:
         self._anthropic_client: Any = None
         self._openai_client: Any = None
 
-        logger.info(f"MirascopeTradingClient initialized with provider: {provider.value}")
+        logger.info(
+            f"MirascopeTradingClient initialized with provider: {provider.value}"
+        )
 
     @property
     def anthropic_client(self) -> Any:
@@ -175,7 +186,9 @@ class MirascopeTradingClient:
 
                 self._anthropic_client = Anthropic(api_key=get_anthropic_api_key())
             except ImportError:
-                raise ImportError("anthropic package not installed. Run: pip install anthropic")
+                raise ImportError(
+                    "anthropic package not installed. Run: pip install anthropic"
+                )
         return self._anthropic_client
 
     @property
@@ -197,7 +210,9 @@ class MirascopeTradingClient:
                     base_url=base_url,
                 )
             except ImportError:
-                raise ImportError("openai package not installed. Run: pip install openai")
+                raise ImportError(
+                    "openai package not installed. Run: pip install openai"
+                )
         return self._openai_client
 
     def switch_provider(self, provider: LLMProvider) -> None:
@@ -256,7 +271,9 @@ class MirascopeTradingClient:
         else:
             yield from self._stream_openai(prompt, model, system_prompt)
 
-    def _stream_anthropic(self, prompt: str, model: str, system_prompt: str) -> Iterator[str]:
+    def _stream_anthropic(
+        self, prompt: str, model: str, system_prompt: str
+    ) -> Iterator[str]:
         """Stream using Anthropic API."""
         total_input = 0
         total_output = 0
@@ -275,7 +292,9 @@ class MirascopeTradingClient:
         total_input = len(prompt) // 4 + len(system_prompt) // 4
         self._record_usage(model, total_input, total_output)
 
-    def _stream_openai(self, prompt: str, model: str, system_prompt: str) -> Iterator[str]:
+    def _stream_openai(
+        self, prompt: str, model: str, system_prompt: str
+    ) -> Iterator[str]:
         """Stream using OpenAI-compatible API."""
         total_output = 0
 
@@ -327,7 +346,9 @@ class MirascopeTradingClient:
         )
 
         if self.provider == LLMProvider.ANTHROPIC:
-            async for chunk in self._stream_anthropic_async(prompt, model, system_prompt):
+            async for chunk in self._stream_anthropic_async(
+                prompt, model, system_prompt
+            ):
                 yield chunk
         else:
             async for chunk in self._stream_openai_async(prompt, model, system_prompt):
@@ -437,7 +458,9 @@ class MirascopeTradingClient:
         else:
             return self._call_tools_openai(prompt, model, tool_defs)
 
-    def _call_tools_anthropic(self, prompt: str, model: str, tools: list[dict]) -> dict[str, Any]:
+    def _call_tools_anthropic(
+        self, prompt: str, model: str, tools: list[dict]
+    ) -> dict[str, Any]:
         """Tool calling via Anthropic API."""
         response = self.anthropic_client.messages.create(
             model=model,
@@ -448,7 +471,9 @@ class MirascopeTradingClient:
 
         # Record usage
         if response.usage:
-            self._record_usage(model, response.usage.input_tokens, response.usage.output_tokens)
+            self._record_usage(
+                model, response.usage.input_tokens, response.usage.output_tokens
+            )
 
         # Parse response
         result: dict[str, Any] = {
@@ -471,11 +496,15 @@ class MirascopeTradingClient:
 
         return result
 
-    def _call_tools_openai(self, prompt: str, model: str, tools: list[dict]) -> dict[str, Any]:
+    def _call_tools_openai(
+        self, prompt: str, model: str, tools: list[dict]
+    ) -> dict[str, Any]:
         """Tool calling via OpenAI-compatible API."""
         if "claude" in model.lower():
             model = (
-                "anthropic/claude-3-opus" if self.provider == LLMProvider.OPENROUTER else "gpt-4o"
+                "anthropic/claude-3-opus"
+                if self.provider == LLMProvider.OPENROUTER
+                else "gpt-4o"
             )
 
         response = self.openai_client.chat.completions.create(
@@ -495,7 +524,9 @@ class MirascopeTradingClient:
         result: dict[str, Any] = {
             "text": "",
             "tool_calls": [],
-            "stop_reason": response.choices[0].finish_reason if response.choices else None,
+            "stop_reason": (
+                response.choices[0].finish_reason if response.choices else None
+            ),
         }
 
         if response.choices:
@@ -546,7 +577,9 @@ Respond with valid JSON matching this schema:
 Only output valid JSON, no additional text."""
 
         if self.provider == LLMProvider.ANTHROPIC:
-            return self._structured_anthropic(prompt, model, output_model, system_prompt)
+            return self._structured_anthropic(
+                prompt, model, output_model, system_prompt
+            )
         else:
             return self._structured_openai(prompt, model, output_model, system_prompt)
 
@@ -566,7 +599,9 @@ Only output valid JSON, no additional text."""
         )
 
         if response.usage:
-            self._record_usage(model, response.usage.input_tokens, response.usage.output_tokens)
+            self._record_usage(
+                model, response.usage.input_tokens, response.usage.output_tokens
+            )
 
         # Extract and parse JSON
         text = ""
@@ -587,7 +622,9 @@ Only output valid JSON, no additional text."""
         """Structured output via OpenAI-compatible API."""
         if "claude" in model.lower():
             model = (
-                "anthropic/claude-3-opus" if self.provider == LLMProvider.OPENROUTER else "gpt-4o"
+                "anthropic/claude-3-opus"
+                if self.provider == LLMProvider.OPENROUTER
+                else "gpt-4o"
             )
 
         response = self.openai_client.chat.completions.create(
@@ -641,7 +678,9 @@ Only output valid JSON, no additional text."""
 4. Key support/resistance levels
 5. Brief summary"""
 
-        return self.structured_output(prompt, MarketAnalysis, task_type="technical_analysis")
+        return self.structured_output(
+            prompt, MarketAnalysis, task_type="technical_analysis"
+        )
 
     def assess_risk(self, trade_params: dict[str, Any]) -> RiskAssessment:
         """Get structured risk assessment for a trade."""
@@ -654,9 +693,13 @@ Consider:
 3. Position size relative to account
 4. Suggested mitigations"""
 
-        return self.structured_output(prompt, RiskAssessment, task_type="risk_assessment")
+        return self.structured_output(
+            prompt, RiskAssessment, task_type="risk_assessment"
+        )
 
-    def get_trade_decision(self, context: str, strategy: str = "iron_condor") -> TradeDecision:
+    def get_trade_decision(
+        self, context: str, strategy: str = "iron_condor"
+    ) -> TradeDecision:
         """Get structured trade decision."""
         prompt = f"""Based on this context:
 {context}
@@ -668,7 +711,9 @@ Consider:
 3. Specific parameters (delta, DTE, width)
 4. Clear reasoning"""
 
-        return self.structured_output(prompt, TradeDecision, task_type="signal_generation")
+        return self.structured_output(
+            prompt, TradeDecision, task_type="signal_generation"
+        )
 
 
 # =============================================================================

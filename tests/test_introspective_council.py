@@ -5,8 +5,9 @@ Tests the _anonymize_responses() method added based on Karpathy's LLM Council in
 Reference: https://github.com/karpathy/llm-council
 """
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock
+
+import pytest
 
 
 class TestAnonymizeResponses:

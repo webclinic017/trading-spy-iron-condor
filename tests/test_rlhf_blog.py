@@ -74,7 +74,9 @@ class TestRLHFBlogPublisher:
             text=True,
             timeout=60,
         )
-        assert result.returncode == 0, f"Blog script failed on negative: {result.stderr}"
+        assert (
+            result.returncode == 0
+        ), f"Blog script failed on negative: {result.stderr}"
         assert "lesson" in result.stdout.lower(), "Negative post should mention lesson"
 
     def test_blog_posts_directory_exists(self):
@@ -85,7 +87,9 @@ class TestRLHFBlogPublisher:
     def test_feedback_log_exists(self):
         """Ensure feedback log can be created."""
         log_dir = Path(".claude/memory/feedback")
-        assert log_dir.exists() or log_dir.parent.exists(), "Feedback directory missing!"
+        assert (
+            log_dir.exists() or log_dir.parent.exists()
+        ), "Feedback directory missing!"
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ cd "$REPO_ROOT"
 echo "Running smoke test..."
 
 # Ensure python path includes repo root
-export PYTHONPATH="${PYTHONPATH:-}:$(pwd)"
+export PYTHONPATH="${PYTHONPATH-}:$(pwd)"
 
 python3 - <<'PY'
 import sys

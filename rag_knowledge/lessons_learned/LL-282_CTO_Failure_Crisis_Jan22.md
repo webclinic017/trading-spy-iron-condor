@@ -12,6 +12,7 @@ Three consecutive days of losses. Total P/L: **-$413.39 (-8.27%)** from $5,000 s
 ## Root Cause: CTO Failed to Learn from RAG
 
 LL-203 documented EXACTLY what works:
+
 - $100K account made +$16,661 in one day
 - Strategy: Sell SPY puts, iron condors, keep it simple
 - Evidence was sitting in RAG since January 14
@@ -20,12 +21,12 @@ LL-203 documented EXACTLY what works:
 
 ## What Went Wrong
 
-| Violation | Impact |
-|-----------|--------|
-| Traded SOFI instead of SPY | Realized losses when closed |
-| Position imbalance (6 long, 4 short) | Unrealized losses |
-| No pre-trade RAG check | Ignored proven strategy |
-| Allowed strategy violations | System didn't enforce rules |
+| Violation                            | Impact                      |
+| ------------------------------------ | --------------------------- |
+| Traded SOFI instead of SPY           | Realized losses when closed |
+| Position imbalance (6 long, 4 short) | Unrealized losses           |
+| No pre-trade RAG check               | Ignored proven strategy     |
+| Allowed strategy violations          | System didn't enforce rules |
 
 ## CEO's Words
 
@@ -56,6 +57,7 @@ This is unacceptable. The system exists to make money, not lose it.
 ## Accountability
 
 As CTO, I take full responsibility for:
+
 1. Not learning from documented successes
 2. Allowing system to violate its own rules
 3. Three days of losses

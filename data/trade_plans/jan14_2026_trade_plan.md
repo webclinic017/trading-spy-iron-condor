@@ -14,6 +14,7 @@
 ## Primary Targets (Priority Order)
 
 ### 1. SPY Bull Put Spread
+
 - **Why**: Best liquidity, tightest bid/ask
 - **Setup**:
   - Sell 30-delta put (~$580 strike area, verify live)
@@ -24,6 +25,7 @@
 - **Collateral required**: $500
 
 ### 2. IWM Bull Put Spread (Backup)
+
 - **Why**: Small caps undervalued, good IV
 - **Setup**:
   - Sell 30-delta put (verify strike live)
@@ -40,11 +42,11 @@
 
 ## Exit Rules
 
-| Condition | Action |
-|-----------|--------|
-| 50% of max profit | Close and bank gains |
-| 25% of max loss | Close and cut losses |
-| 7 DTE remaining | Close regardless of P/L |
+| Condition         | Action                  |
+| ----------------- | ----------------------- |
+| 50% of max profit | Close and bank gains    |
+| 25% of max loss   | Close and cut losses    |
+| 7 DTE remaining   | Close regardless of P/L |
 
 ## End-of-Day Review
 

@@ -21,19 +21,22 @@ For small accounts ($500-$5,000), the most recommended strategies are:
 ## 1. Cash-Secured Puts (Our Primary Strategy)
 
 ### How It Works
+
 - Sell put options on stocks you want to own
 - If assigned, you buy at strike price minus premium collected
 - If not assigned, keep the premium as income
 
 ### Capital Requirements
+
 | Account Size | Max Strike | Example Stocks |
-|--------------|-----------|----------------|
-| $500 | $5 | F (Ford), SOFI |
-| $1,000 | $10 | INTC, BAC |
-| $2,000 | $20 | T, VZ |
-| $5,000 | $50 | Multiple CSPs |
+| ------------ | ---------- | -------------- |
+| $500         | $5         | F (Ford), SOFI |
+| $1,000       | $10        | INTC, BAC      |
+| $2,000       | $20        | T, VZ          |
+| $5,000       | $50        | Multiple CSPs  |
 
 ### Phil Town Approach
+
 - Only sell CSPs on "wonderful companies at fair prices"
 - Sell puts at 50% Margin of Safety (MOS) price
 - You get PAID to wait for the stock to come to you
@@ -45,6 +48,7 @@ For small accounts ($500-$5,000), the most recommended strategies are:
 ## 2. The Wheel Strategy
 
 ### Step-by-Step
+
 1. **Sell Cash-Secured Put** → Collect premium
 2. **If assigned** → Own 100 shares at lower price
 3. **Sell Covered Call** → Collect more premium
@@ -52,11 +56,13 @@ For small accounts ($500-$5,000), the most recommended strategies are:
 5. **Repeat** → Perpetual income wheel
 
 ### Expected Returns
+
 - 15-20% annually is realistic
 - Works best in sideways to bullish markets
 - Requires patience and discipline
 
 ### Best Stocks for Wheel
+
 - Stable, high-liquidity stocks: MSFT, KO, SPY, QQQ
 - Dividend payers enhance returns
 - **Our watchlist**: F, SOFI, T, INTC, BAC, VZ (capital-tiered)
@@ -68,11 +74,13 @@ For small accounts ($500-$5,000), the most recommended strategies are:
 ## 3. Credit Spreads (Capital-Efficient)
 
 ### Why Credit Spreads for Small Accounts
+
 - Lower capital requirement ($200-500 vs $1,000+ for CSPs)
 - Defined risk - max loss = width - credit received
 - Can be used when buying power is insufficient for CSPs
 
 ### Bull Put Spread Example
+
 - Sell $25 put, Buy $23 put
 - Collect $0.50 credit
 - Max risk = $2 - $0.50 = $1.50 per share
@@ -85,17 +93,20 @@ For small accounts ($500-$5,000), the most recommended strategies are:
 ## 4. Iron Condors (Neutral Markets)
 
 ### Structure
+
 - Sell OTM Put Spread (Bull Put)
 - Sell OTM Call Spread (Bear Call)
 - Same expiration date
 - Profit if stock stays in range
 
 ### Risk/Reward
+
 - Max profit = Net credit collected
 - Max loss = Width of wider spread - credit
 - Best in low volatility environments
 
 ### Warning for Small Accounts
+
 - Multiple legs = multiple commissions
 - Requires larger account for effective use
 - Option Alpha recommends accounts under $25K focus on simpler strategies first
@@ -107,11 +118,13 @@ For small accounts ($500-$5,000), the most recommended strategies are:
 ## 5. Poor Man's Covered Call (PMCC)
 
 ### Why It's Great for Small Accounts
+
 - Controls 100 shares for fraction of cost
 - Example: Ford CSP needs $1,200, PMCC needs ~$400
 - Can generate $10-15/week in premium
 
 ### Structure
+
 - Buy deep ITM LEAPS call (6+ months out)
 - Sell OTM weekly/monthly calls against it
 - LEAPS acts as substitute for owning shares
@@ -123,19 +136,21 @@ For small accounts ($500-$5,000), the most recommended strategies are:
 ## Risk Management Rules (All Strategies)
 
 ### Position Sizing
+
 - Never risk more than **5% of account** on single trade
 - Option Alpha: "As soon as you start getting over 5%... the likelihood that you have a run of trades that go against you... and blow up your account is exponentially higher"
 
 ### Strategy Selection by Account Size
 
-| Account Size | Recommended Strategies |
-|--------------|------------------------|
-| $500 | Long calls/puts, PMCC on cheap stocks |
-| $1,000 | Credit spreads, single CSPs on $5-10 stocks |
-| $2,000 | Wheel on affordable stocks (F, SOFI) |
-| $5,000 | Full wheel, iron condors, multiple positions |
+| Account Size | Recommended Strategies                       |
+| ------------ | -------------------------------------------- |
+| $500         | Long calls/puts, PMCC on cheap stocks        |
+| $1,000       | Credit spreads, single CSPs on $5-10 stocks  |
+| $2,000       | Wheel on affordable stocks (F, SOFI)         |
+| $5,000       | Full wheel, iron condors, multiple positions |
 
 ### Realistic Expectations
+
 - Target: **1-2% account growth per week**
 - Compounding: Could double account in ~1 year
 - **Capital preservation is PRIMARY focus**
@@ -173,4 +188,4 @@ This is exactly Phil Town's approach - he learned from Buffett!
 
 ---
 
-*This research will be synced to Vertex AI RAG via CI workflow for future reference.*
+_This research will be synced to Vertex AI RAG via CI workflow for future reference._

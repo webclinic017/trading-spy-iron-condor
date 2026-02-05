@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 # Docker Compose configuration for Trading System
 # This orchestrates the trading bot and dashboard services
@@ -64,10 +64,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '2'
+          cpus: "2"
           memory: 2G
         reservations:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 512M
 
     # Health check configuration
@@ -102,7 +102,14 @@ services:
     container_name: trading-dashboard
 
     # Override entrypoint to run Streamlit instead of main.py
-    command: ["streamlit", "run", "dashboard/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    command:
+      [
+        "streamlit",
+        "run",
+        "dashboard/app.py",
+        "--server.port=8501",
+        "--server.address=0.0.0.0",
+      ]
 
     # Load environment variables
     env_file:
@@ -132,10 +139,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: "1"
           memory: 1G
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 256M
 
     # Health check for Streamlit
@@ -162,7 +169,7 @@ services:
     networks:
       - trading-network
 
-# Hindsight Memory Service (Optional - Agentic Memory for Trade Learning)
+  # Hindsight Memory Service (Optional - Agentic Memory for Trade Learning)
   # See: https://github.com/vectorize-io/hindsight
   hindsight:
     image: ghcr.io/vectorize-io/hindsight:latest
@@ -176,8 +183,8 @@ services:
 
     # Expose API and UI ports
     ports:
-      - "8888:8888"  # API
-      - "9999:9999"  # UI
+      - "8888:8888" # API
+      - "9999:9999" # UI
 
     # Persistent storage for memory banks
     volumes:
@@ -187,10 +194,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: "1"
           memory: 1G
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 256M
 
     # Health check - verify API is responding

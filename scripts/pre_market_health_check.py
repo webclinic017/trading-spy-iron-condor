@@ -103,7 +103,9 @@ def check_alpaca_api() -> bool:
                 print(f"   Status: {status}")
                 return True
             else:
-                print(f"⚠️  Alpaca API: No account data (attempt {attempt + 1}/{max_retries})")
+                print(
+                    f"⚠️  Alpaca API: No account data (attempt {attempt + 1}/{max_retries})"
+                )
                 last_error = "No account data returned"
 
         except Exception as e:
@@ -128,7 +130,9 @@ def check_alpaca_api() -> bool:
         print("     1. Keys are for LIVE account (not PAPER)")
         print("     2. Keys were regenerated after adding to GitHub Secrets")
         print("     3. Typo when copying keys to GitHub Secrets")
-        print("   - Solution: Verify credentials using scripts/test_alpaca_credentials_local.py")
+        print(
+            "   - Solution: Verify credentials using scripts/test_alpaca_credentials_local.py"
+        )
         print("   - See: ALPACA_AUTH_DIAGNOSTIC.md for detailed steps")
     elif "ssl" in error_str or "certificate" in error_str:
         print("   - SSL/TLS connection issue")
@@ -187,7 +191,9 @@ def check_economic_calendar() -> bool:
         client = FinnhubClient()
         if not client.api_key:
             signal.alarm(0)  # Cancel timeout
-            print("⚠️  Finnhub API key not configured - skipping economic calendar check")
+            print(
+                "⚠️  Finnhub API key not configured - skipping economic calendar check"
+            )
             return True  # Not critical if not configured
 
         if client.has_major_event_today():
@@ -305,7 +311,9 @@ def check_strategy_execution() -> bool:
                     # Check if it's been active for more than 3 days without trades
                     # (should execute daily on weekdays)
                     if trades_executed == 0:
-                        issues.append(f"{name}: 0 trades executed (should execute daily)")
+                        issues.append(
+                            f"{name}: 0 trades executed (should execute daily)"
+                        )
 
         if issues:
             print("⚠️  Strategy Execution: ISSUES DETECTED")

@@ -14,16 +14,21 @@ This is a complete failure of Phil Town's Rule #1: "Don't lose money."
 ## The Failures
 
 ### 1. Dismissed CEO Concerns
+
 When CEO said "this is a crisis", CTO responded with:
+
 > "This is not a crisis. A 0.14% drawdown is well within normal trading variance."
 
 **Reality**: TRADING_HALTED was already active. Unrealized loss was 30.7% of equity. CTO looked at the wrong number ($29,959 vs actual equity of $4,099).
 
 ### 2. Did Not Query RAG First
+
 CTO had access to 9+ crisis lessons from past failures (LL-291, LL-282, LL-312, etc.) but did not consult them before dismissing CEO's concern.
 
 ### 3. Repeated Same Mistakes
+
 Despite lessons documenting:
+
 - Position accumulation bugs
 - PDT restrictions blocking closes
 - Circuit breaker needs
@@ -32,7 +37,9 @@ Despite lessons documenting:
 The system continued to violate these lessons.
 
 ### 4. Failed to Verify Before Claiming
+
 CTO claimed "not a crisis" without:
+
 - Checking TRADING_HALTED flag
 - Verifying actual equity ($4,099 not $29,959)
 - Running crisis monitor status
@@ -40,14 +47,14 @@ CTO claimed "not a crisis" without:
 
 ## Financial Impact
 
-| Metric | Value |
-|--------|-------|
-| Starting balance | $30,000 |
-| Current equity | $4,099.71 |
-| Total loss | $25,900.29 |
-| Loss percentage | **86.3%** |
-| Days elapsed | 8 |
-| Rule #1 violations | Multiple |
+| Metric             | Value      |
+| ------------------ | ---------- |
+| Starting balance   | $30,000    |
+| Current equity     | $4,099.71  |
+| Total loss         | $25,900.29 |
+| Loss percentage    | **86.3%**  |
+| Days elapsed       | 8          |
+| Rule #1 violations | Multiple   |
 
 ## What This Means for the North Star
 
@@ -56,6 +63,7 @@ CTO claimed "not a crisis" without:
 **Original timeline**: ~7 years with discipline
 
 **New reality**: From $4,099, even with perfect execution:
+
 - 18% annual + $1,000/month deposits = 15+ years
 - Added ~8 years to timeline in 8 days
 

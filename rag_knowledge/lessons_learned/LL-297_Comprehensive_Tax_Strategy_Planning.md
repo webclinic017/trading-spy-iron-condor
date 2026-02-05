@@ -12,61 +12,68 @@ This document consolidates our tax strategy for achieving $6K/month after-tax fi
 ## Current Tax Situation
 
 ### SPY Options (Current Strategy)
-| Aspect | Treatment |
-|--------|-----------|
-| Tax classification | Equity options |
+
+| Aspect                     | Treatment                                  |
+| -------------------------- | ------------------------------------------ |
+| Tax classification         | Equity options                             |
 | Short-term gains (<1 year) | Taxed at ordinary income rates (up to 37%) |
-| Long-term gains (>1 year) | Taxed at 0-20% |
-| Wash sale rules | **APPLY** |
-| Typical effective rate | ~32% (all short-term for 30-45 DTE trades) |
+| Long-term gains (>1 year)  | Taxed at 0-20%                             |
+| Wash sale rules            | **APPLY**                                  |
+| Typical effective rate     | ~32% (all short-term for 30-45 DTE trades) |
 
 ### XSP/SPX Options (Proposed Alternative)
-| Aspect | Treatment |
-|--------|-----------|
-| Tax classification | Section 1256 contracts |
-| Tax split | 60% long-term / 40% short-term (regardless of holding period) |
-| Wash sale rules | **DO NOT APPLY** |
-| Typical effective rate | ~22% blended |
-| IRS form required | Form 6781 |
+
+| Aspect                 | Treatment                                                     |
+| ---------------------- | ------------------------------------------------------------- |
+| Tax classification     | Section 1256 contracts                                        |
+| Tax split              | 60% long-term / 40% short-term (regardless of holding period) |
+| Wash sale rules        | **DO NOT APPLY**                                              |
+| Typical effective rate | ~22% blended                                                  |
+| IRS form required      | Form 6781                                                     |
 
 ## Tax Savings Math
 
 ### Per $10,000 in Gains
-| Strategy | Tax Calculation | Total Tax |
-|----------|-----------------|-----------|
-| SPY | $10,000 x 32% | $3,200 |
-| XSP | $6,000 x 15% + $4,000 x 32% | $2,180 |
-| **Savings** | | **$1,020 (31.9%)** |
+
+| Strategy    | Tax Calculation             | Total Tax          |
+| ----------- | --------------------------- | ------------------ |
+| SPY         | $10,000 x 32%               | $3,200             |
+| XSP         | $6,000 x 15% + $4,000 x 32% | $2,180             |
+| **Savings** |                             | **$1,020 (31.9%)** |
 
 ### 7-Year Projection (Compounded Savings)
-| Year | Pre-Tax Gains | SPY Tax | XSP Tax | Annual Savings | Cumulative |
-|------|---------------|---------|---------|----------------|------------|
-| 1 | $5,400 | $1,728 | $1,210 | $518 | $518 |
-| 2 | $7,900 | $2,528 | $1,770 | $758 | $1,276 |
-| 3 | $11,600 | $3,712 | $2,598 | $1,114 | $2,390 |
-| 4 | $17,000 | $5,440 | $3,808 | $1,632 | $4,022 |
-| 5 | $25,000 | $8,000 | $5,600 | $2,400 | $6,422 |
-| 6 | $36,500 | $11,680 | $8,176 | $3,504 | $9,926 |
-| 7 | $53,500 | $17,120 | $11,984 | $5,136 | **$15,062** |
+
+| Year | Pre-Tax Gains | SPY Tax | XSP Tax | Annual Savings | Cumulative  |
+| ---- | ------------- | ------- | ------- | -------------- | ----------- |
+| 1    | $5,400        | $1,728  | $1,210  | $518           | $518        |
+| 2    | $7,900        | $2,528  | $1,770  | $758           | $1,276      |
+| 3    | $11,600       | $3,712  | $2,598  | $1,114         | $2,390      |
+| 4    | $17,000       | $5,440  | $3,808  | $1,632         | $4,022      |
+| 5    | $25,000       | $8,000  | $5,600  | $2,400         | $6,422      |
+| 6    | $36,500       | $11,680 | $8,176  | $3,504         | $9,926      |
+| 7    | $53,500       | $17,120 | $11,984 | $5,136         | **$15,062** |
 
 **Result**: ~$15,000-20,000 extra in your account through tax optimization alone.
 
 ## Quarterly Estimated Tax Requirements
 
 ### 2026 Due Dates
-| Quarter | Period | Due Date |
-|---------|--------|----------|
-| Q1 | Jan-Mar | April 15, 2026 |
-| Q2 | Apr-May | June 16, 2026 |
-| Q3 | Jun-Aug | September 15, 2026 |
-| Q4 | Sep-Dec | January 15, 2027 |
+
+| Quarter | Period  | Due Date           |
+| ------- | ------- | ------------------ |
+| Q1      | Jan-Mar | April 15, 2026     |
+| Q2      | Apr-May | June 16, 2026      |
+| Q3      | Jun-Aug | September 15, 2026 |
+| Q4      | Sep-Dec | January 15, 2027   |
 
 ### Safe Harbor Rules
+
 - Pay **100% of prior year's tax liability** (110% if AGI > $150K)
 - OR pay **90% of current year's tax liability**
 - Meeting either threshold avoids underpayment penalties
 
 ### Recommended Approach
+
 1. Set aside 30% of trading profits each month
 2. Pay quarterly using IRS Direct Pay or EFTPS
 3. Adjust Q4 payment based on actual year performance
@@ -75,6 +82,7 @@ This document consolidates our tax strategy for achieving $6K/month after-tax fi
 ## What to Tell Alpaca (Braxton's Inquiry)
 
 ### Key Questions for Alpaca
+
 1. **"Does Alpaca support XSP (Mini-SPX) options trading?"**
    - XSP has same contract size as SPY but Section 1256 tax treatment
    - This is critical for tax optimization
@@ -99,7 +107,9 @@ This document consolidates our tax strategy for achieving $6K/month after-tax fi
    - Automated alerts for harvesting opportunities
 
 ### Our Tax Strategy Summary for Alpaca
+
 > "We're trading iron condors for income and optimizing for taxes. Currently on SPY but evaluating XSP for Section 1256 treatment (60/40 tax split). Goal is $6K/month after-tax within 7 years. We need:
+>
 > 1. XSP/SPX options access (confirm availability)
 > 2. Specific lot identification for tax optimization
 > 3. Robust cost basis and wash sale tracking
@@ -108,54 +118,62 @@ This document consolidates our tax strategy for achieving $6K/month after-tax fi
 ## Tax-Loss Harvesting Strategy
 
 ### When to Harvest
+
 - If a position is down, close and realize loss
 - Immediately re-enter with different underlying (XSP vs SPY) or different expiration
 - Losses offset gains dollar-for-dollar
 
 ### Wash Sale Avoidance (SPY Only)
+
 - Wait 31 days before re-entering substantially identical position
 - OR switch to XSP (not substantially identical to SPY)
 - Note: Wash sales do NOT apply to XSP/SPX (Section 1256 exemption)
 
 ### Harvesting Rules
-| Strategy | Wash Sale Risk | Alternative Entry |
-|----------|---------------|-------------------|
-| Close losing SPY, reopen SPY | YES (31-day wait) | Use XSP instead |
-| Close losing SPY, open XSP | NO (different underlying) | Immediate |
-| Close losing XSP, reopen XSP | NO (Section 1256 exempt) | Immediate |
+
+| Strategy                     | Wash Sale Risk            | Alternative Entry |
+| ---------------------------- | ------------------------- | ----------------- |
+| Close losing SPY, reopen SPY | YES (31-day wait)         | Use XSP instead   |
+| Close losing SPY, open XSP   | NO (different underlying) | Immediate         |
+| Close losing XSP, reopen XSP | NO (Section 1256 exempt)  | Immediate         |
 
 ## XSP Liquidity Analysis (CRITICAL - Updated Jan 23, 2026)
 
 ### Bid-Ask Spread Comparison
+
 | Product | Typical Spread (ATM) | Slippage per Leg |
-|---------|---------------------|------------------|
-| SPY | $0.01-$0.02 | ~$1-2 |
-| XSP | $0.12-$0.13 | ~$12-13 |
-| SPX | $0.20+ | ~$20+ |
+| ------- | -------------------- | ---------------- |
+| SPY     | $0.01-$0.02          | ~$1-2            |
+| XSP     | $0.12-$0.13          | ~$12-13          |
+| SPX     | $0.20+               | ~$20+            |
 
 ### Iron Condor Cost Analysis (4 legs)
-| Product | Spread Cost | Per Trade Cost |
-|---------|-------------|----------------|
-| SPY | 4 x $0.02 = $0.08 | ~$8 |
-| XSP | 4 x $0.12 = $0.48 | ~$48 |
+
+| Product | Spread Cost       | Per Trade Cost |
+| ------- | ----------------- | -------------- |
+| SPY     | 4 x $0.02 = $0.08 | ~$8            |
+| XSP     | 4 x $0.12 = $0.48 | ~$48           |
 
 **XSP costs ~$40 more per iron condor in slippage!**
 
 ### Tax Savings vs Slippage Cost
-| Metric | Annual Value |
-|--------|--------------|
-| Extra XSP slippage (40 trades/year) | -$1,600 |
-| Tax savings on $10K gains | +$1,020 |
-| **Net at $10K gains** | **-$580 (XSP loses)** |
-| Tax savings on $25K gains | +$2,550 |
-| **Net at $25K gains** | **+$950 (XSP wins)** |
+
+| Metric                              | Annual Value          |
+| ----------------------------------- | --------------------- |
+| Extra XSP slippage (40 trades/year) | -$1,600               |
+| Tax savings on $10K gains           | +$1,020               |
+| **Net at $10K gains**               | **-$580 (XSP loses)** |
+| Tax savings on $25K gains           | +$2,550               |
+| **Net at $25K gains**               | **+$950 (XSP wins)**  |
 
 ### Breakeven Analysis
+
 - XSP becomes worth it when annual gains exceed ~$16,000
 - Below $16K: SPY is more cost-effective despite higher taxes
 - Above $16K: XSP tax savings outweigh slippage costs
 
 ### Liquidity Mitigation Strategies
+
 1. **Use limit orders only** - never market orders on XSP
 2. **Be patient** - may take 1-5 minutes for fills
 3. **Trade during high volume** - 9:30-10:30 AM, 3:00-4:00 PM ET
@@ -163,12 +181,15 @@ This document consolidates our tax strategy for achieving $6K/month after-tax fi
 5. **Consider SPX for larger accounts** - better liquidity at 10x size
 
 ### Recommendation
+
 **For $30K account with projected $5-10K annual gains:**
+
 - **Start with SPY** for better execution quality
 - **Switch to XSP when account reaches $75K+** (projected gains >$16K)
 - **Monitor liquidity** during paper testing phase
 
 Sources:
+
 - [TradeStation SPX vs SPY Analysis](https://www.tradestation.com/insights/2025/05/28/spy-vs-spx-options-explained/)
 - [Cboe XSP Options](https://www.cboe.com/tradable-products/sp-500/xsp-options/)
 - [Option Alpha SPX vs SPY](https://optionalpha.com/learn/spx-vs-spy-how-to-trade-the-s-p-500)
@@ -176,17 +197,20 @@ Sources:
 ## Migration Plan: SPY to XSP
 
 ### Phase 1: Paper Testing (Current - 30 days)
+
 - [ ] Confirm XSP available on Alpaca
 - [ ] Paper trade XSP iron condors alongside SPY
 - [ ] Compare bid-ask spreads and fill quality
 - [ ] Document any execution differences
 
 ### Phase 2: Small Live Allocation (After validation)
+
 - [ ] Allocate 50% of iron condor trades to XSP
 - [ ] Track actual tax lots and cost basis
 - [ ] Measure real-world slippage vs SPY
 
 ### Phase 3: Full Migration (After 90 days success)
+
 - [ ] Move 100% of iron condor activity to XSP
 - [ ] Maintain SPY capability for hedging/emergencies
 - [ ] Realize ~30% tax savings going forward
@@ -194,12 +218,14 @@ Sources:
 ## Year-End Tax Planning Checklist
 
 ### Q4 Actions (October-December)
+
 - [ ] Review YTD gains and estimate tax liability
 - [ ] Harvest any losses before Dec 31
 - [ ] Evaluate deferring gains to next year (careful with mark-to-market)
 - [ ] Make Q4 estimated payment by Jan 15
 
 ### January Actions
+
 - [ ] Receive 1099-B from Alpaca
 - [ ] Reconcile with trading records
 - [ ] File Form 6781 for any Section 1256 contracts
@@ -208,16 +234,18 @@ Sources:
 ## Impact on Financial Independence Goal
 
 ### Original Projection (SPY, 32% tax rate)
+
 | Year | Pre-Tax | After-Tax | Account Growth |
-|------|---------|-----------|----------------|
-| 2026 | $5,400 | $3,672 | $33,672 |
-| 2029 | $50,000 | $34,000 | ~$200K |
+| ---- | ------- | --------- | -------------- |
+| 2026 | $5,400  | $3,672    | $33,672        |
+| 2029 | $50,000 | $34,000   | ~$200K         |
 
 ### Optimized Projection (XSP, 22% tax rate)
+
 | Year | Pre-Tax | After-Tax | Account Growth |
-|------|---------|-----------|----------------|
-| 2026 | $5,400 | $4,212 | $34,212 |
-| 2029 | $50,000 | $39,000 | ~$235K |
+| ---- | ------- | --------- | -------------- |
+| 2026 | $5,400  | $4,212    | $34,212        |
+| 2029 | $50,000 | $39,000   | ~$235K         |
 
 **XSP tax optimization accelerates financial independence by ~6-12 months.**
 

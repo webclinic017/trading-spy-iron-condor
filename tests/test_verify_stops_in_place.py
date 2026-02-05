@@ -90,7 +90,12 @@ class TestIdentifyShortOptions:
                 "side": "short",
                 "asset_class": "option",
             },
-            {"symbol": "SOFI260206P00020000", "qty": 2.0, "side": "long", "asset_class": "option"},
+            {
+                "symbol": "SOFI260206P00020000",
+                "qty": 2.0,
+                "side": "long",
+                "asset_class": "option",
+            },
         ]
         result = identify_short_options(positions)
         assert len(result) == 1
@@ -433,11 +438,21 @@ class TestPhilTownRule1Compliance:
         test_args = ["verify_stops_in_place.py", "--warn-only"]
 
         with patch.object(sys, "argv", test_args):
-            with patch("scripts.verify_stops_in_place.get_alpaca_client") as mock_client:
-                with patch("scripts.verify_stops_in_place.get_open_positions") as mock_pos:
-                    with patch("scripts.verify_stops_in_place.get_open_orders") as mock_ord:
-                        with patch("scripts.verify_stops_in_place.save_verification_result"):
-                            with patch("scripts.verify_stops_in_place.update_system_state"):
+            with patch(
+                "scripts.verify_stops_in_place.get_alpaca_client"
+            ) as mock_client:
+                with patch(
+                    "scripts.verify_stops_in_place.get_open_positions"
+                ) as mock_pos:
+                    with patch(
+                        "scripts.verify_stops_in_place.get_open_orders"
+                    ) as mock_ord:
+                        with patch(
+                            "scripts.verify_stops_in_place.save_verification_result"
+                        ):
+                            with patch(
+                                "scripts.verify_stops_in_place.update_system_state"
+                            ):
                                 mock_client.return_value = MagicMock()
                                 mock_pos.return_value = [
                                     {

@@ -7,6 +7,7 @@
 ## The Core Problem
 
 With $5,000 capital, $100/day is mathematically impossible:
+
 - $100/day = $2,000/month = 40% monthly return
 - 40% monthly = 3,500% annual (impossible to sustain)
 - Hedge funds target 15-20% annually
@@ -15,23 +16,25 @@ With $5,000 capital, $100/day is mathematically impossible:
 ## Credit Spread Math Reality
 
 **Risk/Reward Analysis:**
+
 - Collateral: $500, Premium: $60, Max Loss: $440
 - Risk/Reward: 7.3:1 (unfavorable)
 - Break-even win rate: 88% (not 70%!)
 
 **Expected Value by Win Rate:**
+
 - 70% win rate: -$90/trade (LOSING strategy)
 - 80% win rate: +$20/trade (marginal)
 - 85% win rate: +$40/trade (profitable)
 
 ## Realistic Targets for $5K Account
 
-| Target | Monthly Return | Achievability |
-|--------|----------------|---------------|
-| $100/mo | 2% | Conservative, achievable |
-| $150/mo | 3% | Target range |
-| $200/mo | 4% | Optimistic but possible |
-| $250/mo | 5% | Requires skill + luck |
+| Target  | Monthly Return | Achievability            |
+| ------- | -------------- | ------------------------ |
+| $100/mo | 2%             | Conservative, achievable |
+| $150/mo | 3%             | Target range             |
+| $200/mo | 4%             | Optimistic but possible  |
+| $250/mo | 5%             | Requires skill + luck    |
 
 ## Path to $100/day
 
@@ -39,8 +42,9 @@ Capital needed: $40,000-67,000
 Timeline with $25/day deposits + 4% monthly: **28-30 months (May 2028)**
 
 Month-by-month projection:
+
 - Month 6: $9,591 → $384/mo
-- Month 12: $15,941 → $638/mo  
+- Month 12: $15,941 → $638/mo
 - Month 24: $33,435 → $1,337/mo
 - Month 30: $45,300 → $1,812/mo
 

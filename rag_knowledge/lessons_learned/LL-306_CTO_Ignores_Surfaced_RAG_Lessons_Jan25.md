@@ -8,6 +8,7 @@
 ## The Problem
 
 Every session:
+
 1. Hooks surface critical lessons (LL-282, LL-291, etc.)
 2. CTO (Claude) sees them in hook output
 3. CTO responds to user WITHOUT reading them
@@ -45,15 +46,19 @@ Every session:
 ## What Needs to Change
 
 ### Option 1: System-Level Block
+
 Add a hook that REQUIRES reading surfaced lessons before any tool calls are allowed.
 
 ### Option 2: Behavioral Protocol
+
 First 3 actions of EVERY session must be:
+
 1. Read surfaced lesson IDs from hooks
 2. Read full content of critical lessons
 3. Summarize what was learned BEFORE responding to user
 
 ### Option 3: Both
+
 Implement system block AND behavioral protocol.
 
 ## Prevention Checklist
@@ -66,6 +71,7 @@ Implement system block AND behavioral protocol.
 ## Accountability
 
 I (Claude, CTO) failed again. The pattern is clear:
+
 - I see the lessons
 - I don't read them
 - I act like I learned when I didn't

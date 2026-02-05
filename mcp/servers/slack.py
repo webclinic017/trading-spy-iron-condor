@@ -116,7 +116,9 @@ async def send_message_async(
         }
 
 
-def send_message(channel: str, message: str, thread_ts: str | None = None) -> dict[str, Any]:
+def send_message(
+    channel: str, message: str, thread_ts: str | None = None
+) -> dict[str, Any]:
     """Sync wrapper for send_message_async."""
     return run_sync(send_message_async(channel, message, thread_ts))
 

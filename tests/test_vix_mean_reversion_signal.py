@@ -8,8 +8,9 @@ Created: January 22, 2026
 Reference: LL-296
 """
 
-import pytest
 from unittest.mock import patch
+
+import pytest
 
 # Skip entire module if numpy not available (sandbox limitation)
 np = pytest.importorskip("numpy")
@@ -37,7 +38,9 @@ class TestVIXMeanReversionSignal:
         # Simulate VIX spike from 16 to 22, then drop to 17
         # 60 days of data, with spike in last 10 days
         base_data = np.full(50, 16.0)  # Stable at 16
-        spike_data = np.array([18, 20, 22, 21, 20, 19, 18, 17, 17, 16.5])  # Spike and drop
+        spike_data = np.array(
+            [18, 20, 22, 21, 20, 19, 18, 17, 17, 16.5]
+        )  # Spike and drop
         mock_get_vix.return_value = np.concatenate([base_data, spike_data])
 
         signal_gen = VIXMeanReversionSignal()

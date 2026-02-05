@@ -15,9 +15,10 @@ Created: January 15, 2026
 Phil Town Rule #1: Don't Lose Money
 """
 
-import pytest
 from datetime import datetime
 from unittest.mock import patch
+
+import pytest
 
 from src.risk.pre_trade_checklist import PreTradeChecklist
 
@@ -61,47 +62,63 @@ class TestTickerValidation:
 
     def test_spy_allowed(self, checklist):
         """SPY should pass ticker check."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=100.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=100.0, dte=35, is_spread=True
+        )
         assert passed is True
         assert len(failures) == 0
 
     def test_iwm_not_allowed(self, checklist):
         """IWM should fail ticker check - UPDATED Jan 19, 2026: SPY ONLY per CLAUDE.md."""
-        passed, failures = checklist.validate(symbol="IWM", max_loss=100.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="IWM", max_loss=100.0, dte=35, is_spread=True
+        )
         assert passed is False
         assert any("IWM not allowed" in f for f in failures)
 
     def test_spy_lowercase_allowed(self, checklist):
         """Lowercase spy should pass ticker check."""
-        passed, failures = checklist.validate(symbol="spy", max_loss=100.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="spy", max_loss=100.0, dte=35, is_spread=True
+        )
         assert passed is True
 
     def test_iwm_mixed_case_not_allowed(self, checklist):
         """Mixed case IwM should fail - UPDATED Jan 19, 2026: SPY ONLY per CLAUDE.md."""
-        passed, failures = checklist.validate(symbol="IwM", max_loss=100.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="IwM", max_loss=100.0, dte=35, is_spread=True
+        )
         assert passed is False
 
     def test_f_not_allowed(self, checklist):
         """F (Ford) should fail ticker check."""
-        passed, failures = checklist.validate(symbol="F", max_loss=100.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="F", max_loss=100.0, dte=35, is_spread=True
+        )
         assert passed is False
         assert any("F not allowed" in f for f in failures)
 
     def test_sofi_not_allowed(self, checklist):
         """SOFI should fail ticker check."""
-        passed, failures = checklist.validate(symbol="SOFI", max_loss=100.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SOFI", max_loss=100.0, dte=35, is_spread=True
+        )
         assert passed is False
         assert any("SOFI not allowed" in f for f in failures)
 
     def test_t_not_allowed(self, checklist):
         """T (AT&T) should fail ticker check."""
-        passed, failures = checklist.validate(symbol="T", max_loss=100.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="T", max_loss=100.0, dte=35, is_spread=True
+        )
         assert passed is False
         assert any("T not allowed" in f for f in failures)
 
     def test_aapl_not_allowed(self, checklist):
         """AAPL should fail ticker check."""
-        passed, failures = checklist.validate(symbol="AAPL", max_loss=100.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="AAPL", max_loss=100.0, dte=35, is_spread=True
+        )
         assert passed is False
         assert any("AAPL not allowed" in f for f in failures)
 
@@ -160,30 +177,40 @@ class TestPositionSizeValidation:
 
     def test_position_within_limit_passes(self, checklist):
         """Position at 3% ($150) should pass."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=150.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=150.0, dte=35, is_spread=True
+        )
         assert passed is True
 
     def test_position_at_exactly_limit_passes(self, checklist):
         """Position at exactly 5% ($250) should pass."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=250.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=250.0, dte=35, is_spread=True
+        )
         assert passed is True
 
     def test_position_exceeds_limit_fails(self, checklist):
         """Position at 6% ($300) should fail."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=300.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=300.0, dte=35, is_spread=True
+        )
         assert passed is False
         assert any("exceeds 5% limit" in f for f in failures)
 
     def test_large_position_fails(self, checklist):
         """Large position ($500 = 10%) should fail."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=500.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=500.0, dte=35, is_spread=True
+        )
         assert passed is False
         assert any("$500.00" in f for f in failures)
         assert any("$250.00" in f for f in failures)
 
     def test_zero_loss_passes(self, checklist):
         """Zero max loss should pass."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=0.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=0.0, dte=35, is_spread=True
+        )
         assert passed is True
 
     def test_small_account_proportional_limit(self):
@@ -216,18 +243,24 @@ class TestSpreadValidation:
 
     def test_spread_passes(self, checklist):
         """Spread position should pass."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=100.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=100.0, dte=35, is_spread=True
+        )
         assert passed is True
 
     def test_naked_fails(self, checklist):
         """Naked position should fail."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=100.0, dte=35, is_spread=False)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=100.0, dte=35, is_spread=False
+        )
         assert passed is False
         assert any("Naked positions not allowed" in f for f in failures)
 
     def test_naked_with_spy_fails(self, checklist):
         """Even SPY naked positions should fail."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=100.0, dte=35, is_spread=False)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=100.0, dte=35, is_spread=False
+        )
         assert passed is False
         assert any("must use spreads" in f for f in failures)
 
@@ -243,13 +276,17 @@ class TestEarningsBlackoutValidation:
     def test_spy_no_blackout(self, checklist):
         """SPY has no earnings blackout."""
         # Any date should pass for SPY
-        passed, failures = checklist.validate(symbol="SPY", max_loss=100.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=100.0, dte=35, is_spread=True
+        )
         assert passed is True
         assert not any("blackout" in f.lower() for f in failures)
 
     def test_iwm_fails_ticker_check(self, checklist):
         """IWM should fail ticker check - UPDATED Jan 19, 2026: SPY ONLY per CLAUDE.md."""
-        passed, failures = checklist.validate(symbol="IWM", max_loss=100.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="IWM", max_loss=100.0, dte=35, is_spread=True
+        )
         assert passed is False
         assert any("IWM not allowed" in f for f in failures)
 
@@ -335,46 +372,62 @@ class TestDTEValidation:
 
     def test_dte_30_passes(self, checklist):
         """DTE at minimum (30) should pass."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=100.0, dte=30, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=100.0, dte=30, is_spread=True
+        )
         assert passed is True
 
     def test_dte_45_passes(self, checklist):
         """DTE at maximum (45) should pass."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=100.0, dte=45, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=100.0, dte=45, is_spread=True
+        )
         assert passed is True
 
     def test_dte_37_passes(self, checklist):
         """DTE in middle (37) should pass."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=100.0, dte=37, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=100.0, dte=37, is_spread=True
+        )
         assert passed is True
 
     def test_dte_29_fails(self, checklist):
         """DTE below minimum (29) should fail."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=100.0, dte=29, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=100.0, dte=29, is_spread=True
+        )
         assert passed is False
         assert any("DTE 29 outside range" in f for f in failures)
 
     def test_dte_46_fails(self, checklist):
         """DTE above maximum (46) should fail."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=100.0, dte=46, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=100.0, dte=46, is_spread=True
+        )
         assert passed is False
         assert any("DTE 46 outside range" in f for f in failures)
 
     def test_dte_0_fails(self, checklist):
         """DTE at 0 (expiring today) should fail."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=100.0, dte=0, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=100.0, dte=0, is_spread=True
+        )
         assert passed is False
         assert any("DTE 0 outside range" in f for f in failures)
 
     def test_dte_7_fails(self, checklist):
         """DTE at 7 (weekly) should fail."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=100.0, dte=7, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=100.0, dte=7, is_spread=True
+        )
         assert passed is False
         assert any("DTE 7 outside range" in f for f in failures)
 
     def test_dte_60_fails(self, checklist):
         """DTE at 60 should fail."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=100.0, dte=60, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=100.0, dte=60, is_spread=True
+        )
         assert passed is False
         assert any("DTE 60 outside range" in f for f in failures)
 
@@ -412,7 +465,9 @@ class TestStopLossValidation:
 
     def test_stop_loss_default_is_true(self, checklist):
         """Default stop_loss_defined should be True."""
-        passed, failures = checklist.validate(symbol="SPY", max_loss=100.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=100.0, dte=35, is_spread=True
+        )
         assert passed is True
         assert not any("stop" in f.lower() for f in failures)
 
@@ -550,12 +605,16 @@ class TestEquityUpdate:
         checklist = PreTradeChecklist(account_equity=5000.0)
 
         # $300 exceeds 5% of $5000 ($250)
-        passed, _ = checklist.validate(symbol="SPY", max_loss=300.0, dte=35, is_spread=True)
+        passed, _ = checklist.validate(
+            symbol="SPY", max_loss=300.0, dte=35, is_spread=True
+        )
         assert passed is False
 
         # Update equity to $10000 - now $300 is within 5% ($500)
         checklist.update_equity(10000.0)
-        passed, _ = checklist.validate(symbol="SPY", max_loss=300.0, dte=35, is_spread=True)
+        passed, _ = checklist.validate(
+            symbol="SPY", max_loss=300.0, dte=35, is_spread=True
+        )
         assert passed is True
 
 
@@ -701,19 +760,25 @@ class TestPhilTownRule1:
         """Spread requirement limits max loss."""
         checklist = PreTradeChecklist(account_equity=5000.0)
         # Naked puts have unlimited risk - should fail
-        passed, failures = checklist.validate(symbol="SPY", max_loss=100.0, dte=35, is_spread=False)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=100.0, dte=35, is_spread=False
+        )
         assert passed is False
 
     def test_ticker_restriction_limits_volatility(self):
         """Limiting to SPY/IWM reduces single-stock volatility risk."""
         checklist = PreTradeChecklist(account_equity=5000.0)
         # Meme stocks like GME should fail
-        passed, failures = checklist.validate(symbol="GME", max_loss=100.0, dte=35, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="GME", max_loss=100.0, dte=35, is_spread=True
+        )
         assert passed is False
 
     def test_dte_requirement_avoids_gamma_risk(self):
         """30-45 DTE requirement avoids gamma risk."""
         checklist = PreTradeChecklist(account_equity=5000.0)
         # 0 DTE has extreme gamma risk - should fail
-        passed, failures = checklist.validate(symbol="SPY", max_loss=100.0, dte=0, is_spread=True)
+        passed, failures = checklist.validate(
+            symbol="SPY", max_loss=100.0, dte=0, is_spread=True
+        )
         assert passed is False

@@ -4,14 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Dry run (show what would be done)'
+        description: "Dry run (show what would be done)"
         required: false
-        default: 'false'
+        default: "false"
         type: boolean
       max_loss_pct:
-        description: 'Max loss percentage for protection (e.g., 0.50 = 50%)'
+        description: "Max loss percentage for protection (e.g., 0.50 = 50%)"
         required: false
-        default: '0.50'
+        default: "0.50"
         type: string
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |

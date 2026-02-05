@@ -45,8 +45,10 @@ class TestGitHubPagesLinkValidator:
         """Ensure validation produces no errors."""
         validator.validate_jekyll_templates()
 
-        assert len(validator.errors) == 0, (
-            f"Validation produced {len(validator.errors)} error(s):\n" + "\n".join(validator.errors)
+        assert (
+            len(validator.errors) == 0
+        ), f"Validation produced {len(validator.errors)} error(s):\n" + "\n".join(
+            validator.errors
         )
 
     def test_index_md_has_relative_url_on_lesson_links(self):
@@ -61,7 +63,9 @@ class TestGitHubPagesLinkValidator:
         index_file = docs_dir / "index.md"
 
         if not index_file.exists():
-            pytest.skip("docs/index.md removed per cleanup directive (outdated CSP strategy)")
+            pytest.skip(
+                "docs/index.md removed per cleanup directive (outdated CSP strategy)"
+            )
 
         content = index_file.read_text()
 
@@ -95,9 +99,9 @@ class TestGitHubPagesLinkValidator:
         content = lessons_file.read_text()
 
         # Should contain relative_url filter
-        assert "| relative_url" in content, (
-            "docs/lessons.md missing relative_url filter on lesson links"
-        )
+        assert (
+            "| relative_url" in content
+        ), "docs/lessons.md missing relative_url filter on lesson links"
 
 
 class TestRegressionPrevention:
@@ -112,7 +116,9 @@ class TestRegressionPrevention:
 
         content = config_file.read_text()
 
-        assert 'baseurl: "/trading"' in content, '_config.yml should have baseurl: "/trading" set'
+        assert (
+            'baseurl: "/trading"' in content
+        ), '_config.yml should have baseurl: "/trading" set'
 
     def test_url_configured_in_config(self):
         """Ensure _config.yml has correct URL."""
@@ -121,9 +127,9 @@ class TestRegressionPrevention:
 
         content = config_file.read_text()
 
-        assert "igorganapolsky.github.io" in content, (
-            "_config.yml should have correct GitHub Pages URL"
-        )
+        assert (
+            "igorganapolsky.github.io" in content
+        ), "_config.yml should have correct GitHub Pages URL"
 
 
 if __name__ == "__main__":

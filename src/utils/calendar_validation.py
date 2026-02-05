@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from alpaca.trading.client import TradingClient
+
 from src.utils.alpaca_client import get_alpaca_credentials
 
 
@@ -19,7 +20,9 @@ def get_alpaca_client() -> TradingClient:
     paper = os.environ.get("PAPER_TRADING", "true").lower() == "true"
 
     if not api_key or not secret_key:
-        raise ValueError("Alpaca credentials not configured - use get_alpaca_credentials()")
+        raise ValueError(
+            "Alpaca credentials not configured - use get_alpaca_credentials()"
+        )
 
     return TradingClient(api_key, secret_key, paper=paper)
 
@@ -106,7 +109,9 @@ if __name__ == "__main__":
 
     # Test today
     today = datetime.now()
-    print(f"Today ({today.strftime('%A %Y-%m-%d')}): Trading day = {is_trading_day(today)}")
+    print(
+        f"Today ({today.strftime('%A %Y-%m-%d')}): Trading day = {is_trading_day(today)}"
+    )
 
     # Get next trading day
     next_td = get_next_trading_day()

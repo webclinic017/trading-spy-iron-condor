@@ -80,7 +80,8 @@ class TradeSync:
         }
 
         trade_data = {
-            "id": order_id or f"local-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
+            "id": order_id
+            or f"local-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
             "symbol": symbol,
             "side": side,
             "qty": str(qty),
@@ -219,7 +220,9 @@ class TradeSync:
 
         return results
 
-    def get_trade_history(self, symbol: Optional[str] = None, limit: int = 100) -> list[dict]:
+    def get_trade_history(
+        self, symbol: Optional[str] = None, limit: int = 100
+    ) -> list[dict]:
         """
         Query trade history from system_state.json (single source of truth).
 

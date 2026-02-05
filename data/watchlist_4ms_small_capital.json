@@ -9,35 +9,35 @@
     "tier_1_200": {
       "min_capital": 200,
       "max_capital": 499,
-      "max_strike": 2.00,
+      "max_strike": 2.0,
       "realistic_strategy": "Buy shares or long options only - CSPs not possible",
       "note": "Cannot sell CSPs with $200. Need $500+ for cheapest stocks."
     },
     "tier_2_500": {
       "min_capital": 500,
       "max_capital": 999,
-      "max_strike": 5.00,
+      "max_strike": 5.0,
       "stocks": ["F", "PLTR", "SOFI", "NIO"],
       "note": "Can sell CSPs on $5 stocks (100 x $5 = $500 collateral)"
     },
     "tier_3_1000": {
       "min_capital": 1000,
       "max_capital": 1999,
-      "max_strike": 10.00,
+      "max_strike": 10.0,
       "stocks": ["F", "PLTR", "SOFI", "AMD", "INTC", "BAC"],
       "note": "More options available, can do 2 contracts on cheap stocks"
     },
     "tier_4_2000": {
       "min_capital": 2000,
       "max_capital": 4999,
-      "max_strike": 20.00,
+      "max_strike": 20.0,
       "stocks": ["INTC", "BAC", "T", "VZ", "CSCO", "KO"],
       "note": "Can access most mid-cap stocks for CSPs"
     },
     "tier_5_5000": {
       "min_capital": 5000,
       "max_capital": 999999,
-      "max_strike": 50.00,
+      "max_strike": 50.0,
       "stocks": ["AAPL", "MSFT", "GOOGL", "V", "MA", "COST", "BRK.B"],
       "note": "Full Phil Town universe accessible"
     }
@@ -162,8 +162,6 @@
       "note": "Very expensive, need major capital"
     }
   ],
-  "sticker_prices_to_calculate": [
-    "F", "PLTR", "SOFI", "INTC", "BAC", "T"
-  ],
+  "sticker_prices_to_calculate": ["F", "PLTR", "SOFI", "INTC", "BAC", "T"],
   "next_update": "2026-01-07"
 }

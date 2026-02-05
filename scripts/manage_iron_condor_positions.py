@@ -266,8 +266,12 @@ def main(dry_run: bool = False):
     logger.info(f"Time: {datetime.now().isoformat()}")
     logger.info("=" * 70)
     logger.info("Exit Rules (LL-268/LL-277):")
-    logger.info(f"  - Profit Target: {IC_EXIT_CONFIG['profit_target_pct'] * 100:.0f}% of credit")
-    logger.info(f"  - Stop Loss: {IC_EXIT_CONFIG['stop_loss_pct'] * 100:.0f}% of credit")
+    logger.info(
+        f"  - Profit Target: {IC_EXIT_CONFIG['profit_target_pct'] * 100:.0f}% of credit"
+    )
+    logger.info(
+        f"  - Stop Loss: {IC_EXIT_CONFIG['stop_loss_pct'] * 100:.0f}% of credit"
+    )
     logger.info(f"  - DTE Exit: {IC_EXIT_CONFIG['exit_dte']} days")
     logger.info("=" * 70)
 
@@ -344,7 +348,9 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="Manage iron condor positions")
-    parser.add_argument("--dry-run", action="store_true", help="Preview without executing")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Preview without executing"
+    )
     args = parser.parse_args()
 
     main(dry_run=args.dry_run)

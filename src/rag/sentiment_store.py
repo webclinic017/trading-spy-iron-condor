@@ -21,7 +21,9 @@ class SentimentRAGStore:
     def __init__(self, *args, **kwargs):
         logger.debug("SentimentRAGStore stub initialized (using VADER + LLM instead)")
 
-    def query(self, query: str = "", ticker: str = "", top_k: int = 5, **kwargs) -> list:
+    def query(
+        self, query: str = "", ticker: str = "", top_k: int = 5, **kwargs
+    ) -> list:
         """Return empty results - sentiment comes from unified_sentiment.py."""
         return []
 

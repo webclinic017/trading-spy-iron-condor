@@ -223,7 +223,9 @@ class WorkflowGraph:
             if not deps_ok:
                 node.status = NodeStatus.SKIPPED
                 node.result = NodeResult(
-                    node_id=node_id, status=NodeStatus.SKIPPED, error="Dependencies not satisfied"
+                    node_id=node_id,
+                    status=NodeStatus.SKIPPED,
+                    error="Dependencies not satisfied",
                 )
                 results[node_id] = node.result
                 continue
@@ -266,7 +268,9 @@ class WorkflowGraph:
 
         return results
 
-    def execute_from(self, checkpoint_id: str, state: dict = None) -> dict[str, NodeResult]:
+    def execute_from(
+        self, checkpoint_id: str, state: dict = None
+    ) -> dict[str, NodeResult]:
         """
         Execute workflow starting from a specific checkpoint.
 
@@ -410,11 +414,15 @@ class WorkflowGraph:
 
         # Summary
         total_time = (self.end_time - self.start_time) * 1000 if self.end_time else 0
-        completed = sum(1 for n in self.nodes.values() if n.status == NodeStatus.COMPLETED)
+        completed = sum(
+            1 for n in self.nodes.values() if n.status == NodeStatus.COMPLETED
+        )
         failed = sum(1 for n in self.nodes.values() if n.status == NodeStatus.FAILED)
 
         lines.append("=" * 50)
-        lines.append(f"Total: {len(self.nodes)} nodes | Completed: {completed} | Failed: {failed}")
+        lines.append(
+            f"Total: {len(self.nodes)} nodes | Completed: {completed} | Failed: {failed}"
+        )
         lines.append(f"Execution time: {total_time:.0f}ms")
 
         return "\n".join(lines)
@@ -424,10 +432,18 @@ class WorkflowGraph:
         return {
             "name": self.name,
             "total_nodes": len(self.nodes),
-            "completed": sum(1 for n in self.nodes.values() if n.status == NodeStatus.COMPLETED),
-            "failed": sum(1 for n in self.nodes.values() if n.status == NodeStatus.FAILED),
-            "skipped": sum(1 for n in self.nodes.values() if n.status == NodeStatus.SKIPPED),
-            "total_time_ms": (self.end_time - self.start_time) * 1000 if self.end_time else 0,
+            "completed": sum(
+                1 for n in self.nodes.values() if n.status == NodeStatus.COMPLETED
+            ),
+            "failed": sum(
+                1 for n in self.nodes.values() if n.status == NodeStatus.FAILED
+            ),
+            "skipped": sum(
+                1 for n in self.nodes.values() if n.status == NodeStatus.SKIPPED
+            ),
+            "total_time_ms": (
+                (self.end_time - self.start_time) * 1000 if self.end_time else 0
+            ),
             "execution_order": self.execution_order,
         }
 
@@ -451,7 +467,9 @@ class WorkflowGraph:
         """Save workflow state for later replay."""
         data = {
             "name": self.name,
-            "state": {k: str(v)[:500] for k, v in self.state.items()},  # Truncate large values
+            "state": {
+                k: str(v)[:500] for k, v in self.state.items()
+            },  # Truncate large values
             "nodes": {nid: n.to_dict() for nid, n in self.nodes.items()},
             "execution_order": self.execution_order,
             "timestamp": datetime.utcnow().isoformat() + "Z",
@@ -669,7 +687,9 @@ def create_actionable_task_pipeline(task_type: str) -> WorkflowGraph:
         nodes = []
 
     for node_id, name, node_type, deps in nodes:
-        workflow.add_node(node_id=node_id, name=name, node_type=node_type, depends_on=deps)
+        workflow.add_node(
+            node_id=node_id, name=name, node_type=node_type, depends_on=deps
+        )
 
     return workflow
 

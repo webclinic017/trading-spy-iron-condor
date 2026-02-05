@@ -26,7 +26,9 @@ def get_all_positions():
     try:
         from alpaca.trading.client import TradingClient
 
-        api_key = os.getenv("ALPACA_API_KEY") or os.getenv("ALPACA_PAPER_TRADING_5K_API_KEY")
+        api_key = os.getenv("ALPACA_API_KEY") or os.getenv(
+            "ALPACA_PAPER_TRADING_5K_API_KEY"
+        )
         secret_key = os.getenv("ALPACA_SECRET_KEY") or os.getenv(
             "ALPACA_PAPER_TRADING_5K_API_SECRET"
         )

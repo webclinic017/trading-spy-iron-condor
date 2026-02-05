@@ -13,11 +13,11 @@ The Dialogflow webhook was showing `trades_loaded=0` despite having 38 trades in
 
 ### Data Flow Mismatch
 
-| Component | Writes To | Source |
-|-----------|-----------|--------|
-| `sync-system-state.yml` | `data/system_state.json` → `trade_history` | Alpaca API ✓ |
-| `trade_sync.py` | `data/trades_{date}.json` | Local code calls |
-| `dialogflow_webhook.py` | Reads from | `trades_*.json` FIRST, then `system_state.json` |
+| Component               | Writes To                                  | Source                                          |
+| ----------------------- | ------------------------------------------ | ----------------------------------------------- |
+| `sync-system-state.yml` | `data/system_state.json` → `trade_history` | Alpaca API ✓                                    |
+| `trade_sync.py`         | `data/trades_{date}.json`                  | Local code calls                                |
+| `dialogflow_webhook.py` | Reads from                                 | `trades_*.json` FIRST, then `system_state.json` |
 
 ### The Problem
 
@@ -36,17 +36,19 @@ The `/health` endpoint showed `trade_history_source: "local_json"` which was mis
 **Reversed the priority order in `query_trades()`:**
 
 ### Before (v3.8.0)
+
 ```python
 # First try trades_*.json files
 for trades_file in data_dir.glob("trades_*.json"):
     # ... load local files
-    
+
 # If no local trades, fetch from GitHub API
 if not trades:
     # ... fetch system_state.json
 ```
 
 ### After (v3.9.0)
+
 ```python
 # PRIORITY 1: system_state.json - source of truth from Alpaca
 # Try local first, then GitHub API
@@ -54,7 +56,7 @@ if state_path.exists():
     # ... load local system_state.json
 if not state:
     # ... fetch from GitHub API
-    
+
 # Extract trade_history from system_state.json
 if state:
     trade_history = state.get("trade_history", [])
@@ -68,11 +70,13 @@ if not trades:
 ## Key Insight
 
 **`system_state.json` is the source of truth** because:
+
 - It's synced directly from Alpaca API via `sync-system-state.yml` workflow
 - It contains the `trade_history` array with all filled orders
 - It's committed to Git and accessible via GitHub API from anywhere
 
 **`trades_*.json` files are redundant** because:
+
 - Written by `trade_sync.py` during local execution
 - Not synced to Cloud Run
 - Not the authoritative source
@@ -93,6 +97,7 @@ if not trades:
 ## Verification
 
 After deployment, check:
+
 ```bash
 curl https://trading-dialogflow-webhook-cqlewkvzdq-uc.a.run.app/health
 # Should show: "trade_history_source": "system_state.json (Alpaca)"
@@ -102,6 +107,7 @@ curl https://trading-dialogflow-webhook-cqlewkvzdq-uc.a.run.app/health
 ## Lesson
 
 **When debugging "missing data" bugs:**
+
 1. Trace the full data flow from source to consumer
 2. Check what environment the consumer runs in (local vs cloud)
 3. Verify the actual source being used, not just what the code says

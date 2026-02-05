@@ -12,16 +12,36 @@
     "reason": "System already implements Sequential Pipeline, Coordinator/Dispatcher, Parallel Fan-Out, Hierarchical Decomposition, Human-in-the-Loop, Security Guardrails, Budget-Aware Selection"
   },
   "patterns_we_have": [
-    {"pattern": "Sequential Pipeline", "location": "TradingGatePipeline in gates.py"},
-    {"pattern": "Coordinator/Dispatcher", "location": "TradingOrchestrator in main.py"},
-    {"pattern": "Parallel Fan-Out", "location": "ParallelTickerProcessor"},
-    {"pattern": "Hierarchical Decomposition", "location": "Orchestrator -> specialized agents"},
-    {"pattern": "Human-in-the-Loop", "location": "Gate4Risk approval thresholds"},
-    {"pattern": "Security Guardrails", "location": "GateSecurity for prompt injection"},
-    {"pattern": "ADK Integration", "location": "adk_integration.py"}
+    {
+      "pattern": "Sequential Pipeline",
+      "location": "TradingGatePipeline in gates.py"
+    },
+    {
+      "pattern": "Coordinator/Dispatcher",
+      "location": "TradingOrchestrator in main.py"
+    },
+    { "pattern": "Parallel Fan-Out", "location": "ParallelTickerProcessor" },
+    {
+      "pattern": "Hierarchical Decomposition",
+      "location": "Orchestrator -> specialized agents"
+    },
+    {
+      "pattern": "Human-in-the-Loop",
+      "location": "Gate4Risk approval thresholds"
+    },
+    {
+      "pattern": "Security Guardrails",
+      "location": "GateSecurity for prompt injection"
+    },
+    { "pattern": "ADK Integration", "location": "adk_integration.py" }
   ],
   "gaps_identified": [
-    {"gap": "Generator/Critic pattern stub", "location": "debate_agents.py", "priority": "low", "reason": "Not needed for iron condor strategy"}
+    {
+      "gap": "Generator/Critic pattern stub",
+      "location": "debate_agents.py",
+      "priority": "low",
+      "reason": "Not needed for iron condor strategy"
+    }
   ],
   "protocol_used": {
     "step_1": "Fetch resource content via WebSearch/WebFetch",
@@ -32,5 +52,11 @@
     "step_6": "Render verdict: VALUABLE / REDUNDANT / FLUFF"
   },
   "key_insight": "Most AI agent content in 2026 covers patterns we already implemented. Focus time on trading execution, not framework chasing.",
-  "tags": ["process", "resource-evaluation", "multi-agent", "architecture", "redundancy-check"]
+  "tags": [
+    "process",
+    "resource-evaluation",
+    "multi-agent",
+    "architecture",
+    "redundancy-check"
+  ]
 }

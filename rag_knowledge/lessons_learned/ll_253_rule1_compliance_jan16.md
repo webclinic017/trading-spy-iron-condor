@@ -10,6 +10,7 @@
 CEO reminded: "We are not allowed to lose money!!!"
 
 Current portfolio status:
+
 - Equity: $4,985.72
 - Total P/L: -$14.28 (-0.29%)
 - Unrealized P/L: +$26.68
@@ -24,11 +25,13 @@ Current portfolio status:
 | $653/$658 | $5 | -$3 |
 
 **Orphan Position (LL-221):**
+
 - Long $660 Put: +$35 P/L (currently profitable but decaying)
 
 ## Rule #1 Compliance
 
 ✅ **WITHIN LIMITS**
+
 - Current loss: $14.28
 - Max allowed (5%): $250.00
 - Buffer remaining: $235.72

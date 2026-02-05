@@ -144,7 +144,12 @@ def calculate_implied_volatility(
 
 
 def calculate_delta(
-    option_price: float, S: float, K: float, T: float, r: float, option_type: str = "put"
+    option_price: float,
+    S: float,
+    K: float,
+    T: float,
+    r: float,
+    option_type: str = "put",
 ) -> Optional[float]:
     """Calculate option delta."""
     if T <= 1e-6:
@@ -178,17 +183,24 @@ class BullPutSpreadBacktester:
     """
 
     def __init__(
-        self, alpaca_key: str, alpaca_secret: str, config: Optional[BacktestConfig] = None
+        self,
+        alpaca_key: str,
+        alpaca_secret: str,
+        config: Optional[BacktestConfig] = None,
     ):
         self.config = config or BacktestConfig()
         self.ny_tz = ZoneInfo("America/New_York")
 
         # Initialize Alpaca clients
-        self.trade_client = TradingClient(api_key=alpaca_key, secret_key=alpaca_secret, paper=True)
+        self.trade_client = TradingClient(
+            api_key=alpaca_key, secret_key=alpaca_secret, paper=True
+        )
         self.option_client = OptionHistoricalDataClient(
             api_key=alpaca_key, secret_key=alpaca_secret
         )
-        self.stock_client = StockHistoricalDataClient(api_key=alpaca_key, secret_key=alpaca_secret)
+        self.stock_client = StockHistoricalDataClient(
+            api_key=alpaca_key, secret_key=alpaca_secret
+        )
 
         print(f"✅ Initialized backtester for {self.config.underlying_symbol}")
         print(
@@ -197,7 +209,9 @@ class BullPutSpreadBacktester:
         print(
             f"   Delta range: long [{self.config.long_put_delta_min}, {self.config.long_put_delta_max}]"
         )
-        print(f"   Spread width: ${self.config.spread_width_min} - ${self.config.spread_width_max}")
+        print(
+            f"   Spread width: ${self.config.spread_width_min} - ${self.config.spread_width_max}"
+        )
 
     def get_trading_days(self, start_date: date, end_date: date) -> list[date]:
         """Get list of trading days from Alpaca calendar."""
@@ -225,7 +239,9 @@ class BullPutSpreadBacktester:
 
         return df
 
-    def estimate_historical_volatility(self, bars: pd.DataFrame, lookback: int = 20) -> float:
+    def estimate_historical_volatility(
+        self, bars: pd.DataFrame, lookback: int = 20
+    ) -> float:
         """
         Estimate historical volatility from price data.
 
@@ -236,7 +252,11 @@ class BullPutSpreadBacktester:
             return 0.20  # Default SPY IV
 
         # Calculate log returns
-        closes = bars["close"].values[-lookback:] if len(bars) >= lookback else bars["close"].values
+        closes = (
+            bars["close"].values[-lookback:]
+            if len(bars) >= lookback
+            else bars["close"].values
+        )
         if len(closes) < 2:
             return 0.20
 
@@ -265,7 +285,9 @@ class BullPutSpreadBacktester:
 
         return symbols
 
-    def black_scholes_put(self, S: float, K: float, T: float, r: float, sigma: float) -> float:
+    def black_scholes_put(
+        self, S: float, K: float, T: float, r: float, sigma: float
+    ) -> float:
         """
         Calculate Black-Scholes put option price.
 
@@ -308,7 +330,9 @@ class BullPutSpreadBacktester:
         max_strike = daily_high * (1 + self.config.buffer_pct)
 
         # Generate option symbols
-        option_symbols = self.generate_option_symbols(trade_date, min_strike, max_strike)
+        option_symbols = self.generate_option_symbols(
+            trade_date, min_strike, max_strike
+        )
 
         if not option_symbols:
             print(f"  ⚠️ No options in range for {trade_date}")
@@ -323,7 +347,9 @@ class BullPutSpreadBacktester:
         short_strike = round(short_strike)
 
         # Vary spread width within config range
-        spread_width = np.random.uniform(self.config.spread_width_min, self.config.spread_width_max)
+        spread_width = np.random.uniform(
+            self.config.spread_width_min, self.config.spread_width_max
+        )
         spread_width = round(spread_width)
         long_strike = short_strike - spread_width
 
@@ -358,17 +384,26 @@ class BullPutSpreadBacktester:
         price_change_pct = (daily_high - daily_low) / daily_low
 
         # Determine outcome
-        entry_time = datetime.combine(trade_date, datetime.min.time().replace(hour=9, minute=45))
+        entry_time = datetime.combine(
+            trade_date, datetime.min.time().replace(hour=9, minute=45)
+        )
         entry_time = entry_time.replace(tzinfo=self.ny_tz)
 
-        exit_time = datetime.combine(trade_date, datetime.min.time().replace(hour=15, minute=45))
+        exit_time = datetime.combine(
+            trade_date, datetime.min.time().replace(hour=15, minute=45)
+        )
         exit_time = exit_time.replace(tzinfo=self.ny_tz)
 
         # Probabilistic outcome logic based on historical distributions
         # SPY typically has ~75-85% probability of staying above short strike for 15-delta puts
-        breach_probability = min(0.30, price_change_pct * 5)  # Higher volatility = more breach risk
+        breach_probability = min(
+            0.30, price_change_pct * 5
+        )  # Higher volatility = more breach risk
 
-        if daily_low < short_strike - credit_received or np.random.random() < breach_probability:
+        if (
+            daily_low < short_strike - credit_received
+            or np.random.random() < breach_probability
+        ):
             # Assignment risk - loss scenario
             if daily_low < long_strike:
                 # Max loss
@@ -402,9 +437,11 @@ class BullPutSpreadBacktester:
             long_strike=long_strike,
             credit_received=credit_received,
             underlying_at_entry=underlying_price,
-            underlying_at_exit=daily_low
-            if status in ["max_loss", "early_assignment"]
-            else underlying_price,
+            underlying_at_exit=(
+                daily_low
+                if status in ["max_loss", "early_assignment"]
+                else underlying_price
+            ),
             exit_reason=status,
         )
 
@@ -442,7 +479,9 @@ class BullPutSpreadBacktester:
                 break
 
             trade_date = (
-                row["timestamp"].date() if hasattr(row["timestamp"], "date") else row["timestamp"]
+                row["timestamp"].date()
+                if hasattr(row["timestamp"], "date")
+                else row["timestamp"]
             )
 
             # Calculate rolling IV up to this point for more accurate simulation
@@ -502,7 +541,9 @@ class BullPutSpreadBacktester:
                     "max_win": max(pnls),
                     "max_loss": min(pnls),
                     "std_dev": np.std(pnls),
-                    "sharpe_ratio": np.mean(pnls) / np.std(pnls) if np.std(pnls) > 0 else 0,
+                    "sharpe_ratio": (
+                        np.mean(pnls) / np.std(pnls) if np.std(pnls) > 0 else 0
+                    ),
                     "config": self.config.to_dict(),
                     "start_date": start_date.isoformat(),
                     "end_date": end_date.isoformat(),
@@ -513,7 +554,9 @@ class BullPutSpreadBacktester:
 
         return results, summary
 
-    def generate_rag_lessons(self, results: list[TradeResult], summary: dict) -> list[dict]:
+    def generate_rag_lessons(
+        self, results: list[TradeResult], summary: dict
+    ) -> list[dict]:
         """Generate lessons for RAG database from backtest results."""
         lessons = []
 
@@ -597,10 +640,14 @@ class BullPutSpreadBacktester:
 
 def main():
     parser = argparse.ArgumentParser(description="Bull Put Spread Backtester")
-    parser.add_argument("--days", type=int, default=30, help="Number of days to backtest")
+    parser.add_argument(
+        "--days", type=int, default=30, help="Number of days to backtest"
+    )
     parser.add_argument("--start", type=str, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end", type=str, help="End date (YYYY-MM-DD)")
-    parser.add_argument("--output", type=str, default="data/backtests", help="Output directory")
+    parser.add_argument(
+        "--output", type=str, default="data/backtests", help="Output directory"
+    )
     parser.add_argument("--config", type=str, help="Path to config JSON file")
 
     args = parser.parse_args()

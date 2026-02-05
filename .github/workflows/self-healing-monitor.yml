@@ -3,11 +3,11 @@ name: Self-Healing Monitor
 on:
   schedule:
     # Run every 15 minutes during market hours (9:30 AM - 4:00 PM ET)
-    - cron: '*/15 13-21 * * 1-5'  # UTC = ET + 5
+    - cron: "*/15 13-21 * * 1-5" # UTC = ET + 5
   workflow_dispatch:
     inputs:
       heal:
-        description: 'Attempt auto-fix'
+        description: "Attempt auto-fix"
         type: boolean
         default: true
 
@@ -26,7 +26,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: pip install alpaca-py python-dotenv

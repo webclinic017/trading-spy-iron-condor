@@ -37,7 +37,9 @@ async def ensemble_sentiment_async(
     analyzer = ensure_env_var(
         lambda: get_multi_llm_analyzer(use_async=True), "OpenRouter MultiLLMAnalyzer"
     )
-    sentiment = await analyzer.get_ensemble_sentiment(dict(market_data), _normalize_news(news))
+    sentiment = await analyzer.get_ensemble_sentiment(
+        dict(market_data), _normalize_news(news)
+    )
     return {"sentiment": sentiment}
 
 

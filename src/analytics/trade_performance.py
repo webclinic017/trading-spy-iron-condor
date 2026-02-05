@@ -57,7 +57,9 @@ class TradeRecord:
     entry_collateral: float  # Total collateral required
     exit_date: str | None = None
     exit_cost: float | None = None  # Cost to close (per share)
-    exit_reason: str | None = None  # "profit_target", "stop_loss", "expiration", "manual"
+    exit_reason: str | None = (
+        None  # "profit_target", "stop_loss", "expiration", "manual"
+    )
     result: Literal["win", "loss", "open"] = "open"
     pnl: float = 0.0  # Realized P/L
     days_held: int = 0
@@ -148,11 +150,17 @@ class TradePerformanceTracker:
         self.trades.append(trade)
         self._save_trades()
 
-        logger.info(f"Recorded trade: {trade.trade_id} ({trade.strategy} on {trade.symbol})")
+        logger.info(
+            f"Recorded trade: {trade.trade_id} ({trade.strategy} on {trade.symbol})"
+        )
         return trade
 
     def close_trade(
-        self, trade_id: str, exit_date: str, exit_cost: float, exit_reason: str = "manual"
+        self,
+        trade_id: str,
+        exit_date: str,
+        exit_cost: float,
+        exit_reason: str = "manual",
     ) -> TradeRecord | None:
         """
         Close an open trade and calculate P/L.
@@ -220,7 +228,9 @@ class TradePerformanceTracker:
 
         if closed_trades:
             metrics.win_rate = len(wins) / len(closed_trades)
-            metrics.avg_days_held = sum(t.days_held for t in closed_trades) / len(closed_trades)
+            metrics.avg_days_held = sum(t.days_held for t in closed_trades) / len(
+                closed_trades
+            )
 
         if wins:
             metrics.avg_winner = total_wins / len(wins)
@@ -263,7 +273,9 @@ class TradePerformanceTracker:
 
         status = "PROFITABLE" if metrics.is_profitable else "NOT PROFITABLE"
         win_rate_status = (
-            "OK" if metrics.meets_target_win_rate else f"BELOW {WIN_RATE_TARGET:.0%} TARGET"
+            "OK"
+            if metrics.meets_target_win_rate
+            else f"BELOW {WIN_RATE_TARGET:.0%} TARGET"
         )
         sample_status = (
             "ADEQUATE"

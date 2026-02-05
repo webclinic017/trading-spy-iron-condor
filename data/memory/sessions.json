@@ -8,10 +8,7 @@
       "memories_updated": 0,
       "status": "completed",
       "context": {
-        "next_steps": [
-          "Review unverified claims",
-          "Add more critical lessons"
-        ]
+        "next_steps": ["Review unverified claims", "Add more critical lessons"]
       },
       "learnings": [
         "Always verify claims before making them",

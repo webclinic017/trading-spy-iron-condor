@@ -64,7 +64,9 @@ class BiasStore:
     def persist(self, snapshot: BiasSnapshot) -> None:
         """Save a bias snapshot."""
         self.snapshots.append(snapshot)
-        filepath = self.bias_dir / f"bias_{snapshot.timestamp.strftime('%Y%m%d_%H%M%S')}.json"
+        filepath = (
+            self.bias_dir / f"bias_{snapshot.timestamp.strftime('%Y%m%d_%H%M%S')}.json"
+        )
         with open(filepath, "w") as f:
             json.dump(snapshot.to_dict(), f, indent=2)
 

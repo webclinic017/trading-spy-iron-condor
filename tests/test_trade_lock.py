@@ -108,21 +108,68 @@ class TestCrisisMonitor:
 
         # 9 positions exceeds MAX_POSITIONS (8) - triggers crisis
         positions = [
-            {"symbol": "SPY260220P00565000", "qty": -4, "unrealized_pl": -100, "cost_basis": 500},
-            {"symbol": "SPY260220P00570000", "qty": 4, "unrealized_pl": -50, "cost_basis": 500},
-            {"symbol": "SPY260220P00653000", "qty": -2, "unrealized_pl": -100, "cost_basis": 500},
-            {"symbol": "SPY260220P00658000", "qty": 8, "unrealized_pl": -200, "cost_basis": 500},
-            {"symbol": "SPY260220P00660000", "qty": 2, "unrealized_pl": -50, "cost_basis": 500},
-            {"symbol": "SPY260220C00700000", "qty": -2, "unrealized_pl": -50, "cost_basis": 500},
-            {"symbol": "SPY260220C00705000", "qty": 2, "unrealized_pl": -50, "cost_basis": 500},
-            {"symbol": "SPY260220C00710000", "qty": -2, "unrealized_pl": -50, "cost_basis": 500},
-            {"symbol": "SPY260220C00715000", "qty": 2, "unrealized_pl": -50, "cost_basis": 500},
+            {
+                "symbol": "SPY260220P00565000",
+                "qty": -4,
+                "unrealized_pl": -100,
+                "cost_basis": 500,
+            },
+            {
+                "symbol": "SPY260220P00570000",
+                "qty": 4,
+                "unrealized_pl": -50,
+                "cost_basis": 500,
+            },
+            {
+                "symbol": "SPY260220P00653000",
+                "qty": -2,
+                "unrealized_pl": -100,
+                "cost_basis": 500,
+            },
+            {
+                "symbol": "SPY260220P00658000",
+                "qty": 8,
+                "unrealized_pl": -200,
+                "cost_basis": 500,
+            },
+            {
+                "symbol": "SPY260220P00660000",
+                "qty": 2,
+                "unrealized_pl": -50,
+                "cost_basis": 500,
+            },
+            {
+                "symbol": "SPY260220C00700000",
+                "qty": -2,
+                "unrealized_pl": -50,
+                "cost_basis": 500,
+            },
+            {
+                "symbol": "SPY260220C00705000",
+                "qty": 2,
+                "unrealized_pl": -50,
+                "cost_basis": 500,
+            },
+            {
+                "symbol": "SPY260220C00710000",
+                "qty": -2,
+                "unrealized_pl": -50,
+                "cost_basis": 500,
+            },
+            {
+                "symbol": "SPY260220C00715000",
+                "qty": 2,
+                "unrealized_pl": -50,
+                "cost_basis": 500,
+            },
         ]
 
         conditions = check_crisis_conditions(positions, account_equity=5000)
 
         # Should detect excess positions (9 > 8)
-        excess_conditions = [c for c in conditions if c.condition_type == "EXCESS_POSITIONS"]
+        excess_conditions = [
+            c for c in conditions if c.condition_type == "EXCESS_POSITIONS"
+        ]
         assert len(excess_conditions) > 0
 
     def test_excess_loss_detected(self):
@@ -131,13 +178,20 @@ class TestCrisisMonitor:
 
         # 30% loss on $5000 account = $1500 loss
         positions = [
-            {"symbol": "SPY260220P00658000", "qty": 4, "unrealized_pl": -1500, "cost_basis": 2000},
+            {
+                "symbol": "SPY260220P00658000",
+                "qty": 4,
+                "unrealized_pl": -1500,
+                "cost_basis": 2000,
+            },
         ]
 
         conditions = check_crisis_conditions(positions, account_equity=5000)
 
         # Should detect excess loss (30% > 25% threshold)
-        loss_conditions = [c for c in conditions if c.condition_type == "EXCESS_UNREALIZED_LOSS"]
+        loss_conditions = [
+            c for c in conditions if c.condition_type == "EXCESS_UNREALIZED_LOSS"
+        ]
         assert len(loss_conditions) > 0
 
     def test_stop_loss_breach(self):
@@ -146,12 +200,19 @@ class TestCrisisMonitor:
 
         # Loss of $2500 on $1000 credit = 250% > 200% threshold
         positions = [
-            {"symbol": "SPY260220P00658000", "qty": 4, "unrealized_pl": -2500, "cost_basis": 1000},
+            {
+                "symbol": "SPY260220P00658000",
+                "qty": 4,
+                "unrealized_pl": -2500,
+                "cost_basis": 1000,
+            },
         ]
 
         conditions = check_crisis_conditions(positions, account_equity=10000)
 
-        stop_loss_conditions = [c for c in conditions if c.condition_type == "STOP_LOSS_BREACH"]
+        stop_loss_conditions = [
+            c for c in conditions if c.condition_type == "STOP_LOSS_BREACH"
+        ]
         assert len(stop_loss_conditions) > 0
 
     def test_no_crisis_when_normal(self):
@@ -159,7 +220,12 @@ class TestCrisisMonitor:
         from src.safety.crisis_monitor import check_crisis_conditions
 
         positions = [
-            {"symbol": "SPY260220P00658000", "qty": 2, "unrealized_pl": -100, "cost_basis": 1000},
+            {
+                "symbol": "SPY260220P00658000",
+                "qty": 2,
+                "unrealized_pl": -100,
+                "cost_basis": 1000,
+            },
         ]
 
         conditions = check_crisis_conditions(positions, account_equity=10000)
@@ -214,7 +280,12 @@ class TestAutoCloseBleedingPositions:
         from src.safety.auto_close_bleeding import analyze_positions_for_closure
 
         positions = [
-            {"symbol": "SPY260220P00658000", "qty": 4, "unrealized_pl": -600, "cost_basis": 1000},
+            {
+                "symbol": "SPY260220P00658000",
+                "qty": 4,
+                "unrealized_pl": -600,
+                "cost_basis": 1000,
+            },
         ]
 
         recommendations = analyze_positions_for_closure(positions, account_equity=10000)
@@ -229,8 +300,18 @@ class TestAutoCloseBleedingPositions:
         from src.safety.auto_close_bleeding import analyze_positions_for_closure
 
         positions = [
-            {"symbol": "SPY260220P00658000", "qty": 4, "unrealized_pl": -800, "cost_basis": 2000},
-            {"symbol": "SPY260220P00565000", "qty": 2, "unrealized_pl": -700, "cost_basis": 2000},
+            {
+                "symbol": "SPY260220P00658000",
+                "qty": 4,
+                "unrealized_pl": -800,
+                "cost_basis": 2000,
+            },
+            {
+                "symbol": "SPY260220P00565000",
+                "qty": 2,
+                "unrealized_pl": -700,
+                "cost_basis": 2000,
+            },
         ]
 
         # Total loss = $1500 on $5000 account = 30% > 25% threshold
@@ -267,7 +348,12 @@ class TestAutoCloseBleedingPositions:
         from src.safety.auto_close_bleeding import analyze_positions_for_closure
 
         positions = [
-            {"symbol": "SPY260220P00658000", "qty": 4, "unrealized_pl": 200, "cost_basis": 1000},
+            {
+                "symbol": "SPY260220P00658000",
+                "qty": 4,
+                "unrealized_pl": 200,
+                "cost_basis": 1000,
+            },
         ]
 
         recommendations = analyze_positions_for_closure(positions, account_equity=10000)

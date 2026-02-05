@@ -102,7 +102,9 @@ def generate_wiki_home(data: dict) -> str:
     if iron_condors:
         ic_table = "| Expiry | Put Spread | Call Spread |\n|--------|------------|-------------|\n"
         for ic in iron_condors:
-            ic_table += f"| {ic['expiry']} | {ic['put_spread']} | {ic['call_spread']} |\n"
+            ic_table += (
+                f"| {ic['expiry']} | {ic['put_spread']} | {ic['call_spread']} |\n"
+            )
     else:
         ic_table = "*No open iron condor positions*\n"
 

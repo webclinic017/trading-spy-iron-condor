@@ -17,25 +17,11 @@
         "api.coingecko.com",
         "pro-api.coinmarketcap.com"
       ],
-      "blockedDomains": [
-        "*.torrent.*",
-        "*.onion",
-        "pastebin.com"
-      ]
+      "blockedDomains": ["*.torrent.*", "*.onion", "pastebin.com"]
     },
     "filesystem": {
-      "allowedPaths": [
-        "./data",
-        "./reports",
-        "./logs",
-        "/tmp"
-      ],
-      "readOnlyPaths": [
-        "./src",
-        "./config",
-        "./mcp",
-        "./.claude"
-      ],
+      "allowedPaths": ["./data", "./reports", "./logs", "/tmp"],
+      "readOnlyPaths": ["./src", "./config", "./mcp", "./.claude"],
       "blockedPaths": [
         "~/.ssh",
         "~/.gnupg",
@@ -100,7 +86,15 @@
     "auditLogging": true,
     "auditLogPath": "./logs/sandbox_audit.log",
     "maxFileSize": "100MB",
-    "allowedFileExtensions": [".py", ".json", ".csv", ".txt", ".md", ".yaml", ".yml"],
+    "allowedFileExtensions": [
+      ".py",
+      ".json",
+      ".csv",
+      ".txt",
+      ".md",
+      ".yaml",
+      ".yml"
+    ],
     "blockedFileExtensions": [".exe", ".sh", ".bat", ".ps1", ".dll", ".so"]
   }
 }

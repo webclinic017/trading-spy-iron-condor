@@ -70,9 +70,7 @@ def update_index_md(
 
     # Pattern: | **Win Rate** | XX% | ... |
     win_rate_pattern = r"\| \*\*Win Rate\*\* \| \d+% \| \w+ \|"
-    win_rate_replacement = (
-        f"| **Win Rate** | {int(win_rate)}% | {'Improved' if win_rate >= 60 else 'Stable'} |"
-    )
+    win_rate_replacement = f"| **Win Rate** | {int(win_rate)}% | {'Improved' if win_rate >= 60 else 'Stable'} |"
     content = re.sub(win_rate_pattern, win_rate_replacement, content)
 
     # Pattern: | **Lessons** | XX+ | Growing |
@@ -86,7 +84,9 @@ def update_index_md(
     content = re.sub(day_pattern, day_replacement, content)
 
     # Update "What's Actually Working" table - Options Theta row
-    options_pattern = r"\| \*\*Options Theta\*\* \| \d+% \| [+\-]?\$[\d,]+ \| Primary Edge \|"
+    options_pattern = (
+        r"\| \*\*Options Theta\*\* \| \d+% \| [+\-]?\$[\d,]+ \| Primary Edge \|"
+    )
     options_replacement = f"| **Options Theta** | {int(win_rate)}% | +{format_currency(equity - 100000).replace('$', '$')} | Primary Edge |"
     content = re.sub(options_pattern, options_replacement, content)
 

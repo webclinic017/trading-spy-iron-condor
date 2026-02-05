@@ -91,7 +91,8 @@ class RegimeDetector:
     vix_spike_threshold: float = 30.0
     vix_calm_threshold: float = 15.0
     hmm_enabled: bool = field(
-        default_factory=lambda: os.getenv("HMM_REGIME_ENABLED", "true").lower() == "true"
+        default_factory=lambda: os.getenv("HMM_REGIME_ENABLED", "true").lower()
+        == "true"
     )
     _hmm_model: Any = field(default=None, repr=False)
     _last_hmm_fit: datetime | None = field(default=None, repr=False)
@@ -215,7 +216,9 @@ class RegimeDetector:
                 confidence = 0.8 - (vix / 30)
 
             label = REGIME_LABELS.get(regime_id, "unknown")
-            allocation = REGIME_ALLOCATIONS.get(label, {"equities": 0.5, "treasuries": 0.5})
+            allocation = REGIME_ALLOCATIONS.get(
+                label, {"equities": 0.5, "treasuries": 0.5}
+            )
 
             # Risk bias based on regime
             if regime_id == 3:
@@ -285,7 +288,8 @@ class RegimeDetector:
             should_refit = (
                 self._hmm_model is None
                 or self._last_hmm_fit is None
-                or (now - self._last_hmm_fit).total_seconds() > self._hmm_fit_interval_hours * 3600
+                or (now - self._last_hmm_fit).total_seconds()
+                > self._hmm_fit_interval_hours * 3600
             )
 
             if should_refit:
@@ -365,8 +369,12 @@ class RegimeDetector:
             if "^VIX" in closes:
                 vix = closes["^VIX"]
                 # VIX rate of change (acceleration)
-                vix_roc_5 = (vix.iloc[-1] / vix.iloc[-5] - 1) * 100 if len(vix) > 5 else 0
-                vix_roc_10 = (vix.iloc[-1] / vix.iloc[-10] - 1) * 100 if len(vix) > 10 else 0
+                vix_roc_5 = (
+                    (vix.iloc[-1] / vix.iloc[-5] - 1) * 100 if len(vix) > 5 else 0
+                )
+                vix_roc_10 = (
+                    (vix.iloc[-1] / vix.iloc[-10] - 1) * 100 if len(vix) > 10 else 0
+                )
                 indicators["vix_roc_5d"] = round(float(vix_roc_5), 2)
                 indicators["vix_roc_10d"] = round(float(vix_roc_10), 2)
 
@@ -380,7 +388,9 @@ class RegimeDetector:
                 vix = closes["^VIX"]
                 # VVIX/VIX ratio (high = uncertainty about volatility = transition)
                 ratio = float(vvix.iloc[-1] / vix.iloc[-1]) if vix.iloc[-1] > 0 else 5.0
-                ratio_ma = float((vvix / vix).iloc[-10:].mean()) if len(vvix) > 10 else ratio
+                ratio_ma = (
+                    float((vvix / vix).iloc[-10:].mean()) if len(vvix) > 10 else ratio
+                )
                 indicators["vvix_vix_ratio"] = round(ratio, 2)
                 indicators["vvix_vix_ratio_change"] = round(ratio - ratio_ma, 2)
 
@@ -408,17 +418,23 @@ class RegimeDetector:
             if indicators.get("vix_acceleration", 0) > 5:
                 transition_prob += 0.15
                 if current_regime_id < 3:
-                    predicted_regime = REGIME_LABELS.get(current_regime_id + 1, current_label)
+                    predicted_regime = REGIME_LABELS.get(
+                        current_regime_id + 1, current_label
+                    )
 
             # VIX rate of change high = regime shift
             if indicators.get("vix_roc_5d", 0) > 15:
                 transition_prob += 0.25
                 if current_regime_id < 3:
-                    predicted_regime = REGIME_LABELS.get(current_regime_id + 1, current_label)
+                    predicted_regime = REGIME_LABELS.get(
+                        current_regime_id + 1, current_label
+                    )
             elif indicators.get("vix_roc_5d", 0) < -15:
                 transition_prob += 0.15
                 if current_regime_id > 0:
-                    predicted_regime = REGIME_LABELS.get(current_regime_id - 1, current_label)
+                    predicted_regime = REGIME_LABELS.get(
+                        current_regime_id - 1, current_label
+                    )
 
             # Cap probability
             transition_prob = min(0.9, transition_prob)
@@ -426,9 +442,7 @@ class RegimeDetector:
             # Generate warning if transition likely
             warning = None
             if transition_prob > 0.5:
-                warning = (
-                    f"High probability ({transition_prob:.0%}) of transition to {predicted_regime}"
-                )
+                warning = f"High probability ({transition_prob:.0%}) of transition to {predicted_regime}"
             elif transition_detected and bars_since_transition <= 2:
                 warning = f"Just entered {current_label} regime ({bars_since_transition} bars ago)"
 
@@ -498,7 +512,9 @@ class RegimeDetector:
 
         return round(composite, 3), round(stability, 3)
 
-    def detect_live_regime_with_prediction(self, lookback_days: int = 90) -> RegimeSnapshot:
+    def detect_live_regime_with_prediction(
+        self, lookback_days: int = 90
+    ) -> RegimeSnapshot:
         """
         Enhanced version of detect_live_regime with transition prediction.
 

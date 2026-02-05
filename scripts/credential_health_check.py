@@ -298,7 +298,8 @@ def run_health_check(notify_on_failure: bool = False) -> bool:
                 failed_services = [
                     c["service"]
                     for c in checks
-                    if c["status"] in ("invalid", "missing") and c["service"] in critical_services
+                    if c["status"] in ("invalid", "missing")
+                    and c["service"] in critical_services
                 ]
 
                 notify_ceo(

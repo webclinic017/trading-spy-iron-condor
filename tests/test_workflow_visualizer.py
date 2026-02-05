@@ -9,21 +9,21 @@ Validates:
 5. Checkpoint and replay
 """
 
-import pytest
+import sys
 from pathlib import Path
 from unittest.mock import patch
 
-import sys
+import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.orchestration.workflow_visualizer import (
-    WorkflowGraph,
     NodeStatus,
     NodeType,
-    create_trading_pipeline,
-    create_rlhf_pipeline,
+    WorkflowGraph,
     create_actionable_task_pipeline,
+    create_rlhf_pipeline,
+    create_trading_pipeline,
 )
 
 
@@ -108,7 +108,9 @@ class TestExecution:
             return {"value": "should not run"}
 
         workflow.add_node("a", "A", NodeType.GATE, function=failing_node)
-        workflow.add_node("b", "B", NodeType.GATE, function=dependent_node, depends_on=["a"])
+        workflow.add_node(
+            "b", "B", NodeType.GATE, function=dependent_node, depends_on=["a"]
+        )
 
         results = workflow.execute()
 
@@ -142,7 +144,9 @@ class TestExecution:
 
         workflow.add_node("a", "A", NodeType.GATE, function=node_func("a"))
         workflow.add_node("b", "B", NodeType.GATE, function=node_func("b"))
-        workflow.add_node("c", "C", NodeType.GATE, function=node_func("c"), depends_on=["a", "b"])
+        workflow.add_node(
+            "c", "C", NodeType.GATE, function=node_func("c"), depends_on=["a", "b"]
+        )
 
         workflow.execute()
 
@@ -166,8 +170,12 @@ class TestCheckpointReplay:
             return inner
 
         workflow.add_node("a", "A", NodeType.GATE, function=node_func("a"))
-        workflow.add_node("b", "B", NodeType.CHECKPOINT, function=node_func("b"), depends_on=["a"])
-        workflow.add_node("c", "C", NodeType.GATE, function=node_func("c"), depends_on=["b"])
+        workflow.add_node(
+            "b", "B", NodeType.CHECKPOINT, function=node_func("b"), depends_on=["a"]
+        )
+        workflow.add_node(
+            "c", "C", NodeType.GATE, function=node_func("c"), depends_on=["b"]
+        )
 
         # Execute from checkpoint b (skipping a)
         workflow.execute_from("b")
@@ -221,7 +229,9 @@ class TestVisualization:
     def test_summary(self, workflow):
         """Should provide execution summary."""
         workflow.add_node("a", "A", NodeType.GATE, function=lambda s: {})
-        workflow.add_node("b", "B", NodeType.GATE, function=lambda s: {}, depends_on=["a"])
+        workflow.add_node(
+            "b", "B", NodeType.GATE, function=lambda s: {}, depends_on=["a"]
+        )
         workflow.execute()
 
         summary = workflow.get_summary()

@@ -3,13 +3,13 @@ name: Pre-Market Scan
 on:
   schedule:
     # Run at 9:00 AM ET (14:00 UTC) on weekdays
-    - cron: '0 14 * * 1-5'
+    - cron: "0 14 * * 1-5"
   workflow_dispatch:
     inputs:
       force_run:
-        description: 'Run even if market is closed'
+        description: "Run even if market is closed"
         required: false
-        default: 'false'
+        default: "false"
 
 env:
   PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
@@ -28,8 +28,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          python-version: "3.12"
+          cache: "pip"
 
       - name: Install dependencies
         run: |

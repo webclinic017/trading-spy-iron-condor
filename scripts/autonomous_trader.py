@@ -80,12 +80,16 @@ def _refresh_account_data(logger) -> None:
         logger.warning(f"Failed to refresh account data: {e}")
 
 
-def _update_system_state_with_prediction_trade(trade_record: dict[str, Any], logger) -> None:
+def _update_system_state_with_prediction_trade(
+    trade_record: dict[str, Any], logger
+) -> None:
     """Prediction markets (Kalshi) integration removed Dec 2025. No-op stub."""
     pass
 
 
-def validate_order_size(amount: float, expected: float, tier: str = "T1_CORE") -> tuple[bool, str]:
+def validate_order_size(
+    amount: float, expected: float, tier: str = "T1_CORE"
+) -> tuple[bool, str]:
     """
     Guardrail against fat-finger order sizing.
 
@@ -120,7 +124,9 @@ def _parse_tickers() -> list[str]:
     # FIXED Jan 19 2026: Per CLAUDE.md, SPY/IWM ONLY until strategy proven
     # Previous expanded list caused SOFI blackout violation
     # Other tickers can be re-enabled AFTER 90-day paper trading validation
-    default_tickers = "SPY,IWM"  # CLAUDE.md: SPY/IWM ONLY - No individual stocks until proven
+    default_tickers = (
+        "SPY,IWM"  # CLAUDE.md: SPY/IWM ONLY - No individual stocks until proven
+    )
     raw = os.getenv("TARGET_TICKERS", default_tickers)
     return [ticker.strip().upper() for ticker in raw.split(",") if ticker.strip()]
 
@@ -178,7 +184,9 @@ def is_market_holiday() -> bool:
         return next_open_date != today_utc
     except Exception as e:
         logger = setup_logging()
-        logger.warning(f"Could not check market holiday status: {e}. Assuming not a holiday.")
+        logger.warning(
+            f"Could not check market holiday status: {e}. Assuming not a holiday."
+        )
         return False  # Fail safe: assume not a holiday if check fails
 
 
@@ -351,10 +359,12 @@ def _update_system_state_with_reit_trade(trade_record: dict[str, Any], logger) -
 
     investments = state.setdefault("investments", {})
     investments["tier7_invested"] = round(
-        investments.get("tier7_invested", 0.0) + float(trade_record.get("amount", 0.0)), 6
+        investments.get("tier7_invested", 0.0) + float(trade_record.get("amount", 0.0)),
+        6,
     )
     investments["total_invested"] = round(
-        investments.get("total_invested", 0.0) + float(trade_record.get("amount", 0.0)), 6
+        investments.get("total_invested", 0.0) + float(trade_record.get("amount", 0.0)),
+        6,
     )
 
     performance = state.setdefault("performance", {})
@@ -465,12 +475,16 @@ def _update_reit_daily_returns(logger) -> None:
         with state_path.open("w", encoding="utf-8") as handle:
             json.dump(state, handle, indent=2)
         reit_total = reit_realized + reit_unrealized
-        logger.info(f"📊 REIT Daily Returns: ${reit_total:.2f} ({len(reit_positions)} positions)")
+        logger.info(
+            f"📊 REIT Daily Returns: ${reit_total:.2f} ({len(reit_positions)} positions)"
+        )
     except Exception:
         pass
 
 
-def _update_system_state_with_precious_metals_trade(trade_record: dict[str, Any], logger) -> None:
+def _update_system_state_with_precious_metals_trade(
+    trade_record: dict[str, Any], logger
+) -> None:
     """Update `data/system_state.json` so Tier 8 reflects the new precious metals trade."""
     state_path = Path("data/system_state.json")
     if not state_path.exists():
@@ -510,10 +524,12 @@ def _update_system_state_with_precious_metals_trade(trade_record: dict[str, Any]
 
     investments = state.setdefault("investments", {})
     investments["tier8_invested"] = round(
-        investments.get("tier8_invested", 0.0) + float(trade_record.get("amount", 0.0)), 6
+        investments.get("tier8_invested", 0.0) + float(trade_record.get("amount", 0.0)),
+        6,
     )
     investments["total_invested"] = round(
-        investments.get("total_invested", 0.0) + float(trade_record.get("amount", 0.0)), 6
+        investments.get("total_invested", 0.0) + float(trade_record.get("amount", 0.0)),
+        6,
     )
 
     performance = state.setdefault("performance", {})
@@ -611,7 +627,9 @@ def _update_precious_metals_daily_returns(logger) -> None:
         with state_path.open("w", encoding="utf-8") as handle:
             json.dump(state, handle, indent=2)
         metals_total = metals_realized + metals_unrealized
-        logger.info(f"Precious Metals Returns: ${metals_total:.2f} ({len(metals_positions)} pos)")
+        logger.info(
+            f"Precious Metals Returns: ${metals_total:.2f} ({len(metals_positions)} pos)"
+        )
     except Exception:
         pass
 
@@ -655,7 +673,9 @@ def execute_precious_metals_trading() -> None:
 
         # Initialize precious metals strategy
         daily_amount = float(os.getenv("PRECIOUS_METALS_DAILY_ALLOCATION", "5.0"))
-        metals_strategy = PreciousMetalsStrategy(trader=trader, daily_allocation=daily_amount)
+        metals_strategy = PreciousMetalsStrategy(
+            trader=trader, daily_allocation=daily_amount
+        )
 
         # Generate signals first to understand regime
         logger.info("Analyzing precious metals market regime...")
@@ -707,14 +727,18 @@ def execute_precious_metals_trading() -> None:
                             "regime": regime,
                         }
                         daily_trades.append(trade_record)
-                        _update_system_state_with_precious_metals_trade(trade_record, logger)
+                        _update_system_state_with_precious_metals_trade(
+                            trade_record, logger
+                        )
 
                 # Write back
                 with open(trades_file, "w") as f:
                     json.dump(daily_trades, f, indent=4)
 
                 logger.info(f"Precious metals trades saved to {trades_file}")
-                logger.info(f"Precious metals strategy executed: ${daily_amount:.2f} allocated")
+                logger.info(
+                    f"Precious metals strategy executed: ${daily_amount:.2f} allocated"
+                )
 
                 # Update daily returns
                 _update_precious_metals_daily_returns(logger)
@@ -772,12 +796,16 @@ def execute_reit_trading() -> None:
         signals = reit_strategy.generate_signals()
 
         if not signals:
-            logger.info("⚠️  No REIT signals generated (market conditions not favorable)")
+            logger.info(
+                "⚠️  No REIT signals generated (market conditions not favorable)"
+            )
             return
 
         regime = signals[0].get("regime", "Neutral") if signals else "Neutral"
         logger.info(f"📊 Current rate regime: {regime}")
-        logger.info(f"📈 Top {len(signals)} REIT picks: {[s['symbol'] for s in signals]}")
+        logger.info(
+            f"📈 Top {len(signals)} REIT picks: {[s['symbol'] for s in signals]}"
+        )
 
         # Execute trades
         if trader:
@@ -822,7 +850,9 @@ def execute_reit_trading() -> None:
                 json.dump(daily_trades, f, indent=4)
 
             logger.info(f"💾 REIT trades saved to {trades_file}")
-            logger.info(f"✅ REIT: {len(signals)} positions @ ${per_trade_amount:.2f} each")
+            logger.info(
+                f"✅ REIT: {len(signals)} positions @ ${per_trade_amount:.2f} each"
+            )
 
             # Update REIT daily returns in system_state for easy CEO visibility
             _update_reit_daily_returns(logger)
@@ -904,9 +934,13 @@ def main() -> None:
     # Key checkpoints only for debugging exit code 2 issue
     parser = argparse.ArgumentParser(description="Trading orchestrator entrypoint")
     parser.add_argument(
-        "--prediction-only", action="store_true", help="Run only prediction markets (Kalshi)"
+        "--prediction-only",
+        action="store_true",
+        help="Run only prediction markets (Kalshi)",
     )
-    parser.add_argument("--skip-prediction", action="store_true", help="Skip prediction markets")
+    parser.add_argument(
+        "--skip-prediction", action="store_true", help="Skip prediction markets"
+    )
     parser.add_argument("--auto-scale", action="store_true")
     args = parser.parse_args()
 
@@ -940,7 +974,9 @@ def main() -> None:
             logger.warning(
                 f"   Closed {enforcement_result.positions_closed} positions: {enforcement_result.closed_symbols}"
             )
-            logger.warning(f"   Total value closed: ${enforcement_result.total_value_closed:.2f}")
+            logger.warning(
+                f"   Total value closed: ${enforcement_result.total_value_closed:.2f}"
+            )
         else:
             logger.info("✅ No violations found - all positions comply with lessons")
     except Exception as e:
@@ -962,7 +998,9 @@ def main() -> None:
             logger.info("Prediction trading session completed.")
             return
         else:
-            logger.warning("Prediction-only requested but ENABLE_PREDICTION_MARKETS is not true.")
+            logger.warning(
+                "Prediction-only requested but ENABLE_PREDICTION_MARKETS is not true."
+            )
             return
 
     should_run_prediction = not args.skip_prediction and prediction_allowed
@@ -981,7 +1019,12 @@ def main() -> None:
     from src.orchestrator.main import TradingOrchestrator
 
     # Skip ADK service to simplify debugging - disable via env var
-    adk_enabled = os.getenv("ENABLE_ADK_AGENTS", "false").lower() in {"1", "true", "yes", "on"}
+    adk_enabled = os.getenv("ENABLE_ADK_AGENTS", "false").lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
     if adk_enabled:
         try:
             # Check if service is already running on port 8080
@@ -995,7 +1038,9 @@ def main() -> None:
 
             if result != 0:
                 logger.info("🚀 Starting Go ADK Trading Service...")
-                script_path = os.path.join(os.path.dirname(__file__), "run_adk_trading_service.sh")
+                script_path = os.path.join(
+                    os.path.dirname(__file__), "run_adk_trading_service.sh"
+                )
                 # Run in background
                 subprocess.Popen(
                     [script_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
@@ -1016,13 +1061,18 @@ def main() -> None:
 
     for attempt in range(1, MAX_RETRIES + 1):
         try:
-            logger.info(f"Attempt {attempt}/{MAX_RETRIES}: Starting hybrid funnel orchestrator...")
+            logger.info(
+                f"Attempt {attempt}/{MAX_RETRIES}: Starting hybrid funnel orchestrator..."
+            )
             orchestrator = TradingOrchestrator(tickers=tickers)
             orchestrator.run()
             print("::notice::1/5 Trading completed OK", flush=True)
             break
         except Exception as e:
-            print(f"::error::Attempt {attempt} failed: {type(e).__name__}: {e}", flush=True)
+            print(
+                f"::error::Attempt {attempt} failed: {type(e).__name__}: {e}",
+                flush=True,
+            )
             logger.error(f"❌ Attempt {attempt} failed: {e}", exc_info=True)
             if attempt < MAX_RETRIES:
                 logger.info(f"Retrying in {RETRY_DELAY} seconds...")
@@ -1033,7 +1083,9 @@ def main() -> None:
                 logger.critical(
                     f"❌ CRITICAL: All {MAX_RETRIES} attempts failed. Trading session crashed."
                 )
-                print(f"::error::CRITICAL: All {MAX_RETRIES} attempts failed", flush=True)
+                print(
+                    f"::error::CRITICAL: All {MAX_RETRIES} attempts failed", flush=True
+                )
                 raise
 
     print("::notice::2/5 Post-trading hooks done", flush=True)
@@ -1079,7 +1131,9 @@ def main() -> None:
 
         # If avg_return is positive and we have a recommended budget, log it
         if plan.recommended_daily_budget and plan.avg_return_pct > 0:
-            logger.info(f"Recommended daily budget: ${plan.recommended_daily_budget:.2f}")
+            logger.info(
+                f"Recommended daily budget: ${plan.recommended_daily_budget:.2f}"
+            )
     except Exception as e:
         logger.warning(f"Failed to generate profit target report: {e}")
 
@@ -1100,7 +1154,9 @@ def main() -> None:
 
     # Execute Precious Metals strategy (Tier 8) - runs daily during market hours
     # Provides inflation hedge and portfolio diversification via GLD/SLV
-    should_run_metals = precious_metals_enabled() and not is_weekend_day and not is_holiday
+    should_run_metals = (
+        precious_metals_enabled() and not is_weekend_day and not is_holiday
+    )
     if should_run_metals:
         logger.info("Executing Tier 8 - Precious Metals Strategy (GLD/SLV)...")
         execute_precious_metals_trading()

@@ -3,14 +3,14 @@ name: Daily Trading Execution
 on:
   push:
     paths:
-      - 'TRIGGER_TRADE.md'  # Push trigger for immediate trading
+      - "TRIGGER_TRADE.md" # Push trigger for immediate trading
   schedule:
     # Run every weekday at 9:35 AM Eastern
     # AUTOMATIC DST HANDLING: Runs at both times to cover EST/EDT transitions
     # EST (Nov-Mar): UTC-5 -> 9:35 AM ET = 14:35 UTC
     # EDT (Mar-Nov): UTC-4 -> 9:35 AM ET = 13:35 UTC
     # Run: python3 scripts/get_utc_time.py 9 35 1-5
-    - cron: '35 13,14 * * 1-5'   # 9:35 AM Eastern (covers both EST and EDT)
+    - cron: "35 13,14 * * 1-5" # 9:35 AM Eastern (covers both EST and EDT)
   workflow_dispatch:
     inputs:
       force_trade:
@@ -134,8 +134,8 @@ jobs:
 
   # Quick validation and setup job
   validate-and-test:
-    runs-on: ubuntu-22.04  # Pinned Ubuntu version
-    timeout-minutes: 20  # Increased from 10 - sentence-transformers downloads large models
+    runs-on: ubuntu-22.04 # Pinned Ubuntu version
+    timeout-minutes: 20 # Increased from 10 - sentence-transformers downloads large models
     needs: [check-trading-halt]
     if: needs.check-trading-halt.outputs.trading_halted != 'true'
     outputs:
@@ -151,7 +151,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install UV
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -185,7 +185,7 @@ jobs:
           fi
 
       - name: Install full deps for unit gates (optional)
-        if: ${{ false }}  # enable only if additional tests need full stack
+        if: ${{ false }} # enable only if additional tests need full stack
         run: |
           export PATH="$HOME/.local/bin:$PATH"
           uv pip sync --system requirements.txt
@@ -253,7 +253,7 @@ jobs:
     timeout-minutes: 8
     needs: validate-and-test
     # DISABLED Feb 1, 2026 - Cost reduction
-    if: false  # needs.validate-and-test.outputs.secrets_valid == 'true'
+    if: false # needs.validate-and-test.outputs.secrets_valid == 'true'
     outputs:
       has_warnings: ${{ steps.query.outputs.has_warnings }}
       advice_available: ${{ steps.query.outputs.advice_available }}
@@ -265,8 +265,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: 'pip'
+          python-version: "3.11"
+          cache: "pip"
 
       - name: Install Vertex AI dependencies
         run: |
@@ -368,8 +368,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          python-version: "3.12"
+          cache: "pip"
 
       - name: Install dependencies
         run: pip install alpaca-py
@@ -410,15 +410,15 @@ jobs:
 
   # Main trading execution job
   execute-trading:
-    runs-on: ubuntu-22.04  # Pinned Ubuntu version
-    timeout-minutes: 30  # Increased to handle retries
+    runs-on: ubuntu-22.04 # Pinned Ubuntu version
+    timeout-minutes: 30 # Increased to handle retries
     # pretrade-rag-query disabled Feb 1, 2026 - cost reduction
     needs: [validate-and-test, protect-existing-positions]
-    if: needs.check-trading-halt.outputs.trading_halted != 'true'  # Uses TRADING_HALTED file + holiday check
+    if: needs.check-trading-halt.outputs.trading_halted != 'true' # Uses TRADING_HALTED file + holiday check
     env:
       PYTHONPATH: ${{ github.workspace }}
-      ENABLE_WEEKEND_PROXY: 'false'
-      ALLOW_PROMOTION_OVERRIDE: '1'  # Temporary override to allow trading while metrics are repaired
+      ENABLE_WEEKEND_PROXY: "false"
+      ALLOW_PROMOTION_OVERRIDE: "1" # Temporary override to allow trading while metrics are repaired
       # LangSmith removed Jan 9, 2026 - using Vertex AI RAG for observability
 
     steps:
@@ -475,8 +475,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: 'pip'
+          python-version: "3.11"
+          cache: "pip"
 
       - name: Free workspace before install
         run: |
@@ -498,7 +498,7 @@ jobs:
       - name: Set up Go for ADK orchestrator
         uses: actions/setup-go@v6
         with:
-          go-version: '1.23'
+          go-version: "1.23"
           cache-dependency-path: go/adk_trading/go.sum
         env:
           ADK_ENABLED: ${{ secrets.ADK_ENABLED || '1' }}
@@ -526,8 +526,8 @@ jobs:
         env:
           ADK_ENABLED: ${{ secrets.ADK_ENABLED || '1' }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-          ADK_PORT: '8080'
-          ADK_HEALTH_ADDR: ':8091'
+          ADK_PORT: "8080"
+          ADK_HEALTH_ADDR: ":8091"
           ADK_MODEL: ${{ secrets.ADK_MODEL || 'gemini-2.5-flash' }}
         run: |
           echo "🚀 TURBO MODE: Starting Go ADK orchestrator service..."
@@ -862,7 +862,7 @@ jobs:
       - name: Pre-market health check
         id: health_check
         if: steps.check_execution.outputs.skip != 'true' && steps.credential_check.outputs.credentials_valid == 'true'
-        timeout-minutes: 5  # Increased from 1 to allow efficient API checks
+        timeout-minutes: 5 # Increased from 1 to allow efficient API checks
         env:
           ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
           ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
@@ -901,9 +901,9 @@ jobs:
           # To enable live trading: set PAPER_TRADING secret to 'false' OR run workflow with trading_mode=live
           PAPER_TRADING: ${{ github.event.inputs.trading_mode == 'live' && 'false' || secrets.PAPER_TRADING || 'true' }}
           # CRITICAL FIX Dec 17: Disable bleeding strategies
-          REIT_ALLOCATION_PCT: '0'  # REITs are ALL losing - disable
-          ENABLE_CRYPTO_TRADING: 'false'  # Crypto losing 6.7% - disable
-          ENABLE_WEEKEND_PROXY: 'false'  # No weekend crypto proxy
+          REIT_ALLOCATION_PCT: "0" # REITs are ALL losing - disable
+          ENABLE_CRYPTO_TRADING: "false" # Crypto losing 6.7% - disable
+          ENABLE_WEEKEND_PROXY: "false" # No weekend crypto proxy
           # TURBO MODE: Enable ADK orchestrator
           ADK_ENABLED: ${{ secrets.ADK_ENABLED || '1' }}
           ADK_BASE_URL: ${{ secrets.ADK_BASE_URL || 'http://127.0.0.1:8080/api' }}
@@ -1166,7 +1166,7 @@ jobs:
       - name: Harvest theta (options income)
         id: harvest_theta
         if: steps.execute_trading.conclusion == 'success'
-        continue-on-error: false  # CRITICAL: Options failures must be visible (Dec 16 fix)
+        continue-on-error: false # CRITICAL: Options failures must be visible (Dec 16 fix)
         timeout-minutes: 15
         env:
           ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
@@ -1399,7 +1399,7 @@ jobs:
 
       - name: Update performance log
         if: steps.execute_trading.conclusion == 'success'
-        continue-on-error: true  # Non-fatal - trading succeeded
+        continue-on-error: true # Non-fatal - trading succeeded
         env:
           ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
           ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
@@ -1411,7 +1411,7 @@ jobs:
       - name: Verify Positions (Alpaca vs Local)
         id: verify_positions
         if: steps.execute_trading.conclusion == 'success'
-        continue-on-error: true  # Non-fatal - trading succeeded, sync issues shouldn't fail workflow
+        continue-on-error: true # Non-fatal - trading succeeded, sync issues shouldn't fail workflow
         env:
           ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
           ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
@@ -1425,7 +1425,7 @@ jobs:
       - name: Verify Orders (Trust But Verify)
         id: verify_orders
         if: steps.execute_trading.conclusion == 'success'
-        continue-on-error: true  # Non-fatal - Alpaca is source of truth
+        continue-on-error: true # Non-fatal - Alpaca is source of truth
         env:
           ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
           ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
@@ -1457,7 +1457,7 @@ jobs:
       - name: P/L Sanity Check
         id: sanity_check
         if: always()
-        continue-on-error: true  # FIX Jan 5 2026: Don't fail workflow - just warn
+        continue-on-error: true # FIX Jan 5 2026: Don't fail workflow - just warn
         env:
           ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
           ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
@@ -1544,7 +1544,7 @@ jobs:
 
       - name: Commit trading data updates
         if: steps.check_execution.outputs.skip != 'true' && steps.execute_trading.conclusion == 'success'
-        continue-on-error: true  # Non-fatal - trading already succeeded
+        continue-on-error: true # Non-fatal - trading already succeeded
         run: |
           echo "💾 Committing trading data updates..."
 
@@ -1658,7 +1658,7 @@ jobs:
 
       - name: Monitor TLT Momentum Gate
         if: steps.check_execution.outputs.skip != 'true'
-        continue-on-error: true  # Don't fail workflow if monitoring fails
+        continue-on-error: true # Don't fail workflow if monitoring fails
         timeout-minutes: 3
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -1712,8 +1712,8 @@ jobs:
       - name: Update Progress Dashboard Wiki
         # FIXED Dec 29, 2025: Always update dashboard, even when trading skipped
         # FIXED Jan 5, 2026: Added if: always() so dashboard updates even when trading fails
-        if: always()  # Run even when previous steps fail
-        continue-on-error: true  # Don't fail workflow if wiki update fails
+        if: always() # Run even when previous steps fail
+        continue-on-error: true # Don't fail workflow if wiki update fails
         timeout-minutes: 5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -1823,7 +1823,7 @@ jobs:
 
       - name: Run health check
         if: always()
-        continue-on-error: true  # Non-blocking check
+        continue-on-error: true # Non-blocking check
         run: |
           echo "🏥 Running post-execution health check..."
           python3 scripts/health_monitor.py || echo "⚠️  Health check detected issues (see health-alert workflow)"
@@ -1865,7 +1865,7 @@ jobs:
       # If stop-losses fail, positions are UNPROTECTED and we could LOSE MONEY
       - name: Set Trailing Stop-Loss Orders (Phil Town Rule 1)
         if: success()
-        continue-on-error: false  # CRITICAL: Stop-loss failures MUST fail the workflow
+        continue-on-error: false # CRITICAL: Stop-loss failures MUST fail the workflow
         env:
           ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
           ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
@@ -1888,7 +1888,7 @@ jobs:
         # CRITICAL: Added Jan 5, 2026 after 13-day silent outage
         # Detects when workflow "succeeds" but executes ZERO trades
         if: always()
-        continue-on-error: true  # Don't fail workflow, but warn loudly
+        continue-on-error: true # Don't fail workflow, but warn loudly
         run: |
           echo "🔍 ========================================"
           echo "🔍 TRADE ACTIVITY MONITOR"
@@ -1908,7 +1908,7 @@ jobs:
 
       - name: Upload execution logs
         if: always()
-        continue-on-error: true  # Don't fail workflow if log upload fails
+        continue-on-error: true # Don't fail workflow if log upload fails
         uses: actions/upload-artifact@v6
         with:
           name: trading-logs-${{ github.run_id }}

@@ -7,18 +7,19 @@ CRITICAL for pipeline recovery after failures.
 """
 
 import json
-import pytest
 import sqlite3
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
+import pytest
+
 from src.orchestrator.checkpoint import (
+    CHECKPOINT_GATES,
     PipelineCheckpoint,
     PipelineCheckpointer,
-    CHECKPOINT_GATES,
-    should_checkpoint,
     get_checkpointer,
+    should_checkpoint,
 )
 
 

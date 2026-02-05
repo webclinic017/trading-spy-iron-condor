@@ -21,14 +21,14 @@ Switch from SPY to **XSP (Mini-SPX)** iron condors.
 
 ## Why XSP vs SPX?
 
-| Feature | SPY | XSP | SPX |
-|---------|-----|-----|-----|
-| Contract value | ~$590 | ~$590 | ~$5,900 |
-| Position size for $30K | ✅ Fits | ✅ Fits | ❌ Too large |
-| Tax treatment | Short-term | **60/40** | **60/40** |
-| Assignment risk | Yes (American) | **No (European)** | **No (European)** |
-| Cash settled | No | **Yes** | **Yes** |
-| Wash sale rules | Apply | **Don't apply** | **Don't apply** |
+| Feature                | SPY            | XSP               | SPX               |
+| ---------------------- | -------------- | ----------------- | ----------------- |
+| Contract value         | ~$590          | ~$590             | ~$5,900           |
+| Position size for $30K | ✅ Fits        | ✅ Fits           | ❌ Too large      |
+| Tax treatment          | Short-term     | **60/40**         | **60/40**         |
+| Assignment risk        | Yes (American) | **No (European)** | **No (European)** |
+| Cash settled           | No             | **Yes**           | **Yes**           |
+| Wash sale rules        | Apply          | **Don't apply**   | **Don't apply**   |
 
 **XSP is ideal for $30K account** - same size as SPY, better tax treatment.
 
@@ -48,13 +48,13 @@ Savings: $1,020 (31.9%)
 
 ## 7-Year Projection
 
-| Year | Pre-Tax Gains | SPY Tax | XSP Tax | Cumulative Savings |
-|------|---------------|---------|---------|-------------------|
-| 1 | $5,400 | $1,728 | $1,210 | $518 |
-| 2 | $7,900 | $2,528 | $1,770 | $1,276 |
-| 3 | $11,600 | $3,712 | $2,598 | $2,390 |
-| 5 | $25,000 | $8,000 | $5,600 | ~$5,000 |
-| 7 | $50,000+ | $16,000 | $11,200 | **~$15,000-20,000** |
+| Year | Pre-Tax Gains | SPY Tax | XSP Tax | Cumulative Savings  |
+| ---- | ------------- | ------- | ------- | ------------------- |
+| 1    | $5,400        | $1,728  | $1,210  | $518                |
+| 2    | $7,900        | $2,528  | $1,770  | $1,276              |
+| 3    | $11,600       | $3,712  | $2,598  | $2,390              |
+| 5    | $25,000       | $8,000  | $5,600  | ~$5,000             |
+| 7    | $50,000+      | $16,000 | $11,200 | **~$15,000-20,000** |
 
 ## Risk Considerations
 
@@ -81,6 +81,7 @@ Savings: $1,020 (31.9%)
 ## Infrastructure Ready
 
 The `iron_condor_backtester.py` already supports XSP:
+
 ```bash
 python scripts/backtest/iron_condor_backtester.py --ticker XSP --days 90
 ```

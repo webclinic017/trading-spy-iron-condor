@@ -5,6 +5,7 @@
 **Verdict**: REDUNDANT
 
 ## What It Proposes
+
 - Context quality matters more than model size
 - "Context rot" (accumulated noise) degrades AI performance
 - 11.5% accuracy drop when unrelated text added (Mila/McGill study)
@@ -14,19 +15,21 @@
 
 We already implement these principles:
 
-| Principle | Our Implementation |
-|-----------|-------------------|
-| Extract signal | `inject_trading_context.sh` injects only ~30 lines |
-| Avoid context rot | Live Alpaca API fetch, not history dumps |
-| Filter at architecture | Hook-based injection on UserPromptSubmit |
-| Optimal retrieval | Vertex AI RAG: 512 tokens, top-5 results |
+| Principle              | Our Implementation                                 |
+| ---------------------- | -------------------------------------------------- |
+| Extract signal         | `inject_trading_context.sh` injects only ~30 lines |
+| Avoid context rot      | Live Alpaca API fetch, not history dumps           |
+| Filter at architecture | Hook-based injection on UserPromptSubmit           |
+| Optimal retrieval      | Vertex AI RAG: 512 tokens, top-5 results           |
 
 ## References
+
 - `.claude/hooks/inject_trading_context.sh` - Curated context injection
 - `.claude/hooks/mandatory_rag_check.sh` - Filtered critical lessons
 - `src/rag/vertex_rag.py` - Optimal RAG configuration
 
 ## Decision
+
 No implementation needed. Article validates our existing architecture.
 
 #resource-evaluation #context-management #validated

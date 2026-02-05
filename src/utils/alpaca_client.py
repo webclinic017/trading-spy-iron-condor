@@ -46,14 +46,16 @@ def get_alpaca_credentials() -> tuple[Optional[str], Optional[str]]:
             logger.info(f"  ❌ {var_name}: NOT SET")
 
     # $100K account is PRIMARY (Jan 30, 2026 decision)
-    api_key = (
-        os.getenv("ALPACA_PAPER_TRADING_API_KEY")  # $100K account - PRIMARY
-        or os.getenv("ALPACA_API_KEY")  # Workflow fallback
-    )
-    secret_key = (
-        os.getenv("ALPACA_PAPER_TRADING_API_SECRET")  # $100K account - PRIMARY
-        or os.getenv("ALPACA_SECRET_KEY")  # Workflow fallback
-    )
+    api_key = os.getenv(
+        "ALPACA_PAPER_TRADING_API_KEY"
+    ) or os.getenv(  # $100K account - PRIMARY
+        "ALPACA_API_KEY"
+    )  # Workflow fallback
+    secret_key = os.getenv(
+        "ALPACA_PAPER_TRADING_API_SECRET"
+    ) or os.getenv(  # $100K account - PRIMARY
+        "ALPACA_SECRET_KEY"
+    )  # Workflow fallback
 
     if api_key:
         if os.getenv("ALPACA_PAPER_TRADING_API_KEY"):
@@ -84,7 +86,9 @@ def get_brokerage_credentials() -> tuple[Optional[str], Optional[str]]:
     if api_key:
         logger.info("Using BROKERAGE (live) trading credentials")
     else:
-        logger.warning("Brokerage credentials not found - set ALPACA_BROKERAGE_TRADING_API_KEY")
+        logger.warning(
+            "Brokerage credentials not found - set ALPACA_BROKERAGE_TRADING_API_KEY"
+        )
 
     return api_key, secret_key
 
@@ -104,7 +108,9 @@ def get_brokerage_client():
         api_key, secret_key = get_brokerage_credentials()
 
         if not api_key or not secret_key:
-            logger.error("Brokerage credentials not found. Set ALPACA_BROKERAGE_TRADING_API_KEY")
+            logger.error(
+                "Brokerage credentials not found. Set ALPACA_BROKERAGE_TRADING_API_KEY"
+            )
             return None
 
         return TradingClient(api_key, secret_key, paper=False)

@@ -29,17 +29,20 @@
   },
   "book_structure": {
     "chapters": [
-      {"number": "Intro", "title": "Why Trade Options?"},
-      {"number": 1, "title": "Math and Finance Preliminaries"},
-      {"number": 2, "title": "The Nature of Volatility Trading and Implied Volatility"},
-      {"number": 3, "title": "Trading Short Premium"},
-      {"number": 4, "title": "Buying Power Reduction"},
-      {"number": 5, "title": "Constructing a Trade"},
-      {"number": 6, "title": "Managing Trades"},
-      {"number": 7, "title": "Basic Portfolio Management"},
-      {"number": 8, "title": "Advanced Portfolio Management"},
-      {"number": 9, "title": "Binary Events"},
-      {"number": 10, "title": "Conclusion and Key Takeaways"}
+      { "number": "Intro", "title": "Why Trade Options?" },
+      { "number": 1, "title": "Math and Finance Preliminaries" },
+      {
+        "number": 2,
+        "title": "The Nature of Volatility Trading and Implied Volatility"
+      },
+      { "number": 3, "title": "Trading Short Premium" },
+      { "number": 4, "title": "Buying Power Reduction" },
+      { "number": 5, "title": "Constructing a Trade" },
+      { "number": 6, "title": "Managing Trades" },
+      { "number": 7, "title": "Basic Portfolio Management" },
+      { "number": 8, "title": "Advanced Portfolio Management" },
+      { "number": 9, "title": "Binary Events" },
+      { "number": 10, "title": "Conclusion and Key Takeaways" }
     ],
     "key_feature": "Each chapter ends with Key Takeaways summary page"
   },

@@ -3,13 +3,13 @@ name: Ralph Mode - Autonomous CTO
 on:
   schedule:
     # Run every 4 hours around the clock
-    - cron: '0 */4 * * *'
+    - cron: "0 */4 * * *"
   workflow_dispatch:
     inputs:
       iteration_type:
-        description: 'Type of iteration to run'
+        description: "Type of iteration to run"
         required: false
-        default: 'full'
+        default: "full"
         type: choice
         options:
           - full
@@ -18,7 +18,7 @@ on:
           - cleanup-only
 
 env:
-  PYTHON_VERSION: '3.11'
+  PYTHON_VERSION: "3.11"
 
 # Prevent concurrent runs to avoid race conditions
 concurrency:

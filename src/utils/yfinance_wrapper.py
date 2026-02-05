@@ -259,7 +259,12 @@ def download(
     if yf:
         try:
             return yf.download(
-                tickers, start=start, end=end, period=period, interval=interval, **kwargs
+                tickers,
+                start=start,
+                end=end,
+                period=period,
+                interval=interval,
+                **kwargs,
             )
         except Exception as e:
             logger.warning(f"yfinance download failed: {e}")
@@ -268,7 +273,9 @@ def download(
     pd = _get_pandas()
     logger.warning(f"Returning empty DataFrame for {tickers}")
     if pd:
-        return pd.DataFrame(columns=["Open", "High", "Low", "Close", "Volume", "Adj Close"])
+        return pd.DataFrame(
+            columns=["Open", "High", "Low", "Close", "Volume", "Adj Close"]
+        )
     return {}
 
 

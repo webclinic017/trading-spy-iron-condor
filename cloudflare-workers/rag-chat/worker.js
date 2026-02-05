@@ -87,27 +87,27 @@ STRATEGY SUMMARY:
 export default {
   async fetch(request, env) {
     // Handle CORS preflight
-    if (request.method === 'OPTIONS') {
+    if (request.method === "OPTIONS") {
       return new Response(null, {
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
         },
       });
     }
 
-    if (request.method !== 'POST') {
-      return new Response('Method not allowed', { status: 405 });
+    if (request.method !== "POST") {
+      return new Response("Method not allowed", { status: 405 });
     }
 
     try {
       const { message, history } = await request.json();
 
-      if (!message || typeof message !== 'string') {
-        return new Response(JSON.stringify({ error: 'Message required' }), {
+      if (!message || typeof message !== "string") {
+        return new Response(JSON.stringify({ error: "Message required" }), {
           status: 400,
-          headers: { 'Content-Type': 'application/json' },
+          headers: { "Content-Type": "application/json" },
         });
       }
 
@@ -125,17 +125,17 @@ export default {
       }
 
       // Add current message
-      messages.push({ role: 'user', content: message });
+      messages.push({ role: "user", content: message });
 
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': env.ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01',
+          "Content-Type": "application/json",
+          "x-api-key": env.ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01",
         },
         body: JSON.stringify({
-          model: 'claude-3-5-haiku-20241022',
+          model: "claude-3-5-haiku-20241022",
           max_tokens: 1024,
           system: LESSONS_CONTEXT,
           messages: messages,
@@ -144,32 +144,32 @@ export default {
 
       if (!response.ok) {
         const error = await response.text();
-        console.error('Claude API error:', error);
-        return new Response(JSON.stringify({ error: 'API error' }), {
+        console.error("Claude API error:", error);
+        return new Response(JSON.stringify({ error: "API error" }), {
           status: 500,
           headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
           },
         });
       }
 
       const data = await response.json();
-      const reply = data.content[0]?.text || 'No response';
+      const reply = data.content[0]?.text || "No response";
 
       return new Response(JSON.stringify({ reply }), {
         headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
         },
       });
     } catch (error) {
-      console.error('Worker error:', error);
+      console.error("Worker error:", error);
       return new Response(JSON.stringify({ error: error.message }), {
         status: 500,
         headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
         },
       });
     }

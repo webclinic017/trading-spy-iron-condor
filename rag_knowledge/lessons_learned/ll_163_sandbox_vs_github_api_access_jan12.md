@@ -1,6 +1,7 @@
 # LL-163: CTO Wrongly Assumed API Keys Were Invalid - January 12, 2026
 
 ## Incident Summary
+
 - **Date**: January 12, 2026
 - **Severity**: P2 - CTO ERROR (not system error)
 - **Impact**: Caused unnecessary confusion for CEO

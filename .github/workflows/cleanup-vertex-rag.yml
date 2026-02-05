@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'Cleanup mode'
+        description: "Cleanup mode"
         required: true
-        default: 'dry-run'
+        default: "dry-run"
         type: choice
         options:
           - dry-run
@@ -27,7 +27,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |

@@ -26,7 +26,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 # Phil Town's channel info
@@ -354,7 +356,9 @@ def get_videos_via_youtube_api(max_results: int = 50) -> list[dict]:
             logger.error("Channel not found via API")
             return []
 
-        uploads_playlist = data["items"][0]["contentDetails"]["relatedPlaylists"]["uploads"]
+        uploads_playlist = data["items"][0]["contentDetails"]["relatedPlaylists"][
+            "uploads"
+        ]
 
         videos = []
         next_page = None
@@ -443,7 +447,9 @@ def get_videos_via_ytdlp(max_results: int = 50) -> list[dict]:
 
 def get_videos_curated() -> list[dict]:
     """Return curated list with embedded transcripts (guaranteed to work)."""
-    logger.info(f"Using curated list with embedded transcripts: {len(CURATED_VIDEOS)} videos")
+    logger.info(
+        f"Using curated list with embedded transcripts: {len(CURATED_VIDEOS)} videos"
+    )
     return [
         {
             "id": v["id"],
@@ -469,7 +475,9 @@ def get_channel_videos(max_results: int = 50) -> list[dict]:
         return videos
 
     # Fall back to curated list with embedded transcripts
-    logger.warning("All fetch methods failed, using curated list with embedded transcripts")
+    logger.warning(
+        "All fetch methods failed, using curated list with embedded transcripts"
+    )
     return get_videos_curated()
 
 
@@ -521,7 +529,9 @@ def get_transcript_with_retry(video_id: str, max_retries: int = 3) -> Optional[s
         return None
 
 
-def get_transcript(video_id: str, embedded_transcript: Optional[str] = None) -> Optional[str]:
+def get_transcript(
+    video_id: str, embedded_transcript: Optional[str] = None
+) -> Optional[str]:
     """Get transcript, using embedded version if API fails."""
     # Try API first
     transcript = get_transcript_with_retry(video_id)
@@ -588,14 +598,54 @@ def analyze_transcript(transcript: str, title: str) -> dict:
 
     # Phil Town concepts
     concept_keywords = {
-        "4 Ms": ["meaning", "moat", "management", "margin of safety", "4 ms", "four ms"],
-        "Moat": ["competitive advantage", "moat", "durable", "wide moat", "economic moat"],
-        "Margin of Safety": ["margin of safety", "sticker price", "buy price", "discount"],
-        "Big Five Numbers": ["ROIC", "equity growth", "EPS growth", "sales growth", "big five"],
+        "4 Ms": [
+            "meaning",
+            "moat",
+            "management",
+            "margin of safety",
+            "4 ms",
+            "four ms",
+        ],
+        "Moat": [
+            "competitive advantage",
+            "moat",
+            "durable",
+            "wide moat",
+            "economic moat",
+        ],
+        "Margin of Safety": [
+            "margin of safety",
+            "sticker price",
+            "buy price",
+            "discount",
+        ],
+        "Big Five Numbers": [
+            "ROIC",
+            "equity growth",
+            "EPS growth",
+            "sales growth",
+            "big five",
+        ],
         "Rule #1": ["rule one", "rule #1", "don't lose money", "rule number one"],
-        "Wonderful Company": ["wonderful company", "wonderful business", "great company"],
-        "Options Strategy": ["put", "call", "covered call", "cash secured put", "wheel", "premium"],
-        "Intrinsic Value": ["intrinsic value", "true value", "fair value", "owner earnings"],
+        "Wonderful Company": [
+            "wonderful company",
+            "wonderful business",
+            "great company",
+        ],
+        "Options Strategy": [
+            "put",
+            "call",
+            "covered call",
+            "cash secured put",
+            "wheel",
+            "premium",
+        ],
+        "Intrinsic Value": [
+            "intrinsic value",
+            "true value",
+            "fair value",
+            "owner earnings",
+        ],
         "Value Investing": ["value investing", "benjamin graham", "warren buffett"],
     }
 
@@ -622,14 +672,19 @@ def analyze_transcript(transcript: str, title: str) -> dict:
         insights["sentiment"] = "bearish"
 
     # Strategies
-    if any(x in transcript_lower for x in ["cash secured put", "sell put", "selling puts"]):
+    if any(
+        x in transcript_lower for x in ["cash secured put", "sell put", "selling puts"]
+    ):
         insights["strategies"].append("Cash-Secured Puts")
-    if any(x in transcript_lower for x in ["covered call", "sell call", "selling calls"]):
+    if any(
+        x in transcript_lower for x in ["covered call", "sell call", "selling calls"]
+    ):
         insights["strategies"].append("Covered Calls")
     if any(x in transcript_lower for x in ["wheel strategy", "wheel of income"]):
         insights["strategies"].append("Wheel Strategy")
     if any(
-        x in transcript_lower for x in ["value investing", "intrinsic value", "margin of safety"]
+        x in transcript_lower
+        for x in ["value investing", "intrinsic value", "margin of safety"]
     ):
         insights["strategies"].append("Value Investing")
 
@@ -757,7 +812,9 @@ def main():
     """Main entry point."""
     import argparse
 
-    parser = argparse.ArgumentParser(description="Ingest Phil Town YouTube videos to RAG")
+    parser = argparse.ArgumentParser(
+        description="Ingest Phil Town YouTube videos to RAG"
+    )
     parser.add_argument(
         "--mode",
         choices=["backfill", "recent", "new"],
@@ -771,13 +828,17 @@ def main():
     logger.info("=" * 60)
     logger.info("PHIL TOWN YOUTUBE INGESTION (Dec 2025 Best Practices)")
     logger.info(f"Mode: {args.mode}")
-    logger.info(f"YOUTUBE_API_KEY: {'SET' if os.environ.get('YOUTUBE_API_KEY') else 'NOT SET'}")
+    logger.info(
+        f"YOUTUBE_API_KEY: {'SET' if os.environ.get('YOUTUBE_API_KEY') else 'NOT SET'}"
+    )
     logger.info(f"TRANSCRIPT_PROXY: {'SET' if PROXY_URL else 'NOT SET'}")
     logger.info("=" * 60)
 
     ensure_directories()
 
-    max_videos = {"backfill": 500, "recent": 50, "new": args.max_videos}.get(args.mode, 50)
+    max_videos = {"backfill": 500, "recent": 50, "new": args.max_videos}.get(
+        args.mode, 50
+    )
 
     logger.info(f"Fetching up to {max_videos} videos...")
     videos = get_channel_videos(max_results=max_videos)
@@ -806,10 +867,14 @@ def main():
     # also process curated videos which have guaranteed embedded transcripts
     if results["success"] == 0 and results["failed"] > 0:
         logger.warning("=" * 60)
-        logger.warning("⚠️ All API/yt-dlp videos failed - falling back to curated videos")
+        logger.warning(
+            "⚠️ All API/yt-dlp videos failed - falling back to curated videos"
+        )
         logger.warning("=" * 60)
         curated = get_videos_curated()
-        curated_results = ingest_videos(curated, skip_processed=False)  # Force process all
+        curated_results = ingest_videos(
+            curated, skip_processed=False
+        )  # Force process all
         # Merge results
         results["success"] += curated_results["success"]
         results["failed"] += curated_results["failed"]
@@ -828,12 +893,16 @@ def main():
     # Prevents "Dec 22 silent failure" where workflow ran but produced nothing
     if results["success"] == 0 and results["skipped"] == 0:
         logger.error("⛔ OUTPUT VERIFICATION FAILED: No videos were processed!")
-        logger.error("This is a SILENT FAILURE - workflow completed but produced no output.")
+        logger.error(
+            "This is a SILENT FAILURE - workflow completed but produced no output."
+        )
         results["output_verified"] = False
         results["silent_failure"] = True
     else:
         # Verify files actually exist
-        transcript_files = list(RAG_TRANSCRIPTS.glob("*.md")) if RAG_TRANSCRIPTS.exists() else []
+        transcript_files = (
+            list(RAG_TRANSCRIPTS.glob("*.md")) if RAG_TRANSCRIPTS.exists() else []
+        )
         if results["success"] > 0 and len(transcript_files) == 0:
             logger.error(
                 "⛔ OUTPUT VERIFICATION FAILED: Claimed success but no transcript files exist!"

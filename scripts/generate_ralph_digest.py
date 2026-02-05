@@ -9,7 +9,9 @@ from pathlib import Path
 def run_cmd(cmd: str) -> str:
     """Run shell command and return output."""
     try:
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=30)
+        result = subprocess.run(
+            cmd, shell=True, capture_output=True, text=True, timeout=30
+        )
         return result.stdout.strip()
     except Exception:
         return ""
@@ -17,9 +19,9 @@ def run_cmd(cmd: str) -> str:
 
 def main():
     today = datetime.now().strftime("%Y-%m-%d")
-    week_start = (datetime.now() - timedelta(days=datetime.now().weekday() + 1)).strftime(
-        "%Y-%m-%d"
-    )
+    week_start = (
+        datetime.now() - timedelta(days=datetime.now().weekday() + 1)
+    ).strftime("%Y-%m-%d")
 
     digest_file = Path(f"docs/_posts/{today}-ralph-weekly-digest.md")
     digest_file.parent.mkdir(parents=True, exist_ok=True)
@@ -29,14 +31,20 @@ def main():
             "git log --since='7 days ago' --oneline --grep='ralph\\|self-heal\\|auto-fix'"
         ).split("\n")
     )
-    fix_commits = len(run_cmd("git log --since='7 days ago' --oneline --grep='fix'").split("\n"))
-    feat_commits = len(run_cmd("git log --since='7 days ago' --oneline --grep='feat'").split("\n"))
+    fix_commits = len(
+        run_cmd("git log --since='7 days ago' --oneline --grep='fix'").split("\n")
+    )
+    feat_commits = len(
+        run_cmd("git log --since='7 days ago' --oneline --grep='feat'").split("\n")
+    )
     total_commits = len(run_cmd("git log --since='7 days ago' --oneline").split("\n"))
     test_count = run_cmd("grep -r 'def test_' tests/ 2>/dev/null | wc -l")
     py_files = run_cmd("find src/ scripts/ -name '*.py' 2>/dev/null | wc -l")
 
     fixes_log = (
-        run_cmd("git log --since='7 days ago' --oneline --grep='fix\\|heal\\|auto' | head -15")
+        run_cmd(
+            "git log --since='7 days ago' --oneline --grep='fix\\|heal\\|auto' | head -15"
+        )
         or "None this week"
     )
     feats_log = (

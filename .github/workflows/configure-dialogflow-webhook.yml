@@ -1,7 +1,7 @@
 name: Configure Dialogflow CX Webhook
 
 on:
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch: # Manual trigger
 
 env:
   PROJECT_ID: igor-trading-2025-v2

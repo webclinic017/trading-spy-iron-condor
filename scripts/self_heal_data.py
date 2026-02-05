@@ -133,7 +133,9 @@ def fix_index_md(docs_path: Path, current_day: int) -> list[str]:
         date_pattern = r"\*\*📅 \w+, \w+ \d+, \d{4}\*\* \(Day \d+ of 90"
         old_date_match = re.search(date_pattern, content)
         if old_date_match:
-            new_date_line = f"**📅 {day_name}, {month_day_year}** (Day {current_day} of 90"
+            new_date_line = (
+                f"**📅 {day_name}, {month_day_year}** (Day {current_day} of 90"
+            )
             if old_date_match.group() != new_date_line:
                 content = re.sub(date_pattern, new_date_line, content)
                 fixes.append("Updated date in header")
@@ -156,7 +158,9 @@ def fix_index_md(docs_path: Path, current_day: int) -> list[str]:
     return fixes
 
 
-def check_stale_data(state_path: Path, max_staleness_hours: float = 4.0) -> tuple[bool, list[str]]:
+def check_stale_data(
+    state_path: Path, max_staleness_hours: float = 4.0
+) -> tuple[bool, list[str]]:
     """
     Check if critical data files are stale.
 
@@ -324,7 +328,9 @@ def main():
         print("SELF-HEALING COMPLETE: All data is current and fresh")
         return 0
 
-    return 1 if all_fixes else 0  # Return 1 to indicate changes were made (useful for CI)
+    return (
+        1 if all_fixes else 0
+    )  # Return 1 to indicate changes were made (useful for CI)
 
 
 if __name__ == "__main__":

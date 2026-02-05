@@ -142,7 +142,9 @@ def update_model(feedback_type: str, context: str) -> None:
 
     # Log for observability
     posterior = model["alpha"] / (model["alpha"] + model["beta"])
-    logger.info(f"Feedback: {feedback_type} | Posterior: {posterior:.3f} | Features: {features}")
+    logger.info(
+        f"Feedback: {feedback_type} | Posterior: {posterior:.3f} | Features: {features}"
+    )
 
 
 def compute_time_weight(timestamp: str) -> float:
@@ -220,7 +222,9 @@ def recompute_from_history() -> None:
         ts = entry.get("timestamp", "")
         weight = compute_time_weight(ts)
 
-        context = entry.get("summary", entry.get("context", entry.get("user_message", "")))
+        context = entry.get(
+            "summary", entry.get("context", entry.get("user_message", ""))
+        )
         features = extract_features(context)
 
         if fb_type == "positive":
@@ -259,7 +263,9 @@ def main():
         help="Type of feedback received",
     )
     parser.add_argument(
-        "--context", default="", help="Context around the feedback (for feature extraction)"
+        "--context",
+        default="",
+        help="Context around the feedback (for feature extraction)",
     )
     parser.add_argument(
         "--recompute",

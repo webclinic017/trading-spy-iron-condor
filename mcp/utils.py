@@ -55,4 +55,6 @@ def ensure_env_var(getter: Callable[[], Any], description: str) -> Any:
     try:
         return getter()
     except Exception as exc:  # noqa: BLE001
-        raise RuntimeError(f"{description} is unavailable. Original error: {exc}") from exc
+        raise RuntimeError(
+            f"{description} is unavailable. Original error: {exc}"
+        ) from exc

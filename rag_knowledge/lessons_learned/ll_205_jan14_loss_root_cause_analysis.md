@@ -11,13 +11,13 @@ On January 14, 2026, the paper trading account suffered a $65.58 daily loss when
 
 ## Timeline of Events
 
-| Date | Event | P/L Impact |
-|------|-------|------------|
-| Jan 13, 9:35 AM | SOFI CSP opened during blackout period | - |
-| Jan 13, 3:19 PM | Positions recorded: 3.78 shares + 1 short put | -$2.09 |
-| Jan 14, 9:45 AM | Scheduled close workflow triggered | - |
-| Jan 14, 9:46 AM | All SOFI closed: 24.75 shares + 2 puts | -$18.31 |
-| Jan 14, EOD | Daily P/L reported | -$65.58 |
+| Date            | Event                                         | P/L Impact |
+| --------------- | --------------------------------------------- | ---------- |
+| Jan 13, 9:35 AM | SOFI CSP opened during blackout period        | -          |
+| Jan 13, 3:19 PM | Positions recorded: 3.78 shares + 1 short put | -$2.09     |
+| Jan 14, 9:45 AM | Scheduled close workflow triggered            | -          |
+| Jan 14, 9:46 AM | All SOFI closed: 24.75 shares + 2 puts        | -$18.31    |
+| Jan 14, EOD     | Daily P/L reported                            | -$65.58    |
 
 ## Positions at Close
 
@@ -28,30 +28,34 @@ On January 14, 2026, the paper trading account suffered a $65.58 daily loss when
 ## Root Cause Analysis
 
 ### Primary Cause: Earnings Blackout Violation
+
 CLAUDE.md explicitly states: "SOFI: BLACKOUT until Feb 1 (earnings Jan 30, IV 55%)"
 
 The trade gateway did NOT check earnings dates before approving the CSP order.
 
 ### Secondary Cause: Expiration Past Earnings
+
 - Put expiration: Feb 6, 2026
 - Earnings date: Jan 30, 2026
 - Gap: 7 days after earnings = maximum volatility exposure
 
 ### Tertiary Cause: Forced Exit at Loss
+
 When violations are discovered, closing positions often means realizing losses. The system did the RIGHT thing by closing, but the damage was already done.
 
 ## Loss Breakdown
 
-| Component | Amount | Explanation |
-|-----------|--------|-------------|
-| Stock loss | -$1.31 | SOFI dropped from entry |
-| Put loss | -$17.00 | Options went against us (IV expansion) |
-| Slippage | ~-$47 | Market orders to close rapidly |
-| **Total** | **-$65.58** | Daily change |
+| Component  | Amount      | Explanation                            |
+| ---------- | ----------- | -------------------------------------- |
+| Stock loss | -$1.31      | SOFI dropped from entry                |
+| Put loss   | -$17.00     | Options went against us (IV expansion) |
+| Slippage   | ~-$47       | Market orders to close rapidly         |
+| **Total**  | **-$65.58** | Daily change                           |
 
 ## Why This Loss Was "Good" (Phil Town Perspective)
 
 The loss could have been MUCH worse:
+
 - If held through earnings with 12.2% expected move
 - Assignment risk: $4,800+ (96% of $5K portfolio)
 - Instead: Lost $65 to avoid potential $4,800+ loss
@@ -61,6 +65,7 @@ The loss could have been MUCH worse:
 ## Prevention Measures Required
 
 ### Immediate (Code Fix)
+
 ```python
 # In src/risk/trade_gateway.py
 EARNINGS_BLACKOUTS = {
@@ -82,6 +87,7 @@ def _check_earnings_blackout(self, symbol: str) -> bool:
 ```
 
 ### Process Improvements
+
 1. Pre-trade checklist must be enforced in code, not just documentation
 2. All options trades must verify expiration < earnings date
 3. SPY/IWM should be prioritized (no individual earnings risk)

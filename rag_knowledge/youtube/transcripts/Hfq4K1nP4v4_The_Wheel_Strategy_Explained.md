@@ -7,12 +7,15 @@
 **Ingested**: 2026-02-01T13:25:15.875884
 
 ## Key Concepts
+
 4 Ms, Margin of Safety, Options Strategy
 
 ## Strategies
+
 Cash-Secured Puts, Covered Calls, Wheel Strategy
 
 ## Sentiment
+
 Neutral
 
 ## Transcript

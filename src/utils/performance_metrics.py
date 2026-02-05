@@ -83,15 +83,15 @@ class PerformanceMetrics:
             "avg_loss": round(self.avg_loss, 2),
             "largest_win": round(self.largest_win, 2),
             "largest_loss": round(self.largest_loss, 2),
-            "rolling_sharpe_mean": round(self.rolling_sharpe_mean, 4)
-            if self.rolling_sharpe_mean
-            else None,
-            "rolling_sharpe_std": round(self.rolling_sharpe_std, 4)
-            if self.rolling_sharpe_std
-            else None,
-            "sharpe_consistency": round(self.sharpe_consistency, 4)
-            if self.sharpe_consistency
-            else None,
+            "rolling_sharpe_mean": (
+                round(self.rolling_sharpe_mean, 4) if self.rolling_sharpe_mean else None
+            ),
+            "rolling_sharpe_std": (
+                round(self.rolling_sharpe_std, 4) if self.rolling_sharpe_std else None
+            ),
+            "sharpe_consistency": (
+                round(self.sharpe_consistency, 4) if self.sharpe_consistency else None
+            ),
         }
 
 
@@ -401,8 +401,8 @@ def calculate_all_metrics(
     sharpe_consistency = None
 
     if len(returns) >= 10:
-        _, rolling_sharpe_mean, rolling_sharpe_std, sharpe_consistency = calculate_rolling_sharpe(
-            returns, window=min(20, len(returns) // 2)
+        _, rolling_sharpe_mean, rolling_sharpe_std, sharpe_consistency = (
+            calculate_rolling_sharpe(returns, window=min(20, len(returns) // 2))
         )
 
     return PerformanceMetrics(

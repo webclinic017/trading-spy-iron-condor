@@ -14,14 +14,15 @@ During Ralph Mode iteration 21, queried RAG and synthesized key learnings from r
 
 **Critical insight**: When tested, roll the UNTESTED side closer (not the tested side).
 
-| Trigger | Action |
-|---------|--------|
-| Short strike at 25-30 delta | Consider adjustment |
-| Untested side < 15 delta | Must roll closer |
-| < 7 DTE | NO adjustments - just close |
-| Both sides threatened | Close position immediately |
+| Trigger                     | Action                      |
+| --------------------------- | --------------------------- |
+| Short strike at 25-30 delta | Consider adjustment         |
+| Untested side < 15 delta    | Must roll closer            |
+| < 7 DTE                     | NO adjustments - just close |
+| Both sides threatened       | Close position immediately  |
 
 **Example adjustment**:
+
 - SPY rallies → call side tested
 - Roll put spread UP (closer to current price)
 - Collect additional credit to lower cost basis
@@ -31,6 +32,7 @@ During Ralph Mode iteration 21, queried RAG and synthesized key learnings from r
 **Key insight**: Run `ruff check .` on entire repo, not just `src/`.
 
 Avoid ambiguous variable names:
+
 - ❌ `l` (looks like `1` or `|`)
 - ❌ `O` (looks like `0`)
 - ❌ `I` (looks like `l` or `1`)
@@ -45,6 +47,7 @@ Avoid ambiguous variable names:
 ## ML Model Update
 
 After this session:
+
 - Posterior: 0.917 (exceeds 0.90 target)
 - test pattern: +0.90 (strongest signal)
 - rag pattern: +0.10 (new feature)

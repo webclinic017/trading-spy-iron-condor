@@ -11,7 +11,7 @@ on:
   #   - cron: '*/5 14-20 * * 1-5'
   push:
     paths:
-      - 'CLOSE_NONDT.trigger'
+      - "CLOSE_NONDT.trigger"
     branches:
       - main
 
@@ -33,7 +33,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - run: pip install alpaca-py
 

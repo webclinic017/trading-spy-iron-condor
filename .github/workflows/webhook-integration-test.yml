@@ -14,18 +14,18 @@ jobs:
   integration-test:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name != 'workflow_run' }}
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      
+          python-version: "3.11"
+
       - name: Run Webhook Integration Tests
         run: python tests/integration/test_webhook_integration.py
-      
+
       - name: Alert on Failure
         if: failure()
         run: |

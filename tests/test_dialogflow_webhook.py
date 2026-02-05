@@ -42,7 +42,9 @@ class TestDialogflowWebhookFormat:
         assert "messages" in response["fulfillmentResponse"]
         assert len(response["fulfillmentResponse"]["messages"]) == 1
         assert "text" in response["fulfillmentResponse"]["messages"][0]
-        assert response["fulfillmentResponse"]["messages"][0]["text"]["text"] == ["Test message"]
+        assert response["fulfillmentResponse"]["messages"][0]["text"]["text"] == [
+            "Test message"
+        ]
 
     def test_format_lessons_response_no_results(self):
         """Verify empty results return helpful message."""
@@ -110,6 +112,7 @@ class TestDialogflowWebhookIntegration:
     def test_webhook_extracts_text_field(self, mock_rag):
         """Verify webhook extracts query from 'text' field."""
         from fastapi.testclient import TestClient
+
         from src.agents.dialogflow_webhook import app
 
         client = TestClient(app)
@@ -131,6 +134,7 @@ class TestDialogflowWebhookIntegration:
     def test_webhook_extracts_transcript_field(self, mock_rag):
         """Verify webhook extracts query from 'transcript' field."""
         from fastapi.testclient import TestClient
+
         from src.agents.dialogflow_webhook import app
 
         client = TestClient(app)
@@ -149,6 +153,7 @@ class TestDialogflowWebhookIntegration:
     def test_webhook_handles_empty_request(self, mock_rag):
         """Verify webhook handles request with no query gracefully."""
         from fastapi.testclient import TestClient
+
         from src.agents.dialogflow_webhook import app
 
         client = TestClient(app)
@@ -163,6 +168,7 @@ class TestDialogflowWebhookIntegration:
     def test_health_endpoint(self, mock_rag):
         """Verify health endpoint returns correct status."""
         from fastapi.testclient import TestClient
+
         from src.agents.dialogflow_webhook import app
 
         client = TestClient(app)
@@ -178,6 +184,7 @@ class TestDialogflowWebhookIntegration:
     def test_root_endpoint(self, mock_rag):
         """Verify root endpoint returns service info."""
         from fastapi.testclient import TestClient
+
         from src.agents.dialogflow_webhook import app
 
         client = TestClient(app)
@@ -192,6 +199,7 @@ class TestDialogflowWebhookIntegration:
     def test_test_endpoint(self, mock_rag):
         """Verify test endpoint queries RAG."""
         from fastapi.testclient import TestClient
+
         from src.agents.dialogflow_webhook import app
 
         client = TestClient(app)
@@ -258,12 +266,15 @@ class TestDialogflowWebhookEdgeCases:
     def test_webhook_session_info_params(self, mock_rag_empty):
         """Test extracting query from sessionInfo.parameters."""
         from fastapi.testclient import TestClient
+
         from src.agents.dialogflow_webhook import app
 
         # Set up mock to return results on second call
         with patch("src.agents.dialogflow_webhook.local_rag") as mock:
             mock.lessons = []
-            mock.query.return_value = [{"id": "ll_001", "severity": "INFO", "content": "Test"}]
+            mock.query.return_value = [
+                {"id": "ll_001", "severity": "INFO", "content": "Test"}
+            ]
 
             client = TestClient(app)
 
@@ -280,9 +291,12 @@ class TestDialogflowWebhookEdgeCases:
         """Test extracting query from fulfillmentInfo.tag."""
         with patch("src.agents.dialogflow_webhook.local_rag") as mock:
             mock.lessons = []
-            mock.query.return_value = [{"id": "ll_001", "severity": "INFO", "content": "Test"}]
+            mock.query.return_value = [
+                {"id": "ll_001", "severity": "INFO", "content": "Test"}
+            ]
 
             from fastapi.testclient import TestClient
+
             from src.agents.dialogflow_webhook import app
 
             client = TestClient(app)
@@ -303,10 +317,13 @@ class TestDialogflowWebhookEdgeCases:
             # First call returns empty, second call returns results
             mock.query.side_effect = [
                 [],  # First call - no results
-                [{"id": "ll_001", "severity": "INFO", "content": "Fallback result"}],  # Fallback
+                [
+                    {"id": "ll_001", "severity": "INFO", "content": "Fallback result"}
+                ],  # Fallback
             ]
 
             from fastapi.testclient import TestClient
+
             from src.agents.dialogflow_webhook import app
 
             client = TestClient(app)
@@ -326,6 +343,7 @@ class TestDialogflowWebhookEdgeCases:
             mock.query.side_effect = Exception("Database error")
 
             from fastapi.testclient import TestClient
+
             from src.agents.dialogflow_webhook import app
 
             client = TestClient(app)
@@ -392,7 +410,9 @@ class TestTradeQueryDetection:
         ]
 
         for query in lesson_queries:
-            assert not is_trade_query(query), f"Should NOT detect as trade query: '{query}'"
+            assert not is_trade_query(
+                query
+            ), f"Should NOT detect as trade query: '{query}'"
 
     def test_is_trade_query_case_insensitive(self):
         """Test that query detection is case insensitive."""
@@ -446,6 +466,7 @@ class TestTradeQueryFallbackBehavior:
                 }
 
                 from fastapi.testclient import TestClient
+
                 from src.agents.dialogflow_webhook import app
 
                 client = TestClient(app)
@@ -460,7 +481,12 @@ class TestTradeQueryFallbackBehavior:
                 text = data["fulfillmentResponse"]["messages"][0]["text"]["text"][0]
 
                 # Should return portfolio/trade data, NOT lessons
-                assert "Portfolio" in text or "Equity" in text or "P/L" in text or "Trade" in text
+                assert (
+                    "Portfolio" in text
+                    or "Equity" in text
+                    or "P/L" in text
+                    or "Trade" in text
+                )
                 # Should NOT contain lesson references
                 assert "ll_001" not in text
 
@@ -480,6 +506,7 @@ class TestTradeQueryFallbackBehavior:
                 mock_portfolio.return_value = {}  # No portfolio data
 
                 from fastapi.testclient import TestClient
+
                 from src.agents.dialogflow_webhook import app
 
                 client = TestClient(app)
@@ -608,7 +635,9 @@ class TestPortfolioStatusFunction:
                 # Re-import to get fresh function
                 from src.agents.dialogflow_webhook import get_current_portfolio_status
 
-                _ = get_current_portfolio_status()  # Call function, result not needed for this test
+                _ = (
+                    get_current_portfolio_status()
+                )  # Call function, result not needed for this test
 
                 # GitHub URL should have been called
                 mock_urlopen.assert_called()
@@ -620,9 +649,9 @@ class TestPortfolioStatusFunction:
                     if hasattr(request_obj, "full_url")
                     else request_obj.get_full_url()
                 )
-                assert "github.com" in url or "githubusercontent" in url, (
-                    f"Expected GitHub URL, got: {url}"
-                )
+                assert (
+                    "github.com" in url or "githubusercontent" in url
+                ), f"Expected GitHub URL, got: {url}"
 
     def test_get_current_portfolio_status_returns_empty_on_all_failures(self):
         """Test that empty dict is returned when both local and GitHub fail."""
@@ -635,7 +664,9 @@ class TestPortfolioStatusFunction:
         # Patch Path.exists to return False (no local file)
         # Patch urllib.request.urlopen to raise exception
         with patch("pathlib.Path.exists", return_value=False):
-            with patch("urllib.request.urlopen", side_effect=Exception("Network error")):
+            with patch(
+                "urllib.request.urlopen", side_effect=Exception("Network error")
+            ):
                 from src.agents.dialogflow_webhook import get_current_portfolio_status
 
                 result = get_current_portfolio_status()
@@ -664,7 +695,9 @@ class TestReadinessQueryDetection:
         ]
 
         for query in readiness_queries:
-            assert is_readiness_query(query), f"Should detect as readiness query: '{query}'"
+            assert is_readiness_query(
+                query
+            ), f"Should detect as readiness query: '{query}'"
 
     def test_is_readiness_query_detects_prepared_keyword(self):
         """Test that 'prepared' queries are detected."""
@@ -721,7 +754,9 @@ class TestReadinessQueryDetection:
         ]
 
         for query in non_readiness_queries:
-            assert not is_readiness_query(query), f"Should NOT detect as readiness query: '{query}'"
+            assert not is_readiness_query(
+                query
+            ), f"Should NOT detect as readiness query: '{query}'"
 
 
 class TestReadinessAssessment:
@@ -943,6 +978,7 @@ class TestReadinessWebhookIntegration:
     def test_webhook_routes_readiness_query(self, mock_rag):
         """Verify readiness queries are routed correctly."""
         from fastapi.testclient import TestClient
+
         from src.agents.dialogflow_webhook import app
 
         client = TestClient(app)
@@ -964,6 +1000,7 @@ class TestReadinessWebhookIntegration:
     def test_webhook_readiness_takes_priority_over_trade(self, mock_rag):
         """Verify readiness query takes priority over trade query."""
         from fastapi.testclient import TestClient
+
         from src.agents.dialogflow_webhook import app
 
         client = TestClient(app)
@@ -984,6 +1021,7 @@ class TestReadinessWebhookIntegration:
     def test_test_readiness_endpoint(self, mock_rag):
         """Verify /test-readiness endpoint works."""
         from fastapi.testclient import TestClient
+
         from src.agents.dialogflow_webhook import app
 
         client = TestClient(app)
@@ -1028,13 +1066,18 @@ class TestDialogflowWebhookSmokeTests:
         response = create_dialogflow_response(long_message)
 
         # Verify full message is in response
-        assert len(response["fulfillmentResponse"]["messages"][0]["text"]["text"][0]) == 2000
+        assert (
+            len(response["fulfillmentResponse"]["messages"][0]["text"]["text"][0])
+            == 2000
+        )
 
     def test_no_hardcoded_broker_responses(self):
         """Verify webhook doesn't contain hardcoded broker references."""
         from pathlib import Path
 
-        webhook_path = Path(__file__).parent.parent / "src" / "agents" / "dialogflow_webhook.py"
+        webhook_path = (
+            Path(__file__).parent.parent / "src" / "agents" / "dialogflow_webhook.py"
+        )
         content = webhook_path.read_text()
 
         # These should NOT appear in hardcoded responses
@@ -1045,7 +1088,9 @@ class TestDialogflowWebhookSmokeTests:
         ]
 
         for pattern in forbidden_patterns:
-            assert pattern not in content, f"Found forbidden hardcoded pattern: {pattern}"
+            assert (
+                pattern not in content
+            ), f"Found forbidden hardcoded pattern: {pattern}"
 
 
 class TestTradeQueryWordBoundary:
@@ -1142,7 +1187,9 @@ class TestAnalyticalQueryDetection:
         ]
 
         for query in non_analytical_queries:
-            assert not is_analytical_query(query), f"Should NOT be analytical: '{query}'"
+            assert not is_analytical_query(
+                query
+            ), f"Should NOT be analytical: '{query}'"
 
     def test_analytical_query_case_insensitive(self):
         """Analytical detection should be case insensitive."""

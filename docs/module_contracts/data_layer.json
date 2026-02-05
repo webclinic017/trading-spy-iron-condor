@@ -16,11 +16,7 @@
     "trade_history": "list past trades"
   },
   "dependencies": [],
-  "dependents": [
-    "trading_execution",
-    "risk_management",
-    "agent_swarm"
-  ],
+  "dependents": ["trading_execution", "risk_management", "agent_swarm"],
   "change_category": "data_migration",
   "owner": "CTO",
   "last_updated": "2026-02-03T01:17:59.690166+00:00"

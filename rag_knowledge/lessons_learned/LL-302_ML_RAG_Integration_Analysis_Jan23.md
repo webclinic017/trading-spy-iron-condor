@@ -9,12 +9,14 @@
 ## Current State
 
 ### RAG System
+
 - **Lessons Learned**: 50+ lessons in `rag_knowledge/lessons_learned/`
 - **Strategy Docs**: Options research in `rag_knowledge/options_strategy/`
 - **Query Path**: Dialogflow → `query_rag_hybrid()` → Vertex AI or local fallback
 - **Cost Optimization**: Vertex AI queries limited to pre-trade and webhook only (Jan 23, 2026)
 
 ### ML Feedback Model
+
 - **Algorithm**: Thompson Sampling (Beta-Bernoulli conjugate prior)
 - **Current State**: α=11.0, β=1.0 → 91.7% posterior ✅ TARGET EXCEEDED
 - **Positive Patterns**: test(+0.90), ci(+0.30), entry(+0.10), pr(+0.10), refactor(+0.10), rag(+0.10)
@@ -22,6 +24,7 @@
 - **Total Feedback**: 191 (114 👍, 77 👎) → 59.69% satisfaction
 
 ### Trade Gate Integration (DONE Jan 24, 2026)
+
 - **CHECK 6** added to `mandatory_trade_gate.py`
 - `_query_feedback_model()` queries Thompson Sampling posterior
 - Negative feature patterns reduce trade confidence (0.7-1.0 range)
@@ -31,18 +34,24 @@
 ## Key Insights
 
 ### 1. Testing Correlates with Success
+
 The strongest positive pattern is `test` (+0.90), suggesting:
+
 - Running tests before claiming "done" leads to user satisfaction
 - CI validation catches issues before they reach users
 - **Action**: Continue prioritizing test verification
 
 ### 2. RAG Query Routing Matters
+
 LL-300 showed that raw user queries can match irrelevant lessons. Fix:
+
 - Context-aware query routing based on trade status
 - Query for "why no trades" on no-trade days vs. P/L on trade days
 
 ### 3. 7 DTE Exit is Critical
+
 LL-268 research shows:
+
 - Current 7 DTE exit (down from 21 DTE) increases win rate to 80%+
 - Code correctly implements this in `manage_iron_condor_positions.py`
 - 50% profit target + 7 DTE exit = key to achieving target win rate
@@ -50,6 +59,7 @@ LL-268 research shows:
 ## Completed Improvements
 
 ### ✅ Integrate feedback model into trade gate (Jan 24, 2026)
+
 - Added `_query_feedback_model()` to `mandatory_trade_gate.py`
 - CHECK 6 queries Thompson Sampling model before every trade
 - Negative patterns reduce confidence, low posterior triggers warning
@@ -62,6 +72,7 @@ LL-268 research shows:
    - Consider: auto-sync on PR merge to main
 
 ### Medium-term
+
 1. **Feature expansion for feedback model** ✅ IN PROGRESS
    - Added: `pr`(+0.10), `refactor`(+0.10), `rag`(+0.10) as of Jan 25, 2026
    - Remaining: `fix`, `trade`
@@ -72,14 +83,16 @@ LL-268 research shows:
    - Deprecate low-value lessons automatically
 
 ## Metrics to Track
-| Metric | Current | Target | Status |
-|--------|---------|--------|--------|
-| Satisfaction rate | 59.69% | 80%+ | In progress |
-| Thompson posterior | **0.917** | 0.90+ | ✅ TARGET EXCEEDED |
-| Iron condor win rate | 33% (old) | 80%+ | Paper testing |
-| Data staleness | ~5 hours | <4 hours | Auto-sync added |
-| Trade gate ML check | ✅ Added | Integrated | DONE |
-| Feature expansion | pr, refactor, rag | +5 features | 3/5 DONE |
+
+| Metric               | Current           | Target      | Status             |
+| -------------------- | ----------------- | ----------- | ------------------ |
+| Satisfaction rate    | 59.69%            | 80%+        | In progress        |
+| Thompson posterior   | **0.917**         | 0.90+       | ✅ TARGET EXCEEDED |
+| Iron condor win rate | 33% (old)         | 80%+        | Paper testing      |
+| Data staleness       | ~5 hours          | <4 hours    | Auto-sync added    |
+| Trade gate ML check  | ✅ Added          | Integrated  | DONE               |
+| Feature expansion    | pr, refactor, rag | +5 features | 3/5 DONE           |
 
 ## Tags
+
 ml, rag, integration, analysis, feedback, thompson-sampling

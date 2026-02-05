@@ -10,13 +10,13 @@ name: Ralph Proactive Scanner
 on:
   schedule:
     # Run daily at 3 AM UTC (low activity time)
-    - cron: '0 3 * * *'
+    - cron: "0 3 * * *"
   workflow_dispatch:
     inputs:
       scan_type:
-        description: 'Type of scan'
+        description: "Type of scan"
         required: false
-        default: 'full'
+        default: "full"
         type: choice
         options:
           - full
@@ -25,7 +25,7 @@ on:
           - code_quality
 
 env:
-  PYTHON_VERSION: '3.11'
+  PYTHON_VERSION: "3.11"
 
 jobs:
   # Job 1: Security scanning

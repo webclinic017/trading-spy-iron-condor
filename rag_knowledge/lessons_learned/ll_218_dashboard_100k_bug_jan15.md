@@ -14,10 +14,10 @@ Progress Dashboard showed paper account as **$100,000** when actual balance was 
 
 Key name mismatch between data sync and dashboard display:
 
-| Component | Key Used | Expected Key |
-|-----------|----------|--------------|
-| `sync_alpaca_state.py` | `paper_account.equity` | ✅ |
-| `generate_world_class_dashboard_enhanced.py` | `paper_account.current_equity` | ❌ Missing |
+| Component                                    | Key Used                       | Expected Key |
+| -------------------------------------------- | ------------------------------ | ------------ |
+| `sync_alpaca_state.py`                       | `paper_account.equity`         | ✅           |
+| `generate_world_class_dashboard_enhanced.py` | `paper_account.current_equity` | ❌ Missing   |
 
 When `current_equity` was missing, dashboard defaulted to `100000.0`.
 
@@ -30,6 +30,7 @@ paper_starting = paper_account.get("starting_balance", 100000.0)
 ## The Fix
 
 **sync_alpaca_state.py** - Added code to write BOTH keys for paper accounts:
+
 - `paper_account.equity` (original)
 - `paper_account.current_equity` (what dashboard expects)
 

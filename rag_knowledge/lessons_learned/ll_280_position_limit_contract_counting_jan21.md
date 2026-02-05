@@ -8,6 +8,7 @@
 ## What Happened
 
 The position limit check was counting UNIQUE SYMBOLS instead of TOTAL CONTRACTS:
+
 - Before: `position_count = len(spy_option_positions)` = 4 (unique symbols)
 - Reality: 17 total contracts across those 4 symbols
 - Max allowed: 4 contracts (1 iron condor)
@@ -17,6 +18,7 @@ This allowed 4x overexposure and massive position accumulation.
 ## Evidence
 
 From `system_state.json` positions:
+
 ```
 SPY260220P00565000: qty = -2  (should be -1)
 SPY260220P00570000: qty = +3  (should be +1)

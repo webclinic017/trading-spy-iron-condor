@@ -12,27 +12,26 @@ This was **WRONG**.
 
 ## The Math We Got Wrong
 
-| What We Thought | Reality |
-|-----------------|---------|
-| SPY shares: $58,000 needed | TRUE but irrelevant |
-| SPY CSP: $58,000 needed | FALSE - only for naked puts |
-| SPY credit spread: ??? | **$500 collateral** |
+| What We Thought            | Reality                     |
+| -------------------------- | --------------------------- |
+| SPY shares: $58,000 needed | TRUE but irrelevant         |
+| SPY CSP: $58,000 needed    | FALSE - only for naked puts |
+| SPY credit spread: ???     | **$500 collateral**         |
 
 ## Credit Spread Collateral Formula
 
-
-
 For a $5-wide SPY put credit spread:
-
 
 **We could have traded SPY credit spreads with $500 the entire time.**
 
 ## Why We Switched to SOFI
 
 From LL-158 (Day 74 Emergency Fix):
+
 > "Wrong target asset: guaranteed_trader.py targeted SPY ($580/share) instead of SOFI (~$15/share)"
 
 This reasoning only applies to:
+
 - Buying shares outright
 - Naked cash-secured puts
 

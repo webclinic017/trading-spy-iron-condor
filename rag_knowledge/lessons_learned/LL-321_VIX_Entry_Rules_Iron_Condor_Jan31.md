@@ -19,25 +19,25 @@ This is in the LOW-MEDIUM volatility zone. Not ideal for iron condors but tradea
 
 ### The Zones
 
-| VIX Level | Zone | Iron Condor Recommendation |
-|-----------|------|---------------------------|
-| < 15 | LOW | Avoid - premiums too thin |
-| 15-20 | LOW-MEDIUM | Tradeable with caution |
-| **20-25** | **OPTIMAL** | **Best entry zone** |
-| 25-30 | HIGH | Excellent premiums, higher risk |
-| > 30 | EXTREME | Wide spreads or avoid |
+| VIX Level | Zone        | Iron Condor Recommendation      |
+| --------- | ----------- | ------------------------------- |
+| < 15      | LOW         | Avoid - premiums too thin       |
+| 15-20     | LOW-MEDIUM  | Tradeable with caution          |
+| **20-25** | **OPTIMAL** | **Best entry zone**             |
+| 25-30     | HIGH        | Excellent premiums, higher risk |
+| > 30      | EXTREME     | Wide spreads or avoid           |
 
 ### Entry Decision Matrix
 
-| VIX | IV Rank | Action |
-|-----|---------|--------|
-| < 15 | Any | WAIT - don't enter |
-| 15-20 | < 30% | WAIT - premiums not rich |
-| 15-20 | 30-50% | CONSIDER - small position |
-| 15-20 | > 50% | ENTER - decent setup |
-| **20-25** | **> 30%** | **ENTER - optimal zone** |
-| 25-30 | > 30% | ENTER - excellent premiums |
-| > 30 | Any | CAUTION - may whipsaw |
+| VIX       | IV Rank   | Action                     |
+| --------- | --------- | -------------------------- |
+| < 15      | Any       | WAIT - don't enter         |
+| 15-20     | < 30%     | WAIT - premiums not rich   |
+| 15-20     | 30-50%    | CONSIDER - small position  |
+| 15-20     | > 50%     | ENTER - decent setup       |
+| **20-25** | **> 30%** | **ENTER - optimal zone**   |
+| 25-30     | > 30%     | ENTER - excellent premiums |
+| > 30      | Any       | CAUTION - may whipsaw      |
 
 ## IV Rank Guidelines
 
@@ -49,11 +49,11 @@ This is in the LOW-MEDIUM volatility zone. Not ideal for iron condors but tradea
 
 ## Delta Selection by VIX
 
-| VIX Level | Recommended Delta | Rationale |
-|-----------|-------------------|-----------|
-| 15-20 | 16-delta | Need wider wings for safety |
-| 20-25 | 20-delta | Can tighten for more premium |
-| > 25 | 20-25 delta | Collect more, expect volatility |
+| VIX Level | Recommended Delta | Rationale                       |
+| --------- | ----------------- | ------------------------------- |
+| 15-20     | 16-delta          | Need wider wings for safety     |
+| 20-25     | 20-delta          | Can tighten for more premium    |
+| > 25      | 20-25 delta       | Collect more, expect volatility |
 
 ## Practical Entry Checklist
 
@@ -65,11 +65,11 @@ This is in the LOW-MEDIUM volatility zone. Not ideal for iron condors but tradea
 
 ## Current Assessment (Jan 31, 2026)
 
-| Metric | Value | Status |
-|--------|-------|--------|
-| VIX | 17.24 | ⚠️ Low-medium (not ideal) |
-| IV Rank SPY | ~25-35% | ⚠️ Below optimal |
-| Recommendation | **Small position or WAIT** | |
+| Metric         | Value                      | Status                    |
+| -------------- | -------------------------- | ------------------------- |
+| VIX            | 17.24                      | ⚠️ Low-medium (not ideal) |
+| IV Rank SPY    | ~25-35%                    | ⚠️ Below optimal          |
+| Recommendation | **Small position or WAIT** |                           |
 
 **Monday trade plan**: Enter 1 iron condor (not 2) if VIX stays in 17-18 range. If VIX spikes to 20+, consider 2 positions.
 

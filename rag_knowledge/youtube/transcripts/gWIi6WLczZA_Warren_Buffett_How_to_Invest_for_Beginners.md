@@ -7,12 +7,15 @@
 **Ingested**: 2026-02-01T13:24:37.856793
 
 ## Key Concepts
+
 4 Ms, Moat, Margin of Safety, Options Strategy, Intrinsic Value, Value Investing
 
 ## Strategies
+
 Value Investing
 
 ## Sentiment
+
 Neutral
 
 ## Transcript

@@ -11,12 +11,14 @@ CEO asked: "Why aren't we making money in our $5K paper trading account even tho
 ## The Evidence
 
 **$100K Account (Jan 7):**
+
 - +$16,661.20 profit (+16.45% in ONE DAY)
 - Sold puts on SPY and AMD
 - Used iron condors (defined risk)
 - Concentrated SPY focus after consolidation
 
 **$5K Account (Jan 14):**
+
 - -$40.74 loss (-0.81%)
 - Traded SOFI (not SPY)
 - Used naked CSP (not spreads)
@@ -25,12 +27,12 @@ CEO asked: "Why aren't we making money in our $5K paper trading account even tho
 
 ## The Four Violations
 
-| Rule | $100K Account | $5K Account |
-|------|---------------|-------------|
-| Ticker | SPY/AMD | SOFI ❌ |
-| Strategy | Iron condors | Naked puts ❌ |
-| Size | Proportional | 96% ❌ |
-| Earnings | Avoided | Traded through ❌ |
+| Rule     | $100K Account | $5K Account       |
+| -------- | ------------- | ----------------- |
+| Ticker   | SPY/AMD       | SOFI ❌           |
+| Strategy | Iron condors  | Naked puts ❌     |
+| Size     | Proportional  | 96% ❌            |
+| Earnings | Avoided       | Traded through ❌ |
 
 ## Root Cause Analysis
 
@@ -43,6 +45,7 @@ CEO asked: "Why aren't we making money in our $5K paper trading account even tho
 ## The RAG Failure
 
 The biggest failure was NOT recording lessons from the $100K account:
+
 - Zero lessons recorded during profitable period
 - No trade data preserved
 - No win/loss analysis captured

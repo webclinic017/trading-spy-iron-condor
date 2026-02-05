@@ -48,11 +48,19 @@ def parse_lesson_file(filepath: Path) -> dict | None:
 
         # Extract severity
         severity = "LOW"
-        if "severity**: critical" in content.lower() or "severity: critical" in content.lower():
+        if (
+            "severity**: critical" in content.lower()
+            or "severity: critical" in content.lower()
+        ):
             severity = "CRITICAL"
-        elif "severity**: high" in content.lower() or "severity: high" in content.lower():
+        elif (
+            "severity**: high" in content.lower() or "severity: high" in content.lower()
+        ):
             severity = "HIGH"
-        elif "severity**: medium" in content.lower() or "severity: medium" in content.lower():
+        elif (
+            "severity**: medium" in content.lower()
+            or "severity: medium" in content.lower()
+        ):
             severity = "MEDIUM"
 
         # Extract category
@@ -120,7 +128,9 @@ def get_lesson_takeaway(lesson: dict) -> str:
 
     # Look for fix/solution/action sections
     fix_match = re.search(
-        r"(?:Fix|Solution|Action|Resolution|Takeaway)[:\s]*\n+([^\n#]+)", content, re.IGNORECASE
+        r"(?:Fix|Solution|Action|Resolution|Takeaway)[:\s]*\n+([^\n#]+)",
+        content,
+        re.IGNORECASE,
     )
     if fix_match:
         return fix_match.group(1).strip()[:150]
@@ -228,7 +238,9 @@ def generate_daily_summary_post(date_str: str, lessons: list[dict]) -> str:
     lessons_md = ""
 
     # Critical lessons first - these are the headlines
-    critical_lessons = [lesson for lesson in lessons if lesson["severity"] == "CRITICAL"]
+    critical_lessons = [
+        lesson for lesson in lessons if lesson["severity"] == "CRITICAL"
+    ]
     if critical_lessons:
         lessons_md += "\n## The Hard Lessons\n\n"
         lessons_md += "*These are the moments that test us. Critical issues that demanded immediate attention.*\n\n"
@@ -246,9 +258,7 @@ def generate_daily_summary_post(date_str: str, lessons: list[dict]) -> str:
     high_lessons = [lesson for lesson in lessons if lesson["severity"] == "HIGH"]
     if high_lessons:
         lessons_md += "\n## Important Discoveries\n\n"
-        lessons_md += (
-            "*Not emergencies, but insights that will shape how we trade going forward.*\n\n"
-        )
+        lessons_md += "*Not emergencies, but insights that will shape how we trade going forward.*\n\n"
         for lesson in high_lessons[:3]:  # Limit to top 3
             title = get_human_readable_title(lesson)
             insight = extract_key_insight(lesson)
@@ -257,7 +267,9 @@ def generate_daily_summary_post(date_str: str, lessons: list[dict]) -> str:
             lessons_md += f"{insight}\n\n"
 
     # Quick wins and improvements
-    other_lessons = [lesson for lesson in lessons if lesson["severity"] in ["MEDIUM", "LOW"]]
+    other_lessons = [
+        lesson for lesson in lessons if lesson["severity"] in ["MEDIUM", "LOW"]
+    ]
     if other_lessons:
         lessons_md += "\n## Quick Wins & Refinements\n\n"
         for lesson in other_lessons[:4]:  # Limit to top 4
@@ -469,7 +481,9 @@ def sync_lessons_to_blog(publish_devto: bool = True):
                 devto_published += 1
 
     print("\n" + "=" * 70)
-    print(f"SYNC COMPLETE: {created} created, {skipped} skipped, {devto_published} to Dev.to")
+    print(
+        f"SYNC COMPLETE: {created} created, {skipped} skipped, {devto_published} to Dev.to"
+    )
     print("=" * 70)
 
     return created, skipped

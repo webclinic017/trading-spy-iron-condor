@@ -11,11 +11,11 @@ This lesson documents the theta scaling strategy from December 2, 2025 when acco
 
 ## Equity-Gated Strategy Tiers
 
-| Tier | Capital Required | Strategies Enabled |
-|------|------------------|-------------------|
-| 1 | $6,000 | Poor Man's Covered Call (PMCC) |
-| 2 | $10,000 | Iron Condors |
-| 3 | $25,000+ | Full Suite |
+| Tier | Capital Required | Strategies Enabled             |
+| ---- | ---------------- | ------------------------------ |
+| 1    | $6,000           | Poor Man's Covered Call (PMCC) |
+| 2    | $10,000          | Iron Condors                   |
+| 3    | $25,000+         | Full Suite                     |
 
 ## Configuration at $6K
 
@@ -27,11 +27,13 @@ This lesson documents the theta scaling strategy from December 2, 2025 when acco
 ## Opportunities Identified
 
 ### SPY Poor Man's Covered Call
+
 - Contracts: 2
 - Estimated Premium: $70
 - IV Percentile: 63.9%
 
 ### QQQ Poor Man's Covered Call
+
 - Contracts: 2
 - Estimated Premium: $70
 - IV Percentile: 73.5%
@@ -48,6 +50,7 @@ This lesson documents the theta scaling strategy from December 2, 2025 when acco
 ## Why This Failed to Execute
 
 The December 2025 system had strategy identification but lacked:
+
 - Trade execution automation
 - Position management
 - Risk monitoring

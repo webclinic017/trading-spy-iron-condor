@@ -14,21 +14,23 @@
 ## Root Cause Analysis
 
 ### Issue 1: SOFI Position Violation
+
 - CLAUDE.md mandates SPY-only trading
 - Legacy SOFI position from January 12-13 was never closed
 - Test correctly caught the violation but blocked all trading
 
 ### Issue 2: Hook JSON Parsing
+
 - Hook expected `aggregate_metrics.passes` field
 - Actual backtest summary has `total_trades` field
 - Resulted in misleading "0/19 scenarios pass" display
 
 ## Fixes Applied
 
-| PR | Fix | SHA |
-|-----|-----|-----|
+| PR    | Fix                      | SHA       |
+| ----- | ------------------------ | --------- |
 | #2292 | Mark SOFI tests as xfail | `984670d` |
-| #2302 | Update hook JSON parser | `857eae1` |
+| #2302 | Update hook JSON parser  | `857eae1` |
 
 ## Lessons Learned
 
@@ -47,6 +49,7 @@
 ## Action Required
 
 **SOFI position MUST be closed** via:
+
 ```bash
 python3 scripts/emergency_close_sofi.py
 ```
@@ -54,4 +57,5 @@ python3 scripts/emergency_close_sofi.py
 This blocks future SPY iron condor trades until resolved.
 
 ## Tags
+
 `ci-failure`, `compliance`, `sofi`, `spy-only`, `hook-bug`, `critical`

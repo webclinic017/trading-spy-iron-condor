@@ -7,12 +7,15 @@
 **Ingested**: 2026-02-01T13:25:55.488027
 
 ## Key Concepts
+
 Value Investing
 
 ## Strategies
+
 None identified
 
 ## Sentiment
+
 Neutral
 
 ## Transcript

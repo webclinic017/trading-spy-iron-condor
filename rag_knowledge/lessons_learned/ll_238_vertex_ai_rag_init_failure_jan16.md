@@ -6,20 +6,24 @@
 **Category**: Operational Optimization
 
 ## Problem
+
 Vertex AI RAG was initialized but queries returned empty results, falling back to local keyword search.
 
 ## Root Cause
+
 1. IAM permissions were missing (FIXED by CEO)
 2. Lessons were not synced to Vertex AI corpus
 
 ## Fixes Applied
 
 ### Fix 1: Diagnostics Endpoint (PR #2045)
+
 - Added `/diagnostics` endpoint to expose init errors
 - Added `vertex_ai_init_error` to health check
 - Version 3.6.0 deployed
 
 ### Fix 2: Lesson Sync Script and Workflow (PR #2047)
+
 - Created `scripts/sync_lessons_to_vertex_rag.py`
 - Created `.github/workflows/sync-lessons-vertex-rag.yml`
 - Workflow runs on:
@@ -28,12 +32,14 @@ Vertex AI RAG was initialized but queries returned empty results, falling back t
   - Weekly schedule (Sundays 6 AM UTC)
 
 ## Current Status
+
 - Vertex AI RAG: ✅ Initialized
 - IAM Permissions: ✅ Fixed
 - Lesson Sync Workflow: ✅ Completed successfully
 - Semantic Search: ⏳ Indexing in progress (may take 5-30 minutes)
 
 ## Verification
+
 ```bash
 # Check health
 curl .../health
@@ -49,5 +55,5 @@ curl -X POST .../webhook -d "{...}"
 ```
 
 ## Tags
-vertex-ai, rag, optimization, semantic-search, lesson-sync
 
+vertex-ai, rag, optimization, semantic-search, lesson-sync

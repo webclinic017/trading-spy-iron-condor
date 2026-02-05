@@ -42,7 +42,9 @@ class LinkValidator:
             r"\{\{\s*\w+\.url\s*\|\s*relative_url\s*\}\}"  # {{ lesson.url | relative_url }}
         )
 
-        template_files = list(self.DOCS_DIR.glob("*.md")) + list(self.DOCS_DIR.glob("*.html"))
+        template_files = list(self.DOCS_DIR.glob("*.md")) + list(
+            self.DOCS_DIR.glob("*.html")
+        )
         template_files += list(self.DOCS_DIR.glob("_layouts/*.html"))
         template_files += list(self.DOCS_DIR.glob("_includes/*.html"))
 
@@ -62,7 +64,9 @@ class LinkValidator:
             actual_bad = []
             for bad in bad_matches:
                 # Check if this bad pattern is part of a good pattern
-                bad_in_good = any(bad.strip("{}").strip() in good for good in good_matches)
+                bad_in_good = any(
+                    bad.strip("{}").strip() in good for good in good_matches
+                )
                 if not bad_in_good:
                     actual_bad.append(bad)
 
@@ -87,7 +91,9 @@ class LinkValidator:
 
         if not self.SITE_DIR.exists():
             print(f"⚠️  _site directory not found at {self.SITE_DIR}")
-            print("   Run 'bundle exec jekyll build' first, or skip with --templates-only")
+            print(
+                "   Run 'bundle exec jekyll build' first, or skip with --templates-only"
+            )
             self.warnings.append("_site directory not found - skipping HTML validation")
             return True  # Not a failure, just can't validate
 
@@ -231,12 +237,16 @@ def main():
         "--check-live", action="store_true", help="Also test the live deployed site"
     )
     parser.add_argument(
-        "--templates-only", action="store_true", help="Only check Jekyll templates, skip built HTML"
+        "--templates-only",
+        action="store_true",
+        help="Only check Jekyll templates, skip built HTML",
     )
     args = parser.parse_args()
 
     validator = LinkValidator()
-    success = validator.run_all(check_live=args.check_live, templates_only=args.templates_only)
+    success = validator.run_all(
+        check_live=args.check_live, templates_only=args.templates_only
+    )
 
     sys.exit(0 if success else 1)
 

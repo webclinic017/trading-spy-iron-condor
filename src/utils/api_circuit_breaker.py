@@ -194,7 +194,9 @@ class APICircuitBreaker:
                     if state.get("trip_time"):
                         self.trip_time = datetime.fromisoformat(state["trip_time"])
                         # Check if still in cooldown
-                        cooldown_expires = self.trip_time + timedelta(seconds=COOLDOWN_SECONDS)
+                        cooldown_expires = self.trip_time + timedelta(
+                            seconds=COOLDOWN_SECONDS
+                        )
                         self._is_open = datetime.now() < cooldown_expires
             except Exception as e:
                 logger.warning(f"Failed to load circuit breaker state: {e}")
@@ -208,13 +210,19 @@ class APICircuitBreaker:
                     {
                         "consecutive_failures": self.consecutive_failures,
                         "trip_count": self.trip_count,
-                        "last_failure_time": self.last_failure_time.isoformat()
-                        if self.last_failure_time
-                        else None,
-                        "last_success_time": self.last_success_time.isoformat()
-                        if self.last_success_time
-                        else None,
-                        "trip_time": self.trip_time.isoformat() if self.trip_time else None,
+                        "last_failure_time": (
+                            self.last_failure_time.isoformat()
+                            if self.last_failure_time
+                            else None
+                        ),
+                        "last_success_time": (
+                            self.last_success_time.isoformat()
+                            if self.last_success_time
+                            else None
+                        ),
+                        "trip_time": (
+                            self.trip_time.isoformat() if self.trip_time else None
+                        ),
                         "is_open": self._is_open,
                     },
                     f,
@@ -228,12 +236,12 @@ class APICircuitBreaker:
         return CircuitBreakerState(
             is_open=self.is_open(),
             consecutive_failures=self.consecutive_failures,
-            last_failure_time=self.last_failure_time.isoformat()
-            if self.last_failure_time
-            else None,
-            last_success_time=self.last_success_time.isoformat()
-            if self.last_success_time
-            else None,
+            last_failure_time=(
+                self.last_failure_time.isoformat() if self.last_failure_time else None
+            ),
+            last_success_time=(
+                self.last_success_time.isoformat() if self.last_success_time else None
+            ),
             trip_time=self.trip_time.isoformat() if self.trip_time else None,
             trip_count=self.trip_count,
         )

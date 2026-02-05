@@ -8,11 +8,11 @@
 
 In a single conversation, the CTO (Claude) violated multiple core directives:
 
-| Directive | Violation | Impact |
-|-----------|-----------|--------|
-| Rule #1: Don't lose money | SOFI trade executed despite blackout | -$40.74 loss |
-| Rule #3: Never tell CEO to do manual work | Told CEO to "check code yourself", "review positions daily" | Broke trust |
-| Rule #4: Always show evidence | Made claims before verification | Reduced credibility |
+| Directive                                 | Violation                                                   | Impact              |
+| ----------------------------------------- | ----------------------------------------------------------- | ------------------- |
+| Rule #1: Don't lose money                 | SOFI trade executed despite blackout                        | -$40.74 loss        |
+| Rule #3: Never tell CEO to do manual work | Told CEO to "check code yourself", "review positions daily" | Broke trust         |
+| Rule #4: Always show evidence             | Made claims before verification                             | Reduced credibility |
 
 ## Root Cause Analysis
 
@@ -37,6 +37,7 @@ In a single conversation, the CTO (Claude) violated multiple core directives:
 ## Prevention
 
 Before EVERY response, CTO must verify:
+
 - [ ] Am I telling CEO to do work I can do myself?
 - [ ] Am I showing evidence for claims?
 - [ ] Am I following Rule #1 in any trade-related decisions?

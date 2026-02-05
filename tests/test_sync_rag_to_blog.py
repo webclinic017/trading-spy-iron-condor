@@ -10,13 +10,15 @@ def test_parse_lesson_file():
 
     # Create temp lesson file
     with tempfile.NamedTemporaryFile(mode="w", suffix="_jan13.md", delete=False) as f:
-        f.write("""# Test Lesson Title
+        f.write(
+            """# Test Lesson Title
 
 **Severity**: CRITICAL
 **Category**: testing
 
 This is the content.
-""")
+"""
+        )
         temp_path = Path(f.name)
 
     try:

@@ -23,7 +23,26 @@ class TestMonteCarloSimulation:
 
     def test_basic_simulation(self):
         """Test basic Monte Carlo simulation runs."""
-        pnls = [40, 40, 40, -80, 60, 40, 40, -120, 40, 40, 80, 40, -40, 60, 40, 40, 40, 40]
+        pnls = [
+            40,
+            40,
+            40,
+            -80,
+            60,
+            40,
+            40,
+            -120,
+            40,
+            40,
+            80,
+            40,
+            -40,
+            60,
+            40,
+            40,
+            40,
+            40,
+        ]
         results = run_monte_carlo(pnls, n_simulations=1000, random_seed=42)
 
         assert results.n_simulations == 1000
@@ -77,7 +96,9 @@ class TestMonteCarloSimulation:
     def test_custom_trades_per_sim(self):
         """Test Monte Carlo with custom trades per simulation."""
         pnls = [40, -20, 60, -40, 50]
-        results = run_monte_carlo(pnls, n_simulations=100, n_trades_per_sim=20, random_seed=42)
+        results = run_monte_carlo(
+            pnls, n_simulations=100, n_trades_per_sim=20, random_seed=42
+        )
 
         assert results.n_trades_per_sim == 20
 
@@ -121,8 +142,14 @@ class TestStressTest:
         results = stress_test_strategy(pnls, n_simulations=1000)
 
         # More stress should reduce mean returns
-        assert results["normal"]["mean_return"] >= results["moderate_stress"]["mean_return"]
-        assert results["moderate_stress"]["mean_return"] >= results["severe_stress"]["mean_return"]
+        assert (
+            results["normal"]["mean_return"]
+            >= results["moderate_stress"]["mean_return"]
+        )
+        assert (
+            results["moderate_stress"]["mean_return"]
+            >= results["severe_stress"]["mean_return"]
+        )
 
 
 class TestMonteCarloReport:

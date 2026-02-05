@@ -7,11 +7,13 @@
 ## Problem
 
 CI was failing on the `Lint & Format` job with error:
+
 ```
 scripts/ralph_discovery_blog.py:158:17: E741 Ambiguous variable name: `l`
 ```
 
 The variable `l` (lowercase L) is flagged by ruff as ambiguous because it looks similar to:
+
 - The number `1`
 - The pipe character `|`
 - The uppercase `I`

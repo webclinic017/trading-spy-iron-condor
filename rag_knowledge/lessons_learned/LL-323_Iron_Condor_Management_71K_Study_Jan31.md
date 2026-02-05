@@ -11,46 +11,47 @@ Analysis of 71,417 iron condor trades on SPY (2007-2017) reveals optimal managem
 
 ## Study Parameters
 
-| Parameter | Value |
-|-----------|-------|
-| Underlying | SPY |
-| Period | Jan 2007 - Mar 2017 |
-| Total trades | 71,417 |
-| Setup 1 | 16-delta short / 5-delta long (40,868 trades) |
-| Setup 2 | 30-delta short / 16-delta long (30,549 trades) |
+| Parameter    | Value                                          |
+| ------------ | ---------------------------------------------- |
+| Underlying   | SPY                                            |
+| Period       | Jan 2007 - Mar 2017                            |
+| Total trades | 71,417                                         |
+| Setup 1      | 16-delta short / 5-delta long (40,868 trades)  |
+| Setup 2      | 30-delta short / 16-delta long (30,549 trades) |
 
 ## Key Findings
 
 ### 1. Optimal Profit-Taking by Delta
 
-| Delta Setup | Optimal Profit Target | Rationale |
-|-------------|----------------------|-----------|
-| **16-delta (wide)** | **50-75%** | Higher win rate, more efficient capital use |
-| 30-delta (tight) | 25-50% | Faster profit capture needed |
+| Delta Setup         | Optimal Profit Target | Rationale                                   |
+| ------------------- | --------------------- | ------------------------------------------- |
+| **16-delta (wide)** | **50-75%**            | Higher win rate, more efficient capital use |
+| 30-delta (tight)    | 25-50%                | Faster profit capture needed                |
 
 ### 2. Win Rate by Profit Target
 
 | Profit Target | Win Rate | Avg Days Held |
-|--------------|----------|---------------|
-| 25% | ~92% | ~8 days |
-| 50% | ~85% | ~14 days |
-| 75% | ~75% | ~25 days |
-| Expiration | ~68% | ~45 days |
+| ------------- | -------- | ------------- |
+| 25%           | ~92%     | ~8 days       |
+| 50%           | ~85%     | ~14 days      |
+| 75%           | ~75%     | ~25 days      |
+| Expiration    | ~68%     | ~45 days      |
 
 **Key insight**: Closing at 50% captures most profit in ~40% of the time.
 
 ### 3. Commission-Adjusted Performance
 
 When accounting for $1/contract commissions:
+
 - **16-delta condors**: 50-75% profit targets optimal
 - **30-delta condors**: 25-50% profit targets optimal
 
 ### 4. VIX Impact on Returns
 
-| VIX Level | 30-Delta Performance |
-|-----------|---------------------|
-| Low (< 15) | Below average |
-| Medium (15-20) | Average |
+| VIX Level       | 30-Delta Performance            |
+| --------------- | ------------------------------- |
+| Low (< 15)      | Below average                   |
+| Medium (15-20)  | Average                         |
 | **High (> 20)** | **Significantly above average** |
 
 **Trading 30-delta iron condors during high VIX environments substantially outperformed** other volatility regimes.
@@ -58,27 +59,28 @@ When accounting for $1/contract commissions:
 ## Practical Application for Our Strategy
 
 ### Our Setup
+
 - **Delta**: 15-20 (between study's 16 and 30)
 - **Wings**: $5 wide
 - **DTE**: 30-45 days
 
 ### Recommended Management (Based on Study)
 
-| Condition | Action |
-|-----------|--------|
-| Hit 50% profit | **CLOSE** |
-| 7 DTE reached | **CLOSE** (regardless of P/L) |
-| 200% loss | **CLOSE** (stop-loss) |
-| Tested side at 25+ delta | Consider adjustment |
+| Condition                | Action                        |
+| ------------------------ | ----------------------------- |
+| Hit 50% profit           | **CLOSE**                     |
+| 7 DTE reached            | **CLOSE** (regardless of P/L) |
+| 200% loss                | **CLOSE** (stop-loss)         |
+| Tested side at 25+ delta | Consider adjustment           |
 
 ### Expected Performance (Based on Study)
 
-| Metric | 16-Delta Condors | Our 15-20 Delta |
-|--------|-----------------|-----------------|
-| Win rate (50% target) | ~85% | ~86% expected |
-| Avg profit (per $5 wide) | ~$75-100 | ~$75-100 |
-| Avg loss (per trade) | ~$200-250 | ~$200-250 |
-| Profit factor | ~1.5 | ~1.5 expected |
+| Metric                   | 16-Delta Condors | Our 15-20 Delta |
+| ------------------------ | ---------------- | --------------- |
+| Win rate (50% target)    | ~85%             | ~86% expected   |
+| Avg profit (per $5 wide) | ~$75-100         | ~$75-100        |
+| Avg loss (per trade)     | ~$200-250        | ~$200-250       |
+| Profit factor            | ~1.5             | ~1.5 expected   |
 
 ## Risk-Reward Math
 
@@ -87,10 +89,12 @@ When accounting for $1/contract commissions:
 Traditional iron condor risk:reward ≈ 3:1 (risk $300 to make $100)
 
 If letting trades expire:
+
 - Need 75%+ win rate just to break even
 - One loss = 3-4 winners needed to recover
 
 With 50% profit target:
+
 - Risk:reward improves to ~1.5:1
 - Faster capital turnover
 - More forgiving of occasional losses
@@ -98,6 +102,7 @@ With 50% profit target:
 ## The 50% / 50% Rule
 
 Study supports using:
+
 - **50% profit target** (take profits)
 - **50% stop-loss** (or 200% of credit)
 
@@ -105,10 +110,10 @@ This transforms the asymmetric risk into a more balanced trade.
 
 ## Capital Efficiency
 
-| Strategy | Trades/Month | Capital Turns/Year |
-|----------|-------------|-------------------|
-| Hold to expiration | 1 | 12 |
-| **50% profit target** | **2-3** | **24-36** |
+| Strategy              | Trades/Month | Capital Turns/Year |
+| --------------------- | ------------ | ------------------ |
+| Hold to expiration    | 1            | 12                 |
+| **50% profit target** | **2-3**      | **24-36**          |
 
 More frequent trades = more opportunities to compound.
 

@@ -16,11 +16,7 @@
     "order_id": "str Alpaca order ID",
     "trade_result": "dict with P/L and status"
   },
-  "dependencies": [
-    "risk_management",
-    "agent_swarm",
-    "data_layer"
-  ],
+  "dependencies": ["risk_management", "agent_swarm", "data_layer"],
   "dependents": [],
   "change_category": "trading_logic",
   "owner": "CEO",

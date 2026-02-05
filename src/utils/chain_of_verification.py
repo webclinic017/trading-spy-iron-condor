@@ -144,7 +144,9 @@ class ChainOfVerification:
         )
 
         if not verification["verified"]:
-            verification["WARNING"] = "CLAIM NOT VERIFIED - Need evidence before stating"
+            verification["WARNING"] = (
+                "CLAIM NOT VERIFIED - Need evidence before stating"
+            )
 
         self.verification_log.append(
             {
@@ -167,7 +169,9 @@ class ChainOfVerification:
                 evidence["type"] = "file"
                 # Don't read entire file, just confirm existence
                 evidence["exists"] = True
-                evidence["modified"] = datetime.fromtimestamp(filepath.stat().st_mtime).isoformat()
+                evidence["modified"] = datetime.fromtimestamp(
+                    filepath.stat().st_mtime
+                ).isoformat()
 
         elif source.startswith("cmd:"):
             cmd = source[4:].strip()
@@ -188,7 +192,9 @@ class ChainOfVerification:
                 return evidence
             try:
                 # Use shell=True ONLY for pre-validated whitelisted commands
-                result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)  # noqa: S602
+                result = subprocess.run(
+                    cmd, shell=True, capture_output=True, text=True, timeout=10
+                )  # noqa: S602
                 evidence["found"] = result.returncode == 0
                 evidence["type"] = "command"
                 evidence["output"] = result.stdout[:500] if result.stdout else None
@@ -212,7 +218,9 @@ class ChainOfVerification:
             "git_status": "git status --short",
             "ci_status": 'curl -s https://api.github.com/repos/IgorGanapolsky/trading/commits/main/check-runs | python3 -c "import json,sys; d=json.load(sys.stdin); print(f\'CI: {sum(1 for r in d.get(\\"check_runs\\",[]) if r.get(\\"conclusion\\")==\\"success\\")}/{d.get(\\"total_count\\",0)} passed\')"',
         }
-        return verifications.get(claim_type, f"# No verification defined for: {claim_type}")
+        return verifications.get(
+            claim_type, f"# No verification defined for: {claim_type}"
+        )
 
     def get_verification_protocol(self) -> str:
         """Return the full verification protocol as a string."""

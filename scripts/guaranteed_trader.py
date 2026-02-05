@@ -28,12 +28,15 @@ from typing import Optional
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from dotenv import load_dotenv
+
 from src.utils.error_monitoring import init_sentry
 
 load_dotenv()
 init_sentry()
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
@@ -271,7 +274,9 @@ def run():
             "message": "Phil Town Rule #1: Don't lose money. Not adding to losing positions.",
         }
     elif total_unrealized_pnl < 0:
-        logger.info(f"Minor unrealized loss (${total_unrealized_pnl:.2f}) - proceeding with trade")
+        logger.info(
+            f"Minor unrealized loss (${total_unrealized_pnl:.2f}) - proceeding with trade"
+        )
 
     # SIMPLE STRATEGY: Buy $100 of SPY (most liquid ETF)
     # $100/day * 5 days = $500 = 1 credit spread collateral
@@ -287,7 +292,11 @@ def run():
         daily_investment = min(50.0, account["cash"] * 0.9)
         if daily_investment < 10:
             logger.error("Not enough cash to trade")
-            return {"success": False, "reason": "insufficient_cash", "cash": account["cash"]}
+            return {
+                "success": False,
+                "reason": "insufficient_cash",
+                "cash": account["cash"],
+            }
 
     # Get current price for logging
     price = get_stock_price(symbol)
@@ -335,7 +344,8 @@ def run():
         "success": len(trades_executed) > 0,
         "trades": trades_executed,
         "equity": account["equity"],
-        "cash_remaining": account["cash"] - sum(t.get("notional", 0) for t in trades_executed),
+        "cash_remaining": account["cash"]
+        - sum(t.get("notional", 0) for t in trades_executed),
     }
 
 
@@ -378,7 +388,11 @@ def set_stop_losses(client):
                     order = client.submit_order(order_request)
                     logger.info(f"  ✅ Stop-loss order placed: {order.id}")
                     stops_set.append(
-                        {"symbol": p.symbol, "stop_price": stop_price, "order_id": str(order.id)}
+                        {
+                            "symbol": p.symbol,
+                            "stop_price": stop_price,
+                            "order_id": str(order.id),
+                        }
                     )
                 except Exception as e:
                     logger.warning(f"  ⚠️ Could not set stop: {e}")

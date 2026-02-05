@@ -24,11 +24,7 @@
       "last_modified": "2025-12-03",
       "source_file": "src/strategies/core_strategy.py",
       "dependencies": [],
-      "tags": [
-        "momentum",
-        "etf",
-        "daily"
-      ]
+      "tags": ["momentum", "etf", "daily"]
     },
     "rule_one_options": {
       "name": "rule_one_options",
@@ -53,11 +49,7 @@
       "last_modified": "2025-12-03",
       "source_file": "src/strategies/rule_one_options.py",
       "dependencies": [],
-      "tags": [
-        "options",
-        "value",
-        "rule1"
-      ]
+      "tags": ["options", "value", "rule1"]
     },
     "reit_smart_income": {
       "name": "reit_smart_income",
@@ -85,17 +77,8 @@
       "created_date": "2025-12-12",
       "last_modified": "2025-12-12",
       "source_file": "src/strategies/reit_strategy.py",
-      "dependencies": [
-        "FredCollector",
-        "market_data_provider"
-      ],
-      "tags": [
-        "reit",
-        "income",
-        "dividend",
-        "regime-rotation",
-        "real-estate"
-      ]
+      "dependencies": ["FredCollector", "market_data_provider"],
+      "tags": ["reit", "income", "dividend", "regime-rotation", "real-estate"]
     },
     "legacy_momentum": {
       "name": "legacy_momentum",
@@ -120,11 +103,7 @@
       "last_modified": "2026-01-06",
       "source_file": "src/strategies/legacy_momentum.py",
       "dependencies": [],
-      "tags": [
-        "legacy",
-        "momentum",
-        "deprecated"
-      ]
+      "tags": ["legacy", "momentum", "deprecated"]
     },
     "options_theta": {
       "name": "options_theta",
@@ -149,11 +128,7 @@
       "last_modified": "2026-01-06",
       "source_file": "src/strategies/options_strategy.py",
       "dependencies": [],
-      "tags": [
-        "options",
-        "theta",
-        "income"
-      ]
+      "tags": ["options", "theta", "income"]
     },
     "growth_portfolio": {
       "name": "growth_portfolio",
@@ -178,11 +153,7 @@
       "last_modified": "2026-01-06",
       "source_file": "src/strategies/growth_strategy.py",
       "dependencies": [],
-      "tags": [
-        "growth",
-        "equity",
-        "long-term"
-      ]
+      "tags": ["growth", "equity", "long-term"]
     },
     "treasury_ladder": {
       "name": "treasury_ladder",
@@ -207,11 +178,7 @@
       "last_modified": "2026-01-06",
       "source_file": "src/strategies/treasury_ladder_strategy.py",
       "dependencies": [],
-      "tags": [
-        "fixed-income",
-        "treasury",
-        "stable"
-      ]
+      "tags": ["fixed-income", "treasury", "stable"]
     },
     "reit_strategy": {
       "name": "reit_strategy",
@@ -236,11 +203,7 @@
       "last_modified": "2026-01-09",
       "source_file": "src/strategies/reit_strategy.py",
       "dependencies": [],
-      "tags": [
-        "reit",
-        "sector",
-        "income"
-      ]
+      "tags": ["reit", "sector", "income"]
     },
     "precious_metals": {
       "name": "precious_metals",
@@ -265,11 +228,7 @@
       "last_modified": "2026-01-09",
       "source_file": "src/strategies/precious_metals_strategy.py",
       "dependencies": [],
-      "tags": [
-        "metals",
-        "gold",
-        "hedge"
-      ]
+      "tags": ["metals", "gold", "hedge"]
     }
   }
 }

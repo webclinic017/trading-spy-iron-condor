@@ -56,7 +56,9 @@ def main():
 
     print(f"\nFetching orders since {start_date.date()}...")
 
-    request = GetOrdersRequest(status=QueryOrderStatus.CLOSED, after=start_date, limit=500)
+    request = GetOrdersRequest(
+        status=QueryOrderStatus.CLOSED, after=start_date, limit=500
+    )
 
     orders = client.get_orders(filter=request)
     filled_orders = [o for o in orders if str(o.status) == "filled"]
@@ -101,7 +103,9 @@ def main():
     print("TRADES BY SYMBOL")
     print("=" * 70)
 
-    for symbol, trades in sorted(trades_by_symbol.items(), key=lambda x: len(x[1]), reverse=True):
+    for symbol, trades in sorted(
+        trades_by_symbol.items(), key=lambda x: len(x[1]), reverse=True
+    ):
         total_notional = sum(t["notional"] for t in trades)
         buys = len([t for t in trades if "buy" in t["side"].lower()])
         sells = len([t for t in trades if "sell" in t["side"].lower()])
@@ -109,7 +113,9 @@ def main():
         print(f"  Total trades: {len(trades)} (buys: {buys}, sells: {sells})")
         print(f"  Total notional: ${total_notional:,.2f}")
         for t in trades[-5:]:  # Show last 5 trades
-            print(f"    {t['side']:4} {t['qty']:.2f} @ ${t['price']:.2f} on {t['filled_at'][:10]}")
+            print(
+                f"    {t['side']:4} {t['qty']:.2f} @ ${t['price']:.2f} on {t['filled_at'][:10]}"
+            )
 
     print("\n" + "=" * 70)
     print("OPTIONS TRADES SUMMARY")
@@ -192,7 +198,9 @@ Analysis of {len(filled_orders)} filled orders from the $100K paper trading acco
         sell_premium = sum(t["notional"] for t in sells)
         buy_premium = sum(t["notional"] for t in buys)
         net = sell_premium - buy_premium
-        lesson_content += f"- **{underlying}**: Net premium ${net:,.2f} from {len(trades)} trades\n"
+        lesson_content += (
+            f"- **{underlying}**: Net premium ${net:,.2f} from {len(trades)} trades\n"
+        )
 
     lesson_content += f"""
 ### Stock/ETF Trading
@@ -209,7 +217,9 @@ Analysis of {len(filled_orders)} filled orders from the $100K paper trading acco
 - [ ] Compare $5K results to $100K baseline
 """
 
-    lesson_file = Path("rag_knowledge/lessons_learned/ll_203_100k_account_analysis_jan14.md")
+    lesson_file = Path(
+        "rag_knowledge/lessons_learned/ll_203_100k_account_analysis_jan14.md"
+    )
     lesson_file.parent.mkdir(parents=True, exist_ok=True)
     lesson_file.write_text(lesson_content)
     print(f"✅ Lesson saved to {lesson_file}")

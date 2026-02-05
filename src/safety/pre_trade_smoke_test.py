@@ -123,7 +123,9 @@ def run_smoke_tests() -> SmokeTestResult:
         positions = client.get_all_positions()
         result.positions_readable = True
         result.positions_count = len(positions)
-        logger.info(f"✅ SMOKE TEST: Positions readable ({result.positions_count} positions)")
+        logger.info(
+            f"✅ SMOKE TEST: Positions readable ({result.positions_count} positions)"
+        )
     except Exception as e:
         result.errors.append(f"CRITICAL: Cannot read positions: {e}")
         logger.error(f"SMOKE TEST FAILED: Cannot read positions: {e}")
@@ -146,7 +148,9 @@ def run_smoke_tests() -> SmokeTestResult:
         )
     else:
         # Zero buying power AND low/zero equity = broken account (CRITICAL)
-        result.errors.append(f"CRITICAL: Buying power is ${result.buying_power} (must be > 0)")
+        result.errors.append(
+            f"CRITICAL: Buying power is ${result.buying_power} (must be > 0)"
+        )
         logger.error(f"SMOKE TEST FAILED: Buying power is ${result.buying_power}")
         # Don't return - continue to check equity
 

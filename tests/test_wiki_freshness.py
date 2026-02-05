@@ -33,7 +33,9 @@ class TestWikiFreshness:
                 timeout=30,
             )
             if result.returncode == 0 and result.stdout.strip():
-                return datetime.fromisoformat(result.stdout.strip().replace("Z", "+00:00"))
+                return datetime.fromisoformat(
+                    result.stdout.strip().replace("Z", "+00:00")
+                )
         except Exception:
             pass
         return None
@@ -72,9 +74,9 @@ class TestWikiFreshness:
             timeout=60,
         )
         # Should succeed or fail gracefully (no API keys in test)
-        assert result.returncode == 0 or "API" in result.stderr, (
-            f"Wiki generator failed: {result.stderr}"
-        )
+        assert (
+            result.returncode == 0 or "API" in result.stderr
+        ), f"Wiki generator failed: {result.stderr}"
 
     @pytest.mark.skipif(
         True,  # Skip in CI - wiki freshness checked by workflow

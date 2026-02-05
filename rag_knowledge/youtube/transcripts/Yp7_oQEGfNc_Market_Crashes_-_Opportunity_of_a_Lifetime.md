@@ -7,12 +7,15 @@
 **Ingested**: 2026-02-01T13:26:48.566334
 
 ## Key Concepts
+
 Margin of Safety, Rule #1
 
 ## Strategies
+
 None identified
 
 ## Sentiment
+
 Neutral
 
 ## Transcript

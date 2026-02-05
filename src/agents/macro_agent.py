@@ -38,7 +38,9 @@ class MacroeconomicAgent:
         try:
             self.rag_store = SentimentRAGStore()
         except ImportError as e:
-            logger.warning(f"RAG store unavailable (sentence-transformers not installed): {e}")
+            logger.warning(
+                f"RAG store unavailable (sentence-transformers not installed): {e}"
+            )
             self.rag_store = None
         except Exception as e:
             logger.warning(f"RAG store initialization failed: {e}")
@@ -153,7 +155,9 @@ Based on the briefings, provide your analysis strictly in the following JSON for
 {{"state": "<DOVISH|HAWKISH|NEUTRAL>", "reason": "<Brief, evidence-based rationale>", "confidence": <0.0 to 1.0>}}
 """
         try:
-            llm_result = self.llm_agent.analyze_news("MACRO_CONTEXT", {"prompt": prompt})
+            llm_result = self.llm_agent.analyze_news(
+                "MACRO_CONTEXT", {"prompt": prompt}
+            )
             # The result from analyze_news is a dict with 'score', 'reason', etc.
             # We need to adapt this to our DOVISH/HAWKISH state.
             score = llm_result.get("score", 0.0)

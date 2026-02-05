@@ -12,7 +12,9 @@ Concrete action items for Q1 2026 tax planning. This is the "do this now" versio
 ## Immediate Actions (This Week)
 
 ### 1. Alpaca Inquiry Response
+
 Email Braxton at AlpacaDB with:
+
 ```
 Subject: XSP Options Support & Tax Optimization
 
@@ -37,12 +39,14 @@ Igor
 ```
 
 ### 2. Tax Tracking Setup
+
 - [ ] Create spreadsheet for 2026 trade tracking
 - [ ] Columns: Date, Underlying, Open/Close, Credit/Debit, P/L, Wash Sale Flag
 - [ ] Track cost basis per position
 - [ ] Note: System already tracks in `data/system_state.json -> trade_history`
 
 ### 3. Quarterly Estimated Tax Reserve
+
 - Current Q1 profits: $0 (fresh start Jan 22)
 - Reserve 30% of profits monthly
 - Q1 payment due: April 15, 2026
@@ -51,23 +55,23 @@ Igor
 
 Based on LL-297 analysis:
 
-| Account Size | Projected Annual Gains | Recommendation |
-|--------------|----------------------|----------------|
-| $30K (current) | ~$5K | **SPY** (liquidity > tax savings) |
-| $50K | ~$8K | SPY (still below breakeven) |
-| $75K+ | ~$16K+ | **Switch to XSP** |
+| Account Size   | Projected Annual Gains | Recommendation                    |
+| -------------- | ---------------------- | --------------------------------- |
+| $30K (current) | ~$5K                   | **SPY** (liquidity > tax savings) |
+| $50K           | ~$8K                   | SPY (still below breakeven)       |
+| $75K+          | ~$16K+                 | **Switch to XSP**                 |
 
 **Current Recommendation**: Stay with SPY until account exceeds $75K.
 
 ## Q1 2026 Milestones
 
-| Date | Action | Status |
-|------|--------|--------|
-| Jan 23 | Create tax tracking sheet | [ ] |
-| Jan 31 | Review first week paper trades | [ ] |
-| Feb 15 | Mid-Q1 profit review | [ ] |
-| Mar 15 | Q1 pre-close review | [ ] |
-| Apr 15 | Q1 estimated tax payment | [ ] |
+| Date   | Action                         | Status |
+| ------ | ------------------------------ | ------ |
+| Jan 23 | Create tax tracking sheet      | [ ]    |
+| Jan 31 | Review first week paper trades | [ ]    |
+| Feb 15 | Mid-Q1 profit review           | [ ]    |
+| Mar 15 | Q1 pre-close review            | [ ]    |
+| Apr 15 | Q1 estimated tax payment       | [ ]    |
 
 ## Monthly Tax Reserve Calculation
 
@@ -86,20 +90,21 @@ def calculate_reserve(monthly_pnl: float, tax_rate: float = 0.30) -> float:
 ## Tax-Loss Harvesting Opportunities
 
 If any position shows a loss:
+
 1. **Before Dec 31**: Close and realize loss
 2. **Wash sale avoidance**: Either wait 31 days OR switch to XSP
 3. **Note**: Losses offset gains dollar-for-dollar
 
 ## Key Tax Numbers for 2026
 
-| Item | Amount |
-|------|--------|
-| Starting capital | $30,000 |
-| Target annual return | 8% monthly compounded |
-| Projected Year 1 gains | ~$5,400 |
-| Tax at 32% (SPY) | $1,728 |
-| Tax at 22% (XSP) | $1,188 |
-| Savings if XSP | $540 |
+| Item                   | Amount                |
+| ---------------------- | --------------------- |
+| Starting capital       | $30,000               |
+| Target annual return   | 8% monthly compounded |
+| Projected Year 1 gains | ~$5,400               |
+| Tax at 32% (SPY)       | $1,728                |
+| Tax at 22% (XSP)       | $1,188                |
+| Savings if XSP         | $540                  |
 
 **Verdict**: $540 savings < $1,600 extra slippage = **Stay with SPY for Year 1**
 

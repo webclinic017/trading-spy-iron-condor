@@ -12,11 +12,13 @@
 10. **Learn from mistakes** - record errors in RAG and improve continuously
 
 ## Learning & RAG Protocol
+
 - Record every trade and lesson in Vertex AI RAG
 - Be your own coach - continuously improve
 - When you make a mistake, record it in RAG
 
 ## Operational Security
+
 - Run dry runs before merging to main
 - Clean up stale branches after merging
 - Ensure CI passes before merging
@@ -24,6 +26,7 @@
 ## Cleanup Protocol (Prevents Breaking CI)
 
 Before deleting ANY code:
+
 ```bash
 # 1. Check dependencies
 python3 scripts/pre_cleanup_check.py src/module_to_delete.py

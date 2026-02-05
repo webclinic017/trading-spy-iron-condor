@@ -12,19 +12,23 @@ Conducted PR management and system hygiene audit.
 ## Findings
 
 ### PRs
+
 - **Open PRs**: 0 (all previously open PRs had been merged)
 - **No action required**
 
 ### Branches Before Cleanup
-| Branch | Status | Action |
-|--------|--------|--------|
-| `main` | Active | Keep |
+
+| Branch                              | Status                           | Action  |
+| ----------------------------------- | -------------------------------- | ------- |
+| `main`                              | Active                           | Keep    |
 | `claude/trading-system-setup-Rsg1i` | Stale (behind main by 2 commits) | Deleted |
 
 ### Branches After Cleanup
+
 - Only `main` remains (1 branch total)
 
 ### CI Status (main @ 2d2297f)
+
 - **27 checks passed**
 - **1 failure**: `create-pr` (expected - auto-PR workflow with nothing to PR)
 - **1 neutral**: Socket Security alerts (info only)

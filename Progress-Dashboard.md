@@ -8,10 +8,10 @@
 
 ## 💰 Account Summary (All-Time)
 
-| Account | Equity | Starting | Total P/L | Total % |
-|---------|--------|----------|-----------|---------|
-| **🔴 LIVE (Brokerage)** | $4,989.81 | $0.00 | $-10.19 | -0.20% |
-| **📝 PAPER (R&D)** | $4,989.81 | $5,000.00 | $-10.19 | -0.20% |
+| Account                 | Equity    | Starting  | Total P/L | Total % |
+| ----------------------- | --------- | --------- | --------- | ------- |
+| **🔴 LIVE (Brokerage)** | $4,989.81 | $0.00     | $-10.19   | -0.20%  |
+| **📝 PAPER (R&D)**      | $4,989.81 | $5,000.00 | $-10.19   | -0.20%  |
 
 > ⚠️ **LIVE account** = Real money. **PAPER account** = R&D simulation for testing strategies.
 
@@ -23,24 +23,24 @@
 
 ### 🔴 LIVE Account (Real Money)
 
-| Metric | Value |
-|--------|-------|
-| **Equity** | $4,989.81 |
-| **Total P/L** | $-10.19 (-0.20%) |
-| **Today's P/L** | $+0.00 (+0.00%) |
-| **Status** | ✅ Active |
+| Metric          | Value            |
+| --------------- | ---------------- |
+| **Equity**      | $4,989.81        |
+| **Total P/L**   | $-10.19 (-0.20%) |
+| **Today's P/L** | $+0.00 (+0.00%)  |
+| **Status**      | ✅ Active        |
 
-> *Live account is building capital through $25/day deposits. Target: $200 before first options trade.*
+> _Live account is building capital through $25/day deposits. Target: $200 before first options trade._
 
 ### 📝 PAPER Account (R&D)
 
-| Metric | Value |
-|--------|-------|
-| **Equity** | $4,989.81 |
-| **Total P/L** | $-10.19 (-0.20%) |
-| **Today's P/L** | $+0.00 (+0.00%) |
-| **Win Rate** | 0% |
-| **Trades Today** | 0 |
+| Metric           | Value            |
+| ---------------- | ---------------- |
+| **Equity**       | $4,989.81        |
+| **Total P/L**    | $-10.19 (-0.20%) |
+| **Today's P/L**  | $+0.00 (+0.00%)  |
+| **Win Rate**     | 0%               |
+| **Trades Today** | 0                |
 
 **Funnel Activity**: 0 orders, 0 stops
 
@@ -48,11 +48,11 @@
 
 ## 📈 Recent Trades (Last 14 Days)
 
-| Date | Symbol | Action | Qty/Amount | Price | Status | Account |
-|------|--------|--------|------------|-------|--------|---------|
-| 2026-01-06 | **SPY** | BUY | 0.730000 | $684.93 | ✅ FILLED | 📝 Paper |
-| 2026-01-06 | **SPY** | BUY | 0.730000 | $684.93 | ✅ FILLED | 📝 Paper |
-| 2026-01-06 | **SPY** | BUY | 0.730000 | Market | ✅ FILLED | 📝 Paper |
+| Date       | Symbol  | Action | Qty/Amount | Price   | Status    | Account  |
+| ---------- | ------- | ------ | ---------- | ------- | --------- | -------- |
+| 2026-01-06 | **SPY** | BUY    | 0.730000   | $684.93 | ✅ FILLED | 📝 Paper |
+| 2026-01-06 | **SPY** | BUY    | 0.730000   | $684.93 | ✅ FILLED | 📝 Paper |
+| 2026-01-06 | **SPY** | BUY    | 0.730000   | Market  | ✅ FILLED | 📝 Paper |
 
 > **📝 Paper** = R&D simulation (fake money) | **🔴 LIVE** = Real brokerage (real money)
 >
@@ -64,11 +64,11 @@
 
 **Target**: **$100/day after-tax profit** - NON-NEGOTIABLE
 
-| Metric | Current | Target | Progress |
-|--------|---------|--------|----------|
-| **Average Daily Profit** | $-1.27/day | $100.00/day | -1.27% |
-| **Total P/L** | $-10.19 (-0.20%) | TBD | ⚠️ |
-| **Win Rate** | 0.0% | >55% | ⚠️ |
+| Metric                   | Current          | Target      | Progress |
+| ------------------------ | ---------------- | ----------- | -------- |
+| **Average Daily Profit** | $-1.27/day       | $100.00/day | -1.27%   |
+| **Total P/L**            | $-10.19 (-0.20%) | TBD         | ⚠️       |
+| **Win Rate**             | 0.0%             | >55%        | ⚠️       |
 
 **Progress Bar**: `░░░░░░░░░░░░░░░░░░░░` (-1.27%)
 
@@ -80,8 +80,7 @@
 
 ## 💡 $100/Day Progress & Capital Scaling Plan
 
-
-*Profit target analysis not available. Run `python scripts/generate_profit_target_report.py` to generate detailed capital scaling recommendations.*
+_Profit target analysis not available. Run `python scripts/generate_profit_target_report.py` to generate detailed capital scaling recommendations._
 
 ---
 
@@ -89,27 +88,27 @@
 
 ### Core Risk Metrics
 
-| Metric | Value | Target | Status |
-|--------|-------|--------|--------|
-| **Max Drawdown** | 0.00% | <10% | ✅ |
-| **Current Drawdown** | 0.00% | <5% | ✅ |
-| **Ulcer Index** | 0.00 | <5.0 | ✅ |
-| **Sharpe Ratio** | 0.42 | >1.0 | ⚠️ |
-| **Sortino Ratio** | 0.00 | >1.5 | ⚠️ |
-| **Calmar Ratio** | 0.00 | >1.0 | ⚠️ |
-| **Volatility (Annualized)** | 45222.94% | <20% | ⚠️ |
-| **VaR (95%)** | 4700.48% | <3% | ⚠️ |
-| **VaR (99%)** | 6637.65% | <5% | ⚠️ |
-| **CVaR (95%)** | 0.00% | <5% | ✅ |
-| **Kelly Fraction** | 0.00% | 5-10% | ⚠️ |
-| **Margin Usage** | 0.00% | <50% | ✅ |
-| **Leverage** | 1.00x | <2.0x | ✅ |
+| Metric                      | Value     | Target | Status |
+| --------------------------- | --------- | ------ | ------ |
+| **Max Drawdown**            | 0.00%     | <10%   | ✅     |
+| **Current Drawdown**        | 0.00%     | <5%    | ✅     |
+| **Ulcer Index**             | 0.00      | <5.0   | ✅     |
+| **Sharpe Ratio**            | 0.42      | >1.0   | ⚠️     |
+| **Sortino Ratio**           | 0.00      | >1.5   | ⚠️     |
+| **Calmar Ratio**            | 0.00      | >1.0   | ⚠️     |
+| **Volatility (Annualized)** | 45222.94% | <20%   | ⚠️     |
+| **VaR (95%)**               | 4700.48%  | <3%    | ⚠️     |
+| **VaR (99%)**               | 6637.65%  | <5%    | ⚠️     |
+| **CVaR (95%)**              | 0.00%     | <5%    | ✅     |
+| **Kelly Fraction**          | 0.00%     | 5-10%  | ⚠️     |
+| **Margin Usage**            | 0.00%     | <50%   | ✅     |
+| **Leverage**                | 1.00x     | <2.0x  | ✅     |
 
 ### Risk Exposure by Symbol
 
-| Symbol | Exposure % | P/L | Trades | Win Rate |
-|--------|------------|-----|--------|----------|
-| *No symbol data available* | - | - | - | - |
+| Symbol                     | Exposure % | P/L | Trades | Win Rate |
+| -------------------------- | ---------- | --- | ------ | -------- |
+| _No symbol data available_ | -          | -   | -      | -        |
 
 ---
 
@@ -117,15 +116,15 @@
 
 ### By Strategy/Tier
 
-| Strategy | P/L | Trades | Avg P/L per Trade |
-|----------|-----|--------|------------------|
-| *No strategy data available* | - | - | - |
+| Strategy                     | P/L | Trades | Avg P/L per Trade |
+| ---------------------------- | --- | ------ | ----------------- |
+| _No strategy data available_ | -   | -      | -                 |
 
 ### By Time of Day
 
-| Time Period | P/L | Trades | Avg P/L per Trade |
-|-------------|-----|--------|------------------|
-| *No time-of-day data available* | - | - | - |
+| Time Period                     | P/L | Trades | Avg P/L per Trade |
+| ------------------------------- | --- | ------ | ----------------- |
+| _No time-of-day data available_ | -   | -      | -                 |
 
 **Best Trading Time**: N/A
 **Worst Trading Time**: N/A
@@ -136,35 +135,33 @@
 
 ### Equity Curve Visualization
 
-*Charts will be generated when matplotlib is available in the environment. Data available: 8 data points.*
-
+_Charts will be generated when matplotlib is available in the environment. Data available: 8 data points._
 
 ---
 
 ## ⚡ Execution Metrics
 
-| Metric | Value | Target | Status |
-|--------|-------|--------|--------|
-| **Avg Slippage** | 0.000% | <0.5% | ✅ |
-| **Fill Quality** | 0.0/100 | >90 | ⚠️ |
-| **Order Success Rate** | 0.0% | >95% | ⚠️ |
-| **Order Reject Rate** | 0.0% | <5% | ✅ |
-| **Avg Fill Time** | 0 ms | <200ms | ✅ |
-| **Broker Latency** | 0 ms | <100ms | ✅ |
+| Metric                 | Value   | Target | Status |
+| ---------------------- | ------- | ------ | ------ |
+| **Avg Slippage**       | 0.000%  | <0.5%  | ✅     |
+| **Fill Quality**       | 0.0/100 | >90    | ⚠️     |
+| **Order Success Rate** | 0.0%    | >95%   | ⚠️     |
+| **Order Reject Rate**  | 0.0%    | <5%    | ✅     |
+| **Avg Fill Time**      | 0 ms    | <200ms | ✅     |
+| **Broker Latency**     | 0 ms    | <100ms | ✅     |
 
 ---
 
 ## 📊 Data Completeness & Quality
 
-| Metric | Value | Target | Status |
-|--------|-------|--------|--------|
-| **Performance Log Completeness** | 8.0% | >95% | ⚠️ |
-| **Missing Dates** | 0 | 0 | ✅ |
-| **Data Freshness** | 999 days old | <1 day | ⚠️ |
-| **Missing Candle %** | 0.00% | <1% | ✅ |
-| **Data Sources** | Alpaca | Multiple | ⚠️ |
-| **Model Version** | 2.0 | Latest | ✅ |
-
+| Metric                           | Value        | Target   | Status |
+| -------------------------------- | ------------ | -------- | ------ |
+| **Performance Log Completeness** | 8.0%         | >95%     | ⚠️     |
+| **Missing Dates**                | 0            | 0        | ✅     |
+| **Data Freshness**               | 999 days old | <1 day   | ⚠️     |
+| **Missing Candle %**             | 0.00%        | <1%      | ✅     |
+| **Data Sources**                 | Alpaca       | Multiple | ⚠️     |
+| **Model Version**                | 2.0          | Latest   | ✅     |
 
 ---
 
@@ -172,27 +169,27 @@
 
 ### Monte Carlo Forecast (30-Day)
 
-| Metric | Value |
-|--------|-------|
-| **Expected P/L (30d)** | $+0.00 |
-| **Forecast Mean** | $0.00 |
-| **Forecast Std Dev** | $0.00 |
-| **5th Percentile** | $0.00 |
-| **95th Percentile** | $0.00 |
-| **Risk of Ruin** | 0.00% | ✅ |
-| **Forecasted Drawdown** | 0.00% |
-| **Strategy Decay Detected** | ✅ NO |
+| Metric                      | Value  |
+| --------------------------- | ------ | --- |
+| **Expected P/L (30d)**      | $+0.00 |
+| **Forecast Mean**           | $0.00  |
+| **Forecast Std Dev**        | $0.00  |
+| **5th Percentile**          | $0.00  |
+| **95th Percentile**         | $0.00  |
+| **Risk of Ruin**            | 0.00%  | ✅  |
+| **Forecasted Drawdown**     | 0.00%  |
+| **Strategy Decay Detected** | ✅ NO  |
 
 ---
 
 ## 📊 Benchmark Comparison (vs S&P 500)
 
-| Metric | Portfolio | Benchmark | Difference | Status |
-|--------|-----------|-----------|------------|--------|
-| **Total Return** | -0.20% | +0.00% | -0.20% | ⚠️ Underperforming |
-| **Alpha** | -0.20% | - | - | ⚠️ Negative Alpha |
-| **Beta** | 1.00 | 1.0 | +0.00 | Lower Risk |
-| **Data Available** | ⚠️ Limited | - | - | - |
+| Metric             | Portfolio  | Benchmark | Difference | Status             |
+| ------------------ | ---------- | --------- | ---------- | ------------------ |
+| **Total Return**   | -0.20%     | +0.00%    | -0.20%     | ⚠️ Underperforming |
+| **Alpha**          | -0.20%     | -         | -          | ⚠️ Negative Alpha  |
+| **Beta**           | 1.00       | 1.0       | +0.00      | Lower Risk         |
+| **Data Available** | ⚠️ Limited | -         | -          | -                  |
 
 ---
 
@@ -206,49 +203,45 @@ Dashboard generated without AI insights (dependencies not available).
 
 **📊 DATA ONLY** (50/100)
 
-
 ### Trade Analysis
 
 No trade analysis available.
-
 
 ### Anomalies Detected
 
 ✅ No anomalies detected.
 
-
 ### Recommendations
 
 Run full dashboard generation for AI insights.
-
 
 ---
 
 ## 📈 Market Regime Classification
 
-| Metric | Value |
-|--------|-------|
-| **Current Regime** | UNKNOWN |
-| **Regime Type** | UNKNOWN |
-| **Confidence** | 0.0/1.0 |
-| **Trend Strength** | 0.00 |
-| **Volatility Regime** | NORMAL |
-| **Avg Daily Return** | +0.00% |
-| **Volatility** | 0.00% |
+| Metric                | Value   |
+| --------------------- | ------- |
+| **Current Regime**    | UNKNOWN |
+| **Regime Type**       | UNKNOWN |
+| **Confidence**        | 0.0/1.0 |
+| **Trend Strength**    | 0.00    |
+| **Volatility Regime** | NORMAL  |
+| **Avg Daily Return**  | +0.00%  |
+| **Volatility**        | 0.00%   |
 
 ---
 
 ## 💰 Financial Performance Summary
 
-| Metric | Value |
-|--------|-------|
-| **Starting Balance** | $0.00 |
-| **Current Equity** | $4,989.81 |
-| **Total P/L** | $-10.19 (-0.20%) |
-| **Average Daily Profit** | $-1.27 |
-| **Total Trades** | 0 |
-| **Win Rate** | 0.0% |
-| **Trades Today** | 0 |
+| Metric                   | Value            |
+| ------------------------ | ---------------- |
+| **Starting Balance**     | $0.00            |
+| **Current Equity**       | $4,989.81        |
+| **Total P/L**            | $-10.19 (-0.20%) |
+| **Average Daily Profit** | $-1.27           |
+| **Total Trades**         | 0                |
+| **Win Rate**             | 0.0%             |
+| **Trades Today**         | 0                |
 
 ---
 
@@ -264,17 +257,18 @@ Run full dashboard generation for AI insights.
 
 ## 🚨 Risk Guardrails & Safety
 
-| Guardrail | Current | Limit | Status |
-|-----------|---------|-------|--------|
-| **Max Drawdown** | 0.00% | <10% | ✅ |
-| **Sharpe Ratio** | 0.42 | >1.0 | ⚠️ |
-| **Volatility** | 45222.94% | <20% | ⚠️ |
+| Guardrail        | Current   | Limit | Status |
+| ---------------- | --------- | ----- | ------ |
+| **Max Drawdown** | 0.00%     | <10%  | ✅     |
+| **Sharpe Ratio** | 0.42      | >1.0  | ⚠️     |
+| **Volatility**   | 45222.94% | <20%  | ⚠️     |
 
 ---
 
 ## 📝 Notes
 
 **Dashboard Features**:
+
 - ✅ Comprehensive risk metrics (Sharpe, Sortino, VaR, Conditional VaR, Kelly fraction)
 - ✅ Performance attribution by symbol, strategy, and time-of-day
 - ✅ Visualizations (equity curve, drawdown, P/L charts)
@@ -285,8 +279,8 @@ Run full dashboard generation for AI insights.
 - ✅ Benchmark comparison vs S&P 500
 - ✅ Market regime classification
 
-
 **Current Strategy**:
+
 - **MODE**: 📈 STANDARD (Weekday)
 - **Strategy**: Momentum (MACD + RSI + Volume)
 - **Allocation**: 70% Core ETFs (SPY/QQQ/VOO), 30% Growth (NVDA/GOOGL/AMZN)
@@ -302,12 +296,13 @@ Run full dashboard generation for AI insights.
 
 ## 🤖 AI & ML System Status
 
-
 ### RL Training Status
+
 | **Status** | ⚠️ No training data available |
 | **Vertex AI Console** | [View Jobs →](https://console.cloud.google.com/vertex-ai/training/custom-jobs?project=email-outreach-ai-460404) |
 
 ### LangSmith Monitoring
+
 | **Status** | ⚠️ LangSmith monitor unavailable |
 | **Project Dashboard** | [trading-rl-training →](https://smith.langchain.com/o/default/projects/p/04fa554e-f155-4039-bb7f-e866f082103b) |
 
@@ -321,34 +316,36 @@ Run full dashboard generation for AI insights.
 
 ✅ Compliant
 
-| Metric | Value | Status |
-|--------|-------|--------|
-| **Day Trades (Last 5 Days)** | 0 | ✅ |
-| **PDT Threshold** | 4+ day trades in 5 days | ✅ SAFE |
-| **Minimum Equity Required** | $25,000 | ✅ |
-| **Current Equity** | ${current_equity:,.2f} | ✅ |
+| Metric                       | Value                   | Status  |
+| ---------------------------- | ----------------------- | ------- |
+| **Day Trades (Last 5 Days)** | 0                       | ✅      |
+| **PDT Threshold**            | 4+ day trades in 5 days | ✅ SAFE |
+| **Minimum Equity Required**  | $25,000                 | ✅      |
+| **Current Equity**           | ${current_equity:,.2f}  | ✅      |
 
 **PDT Rule Explanation**: If you make 4+ day trades (same-day entry/exit) in 5 business days, you must maintain $25,000 minimum equity. Violations can result in account restrictions.
 
 ### Tax Impact Analysis
 
-| Metric | Value |
-|--------|-------|
-| **Total Closed Trades** | 0 |
-| **Day Trades** | 0 |
-| **Short-Term Trades** | 0 |
-| **Long-Term Trades** | 0 |
-| **Wash Sales** | 0 |
-| **Gross Return** | $+0.00 |
+| Metric                      | Value  |
+| --------------------------- | ------ |
+| **Total Closed Trades**     | 0      |
+| **Day Trades**              | 0      |
+| **Short-Term Trades**       | 0      |
+| **Long-Term Trades**        | 0      |
+| **Wash Sales**              | 0      |
+| **Gross Return**            | $+0.00 |
 | **Estimated Tax Liability** | $+0.00 |
-| **After-Tax Return** | $+0.00 |
-| **Tax Efficiency** | 100.0% |
+| **After-Tax Return**        | $+0.00 |
+| **Tax Efficiency**          | 100.0% |
 
 **Tax Rates**:
+
 - **Short-Term Capital Gains** (< 1 year): 37% (taxed as ordinary income)
 - **Long-Term Capital Gains** (≥ 1 year): 20% (preferred rate)
 
 **Key Tax Strategies**:
+
 1. **Hold positions >1 year** for long-term capital gains rate (20% vs 37%)
 2. **Avoid wash sales**: Don't repurchase same security within 30 days of selling at a loss
 3. **Tax-loss harvesting**: Realize losses to offset gains before year-end
@@ -358,8 +355,8 @@ Run full dashboard generation for AI insights.
 
 ✅ **No immediate tax optimization recommendations**
 
-
 **Important Notes**:
+
 - **Paper Trading**: Tax calculations are estimates. Actual tax liability depends on your tax bracket and state.
 - **Wash Sale Rule**: Losses cannot be deducted if you repurchase the same security within 30 days before or after the sale.
 - **Capital Loss Deduction**: Maximum $3,000 capital loss deduction per year (excess carries forward).
@@ -370,43 +367,38 @@ Run full dashboard generation for AI insights.
 
 ---
 
-
-
 ### Verification Status
 
-
-| Metric | Status |
-|--------|--------|
+| Metric                  | Status              |
+| ----------------------- | ------------------- |
 | **Verification Status** | ✅ All Passed (0/0) |
 
 ### Verification Details
 
 Run verification tests to see detailed results.
 
-
 **How Verification Works**:
+
 1. ✅ Checks `system_state.json` exists and is valid
-3. ✅ Connects to Alpaca API to get actual positions (GROUND TRUTH)
-4. ✅ Compares Alpaca positions with our state tracking
-5. ✅ Detects mismatches (trades executed but not tracked)
+2. ✅ Connects to Alpaca API to get actual positions (GROUND TRUTH)
+3. ✅ Compares Alpaca positions with our state tracking
+4. ✅ Detects mismatches (trades executed but not tracked)
 
 **Critical Test**: If positions exist in Alpaca but state shows 0 trades, this indicates a state tracking bug (like the one we fixed).
 
-
-
 ---
-
 
 ## 🌐 External Dashboards & Monitoring
 
 ### LangSmith Observability
+
 - **[LangSmith Dashboard](https://smith.langchain.com)** - Main dashboard
 - **[Trading RL Training Project](https://smith.langchain.com/o/default/projects/p/04fa554e-f155-4039-bb7f-e866f082103b)** - RL training runs and traces
-  *Project ID: `04fa554e-f155-4039-bb7f-e866f082103b`*
+  _Project ID: `04fa554e-f155-4039-bb7f-e866f082103b`_
 - **[All Projects](https://smith.langchain.com/o/default/projects)** - View all LangSmith projects
 
-
 ### Vertex AI Cloud RL
+
 - **[Vertex AI Console](https://console.cloud.google.com/vertex-ai?project=email-outreach-ai-460404)** - Main Vertex AI dashboard
 - **[Training Jobs](https://console.cloud.google.com/vertex-ai/training/custom-jobs?project=email-outreach-ai-460404)** - View RL training jobs
 - **[Models](https://console.cloud.google.com/vertex-ai/models?project=email-outreach-ai-460404)** - Trained models
@@ -416,5 +408,5 @@ Run verification tests to see detailed results.
 
 ---
 
-*This dashboard is automatically updated daily by GitHub Actions after trading execution.*
-*World-class metrics powered by comprehensive risk & performance analytics.*
+_This dashboard is automatically updated daily by GitHub Actions after trading execution._
+_World-class metrics powered by comprehensive risk & performance analytics._

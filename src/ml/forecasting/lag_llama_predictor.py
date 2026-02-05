@@ -96,7 +96,9 @@ class LagLlamaPredictor:
 
             # Download model checkpoint
             checkpoint_path = hf_hub_download(
-                repo_id=MODEL_NAME, filename="lag-llama.ckpt", local_dir="models/lag_llama"
+                repo_id=MODEL_NAME,
+                filename="lag-llama.ckpt",
+                local_dir="models/lag_llama",
             )
 
             # Load the model
@@ -126,7 +128,10 @@ class LagLlamaPredictor:
             self._initialized = True
 
     def predict_range(
-        self, prices: list[float], ticker: str = "SPY", horizon_days: int = DEFAULT_HORIZON
+        self,
+        prices: list[float],
+        ticker: str = "SPY",
+        horizon_days: int = DEFAULT_HORIZON,
     ) -> RangeForecast:
         """
         Predict price range for the given horizon.
@@ -306,6 +311,7 @@ def get_spy_range_forecast(horizon_days: int = 30) -> dict:
         from alpaca.data import StockHistoricalDataClient
         from alpaca.data.requests import StockBarsRequest
         from alpaca.data.timeframe import TimeFrame
+
         from src.utils.alpaca_client import get_alpaca_credentials
 
         creds = get_alpaca_credentials()

@@ -14,11 +14,13 @@ When an iron condor is tested (price moves toward one of the short strikes), we 
 ### Primary Adjustment: Roll the Untested Side Closer
 
 **When to adjust:**
+
 - One short strike reaches 25-30 delta (getting tested)
 - Price breaks through expected move range
 - Position delta exceeds ±15
 
 **How to adjust:**
+
 1. Leave the tested side alone (don't chase)
 2. Roll the untested side closer to current price
 3. Collect additional credit to lower cost basis
@@ -26,20 +28,20 @@ When an iron condor is tested (price moves toward one of the short strikes), we 
 
 ### Adjustment Decision Matrix
 
-| Scenario | Action | Rationale |
-|----------|--------|-----------|
-| Call side tested (price up) | Roll put spread up | Collect more credit, widen breakeven |
+| Scenario                     | Action                | Rationale                            |
+| ---------------------------- | --------------------- | ------------------------------------ |
+| Call side tested (price up)  | Roll put spread up    | Collect more credit, widen breakeven |
 | Put side tested (price down) | Roll call spread down | Collect more credit, widen breakeven |
-| Both sides threatened | Close position | Too much risk, take the loss |
-| 7 DTE reached | Close regardless | Gamma risk too high |
+| Both sides threatened        | Close position        | Too much risk, take the loss         |
+| 7 DTE reached                | Close regardless      | Gamma risk too high                  |
 
 ### Delta Management Rules
 
-| Untested Side Delta | Action |
-|---------------------|--------|
-| > 15 delta | Hold, no adjustment needed |
-| 10-15 delta | Consider rolling closer |
-| < 10 delta | Must roll - losing hedge value |
+| Untested Side Delta | Action                         |
+| ------------------- | ------------------------------ |
+| > 15 delta          | Hold, no adjustment needed     |
+| 10-15 delta         | Consider rolling closer        |
+| < 10 delta          | Must roll - losing hedge value |
 
 **Key insight**: Low delta positions don't offset tested side movement effectively.
 
@@ -48,10 +50,12 @@ When an iron condor is tested (price moves toward one of the short strikes), we 
 **Example: SPY at $590, Call side tested (price rallied to $605)**
 
 Original Position:
+
 - Short 575 put / Long 570 put (untested)
 - Short 610 call / Long 615 call (tested)
 
 Adjustment:
+
 1. Close 575/570 put spread for small debit (~$0.10)
 2. Open new 595/590 put spread for larger credit (~$1.00)
 3. Net credit: ~$0.90
@@ -67,22 +71,24 @@ Adjustment:
 
 ### Adjustment Timing
 
-| Time to Expiration | Adjustment Approach |
-|-------------------|---------------------|
-| 30-45 DTE | Aggressive - roll untested side closer |
-| 21-30 DTE | Moderate - small adjustments only |
-| 7-21 DTE | Defensive - consider closing |
-| < 7 DTE | Exit - no adjustments, close position |
+| Time to Expiration | Adjustment Approach                    |
+| ------------------ | -------------------------------------- |
+| 30-45 DTE          | Aggressive - roll untested side closer |
+| 21-30 DTE          | Moderate - small adjustments only      |
+| 7-21 DTE           | Defensive - consider closing           |
+| < 7 DTE            | Exit - no adjustments, close position  |
 
 ### Cost-Benefit Analysis
 
 **Benefits of rolling untested side:**
+
 - Collect additional credit (reduces cost basis)
 - Widen breakeven points
 - Re-center position delta to neutral
 - Maintain profit potential
 
 **Risks:**
+
 - Market could reverse and test the moved side
 - Transaction costs (4 more legs to close/open)
 - May lock in smaller profit zone
@@ -90,6 +96,7 @@ Adjustment:
 ### Alternative: Convert to Iron Butterfly
 
 If highly confident in direction, convert to iron butterfly:
+
 - Roll untested side so both short strikes match
 - Significantly higher credit
 - Much narrower profit zone
@@ -120,11 +127,11 @@ IC_ADJUSTMENT_THRESHOLDS = {
 
 ## Current Strategy Alignment
 
-| Parameter | Research Says | Our Setting | Status |
-|-----------|---------------|-------------|--------|
-| Adjustment strategy | Roll untested | Roll untested | ✅ Aligned |
-| Adjustment DTE cutoff | 7-10 DTE | 7 DTE | ✅ Aligned |
-| Delta trigger | 25-30 delta | Not automated | ⚠️ Manual |
+| Parameter             | Research Says | Our Setting   | Status     |
+| --------------------- | ------------- | ------------- | ---------- |
+| Adjustment strategy   | Roll untested | Roll untested | ✅ Aligned |
+| Adjustment DTE cutoff | 7-10 DTE      | 7 DTE         | ✅ Aligned |
+| Delta trigger         | 25-30 delta   | Not automated | ⚠️ Manual  |
 
 ## Action Items
 

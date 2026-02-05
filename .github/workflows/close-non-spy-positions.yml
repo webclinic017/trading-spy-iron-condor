@@ -13,7 +13,7 @@ on:
   # schedule:
   #   # 9:35 AM ET = 14:35 UTC (5 minutes after market open)
   #   - cron: '35 14 * * 1-5'  # Mon-Fri
-  workflow_dispatch:  # Manual trigger only now
+  workflow_dispatch: # Manual trigger only now
 
 permissions:
   contents: write
@@ -36,7 +36,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: pip install alpaca-py

@@ -10,11 +10,11 @@ During Ralph Mode iteration, CTO discovered current positions violate CLAUDE.md 
 
 ## The Violation
 
-| Rule | CLAUDE.md Requirement | Actual |
-|------|----------------------|--------|
-| Spread Width | $3-wide | **$5-wide** |
-| Max Risk | $248 (5% of $4,977) | **$500 per spread** |
-| Position Limit | 1 spread at a time | **3 spreads open** |
+| Rule           | CLAUDE.md Requirement | Actual              |
+| -------------- | --------------------- | ------------------- |
+| Spread Width   | $3-wide               | **$5-wide**         |
+| Max Risk       | $248 (5% of $4,977)   | **$500 per spread** |
+| Position Limit | 1 spread at a time    | **3 spreads open**  |
 
 ## Current Positions (All $5-wide)
 
@@ -42,6 +42,7 @@ This contradicts the 5% max position size rule designed to protect capital.
 ## Action Required
 
 For FUTURE trades:
+
 1. Use $3-wide spreads maximum
 2. Max risk = $248 per trade (5% of current equity)
 3. Only 1 spread at a time until account grows

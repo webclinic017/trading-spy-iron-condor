@@ -347,8 +347,18 @@ class TestGetTradeHistory:
                 json.dumps(
                     {
                         "trade_history": [
-                            {"symbol": "SPY", "side": "buy", "qty": "10", "price": "450.0"},
-                            {"symbol": "AAPL", "side": "sell", "qty": "5", "price": "180.0"},
+                            {
+                                "symbol": "SPY",
+                                "side": "buy",
+                                "qty": "10",
+                                "price": "450.0",
+                            },
+                            {
+                                "symbol": "AAPL",
+                                "side": "sell",
+                                "qty": "5",
+                                "price": "180.0",
+                            },
                         ],
                         "trades_loaded": 2,
                     }

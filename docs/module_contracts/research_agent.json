@@ -16,12 +16,8 @@
     "csv_path": "Path to exported CSV",
     "rag_lessons": "list Path to RAG lesson files"
   },
-  "dependencies": [
-    "data_layer"
-  ],
-  "dependents": [
-    "agent_swarm"
-  ],
+  "dependencies": ["data_layer"],
+  "dependents": ["agent_swarm"],
   "change_category": "agent_behavior",
   "owner": "CTO",
   "last_updated": "2026-02-03T01:17:59.690167+00:00"

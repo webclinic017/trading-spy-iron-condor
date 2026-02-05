@@ -5,9 +5,10 @@ Tests for compare_100k_vs_5k.py
 Verifies the $100K vs $5K strategy comparison logic.
 """
 
-import pytest
 from pathlib import Path
 from unittest.mock import patch
+
+import pytest
 
 # Skip if dependencies not available
 try:
@@ -28,8 +29,16 @@ class TestCompare100kVs5k:
     def test_analyze_100k_patterns_with_options(self):
         """Test pattern analysis with options trades."""
         trades = [
-            {"symbol": "SPY260220P00660000", "action": "SELL", "strategy": "premium_selling"},
-            {"symbol": "AMD260116P00200000", "action": "SELL", "strategy": "premium_selling"},
+            {
+                "symbol": "SPY260220P00660000",
+                "action": "SELL",
+                "strategy": "premium_selling",
+            },
+            {
+                "symbol": "AMD260116P00200000",
+                "action": "SELL",
+                "strategy": "premium_selling",
+            },
             {"symbol": "SPY", "action": "BUY", "strategy": "accumulation"},
         ]
 

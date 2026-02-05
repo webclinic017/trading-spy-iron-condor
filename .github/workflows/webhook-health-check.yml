@@ -14,37 +14,37 @@ jobs:
   health-check:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name != 'workflow_run' }}
-    
+
     steps:
       - name: Check Webhook Health
         id: health
         run: |
           echo "🔍 Checking webhook health..."
-          
+
           HEALTH_URL="https://trading-dialogflow-webhook-cqlewkvzdq-uc.a.run.app/health"
           RESPONSE=$(curl -s "$HEALTH_URL")
-          
+
           echo "Response: $RESPONSE"
-          
+
           # Parse response
           STATUS=$(echo "$RESPONSE" | jq -r '.status')
           TRADES_LOADED=$(echo "$RESPONSE" | jq -r '.trades_loaded')
           VERTEX_RAG=$(echo "$RESPONSE" | jq -r '.vertex_ai_rag_enabled')
-          
+
           echo "status=$STATUS" >> $GITHUB_OUTPUT
           echo "trades_loaded=$TRADES_LOADED" >> $GITHUB_OUTPUT
           echo "vertex_rag=$VERTEX_RAG" >> $GITHUB_OUTPUT
-          
+
           # Validation
           FAILED=false
-          
+
           if [ "$STATUS" != "healthy" ]; then
             echo "❌ FAIL: Status is '$STATUS', expected 'healthy'"
             FAILED=true
           else
             echo "✅ Status: healthy"
           fi
-          
+
           if [ "$TRADES_LOADED" = "0" ] || [ "$TRADES_LOADED" = "null" ]; then
             echo "❌ FAIL: trades_loaded is $TRADES_LOADED - DATA SOURCE MISMATCH!"
             echo "This indicates the webhook cannot find trade data."
@@ -53,20 +53,20 @@ jobs:
           else
             echo "✅ Trades loaded: $TRADES_LOADED"
           fi
-          
+
           if [ "$VERTEX_RAG" != "true" ]; then
             echo "⚠️ WARNING: Vertex AI RAG is not enabled (expected for full functionality)"
           else
             echo "✅ Vertex AI RAG: enabled"
           fi
-          
+
           if [ "$FAILED" = "true" ]; then
             echo ""
             echo "🚨 WEBHOOK HEALTH CHECK FAILED"
             echo "See LL-230 for debugging data source issues"
             exit 1
           fi
-          
+
           echo ""
           echo "✅ All health checks passed"
 
@@ -74,17 +74,17 @@ jobs:
         if: success()
         run: |
           echo "🔍 Testing trade query endpoint..."
-          
+
           TEST_URL="https://trading-dialogflow-webhook-cqlewkvzdq-uc.a.run.app/test-trades"
           RESPONSE=$(curl -s "$TEST_URL")
-          
+
           RESULTS_COUNT=$(echo "$RESPONSE" | jq -r '.results_count')
-          
+
           if [ "$RESULTS_COUNT" = "0" ] || [ "$RESULTS_COUNT" = "null" ]; then
             echo "❌ FAIL: Trade query returned 0 results"
             exit 1
           fi
-          
+
           echo "✅ Trade query returned $RESULTS_COUNT trades"
 
       - name: Summary

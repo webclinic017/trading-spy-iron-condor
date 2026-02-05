@@ -6,7 +6,7 @@ name: Trading Health Monitor
 on:
   schedule:
     # Run at 11:00 AM ET (after trading should have executed at 9:35 AM)
-    - cron: '0 16 * * 1-5'  # 16:00 UTC = 11:00 AM ET
+    - cron: "0 16 * * 1-5" # 16:00 UTC = 11:00 AM ET
   workflow_dispatch:
 
 permissions:
@@ -26,7 +26,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Check last execution
         id: check_execution

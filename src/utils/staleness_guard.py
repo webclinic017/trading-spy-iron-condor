@@ -69,7 +69,9 @@ def check_data_staleness(
 
         # Check both meta.last_updated (preferred) and top-level last_updated (fallback)
         # Fix for Jan 15 crisis: top-level timestamp was being ignored
-        last_updated = state.get("meta", {}).get("last_updated") or state.get("last_updated")
+        last_updated = state.get("meta", {}).get("last_updated") or state.get(
+            "last_updated"
+        )
 
         if not last_updated:
             return StalenessResult(
@@ -240,9 +242,9 @@ def validate_system_state(state_path: Path = SYSTEM_STATE_PATH) -> DataIntegrity
         # Positions can be at top level OR under paper_account (check both for resilience)
         paper_account = state.get("paper_account", {})
         positions = state.get("positions", []) or paper_account.get("positions", [])
-        positions_count = paper_account.get("positions_count", 0) or state.get("account", {}).get(
-            "positions_count", 0
-        )
+        positions_count = paper_account.get("positions_count", 0) or state.get(
+            "account", {}
+        ).get("positions_count", 0)
 
         if positions_count != len(positions):
             warnings.append(
@@ -257,7 +259,9 @@ def validate_system_state(state_path: Path = SYSTEM_STATE_PATH) -> DataIntegrity
             try:
                 price = float(pos.get("price", 0) or 0)
                 if price < 0:
-                    errors.append(f"Position {i} ({pos.get('symbol', '?')}): negative price")
+                    errors.append(
+                        f"Position {i} ({pos.get('symbol', '?')}): negative price"
+                    )
             except (TypeError, ValueError):
                 pass  # Skip price validation if not a valid number
 
@@ -267,7 +271,9 @@ def validate_system_state(state_path: Path = SYSTEM_STATE_PATH) -> DataIntegrity
         initial_equity = 30000.0
         drift_pct = abs(equity - initial_equity) / initial_equity * 100
         if drift_pct > 20:  # More than 20% change from initial
-            warnings.append(f"Large equity drift: {drift_pct:.1f}% from initial ${initial_equity}")
+            warnings.append(
+                f"Large equity drift: {drift_pct:.1f}% from initial ${initial_equity}"
+            )
 
         return DataIntegrityResult(
             is_valid=len(errors) == 0,

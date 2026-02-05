@@ -150,7 +150,9 @@ def test_webhook_compound_query():
 
         # Should contain analytical elements (P/L status + explanation)
         has_pl_status = "P/L" in text or "today" in text.lower()
-        has_analysis = "Analysis" in text or "reasons" in text.lower() or "Common" in text
+        has_analysis = (
+            "Analysis" in text or "reasons" in text.lower() or "Common" in text
+        )
 
         if not has_pl_status:
             print("⚠️  WARNING: Response missing P/L status")

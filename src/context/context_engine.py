@@ -262,7 +262,9 @@ class PatternCompressor:
         if PATTERNS_FILE.exists():
             try:
                 data = json.loads(PATTERNS_FILE.read_text())
-                self.patterns = [CompressedPattern.from_dict(p) for p in data.get("patterns", [])]
+                self.patterns = [
+                    CompressedPattern.from_dict(p) for p in data.get("patterns", [])
+                ]
             except (json.JSONDecodeError, KeyError):
                 self.patterns = self.SEED_PATTERNS.copy()
         else:
@@ -541,7 +543,9 @@ class ContextEngine:
             if lessons:
                 lessons_ctx = "## Relevant Lessons\n"
                 for lesson in lessons:
-                    lessons_ctx += f"- **{lesson['id']}**: {lesson['content'][:200]}...\n"
+                    lessons_ctx += (
+                        f"- **{lesson['id']}**: {lesson['content'][:200]}...\n"
+                    )
                 ctx.add(lessons_ctx, priority=7)
 
         # Add scratchpad (recent analysis, medium-high priority)

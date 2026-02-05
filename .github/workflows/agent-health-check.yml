@@ -4,12 +4,12 @@ on:
   push:
     branches: [main]
     paths:
-      - 'src/agents/**'
-      - 'src/orchestrator/**'
-      - 'src/orchestration/**'
+      - "src/agents/**"
+      - "src/orchestrator/**"
+      - "src/orchestration/**"
   schedule:
     # Run daily at 5:00 AM ET (before trading)
-    - cron: '0 9,10 * * *'
+    - cron: "0 9,10 * * *"
   workflow_dispatch:
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install Poetry
         uses: snok/install-poetry@v1

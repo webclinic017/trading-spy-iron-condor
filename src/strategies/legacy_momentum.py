@@ -146,7 +146,12 @@ class LegacyMomentumCalculator:
             # Calculate composite score
             # Higher score = stronger momentum signal
             current_price = float(close.iloc[-1])
-            score = current_price * (1 + macd_hist / 10) * (1 + (70 - rsi) / 100) * volume_ratio
+            score = (
+                current_price
+                * (1 + macd_hist / 10)
+                * (1 + (70 - rsi) / 100)
+                * volume_ratio
+            )
 
             logger.info(
                 f"{ticker}: Momentum score {score:.2f} | "

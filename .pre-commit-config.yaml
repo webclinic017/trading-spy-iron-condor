@@ -12,7 +12,7 @@ repos:
       - id: ruff-format
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: 'v1.2.0'
+    rev: "v1.2.0"
     hooks:
       - id: mypy
         args: ["--config-file", "mypy.ini"]
@@ -26,7 +26,7 @@ repos:
       - id: end-of-file-fixer
         exclude: ^(data/|reports/)
       - id: check-yaml
-        args: ['--unsafe']  # Allow custom tags but still validate syntax strictly
+        args: ["--unsafe"] # Allow custom tags but still validate syntax strictly
       - id: check-json
         exclude: ^(data/|\.vscode/)
       - id: check-toml
@@ -43,10 +43,10 @@ repos:
       - id: bandit
         args:
           [
-            '-ll',
-            '-ii',
-            '--skip',
-            'B101,B310,B113,B602,B603,B404,B614,B324,B301,B314',
+            "-ll",
+            "-ii",
+            "--skip",
+            "B101,B310,B113,B602,B603,B404,B614,B324,B301,B314",
           ]
         exclude: ^tests/|.pc-venv/
 
@@ -54,7 +54,7 @@ repos:
     rev: v1.5.0
     hooks:
       - id: detect-secrets
-        args: ['--baseline', '.secrets.baseline']
+        args: ["--baseline", ".secrets.baseline"]
         exclude: package.lock.json
 
   # Keep the custom hygiene script if needed, but ensure it works
@@ -100,7 +100,7 @@ repos:
         language: python
         additional_dependencies: [numpy, pyyaml]
         types: [python]
-        files: '(scripts/|src/|tests/)'
+        files: "(scripts/|src/|tests/)"
         pass_filenames: false
         verbose: true
         stages: [pre-commit]

@@ -132,8 +132,9 @@ class TestPaperModeDefault:
 
     def test_paper_mode_is_default(self):
         """get_alpaca_client should default to paper=True."""
-        from src.utils.alpaca_client import get_alpaca_client
         import inspect
+
+        from src.utils.alpaca_client import get_alpaca_client
 
         sig = inspect.signature(get_alpaca_client)
         paper_param = sig.parameters.get("paper")

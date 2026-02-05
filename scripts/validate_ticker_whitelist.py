@@ -61,7 +61,9 @@ def get_blackout_tickers_from_claude_md() -> dict[str, str]:
 def check_workflow_tickers() -> list[str]:
     """Check workflow files for ticker violations."""
     errors = []
-    _approved = get_approved_tickers_from_claude_md()  # TODO: Use for whitelist validation
+    _approved = (
+        get_approved_tickers_from_claude_md()
+    )  # TODO: Use for whitelist validation
     blackouts = get_blackout_tickers_from_claude_md()
 
     workflow_dir = Path(".github/workflows")

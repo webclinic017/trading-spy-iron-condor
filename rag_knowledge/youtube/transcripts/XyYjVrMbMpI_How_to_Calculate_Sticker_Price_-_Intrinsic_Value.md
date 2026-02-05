@@ -7,12 +7,15 @@
 **Ingested**: 2026-02-01T13:25:47.868754
 
 ## Key Concepts
+
 4 Ms, Margin of Safety, Intrinsic Value
 
 ## Strategies
+
 Value Investing
 
 ## Sentiment
+
 Neutral
 
 ## Transcript

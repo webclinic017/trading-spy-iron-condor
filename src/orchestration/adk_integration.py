@@ -68,7 +68,8 @@ class ADKTradeAdapter:
             self.client: ADKOrchestratorClient | None = None
         else:
             config = ADKClientConfig(
-                base_url=base_url or os.getenv("ADK_BASE_URL", "http://127.0.0.1:8080/api"),
+                base_url=base_url
+                or os.getenv("ADK_BASE_URL", "http://127.0.0.1:8080/api"),
                 app_name=app_name or os.getenv("ADK_APP_NAME", "trading_orchestrator"),
                 root_agent_name=root_agent_name
                 or os.getenv("ADK_ROOT_AGENT", "trading_orchestrator_root_agent"),
@@ -184,7 +185,9 @@ class ADKTradeAdapter:
 
         scores = [row["score"] for row in rows if row["score"] is not None]
         confidence = [row["confidence"] for row in rows if row["confidence"]]
-        regime = next((row["market_regime"] for row in rows if row["market_regime"]), None)
+        regime = next(
+            (row["market_regime"] for row in rows if row["market_regime"]), None
+        )
 
         return {
             "samples": [dict(row) for row in rows[:5]],
@@ -194,7 +197,9 @@ class ADKTradeAdapter:
             "market_regime": regime,
         }
 
-    def _decision_from_payload(self, symbol: str, payload: dict[str, Any]) -> ADKDecision | None:
+    def _decision_from_payload(
+        self, symbol: str, payload: dict[str, Any]
+    ) -> ADKDecision | None:
         trade_summary = payload.get("trade_summary") or {}
         action = trade_summary.get("action", "HOLD").upper()
         if action not in {"BUY", "SELL"}:

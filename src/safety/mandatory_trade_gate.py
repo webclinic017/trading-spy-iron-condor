@@ -23,7 +23,9 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 # Feedback model path (Thompson Sampling RLHF)
-FEEDBACK_MODEL_PATH = Path(__file__).parent.parent.parent / "models" / "ml" / "feedback_model.json"
+FEEDBACK_MODEL_PATH = (
+    Path(__file__).parent.parent.parent / "models" / "ml" / "feedback_model.json"
+)
 
 
 # ============================================================
@@ -172,7 +174,9 @@ def _check_position_size(symbol: str, amount: float, equity: float) -> tuple[boo
     return True, f"Position size OK: ${amount:.2f} ({position_pct:.1%})"
 
 
-def _check_daily_loss_limit(equity: float, potential_loss: float = 0.0) -> tuple[bool, str]:
+def _check_daily_loss_limit(
+    equity: float, potential_loss: float = 0.0
+) -> tuple[bool, str]:
     """Check if daily loss limit would be exceeded. Thread-safe."""
     # SECURITY FIX (Jan 19, 2026): Use lock to prevent race condition
     with _daily_loss_lock:
@@ -193,7 +197,9 @@ def _check_daily_loss_limit(equity: float, potential_loss: float = 0.0) -> tuple
         return True, f"Daily loss OK: ${projected_loss:.2f} of ${max_loss:.2f} limit"
 
 
-def _query_feedback_model(strategy: str, context: dict | None) -> tuple[float, list[str]]:
+def _query_feedback_model(
+    strategy: str, context: dict | None
+) -> tuple[float, list[str]]:
     """
     Query the RLHF feedback model for confidence adjustment.
 
@@ -258,7 +264,9 @@ def _query_feedback_model(strategy: str, context: dict | None) -> tuple[float, l
     return confidence, anomalies
 
 
-def _check_market_regime(strategy: str, context: dict | None) -> tuple[float, list[str]]:
+def _check_market_regime(
+    strategy: str, context: dict | None
+) -> tuple[float, list[str]]:
     """
     Check market regime for iron condor entry optimization (LL-247 ML-IMP-2).
 
@@ -309,12 +317,16 @@ def _check_market_regime(strategy: str, context: dict | None) -> tuple[float, li
 
         if "spike" in regime_lower or "crisis" in regime_lower:
             # CRITICAL: Block all trades in spike/crisis regime
-            warnings.append(f"🚨 SPIKE REGIME DETECTED - Trade blocked (regime={regime_label})")
+            warnings.append(
+                f"🚨 SPIKE REGIME DETECTED - Trade blocked (regime={regime_label})"
+            )
             return 0.0, warnings  # 0.0 = block trade
 
         elif "volatile" in regime_lower or "vol" in regime_lower:
             # High volatility - reduce confidence but allow with warning
-            warnings.append(f"⚠️ VOLATILE regime - reduced confidence (regime={regime_label})")
+            warnings.append(
+                f"⚠️ VOLATILE regime - reduced confidence (regime={regime_label})"
+            )
             confidence = 0.7
 
         elif "trending" in regime_lower or "trend" in regime_lower:
@@ -330,7 +342,9 @@ def _check_market_regime(strategy: str, context: dict | None) -> tuple[float, li
         elif "calm" in regime_lower or "range" in regime_lower:
             # Ideal for iron condors - boost confidence
             if "iron" in strategy.lower() or "condor" in strategy.lower():
-                logger.info(f"✅ CALM regime - ideal for iron condors (regime={regime_label})")
+                logger.info(
+                    f"✅ CALM regime - ideal for iron condors (regime={regime_label})"
+                )
             confidence = 1.0
 
         else:
@@ -346,7 +360,9 @@ def _check_market_regime(strategy: str, context: dict | None) -> tuple[float, li
     return confidence, warnings
 
 
-def _query_rag_for_blocking_lessons(symbol: str, strategy: str) -> tuple[bool, list[str]]:
+def _query_rag_for_blocking_lessons(
+    symbol: str, strategy: str
+) -> tuple[bool, list[str]]:
     """
     Query RAG for lessons that should block this trade.
 
@@ -371,7 +387,9 @@ def _query_rag_for_blocking_lessons(symbol: str, strategy: str) -> tuple[bool, l
 
                 if severity == "CRITICAL" and score > 0.5:
                     should_block = True
-                    warnings.append(f"[CRITICAL] {title} (score={score:.2f}) - BLOCKING")
+                    warnings.append(
+                        f"[CRITICAL] {title} (score={score:.2f}) - BLOCKING"
+                    )
                 elif severity == "HIGH" and score > 0.7:
                     should_block = True
                     warnings.append(f"[HIGH] {title} (score={score:.2f}) - BLOCKING")
@@ -476,7 +494,9 @@ def validate_trade_mandatory(
             checks_performed=checks_performed + ["position_count: BLOCKED"],
         )
 
-    checks_performed.append(f"position_count: PASS ({current_position_count}/{MAX_POSITIONS})")
+    checks_performed.append(
+        f"position_count: PASS ({current_position_count}/{MAX_POSITIONS})"
+    )
 
     # =========================================================================
     # CHECK 2.6: Position STACKING prevention (Jan 22, 2026 - LL-275)
@@ -583,7 +603,9 @@ def validate_trade_mandatory(
     base_confidence = 1.0 if not warnings else 0.8
     final_confidence = min(base_confidence, ml_confidence, regime_confidence)
 
-    logger.info(f"✅ Mandatory gate APPROVED: {side} ${amount:.2f} {symbol} ({strategy})")
+    logger.info(
+        f"✅ Mandatory gate APPROVED: {side} ${amount:.2f} {symbol} ({strategy})"
+    )
 
     return GateResult(
         approved=True,

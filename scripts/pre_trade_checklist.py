@@ -71,7 +71,10 @@ def check_position_size(collateral: float, account_equity: float) -> tuple[bool,
     """Check if position size is within 5% limit."""
     max_allowed = account_equity * MAX_POSITION_PCT
     if collateral <= max_allowed:
-        return True, f"✅ Position ${collateral:.2f} within 5% limit (${max_allowed:.2f})"
+        return (
+            True,
+            f"✅ Position ${collateral:.2f} within 5% limit (${max_allowed:.2f})",
+        )
     return False, f"❌ Position ${collateral:.2f} exceeds 5% limit (${max_allowed:.2f})"
 
 
@@ -121,7 +124,10 @@ def check_spread_limit(state: dict) -> tuple[bool, str]:
     """Check if number of open spreads is within limit."""
     current_spreads = count_open_spreads(state)
     if current_spreads < MAX_OPEN_SPREADS:
-        return True, f"✅ Open spreads: {current_spreads}/{MAX_OPEN_SPREADS} (can open new spread)"
+        return (
+            True,
+            f"✅ Open spreads: {current_spreads}/{MAX_OPEN_SPREADS} (can open new spread)",
+        )
     elif current_spreads == MAX_OPEN_SPREADS:
         return (
             False,

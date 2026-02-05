@@ -10,9 +10,10 @@ Based on OpenAI's eval skills framework:
 These evals ensure Phil Town Rule #1 compliance before any trade executes.
 """
 
-import pytest
 from dataclasses import dataclass
 from decimal import Decimal
+
+import pytest
 
 
 @dataclass
@@ -94,8 +95,12 @@ class TradeExecutionEvals:
 
     def eval_delta_range(self, proposal: TradeProposal) -> EvalResult:
         """EVAL-005: Short strikes must be 15-20 delta."""
-        put_ok = self.target_delta_min <= proposal.short_put_delta <= self.target_delta_max
-        call_ok = self.target_delta_min <= proposal.short_call_delta <= self.target_delta_max
+        put_ok = (
+            self.target_delta_min <= proposal.short_put_delta <= self.target_delta_max
+        )
+        call_ok = (
+            self.target_delta_min <= proposal.short_call_delta <= self.target_delta_max
+        )
         passed = put_ok and call_ok
         return EvalResult(
             passed=passed,
