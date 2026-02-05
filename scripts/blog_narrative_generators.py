@@ -25,7 +25,7 @@ I thought I could make it work. Just one more try...
 
 ## The Trap
 
-I kept trying: {', '.join(ctx.attempts)}.
+I kept trying: {", ".join(ctx.attempts)}.
 
 Classic sunk cost fallacy. I was committed to the approach because I'd already invested time.
 
@@ -46,7 +46,7 @@ This changed everything.
 **{ctx.lesson}**
 
 When the tool isn't working, grab a different one:
-{chr(10).join(f'- {tool}? Just a tool.' for tool in ctx.tech_stack)}
+{chr(10).join(f"- {tool}? Just a tool." for tool in ctx.tech_stack)}
 
 The goal matters. The method doesn't.
 
@@ -80,7 +80,7 @@ Not good. Spam on Dev.to looks unprofessional.
 
 ## Why It Happened
 
-{ctx.attempts[0] if ctx.attempts else 'Testing without safeguards'}
+{ctx.attempts[0] if ctx.attempts else "Testing without safeguards"}
 
 I was moving fast and broke things. The startup mantra, except I broke MY OWN blog.
 
@@ -146,7 +146,7 @@ Embarrassing. Publishing bot slop with my name on it.
 
 ## What I Tried (And Failed)
 
-{', '.join(ctx.attempts) if ctx.attempts else 'Templates and formulas'}
+{", ".join(ctx.attempts) if ctx.attempts else "Templates and formulas"}
 
 Turns out you can't template your way to authentic content. Who knew?
 
@@ -181,7 +181,7 @@ No templates. No bot slop. Actual narrative with emotional arc.
 
 **{ctx.lesson}**
 
-Technology: {', '.join(ctx.tech_stack)}
+Technology: {", ".join(ctx.tech_stack)}
 
 ## Why This Matters
 
@@ -251,7 +251,7 @@ All green. Safe to ship.
 **{ctx.lesson}**
 
 Write tests that protect money:
-{chr(10).join(f'- {tool}' for tool in ctx.tech_stack)}
+{chr(10).join(f"- {tool}" for tool in ctx.tech_stack)}
 
 ## Why This Matters
 
@@ -283,7 +283,7 @@ Classic error: assumed it worked without checking. It didn't work.
 
 ## Why It Happened
 
-{', '.join(ctx.attempts) if ctx.attempts else 'Moved too fast, skipped verification'}
+{", ".join(ctx.attempts) if ctx.attempts else "Moved too fast, skipped verification"}
 
 I was in "ship mode" and forgot "verify mode."
 
