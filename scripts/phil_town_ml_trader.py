@@ -45,7 +45,7 @@ class PhilTownMLTrader:
         """Query RAG for Phil Town strategy guidance."""
         results = self.rag.search(question, top_k=5)
 
-        print(f"\n🧠 Phil Town Strategy Guidance:")
+        print("\n🧠 Phil Town Strategy Guidance:")
         for lesson, score in results[:3]:
             print(f"   - {lesson.title}")
 
@@ -59,14 +59,11 @@ class PhilTownMLTrader:
         # Simple analysis: What deltas/DTEs won?
         winners = [t for t in self.trades if t.get("side") == "sell"]
 
-        print(f"\n📊 Historical Performance:")
+        print("\n📊 Historical Performance:")
         print(f"   Total trades analyzed: {len(self.trades)}")
         print(f"   Sell-to-open trades: {len(winners)}")
 
-        return {
-            "total_trades": len(self.trades),
-            "analysis_date": datetime.now().isoformat()
-        }
+        return {"total_trades": len(self.trades), "analysis_date": datetime.now().isoformat()}
 
     def should_enter_trade_today(self):
         """ML decision: Should we enter a trade today?"""
@@ -80,9 +77,9 @@ class PhilTownMLTrader:
         patterns = self.analyze_winning_patterns()
 
         # Decision logic (placeholder for ML model)
-        print(f"\n🎯 Trade Decision:")
-        print(f"   Open positions: 1/2 (can add 1 more)")
-        print(f"   Market conditions: Checking...")
+        print("\n🎯 Trade Decision:")
+        print("   Open positions: 1/2 (can add 1 more)")
+        print("   Market conditions: Checking...")
 
         # For now: Conservative - only trade if we have capacity
         # TODO: Add ML model that learns optimal entry timing
@@ -92,7 +89,7 @@ class PhilTownMLTrader:
             "reason": "Have capacity for 1 more iron condor",
             "max_risk": 5000,  # 5% of $100K
             "target_delta": 0.15,  # 15-delta per Phil Town
-            "target_dte": 30  # 30-45 DTE
+            "target_dte": 30,  # 30-45 DTE
         }
 
     def execute_trade(self, decision: dict):
@@ -101,16 +98,16 @@ class PhilTownMLTrader:
             print(f"❌ No trade today: {decision['reason']}")
             return False
 
-        print(f"\n🚀 TRADE EXECUTION:")
-        print(f"   Strategy: Iron Condor (Phil Town Rule #1)")
+        print("\n🚀 TRADE EXECUTION:")
+        print("   Strategy: Iron Condor (Phil Town Rule #1)")
         print(f"   Delta: {decision['target_delta']}")
         print(f"   DTE: {decision['target_dte']}")
         print(f"   Max Risk: ${decision['max_risk']:,}")
 
         # TODO: Call actual iron condor scanner and executor
-        print(f"\n⏳ TODO: Integrate with iron_condor_scanner.py")
-        print(f"   This will scan SPY for optimal entry")
-        print(f"   Then execute the trade on Alpaca")
+        print("\n⏳ TODO: Integrate with iron_condor_scanner.py")
+        print("   This will scan SPY for optimal entry")
+        print("   Then execute the trade on Alpaca")
 
         return True
 
@@ -120,8 +117,8 @@ def main():
     print("=" * 60)
     print("PHIL TOWN ML TRADER")
     print("=" * 60)
-    print(f"Goal: Make money toward $600K by Nov 14, 2029")
-    print(f"Strategy: Phil Town Rule #1 + ML")
+    print("Goal: Make money toward $600K by Nov 14, 2029")
+    print("Strategy: Phil Town Rule #1 + ML")
     print("=" * 60)
 
     trader = PhilTownMLTrader()
