@@ -41,9 +41,7 @@ from src.utils.error_monitoring import init_sentry
 load_dotenv()
 init_sentry()
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -153,9 +151,7 @@ class IronCondorStrategy:
 
         return long_put, short_put, short_call, long_call
 
-    def calculate_premiums(
-        self, legs: tuple[float, float, float, float], dte: int
-    ) -> dict:
+    def calculate_premiums(self, legs: tuple[float, float, float, float], dte: int) -> dict:
         """
         Estimate premiums for iron condor legs.
 
@@ -189,9 +185,7 @@ class IronCondorStrategy:
 
         # Calculate strikes
         long_put, short_put, short_call, long_call = self.calculate_strikes(price)
-        logger.info(
-            f"Strikes: LP={long_put} SP={short_put} SC={short_call} LC={long_call}"
-        )
+        logger.info(f"Strikes: LP={long_put} SP={short_put} SC={short_call} LC={long_call}")
 
         # Calculate expiry - MUST be a Friday (options expire on Fridays)
         target_date = datetime.now() + timedelta(days=self.config["target_dte"])
@@ -254,9 +248,7 @@ class IronCondorStrategy:
             logger.info("=" * 50)
             logger.info("VIX MEAN REVERSION SIGNAL (LL-296)")
             logger.info("=" * 50)
-            logger.info(
-                f"Signal: {signal.signal} (confidence: {signal.confidence:.2f})"
-            )
+            logger.info(f"Signal: {signal.signal} (confidence: {signal.confidence:.2f})")
             logger.info(f"Current VIX: {signal.current_vix:.2f}")
             logger.info(f"3-day MA: {signal.vix_3day_ma:.2f}")
             logger.info(f"Recent High: {signal.recent_high:.2f}")
@@ -279,9 +271,7 @@ class IronCondorStrategy:
             logger.info("NEUTRAL signal - running legacy VIX check")
 
         except Exception as e:
-            logger.warning(
-                f"VIX Mean Reversion Signal failed: {e} - using legacy check"
-            )
+            logger.warning(f"VIX Mean Reversion Signal failed: {e} - using legacy check")
 
         # Legacy VIX check (fallback)
         try:
@@ -294,7 +284,9 @@ class IronCondorStrategy:
 
             # Check VIX is in optimal range (15-25 per LL-269)
             if current_vix < RiskThresholds.VIX_OPTIMAL_MIN:
-                reason = f"VIX {current_vix:.2f} < {RiskThresholds.VIX_OPTIMAL_MIN} (premiums too thin)"
+                reason = (
+                    f"VIX {current_vix:.2f} < {RiskThresholds.VIX_OPTIMAL_MIN} (premiums too thin)"
+                )
                 logger.warning(f"BLOCKED: {reason}")
                 return False, reason
 
@@ -354,9 +346,7 @@ class IronCondorStrategy:
                     ]
 
                     # Count TOTAL CONTRACTS
-                    total_contracts = sum(
-                        abs(int(float(p.qty))) for p in spy_option_positions
-                    )
+                    total_contracts = sum(abs(int(float(p.qty))) for p in spy_option_positions)
                     unique_symbols = len(spy_option_positions)
 
                     logger.info(
@@ -376,9 +366,7 @@ class IronCondorStrategy:
                         logger.warning(
                             f"REASON: Already have {current_ic_count} iron condor(s) ({total_contracts} contracts, max: {max_ic} ICs / {max_contracts} contracts)"
                         )
-                        logger.warning(
-                            "ACTION: Manage existing positions before opening new ones"
-                        )
+                        logger.warning("ACTION: Manage existing positions before opening new ones")
                         logger.warning("POSITIONS:")
 
                         # Log position details for debugging
@@ -396,8 +384,7 @@ class IronCondorStrategy:
                             "status": "SKIPPED_POSITION_LIMIT",
                             "reason": f"Already have {current_ic_count}/{max_ic} iron condors ({total_contracts} contracts)",
                             "existing_positions": [
-                                {"symbol": p.symbol, "qty": p.qty}
-                                for p in spy_option_positions
+                                {"symbol": p.symbol, "qty": p.qty} for p in spy_option_positions
                             ],
                         }
                     else:
@@ -437,9 +424,7 @@ class IronCondorStrategy:
                 continue
             # Only block on lessons specifically about iron condor execution
             if lesson.severity == "CRITICAL" and "iron condor" in lesson.title.lower():
-                logger.error(
-                    f"BLOCKED by RAG: {lesson.title} (severity: {lesson.severity})"
-                )
+                logger.error(f"BLOCKED by RAG: {lesson.title} (severity: {lesson.severity})")
                 logger.error(f"Prevention: {lesson.prevention}")
                 return {
                     "timestamp": datetime.now().isoformat(),
@@ -450,22 +435,15 @@ class IronCondorStrategy:
                 }
 
         # Check for ticker-specific failures
-        ticker_lessons = rag.search(
-            f"{ic.underlying} trading failures options losses", top_k=3
-        )
+        ticker_lessons = rag.search(f"{ic.underlying} trading failures options losses", top_k=3)
         for lesson, score in ticker_lessons:
             # Skip lessons that have been resolved or fixed
             if lesson.severity == "RESOLVED" or "resolved" in lesson.snippet.lower():
                 logger.info(f"Skipping resolved lesson: {lesson.id}")
                 continue
             # Only block on unresolved CRITICAL lessons about this ticker's execution
-            if (
-                lesson.severity == "CRITICAL"
-                and ic.underlying.lower() in lesson.title.lower()
-            ):
-                logger.error(
-                    f"BLOCKED by RAG: {lesson.title} (severity: {lesson.severity})"
-                )
+            if lesson.severity == "CRITICAL" and ic.underlying.lower() in lesson.title.lower():
+                logger.error(f"BLOCKED by RAG: {lesson.title} (severity: {lesson.severity})")
                 logger.error(f"Prevention: {lesson.prevention}")
                 return {
                     "timestamp": datetime.now().isoformat(),
@@ -514,9 +492,7 @@ class IronCondorStrategy:
                     f"Credentials check: api_key={'SET' if api_key else 'NONE'}, secret={'SET' if secret else 'NONE'}"
                 )
                 if api_key:
-                    logger.info(
-                        f"  api_key length: {len(api_key)}, starts with: {api_key[:4]}..."
-                    )
+                    logger.info(f"  api_key length: {len(api_key)}, starts with: {api_key[:4]}...")
 
                 if api_key and secret:
                     client = TradingClient(api_key, secret, paper=True)
@@ -533,12 +509,8 @@ class IronCondorStrategy:
                     short_call_sym = build_occ(ic.short_call, "C")
                     long_call_sym = build_occ(ic.long_call, "C")
 
-                    logger.info(
-                        f"Option symbols: LP={long_put_sym}, SP={short_put_sym}"
-                    )
-                    logger.info(
-                        f"                SC={short_call_sym}, LC={long_call_sym}"
-                    )
+                    logger.info(f"Option symbols: LP={long_put_sym}, SP={short_put_sym}")
+                    logger.info(f"                SC={short_call_sym}, LC={long_call_sym}")
 
                     # FIX Jan 26, 2026: Use MLeg (multi-leg) orders to ensure all 4 legs
                     # fill together or not at all. This prevents partial fills that cause losses.
@@ -547,18 +519,10 @@ class IronCondorStrategy:
 
                     # Build OptionLegRequest for each leg of the iron condor
                     option_legs = [
-                        OptionLegRequest(
-                            symbol=long_put_sym, side=OrderSide.BUY, ratio_qty=1
-                        ),
-                        OptionLegRequest(
-                            symbol=short_put_sym, side=OrderSide.SELL, ratio_qty=1
-                        ),
-                        OptionLegRequest(
-                            symbol=short_call_sym, side=OrderSide.SELL, ratio_qty=1
-                        ),
-                        OptionLegRequest(
-                            symbol=long_call_sym, side=OrderSide.BUY, ratio_qty=1
-                        ),
+                        OptionLegRequest(symbol=long_put_sym, side=OrderSide.BUY, ratio_qty=1),
+                        OptionLegRequest(symbol=short_put_sym, side=OrderSide.SELL, ratio_qty=1),
+                        OptionLegRequest(symbol=short_call_sym, side=OrderSide.SELL, ratio_qty=1),
+                        OptionLegRequest(symbol=long_call_sym, side=OrderSide.BUY, ratio_qty=1),
                     ]
 
                     logger.info("📋 Building MLeg (multi-leg) iron condor order...")
@@ -700,12 +664,8 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Iron Condor Trader")
-    parser.add_argument(
-        "--live", action="store_true", help="Execute LIVE trades on Alpaca"
-    )
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Dry run (simulate only)"
-    )
+    parser.add_argument("--live", action="store_true", help="Execute LIVE trades on Alpaca")
+    parser.add_argument("--dry-run", action="store_true", help="Dry run (simulate only)")
     parser.add_argument(
         "--symbol", type=str, default="SPY", help="Underlying symbol (default: SPY)"
     )
@@ -748,9 +708,7 @@ def main():
                 logger.warning("=" * 60)
                 logger.warning("DAILY TRADE LIMIT REACHED - BLOCKING NEW TRADES")
                 logger.warning("=" * 60)
-                logger.warning(
-                    f"Trades today: {len(today_trades)} (max: {MAX_TRADES_PER_DAY})"
-                )
+                logger.warning(f"Trades today: {len(today_trades)} (max: {MAX_TRADES_PER_DAY})")
                 logger.warning("Reason: Prevent churning and bid/ask spread losses")
                 logger.warning("=" * 60)
                 return {
@@ -802,9 +760,7 @@ def main():
         with acquire_trade_lock(timeout=10):
             trade = strategy.execute(ic, live=live_mode)
     except TradeLockTimeout:
-        logger.warning(
-            "⚠️ Could not acquire trade lock - another trade may be in progress"
-        )
+        logger.warning("⚠️ Could not acquire trade lock - another trade may be in progress")
         return {"success": False, "reason": "trade_lock_timeout"}
 
     logger.info("IRON CONDOR TRADER - COMPLETE")
