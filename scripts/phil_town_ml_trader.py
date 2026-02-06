@@ -69,12 +69,10 @@ class PhilTownMLTrader:
         """ML decision: Should we enter a trade today?"""
 
         # Query Phil Town RAG for entry criteria
-        criteria_lessons = self.query_phil_town_strategy(
-            "iron condor entry criteria delta DTE position sizing"
-        )
+        self.query_phil_town_strategy("iron condor entry criteria delta DTE position sizing")
 
         # Analyze historical patterns
-        patterns = self.analyze_winning_patterns()
+        self.analyze_winning_patterns()
 
         # Decision logic (placeholder for ML model)
         print("\n🎯 Trade Decision:")

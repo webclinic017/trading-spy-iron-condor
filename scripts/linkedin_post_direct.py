@@ -7,6 +7,7 @@ NO OAuth, NO API tokens needed. Just direct browser automation.
 """
 
 import os
+import subprocess  # nosec B404
 import sys
 import time
 
@@ -14,7 +15,14 @@ try:
     from playwright.sync_api import sync_playwright
 except ImportError:
     print("📦 Installing playwright...")
-    os.system("pip install playwright && playwright install chromium")
+    subprocess.run(  # nosec B603 B607
+        ["pip", "install", "playwright"],
+        check=True,
+    )
+    subprocess.run(  # nosec B603 B607
+        ["playwright", "install", "chromium"],
+        check=True,
+    )
     from playwright.sync_api import sync_playwright
 
 # User credentials

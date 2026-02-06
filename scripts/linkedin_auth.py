@@ -7,6 +7,7 @@ Gets access token for posting to LinkedIn API.
 
 import json
 import os
+import subprocess  # nosec B404
 import time
 from pathlib import Path
 from urllib.parse import parse_qs, urlencode, urlparse
@@ -17,7 +18,14 @@ try:
     from playwright.sync_api import sync_playwright
 except ImportError:
     print("Installing playwright...")
-    os.system("pip install playwright && playwright install chromium")
+    subprocess.run(  # nosec B603 B607
+        ["pip", "install", "playwright"],
+        check=True,
+    )
+    subprocess.run(  # nosec B603 B607
+        ["playwright", "install", "chromium"],
+        check=True,
+    )
     from playwright.sync_api import sync_playwright
 
 # Load credentials
