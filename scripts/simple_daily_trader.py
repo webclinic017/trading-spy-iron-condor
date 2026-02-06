@@ -28,6 +28,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from dotenv import load_dotenv
 from src.rag.lessons_learned_rag import LessonsLearnedRAG
+from src.safety.mandatory_trade_gate import safe_submit_order
 from src.utils.error_monitoring import init_sentry
 
 load_dotenv()
@@ -347,7 +348,7 @@ def execute_cash_secured_put(client, option: dict, config: dict) -> Optional[dic
                 time_in_force=TimeInForce.DAY,
                 limit_price=option["estimated_premium"],  # Limit price for premium
             )
-            order = client.submit_order(order_request)
+            order = safe_submit_order(client, order_request)
 
             trade = {
                 "timestamp": datetime.now().isoformat(),
@@ -381,7 +382,7 @@ def execute_cash_secured_put(client, option: dict, config: dict) -> Optional[dic
                     side=OrderSide.SELL,  # SELL the put
                     time_in_force=TimeInForce.DAY,
                 )
-                order = client.submit_order(order_request)
+                order = safe_submit_order(client, order_request)
 
                 trade = {
                     "timestamp": datetime.now().isoformat(),

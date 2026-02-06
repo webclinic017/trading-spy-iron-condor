@@ -29,6 +29,7 @@ from zoneinfo import ZoneInfo
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from dotenv import load_dotenv
+from src.safety.mandatory_trade_gate import safe_submit_order
 
 load_dotenv()
 
@@ -212,7 +213,7 @@ def execute_iron_condor(trade: dict, dry_run: bool = False) -> dict:
         )
 
         logger.info("Submitting MLeg order...")
-        order = client.submit_order(order_req)
+        order = safe_submit_order(client, order_req)
 
         logger.info(f"Order submitted: {order.id}")
         logger.info(f"Status: {order.status}")

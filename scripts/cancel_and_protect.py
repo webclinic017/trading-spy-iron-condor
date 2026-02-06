@@ -20,6 +20,8 @@ from pathlib import Path
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from src.safety.mandatory_trade_gate import safe_submit_order
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -181,7 +183,7 @@ def place_protective_orders(client, dry_run: bool = False, max_loss_pct: float =
                         time_in_force=TimeInForce.GTC,  # Good til cancelled
                         limit_price=max_close_price,
                     )
-                    order = client.submit_order(order_request)
+                    order = safe_submit_order(client, order_request)
                     logger.info(
                         f"   ✅ PROTECTIVE ORDER PLACED: BUY {abs(qty)} @ ${max_close_price}"
                     )

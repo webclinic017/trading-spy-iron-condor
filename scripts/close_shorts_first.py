@@ -25,6 +25,7 @@ if not api_key or not api_secret:
 
 from alpaca.trading.client import TradingClient
 from alpaca.trading.requests import ClosePositionRequest
+from src.safety.mandatory_trade_gate import safe_close_position  # noqa: E402
 
 print("=" * 60)
 print(f"CLOSE SHORTS FIRST STRATEGY - {datetime.now()}")
@@ -67,7 +68,7 @@ print("=" * 60)
 for symbol, qty, pnl in shorts:
     print(f"\nClosing {symbol} ({qty} contracts)...")
     try:
-        result = client.close_position(symbol)
+        result = safe_close_position(client, symbol)
         print(f"  ✅ SUCCESS! Order ID: {result.id if hasattr(result, 'id') else result}")
     except Exception as e:
         print(f"  ❌ FAILED: {e}")
@@ -85,7 +86,7 @@ print("=" * 60)
 for symbol, qty, pnl in longs:
     print(f"\nClosing {symbol} ({qty} contracts)...")
     try:
-        result = client.close_position(symbol)
+        result = safe_close_position(client, symbol)
         print(f"  ✅ SUCCESS! Order ID: {result.id if hasattr(result, 'id') else result}")
     except Exception as e:
         print(f"  ❌ FAILED: {e}")
@@ -94,7 +95,7 @@ for symbol, qty, pnl in longs:
         print("  Trying partial close (1 contract)...")
         try:
             close_req = ClosePositionRequest(qty="1")
-            result = client.close_position(symbol, close_options=close_req)
+            result = safe_close_position(client, symbol, close_options=close_req)
             print(
                 f"  ✅ Closed 1 contract! Order ID: {result.id if hasattr(result, 'id') else result}"
             )

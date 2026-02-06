@@ -19,6 +19,7 @@ if not api_key or not api_secret:
     sys.exit(1)
 
 from alpaca.trading.client import TradingClient
+from src.safety.mandatory_trade_gate import safe_close_position  # noqa: E402
 
 print("=" * 60)
 print("CLOSE ALL POSITIONS - Phil Town Rule #1")
@@ -62,7 +63,7 @@ for pos in positions:
     pos_type = "OPTION" if len(symbol) > 10 else "STOCK"
     print(f"\nClosing [{pos_type}] {symbol}...")
     try:
-        result = client.close_position(symbol)
+        result = safe_close_position(client, symbol)
         print(f"  ✅ SUCCESS - Order ID: {result.id if hasattr(result, 'id') else 'N/A'}")
         closed += 1
     except Exception as e:

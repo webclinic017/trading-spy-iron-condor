@@ -24,6 +24,8 @@ from typing import Optional
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from src.safety.mandatory_trade_gate import safe_submit_order
+
 try:
     from dotenv import load_dotenv
 
@@ -171,7 +173,7 @@ def execute_phil_town_csp(client, symbol: str, analysis: dict) -> Optional[dict]
                 limit_price=round(estimated_premium, 2),
             )
 
-            order = client.submit_order(order_request)
+            order = safe_submit_order(client, order_request)
 
             trade_result = {
                 "success": True,
@@ -203,7 +205,7 @@ def execute_phil_town_csp(client, symbol: str, analysis: dict) -> Optional[dict]
                     time_in_force=TimeInForce.DAY,
                 )
 
-                order = client.submit_order(order_request)
+                order = safe_submit_order(client, order_request)
 
                 trade_result = {
                     "success": True,
