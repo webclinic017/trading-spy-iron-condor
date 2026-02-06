@@ -116,6 +116,13 @@ class MultiBroker:
         Returns:
             OrderResult with order info
         """
+        # MANDATORY: Ticker whitelist check (SPY ONLY)
+        from src.safety.mandatory_trade_gate import validate_ticker
+
+        ticker_valid, ticker_error = validate_ticker(symbol)
+        if not ticker_valid:
+            raise ValueError(f"ORDER BLOCKED: {ticker_error}")
+
         from alpaca.trading.enums import OrderSide, TimeInForce
         from alpaca.trading.requests import LimitOrderRequest, MarketOrderRequest
 
