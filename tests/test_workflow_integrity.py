@@ -114,7 +114,7 @@ def find_output_writes(workflow_path: Path) -> list[OutputWrite]:
     workflow_name = workflow_path.name
 
     # Pattern: OUTPUT_NAME=value >> $GITHUB_OUTPUT or >> "$GITHUB_OUTPUT"
-    pattern = r'echo\s+["\']?([a-zA-Z_][a-zA-Z0-9_]*)=.*>>\s*\$?GITHUB_OUTPUT'
+    pattern = r'echo\s+["\']?([a-zA-Z_][a-zA-Z0-9_]*)=.*>>\s*"?\$?GITHUB_OUTPUT"?'
 
     current_step_id = None
 

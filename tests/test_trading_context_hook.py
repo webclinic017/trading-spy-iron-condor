@@ -71,9 +71,9 @@ class TestTimezoneHandling:
         with open(hook_path) as f:
             content = f.read()
 
-        # Check that DAYS_OLD calculation uses ET timezone
-        assert "DAYS_OLD=$(( ($(TZ=America/New_York date" in content, (
-            "DAYS_OLD calculation must use TZ=America/New_York"
+        # DAYS_OLD uses CURRENT_TS and LAST_TS which both use TZ=America/New_York
+        assert "CURRENT_TS=$(TZ=America/New_York date" in content, (
+            "DAYS_OLD calculation must use TZ=America/New_York via CURRENT_TS"
         )
 
     def test_day_of_week_uses_et_timezone(self):

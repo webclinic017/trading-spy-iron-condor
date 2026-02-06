@@ -390,7 +390,6 @@ def generate_engaging_title(signal: str, context: str) -> str:
 
 def generate_mermaid_diagram(signal: str, stats: dict, model: dict) -> str:
     """Generate Mermaid diagram."""
-    positive = stats.get("positive", 0)
     alpha = model.get("alpha", 1)
     beta = model.get("beta", 1)
 

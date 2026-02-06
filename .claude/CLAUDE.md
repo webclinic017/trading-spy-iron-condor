@@ -104,6 +104,18 @@ Iron condors ALIGN with Rule #1 better than credit spreads:
 - 1.5:1 reward/risk ratio (BETTER than credit spreads' 0.5:1)
 - Profit if SPY stays within range (most of the time)
 
+## CTO Mandate (Feb 6, 2026 - CEO DIRECTIVE)
+
+**ALL CI MUST PASS 100% OF THE TIME. NO EXCEPTIONS.**
+**ALL GITHUB ISSUES MUST BE RESOLVED AUTONOMOUSLY. NO EXCEPTIONS.**
+
+- Every commit on main MUST have green CI. If CI is red, fixing it is the #1 priority above all other work.
+- Never merge code that breaks CI. Never leave CI broken overnight.
+- GitHub issues are the CTO's responsibility. Resolve them autonomously without CEO intervention.
+- If a fix introduces a new failure, that failure must be fixed in the same PR.
+- Changes are NOT done until they are committed, pushed, PR'd, CI-green, and merged to main. Local-only changes do not count.
+- Never claim "fixed" or "done" until the fix is deployed on main with passing CI.
+
 ## Core Directives (PERMANENT)
 
 1. **Don't lose money** - Rule #1 always

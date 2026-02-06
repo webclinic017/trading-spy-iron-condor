@@ -7,13 +7,17 @@ Reliable, fast, no browser automation needed.
 """
 
 import os
+import subprocess  # nosec B404
 import sys
 
 try:
     import tweepy
 except ImportError:
     print("📦 Installing tweepy...")
-    os.system("pip3 install --break-system-packages tweepy")
+    subprocess.run(  # nosec B603 B607
+        ["pip3", "install", "--break-system-packages", "tweepy"],
+        check=True,
+    )
     import tweepy
 
 # API credentials from environment (NOT hardcoded)
