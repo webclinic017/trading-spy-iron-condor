@@ -935,5 +935,10 @@
     "target_win_rate": 0.8,
     "current_day": 8,
     "notes": "Paper phase per CLAUDE.md - validate 80%+ win rate before scaling"
+  },
+  "research_insights": {
+    "last_updated": "2026-02-07T06:11:46.380851+00:00",
+    "gpu_backtest": null,
+    "combined_insights": []
   }
 }
