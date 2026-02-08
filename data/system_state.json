@@ -911,7 +911,7 @@
     "last_trade_date": "2026-02-08",
     "today_trades": 0,
     "total_trades_today": 0,
-    "last_trade_symbol": "none"
+    "last_trade_symbol": "SYNCED"
   },
   "risk": {
     "status": "MONITORING",
@@ -925,7 +925,7 @@
     "positions_count": 0
   },
   "meta": {
-    "last_updated": "2026-02-08T15:06:59.795653+00:00",
+    "last_updated": "2026-02-08T21:11:26.751157+00:00",
     "trade_sync": "alpaca_api",
     "sync_frequency_minutes": 5
   },
