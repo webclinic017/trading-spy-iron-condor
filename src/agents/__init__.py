@@ -8,28 +8,37 @@ Architecture inspired by:
 - Trading-R1: LLM reasoning with reinforcement learning
 
 Agents:
-- MetaAgent: Coordinates all agents, adapts to market volatility
-- ResearchAgent: Analyzes fundamentals, news, sentiment
-- SignalAgent: Technical analysis + LLM reasoning
-- RiskAgent: Portfolio risk, position sizing, stop-loss
-- ExecutionAgent: Order execution, timing optimization
+- ExecutionAgent: Order execution and timing optimization
+- FundFlowAgent: Institutional fund flow signals
+- MacroeconomicAgent: Macro regime assessment
+- MomentumAgent: Technical momentum analysis
+- PerplexityResearchAgent: Deep research and backtesting
+- RLFilter: Reinforcement learning trade filter
+- SandboxAgent: Safe simulation environment
 """
 
 __version__ = "2.0.0"
+
+from .base_agent import BaseAgent
+from .execution_agent import ExecutionAgent
+from .fund_flow_agent import FundFlowAgent, FundFlowSignal
+from .macro_agent import MacroeconomicAgent
+from .momentum_agent import MomentumAgent, MomentumSignal
+from .research_agent import PerplexityResearchAgent
+from .rl_agent import RLFilter
+from .sandbox_agent import SandboxAgent, SandboxCapabilities, SandboxResult
+
 __all__ = [
-    "MetaAgent",
-    "ResearchAgent",
-    "SignalAgent",
-    "RiskAgent",
+    "BaseAgent",
     "ExecutionAgent",
-    "WorkflowAgent",
-    "ApprovalAgent",
-    "NotificationAgent",
-    # Programmatic Tool Calling (PTC) - Anthropic advanced tool use
-    "PTCOrchestrator",
-    "PTCMetaAgent",
-    "execute_ptc_trade",
-    # OpenThinker Agent - Local reasoning specialist
-    "OpenThinkerAgent",
-    "create_openthinker_agent",
+    "FundFlowAgent",
+    "FundFlowSignal",
+    "MacroeconomicAgent",
+    "MomentumAgent",
+    "MomentumSignal",
+    "PerplexityResearchAgent",
+    "RLFilter",
+    "SandboxAgent",
+    "SandboxCapabilities",
+    "SandboxResult",
 ]

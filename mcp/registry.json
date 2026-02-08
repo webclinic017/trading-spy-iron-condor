@@ -64,10 +64,31 @@
     },
     {
       "id": "alpaca",
+      "display_name": "Alpaca Direct (AlpacaTrader)",
+      "module": "mcp.servers.alpaca",
+      "tools": {
+        "get_account_snapshot": "get_account_snapshot",
+        "get_latest_bars": "get_latest_bars",
+        "get_portfolio_positions": "get_portfolio_positions",
+        "validate_order_amount": "validate_order_amount",
+        "submit_market_order": "submit_market_order",
+        "set_stop_loss": "set_stop_loss"
+      }
+    },
+    {
+      "id": "alpaca-mcp",
       "display_name": "Alpaca Official MCP Server",
+      "module": "mcp.servers.alpaca",
       "transport": "http",
       "endpoint": "http://127.0.0.1:8801",
-      "tools": {}
+      "tools": {
+        "get_account_snapshot": "get_account_snapshot",
+        "get_latest_bars": "get_latest_bars",
+        "get_portfolio_positions": "get_portfolio_positions",
+        "validate_order_amount": "validate_order_amount",
+        "submit_market_order": "submit_market_order",
+        "set_stop_loss": "set_stop_loss"
+      }
     }
   ]
 }

@@ -5,6 +5,8 @@ MCP Server for Bogleheads Forum Learning
 Provides MCP tools for monitoring Bogleheads forum and integrating insights.
 """
 
+from __future__ import annotations
+
 import asyncio
 import json
 import logging
@@ -32,9 +34,7 @@ sys.path.insert(0, str(project_root))
 async def monitor_forum_tool(arguments: dict[str, Any]) -> list[TextContent]:
     """Monitor Bogleheads forum for new insights."""
     try:
-        from claude.skills.bogleheads_learner.scripts.bogleheads_learner import (
-            BogleheadsLearner,
-        )
+        from src.utils.bogleheads_integration import BogleheadsLearner
 
         learner = BogleheadsLearner()
         result = learner.monitor_bogleheads_forum(
