@@ -9,6 +9,8 @@ Updated: Jan 8, 2026 - ACTUALLY removed ChromaDB code (was still present despite
 Updated: Jan 11, 2026 - Added recency boost to prioritize recent lessons
 """
 
+from __future__ import annotations
+
 import logging
 import re
 from dataclasses import dataclass

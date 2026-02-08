@@ -243,6 +243,13 @@ class UnifiedMCPClient:
     def __init__(self) -> None:
         self._shell_client = default_client()
         self._resource_cache: dict[str, Any] = {}
+        self._registry = None
+        try:
+            from mcp.registry import load_registry
+
+            self._registry = load_registry()
+        except Exception as exc:  # noqa: BLE001
+            logger.warning(f"MCP registry unavailable: {exc}")
 
     def get_resource(
         self,
@@ -361,6 +368,12 @@ class UnifiedMCPClient:
 
     def _detect_transport(self, server: str) -> MCPTransport:
         """Detect the appropriate transport for a server."""
+        if self._registry and server in self._registry:
+            registry_entry = self._registry.get(server)
+            if registry_entry.transport == "http":
+                return MCPTransport.HTTP
+            if registry_entry.transport == "direct":
+                return MCPTransport.DIRECT
         # Direct resources
         if server in ("alpaca", "openrouter", "multi_llm"):
             return MCPTransport.DIRECT
@@ -399,12 +412,16 @@ class UnifiedMCPClient:
         import urllib.error
         import urllib.request
 
-        # Server endpoint mapping
-        endpoints = {
-            "alpaca-mcp": "http://127.0.0.1:8801",
-        }
+        base_url = None
+        if self._registry and server in self._registry:
+            base_url = self._registry.get(server).endpoint
 
-        base_url = endpoints.get(server)
+        if not base_url:
+            # Server endpoint mapping fallback
+            endpoints = {
+                "alpaca-mcp": "http://127.0.0.1:8801",
+            }
+            base_url = endpoints.get(server)
         if not base_url:
             raise MCPError(f"Unknown HTTP server: {server}")
 

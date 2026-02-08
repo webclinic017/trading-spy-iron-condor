@@ -911,7 +911,7 @@
     "last_trade_date": "2026-02-08",
     "today_trades": 0,
     "total_trades_today": 0,
-    "last_trade_symbol": "none"
+    "last_trade_symbol": "SYNCED"
   },
   "risk": {
     "status": "MONITORING",
@@ -925,7 +925,7 @@
     "positions_count": 0
   },
   "meta": {
-    "last_updated": "2026-02-08T15:06:59.795653+00:00",
+    "last_updated": "2026-02-08T21:11:26.751157+00:00",
     "trade_sync": "alpaca_api",
     "sync_frequency_minutes": 5
   },
@@ -936,31 +936,12 @@
     "current_day": 10,
     "notes": "Paper phase per CLAUDE.md - validate 80%+ win rate before scaling"
   },
-  "research_insights": {
-    "last_updated": "2026-02-08T19:44:23.584902+00:00",
-    "gpu_backtest": null,
-    "combined_insights": [
-      {
-        "source": "perplexity",
-        "parameter": "dte",
-        "value": "30 DTE",
-        "confidence": 0.7999999999999999,
-        "win_rate": 68.0
-      },
-      {
-        "source": "perplexity",
-        "parameter": "vix",
-        "value": "VIX 15-20",
-        "confidence": 0.75,
-        "win_rate": null
-      },
-      {
-        "source": "perplexity",
-        "parameter": "exit",
-        "value": "50% of max profit",
-        "confidence": 0.7,
-        "win_rate": null
-      }
-    ]
+  "trailing_stops": {
+    "last_set": "2026-02-06T15:38:57.602249",
+    "stops_active": 1,
+    "positions_skipped": 0,
+    "value_protected": 500.0,
+    "default_trail_pct": 0.1,
+    "options_trail_pct": 0.2
   }
 }

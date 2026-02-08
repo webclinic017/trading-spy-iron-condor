@@ -5,8 +5,8 @@ __all__ = [
     "alpaca",
     "mcp_trader",
     "options_order_flow",
-    "tradovate",
-    "metatrader",
+    "openrouter",
     "gmail",
     "slack",
+    "bogleheads_server",
 ]

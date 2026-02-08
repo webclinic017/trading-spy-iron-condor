@@ -25,8 +25,10 @@ class MCPServer:
 
     id: str
     display_name: str
-    module: str
+    module: str | None
     tools: dict[str, str]
+    transport: str | None = None
+    endpoint: str | None = None
 
     def tool_names(self) -> Iterable[str]:
         return self.tools.keys()
@@ -72,11 +74,26 @@ def load_registry(path: os.PathLike | None = None) -> MCPRegistry:
 
     for entry in raw_servers:
         server_id = entry["id"]
+        module = entry.get("module")
+        transport = entry.get("transport")
+        endpoint = entry.get("endpoint")
+
+        if module is None and transport is None:
+            raise ValueError(
+                f"MCP server '{server_id}' is missing both 'module' and 'transport'."
+            )
+        if transport == "http" and not endpoint:
+            raise ValueError(
+                f"MCP server '{server_id}' declares HTTP transport but no endpoint."
+            )
+
         servers[server_id] = MCPServer(
             id=server_id,
             display_name=entry.get("display_name", server_id),
-            module=entry["module"],
+            module=module,
             tools=entry.get("tools", {}),
+            transport=transport,
+            endpoint=endpoint,
         )
 
     return MCPRegistry(

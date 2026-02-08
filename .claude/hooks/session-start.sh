@@ -10,6 +10,10 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+PYTHON_BIN="${PROJECT_ROOT}/venv/bin/python"
+if [[ ! -x "${PYTHON_BIN}" ]] || ! "${PYTHON_BIN}" -V >/dev/null 2>&1; then
+	PYTHON_BIN="python3"
+fi
 
 # Single-instance lock - prevent duplicate runs across sessions
 LOCK_HASH=$(echo "${PROJECT_ROOT}" | md5 2>/dev/null | awk '{print $1}' || echo "default")
@@ -32,7 +36,7 @@ echo ""
 TRAIN_SCRIPT="${PROJECT_ROOT}/.claude/scripts/feedback/train_from_feedback.py"
 MODEL_JSON="${PROJECT_ROOT}/.claude/memory/feedback/feedback_model.json"
 if [[ -f ${TRAIN_SCRIPT} ]] && [[ -f ${MODEL_JSON} ]]; then
-	python3 "${TRAIN_SCRIPT}" --reliability --json 2>/dev/null | python3 -c "
+	"${PYTHON_BIN}" "${TRAIN_SCRIPT}" --reliability --json 2>/dev/null | "${PYTHON_BIN}" -c "
 import sys, json
 try:
     data = json.load(sys.stdin)

@@ -10,6 +10,11 @@
 set -euo pipefail
 
 cd "${CLAUDE_PROJECT_DIR:-/Users/ganapolsky_i/workspace/git/igor/trading}"
+PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-/Users/ganapolsky_i/workspace/git/igor/trading}"
+PYTHON_BIN="${PROJECT_ROOT}/venv/bin/python"
+if [[ ! -x "${PYTHON_BIN}" ]] || ! "${PYTHON_BIN}" -V >/dev/null 2>&1; then
+	PYTHON_BIN="python3"
+fi
 
 echo "============================================================"
 echo "🧠 MANDATORY RAG LEARNING - READ BEFORE RESPONDING"
@@ -17,7 +22,7 @@ echo "============================================================"
 echo ""
 
 # Query RAG for critical lessons
-python3 -c "
+\"${PYTHON_BIN}\" -c "
 from src.rag.lessons_learned_rag import LessonsLearnedRAG
 
 rag = LessonsLearnedRAG()
