@@ -521,10 +521,68 @@ def get_transcript_with_retry(video_id: str, max_retries: int = 3) -> Optional[s
         return None
 
 
+def get_transcript_via_ytdlp(video_id: str) -> Optional[str]:
+    """Fetch transcript using yt-dlp subtitle extraction (more resistant to IP bans)."""
+    import subprocess
+    import tempfile
+
+    try:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            cmd = [
+                "yt-dlp",
+                "--write-auto-sub",
+                "--sub-lang", "en",
+                "--skip-download",
+                "--sub-format", "vtt",
+                "--no-check-certificate",
+                "-o", f"{tmpdir}/%(id)s",
+                f"https://www.youtube.com/watch?v={video_id}",
+            ]
+
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+
+            # Find the subtitle file
+            import glob
+            sub_files = glob.glob(f"{tmpdir}/*.vtt") + glob.glob(f"{tmpdir}/*.en.vtt")
+
+            if not sub_files:
+                logger.warning(f"yt-dlp: No subtitles found for {video_id}")
+                return None
+
+            # Parse VTT to plain text
+            content = Path(sub_files[0]).read_text()
+            lines = []
+            for line in content.split("\n"):
+                line = line.strip()
+                # Skip VTT metadata, timestamps, and empty lines
+                if not line or line.startswith("WEBVTT") or line.startswith("Kind:") or line.startswith("Language:") or "-->" in line or line.isdigit():
+                    continue
+                # Remove HTML tags
+                clean = re.sub(r"<[^>]+>", "", line)
+                if clean and clean not in lines[-1:]:  # Dedup consecutive lines
+                    lines.append(clean)
+
+            text = " ".join(lines)
+            if len(text) > 100:
+                logger.info(f"yt-dlp subtitles: Got {len(text)} chars for {video_id}")
+                return text
+
+            return None
+
+    except Exception as e:
+        logger.warning(f"yt-dlp subtitle extraction failed for {video_id}: {e}")
+        return None
+
+
 def get_transcript(video_id: str, embedded_transcript: Optional[str] = None) -> Optional[str]:
-    """Get transcript, using embedded version if API fails."""
-    # Try API first
+    """Get transcript, using yt-dlp and embedded version as fallbacks."""
+    # Try youtube-transcript-api first
     transcript = get_transcript_with_retry(video_id)
+    if transcript:
+        return transcript
+
+    # Try yt-dlp subtitle extraction (more resistant to IP bans)
+    transcript = get_transcript_via_ytdlp(video_id)
     if transcript:
         return transcript
 
