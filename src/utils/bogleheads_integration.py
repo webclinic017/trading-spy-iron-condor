@@ -13,7 +13,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 NORMALIZED_DIR = PROJECT_ROOT / "data" / "rag" / "normalized"
 
@@ -147,9 +146,7 @@ def get_bogleheads_signal_for_symbol(
 ) -> dict[str, Any]:
     entries = _filter_bogleheads(_iter_normalized_entries())
     symbol_upper = symbol.upper()
-    symbol_entries = [
-        entry for entry in entries if (entry.ticker or "").upper() == symbol_upper
-    ]
+    symbol_entries = [entry for entry in entries if (entry.ticker or "").upper() == symbol_upper]
 
     sentiments = [entry.sentiment for entry in symbol_entries if entry.sentiment is not None]
     avg_sentiment = sum(sentiments) / len(sentiments) if sentiments else 0.0
