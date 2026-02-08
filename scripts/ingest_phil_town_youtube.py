@@ -531,11 +531,14 @@ def get_transcript_via_ytdlp(video_id: str) -> Optional[str]:
             cmd = [
                 "yt-dlp",
                 "--write-auto-sub",
-                "--sub-lang", "en",
+                "--sub-lang",
+                "en",
                 "--skip-download",
-                "--sub-format", "vtt",
+                "--sub-format",
+                "vtt",
                 "--no-check-certificate",
-                "-o", f"{tmpdir}/%(id)s",
+                "-o",
+                f"{tmpdir}/%(id)s",
                 f"https://www.youtube.com/watch?v={video_id}",
             ]
 
@@ -543,6 +546,7 @@ def get_transcript_via_ytdlp(video_id: str) -> Optional[str]:
 
             # Find the subtitle file
             import glob
+
             sub_files = glob.glob(f"{tmpdir}/*.vtt") + glob.glob(f"{tmpdir}/*.en.vtt")
 
             if not sub_files:
@@ -555,7 +559,14 @@ def get_transcript_via_ytdlp(video_id: str) -> Optional[str]:
             for line in content.split("\n"):
                 line = line.strip()
                 # Skip VTT metadata, timestamps, and empty lines
-                if not line or line.startswith("WEBVTT") or line.startswith("Kind:") or line.startswith("Language:") or "-->" in line or line.isdigit():
+                if (
+                    not line
+                    or line.startswith("WEBVTT")
+                    or line.startswith("Kind:")
+                    or line.startswith("Language:")
+                    or "-->" in line
+                    or line.isdigit()
+                ):
                     continue
                 # Remove HTML tags
                 clean = re.sub(r"<[^>]+>", "", line)
