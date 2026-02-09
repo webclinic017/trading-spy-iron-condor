@@ -18,6 +18,7 @@ Author: AI Trading System
 Date: January 13, 2026
 Lesson Source: lesson_20260113_193400_north_star_review
 """
+from __future__ import annotations
 
 import argparse
 import json

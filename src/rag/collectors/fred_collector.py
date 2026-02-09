@@ -10,6 +10,7 @@ Rate Limit: 120 requests per minute
 Author: Trading System
 Created: 2025-12-23
 """
+from __future__ import annotations
 
 import json
 import logging

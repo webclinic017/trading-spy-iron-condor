@@ -18,6 +18,7 @@ Data Flow (CANONICAL):
 │ (manual/test)   │    │   (this module)      │
 └─────────────────┘    └──────────────────────┘
 """
+from __future__ import annotations
 
 import json
 import logging

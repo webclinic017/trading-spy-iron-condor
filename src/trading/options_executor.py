@@ -17,6 +17,7 @@ Safety Features:
 Author: AI Trading System
 Date: December 10, 2025
 """
+from __future__ import annotations
 
 import logging
 import re

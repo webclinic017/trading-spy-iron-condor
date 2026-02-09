@@ -6,6 +6,7 @@ to optimize API costs and maintain $100/month budget constraint.
 
 Reference: https://arxiv.org/abs/2511.17006
 """
+from __future__ import annotations
 
 import json
 import logging

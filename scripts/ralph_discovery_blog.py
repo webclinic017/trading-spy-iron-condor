@@ -12,6 +12,7 @@ Posts go to GitHub Pages and Dev.to.
 - Trend analysis with metrics
 - Narrative storytelling structure
 """
+from __future__ import annotations
 
 import os
 import re

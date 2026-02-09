@@ -10,6 +10,7 @@ from typing import Optional
 @dataclass
 class BiasSnapshot:
     """A snapshot of market bias at a point in time."""
+from __future__ import annotations
 
     timestamp: datetime
     bias: str  # "bullish", "bearish", "neutral"

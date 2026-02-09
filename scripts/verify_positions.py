@@ -25,6 +25,7 @@ Usage:
 Author: Trading System CTO
 Created: 2025-12-08
 """
+from __future__ import annotations
 
 import json
 import os

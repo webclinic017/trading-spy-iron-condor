@@ -21,6 +21,7 @@ Integrates with:
 - daggr_workflow.py for visual debugging
 - agentic_guardrails.py for CEO approval gates
 """
+from __future__ import annotations
 
 import asyncio
 import json

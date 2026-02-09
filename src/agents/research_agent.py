@@ -14,6 +14,7 @@ Runs autonomously on weekends via GitHub Actions to:
 4. Feed results to RAG for continuous learning
 5. Update optimal parameters in system_state.json
 """
+from __future__ import annotations
 
 import asyncio
 import csv

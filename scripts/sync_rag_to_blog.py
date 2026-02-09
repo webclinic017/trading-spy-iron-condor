@@ -7,6 +7,7 @@ CEO Directive: "We should have blog posts for every day of our journey"
 CEO Directive: "You are supposed to be always learning 24/7, and publishing blog posts every day!"
 CEO Directive: "Why are lessons so mechanical and boring?? No human will read these blogs!!!!"
 """
+from __future__ import annotations
 
 import os
 import re

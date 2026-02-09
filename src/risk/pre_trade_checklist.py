@@ -10,6 +10,7 @@ This module enforces the MANDATORY Pre-Trade Checklist from CLAUDE.md:
 
 Phil Town Rule #1: Don't lose money.
 """
+from __future__ import annotations
 
 from datetime import datetime
 

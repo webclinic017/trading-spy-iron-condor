@@ -18,6 +18,7 @@ Auto-Fix Capabilities:
 
 Created: Jan 19, 2026 (LL-249: Resilience and Self-Healing)
 """
+from __future__ import annotations
 
 import json
 import logging

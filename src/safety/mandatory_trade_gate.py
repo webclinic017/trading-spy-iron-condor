@@ -11,6 +11,7 @@ No trade bypasses this gate. It enforces:
 - RAG lesson blocking (CRITICAL lessons block trades)
 - Blind trading prevention (no $0 equity trades)
 """
+from __future__ import annotations
 
 import json
 import logging

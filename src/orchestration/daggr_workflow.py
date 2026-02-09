@@ -14,6 +14,7 @@ Integrates with:
 - Perplexity research agent
 - Agentic guardrails (review gates)
 """
+from __future__ import annotations
 
 import asyncio
 import json

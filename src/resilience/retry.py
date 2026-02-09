@@ -5,6 +5,7 @@ Provides reliable retry mechanisms for transient failures.
 
 Created: Jan 19, 2026 (LL-249)
 """
+from __future__ import annotations
 
 import logging
 import random

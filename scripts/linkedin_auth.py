@@ -4,6 +4,7 @@ LinkedIn OAuth 2.0 Authentication - Automated via Playwright.
 
 Gets access token for posting to LinkedIn API.
 """
+from __future__ import annotations
 
 import json
 import os

@@ -19,6 +19,7 @@ Example:
     >>> print(f"Confidence: {result.aggregate_confidence}")
     >>> print(f"Epistemic uncertainty: {result.epistemic_uncertainty}")
 """
+from __future__ import annotations
 
 import asyncio
 import logging

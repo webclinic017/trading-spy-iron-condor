@@ -10,6 +10,7 @@ Usage:
     python3 scripts/sync_trades_to_rag.py
     python3 scripts/sync_trades_to_rag.py --date 2026-01-06
 """
+from __future__ import annotations
 
 import json
 import logging

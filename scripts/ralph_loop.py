@@ -13,6 +13,7 @@ Usage:
     python scripts/ralph_loop.py --max-iterations 10 --task "fix_tests"
     python scripts/ralph_loop.py --task "improve_code" --target src/
 """
+from __future__ import annotations
 
 import argparse
 import hashlib

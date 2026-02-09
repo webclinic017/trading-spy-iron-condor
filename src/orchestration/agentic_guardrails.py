@@ -12,6 +12,7 @@ Key principles implemented:
 
 CRITICAL: Phil Town Rule #1 compliance - never alter trading logic without human review.
 """
+from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field

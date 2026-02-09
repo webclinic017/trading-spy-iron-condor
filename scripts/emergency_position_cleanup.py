@@ -8,6 +8,7 @@ Closes excess positions to bring portfolio back within risk limits:
 
 This script is meant to run via GitHub Actions with Alpaca credentials.
 """
+from __future__ import annotations
 
 import os
 import sys

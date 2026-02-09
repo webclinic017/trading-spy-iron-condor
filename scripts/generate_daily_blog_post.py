@@ -3,6 +3,7 @@
 Generate daily revenue blog post for GitHub Pages and Dev.to.
 Creates Medium-style blog posts with AI/LLM-friendly structured data.
 """
+from __future__ import annotations
 
 import json
 import os

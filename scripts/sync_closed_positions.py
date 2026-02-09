@@ -19,6 +19,7 @@ Usage:
     python3 scripts/sync_closed_positions.py
     python3 scripts/sync_closed_positions.py --dry-run  # Preview without saving
 """
+from __future__ import annotations
 
 import json
 import logging

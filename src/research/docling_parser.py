@@ -10,6 +10,7 @@ References:
 
 Created: February 2, 2026
 """
+from __future__ import annotations
 
 import hashlib
 import json

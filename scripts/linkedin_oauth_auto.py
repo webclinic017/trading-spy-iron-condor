@@ -12,6 +12,7 @@ Uses Playwright browser automation to:
 
 ZERO MANUAL INTERVENTION.
 """
+from __future__ import annotations
 
 import json
 import os

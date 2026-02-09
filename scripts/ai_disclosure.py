@@ -10,6 +10,7 @@ Per WordPress AI guidelines (https://www.searchenginejournal.com/wordpress-ai-gu
 
 This module provides standardized disclosure blocks for all blog publishers.
 """
+from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path

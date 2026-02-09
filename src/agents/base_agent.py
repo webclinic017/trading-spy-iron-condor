@@ -4,6 +4,7 @@ Base Agent Class - Foundation for all trading agents
 Updated December 2025: Integrated BATS (Budget-Aware Test-time Scaling)
 for intelligent model selection based on task complexity and budget.
 """
+from __future__ import annotations
 
 import logging
 from abc import ABC, abstractmethod

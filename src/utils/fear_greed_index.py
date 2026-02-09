@@ -14,6 +14,7 @@ Usage:
     signal = fgi.get_trading_signal()
     # Returns: {"value": 25, "classification": "Extreme Fear", "action": "BUY", "size_multiplier": 1.5}
 """
+from __future__ import annotations
 
 import logging
 import time

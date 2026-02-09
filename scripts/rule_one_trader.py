@@ -13,6 +13,7 @@ Target: $20-50/day additional income
 
 CRITICAL: This script MUST execute trades, not just analyze!
 """
+from __future__ import annotations
 
 import json
 import logging

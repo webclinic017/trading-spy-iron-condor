@@ -6,6 +6,7 @@ that show what the ML models are actually doing.
 
 Created: Jan 1, 2026 - Fix for ML not reporting anything useful
 """
+from __future__ import annotations
 
 import json
 import logging

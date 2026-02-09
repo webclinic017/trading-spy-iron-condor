@@ -21,6 +21,7 @@ Usage:
 Requirements:
     playwright install chromium  # Run once to install browser
 """
+from __future__ import annotations
 
 import argparse
 import asyncio

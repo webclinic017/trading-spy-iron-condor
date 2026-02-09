@@ -4,6 +4,7 @@ Implements CLAUDE.md trading rules:
 - Stop-loss: Close at 2x credit received ($120 max loss for $60 credit)
 - For credit spreads: Close when spread value rises to 3x entry credit
 """
+from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field

@@ -16,6 +16,7 @@ destroy alpha through fees and sequence risk.
 Author: AI Trading System
 Date: December 2, 2025
 """
+from __future__ import annotations
 
 import logging
 from dataclasses import dataclass

@@ -19,6 +19,7 @@ Usage:
     python scripts/workflow_health_monitor.py --record daily-trading
     python scripts/workflow_health_monitor.py --report
 """
+from __future__ import annotations
 
 import argparse
 import json

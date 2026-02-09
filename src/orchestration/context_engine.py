@@ -2,6 +2,7 @@
 Context Engineering Module
 Offloads context from prompts to persistent storage for better agent performance
 """
+from __future__ import annotations
 
 import json
 import logging

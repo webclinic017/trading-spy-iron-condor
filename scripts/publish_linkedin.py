@@ -10,6 +10,7 @@ Setup:
 2. Store in LINKEDIN_ACCESS_TOKEN environment variable
 3. Script posts to profile automatically
 """
+from __future__ import annotations
 
 import os
 import sys

@@ -7,6 +7,7 @@ catches the redirect with a local server, exchanges code for token.
 
 100% automated, no copy-paste needed.
 """
+from __future__ import annotations
 
 import http.server
 import json

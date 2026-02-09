@@ -19,6 +19,7 @@ Exit codes:
 
 This would have caught our 30-day silent failure within 3 days.
 """
+from __future__ import annotations
 
 import argparse
 import json

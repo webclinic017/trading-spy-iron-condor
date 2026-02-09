@@ -3,6 +3,7 @@ Data Collection Module for Historical Market Data
 
 Systematically archives OHLCV data for ML training and backtesting.
 """
+from __future__ import annotations
 
 import argparse
 import logging

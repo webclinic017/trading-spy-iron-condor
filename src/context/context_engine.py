@@ -26,6 +26,7 @@ Usage:
     # Isolate: Create agent-specific context
     agent_ctx = engine.isolate("technical_agent", max_tokens=2000)
 """
+from __future__ import annotations
 
 import hashlib
 import json

@@ -21,6 +21,7 @@ Usage:
     if is_sentiment_fresh(sentiment_data):
         use_sentiment_in_strategy()
 """
+from __future__ import annotations
 
 import json
 import logging

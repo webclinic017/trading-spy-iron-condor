@@ -10,6 +10,7 @@ Performance targets:
 
 Fallback: Uses NumPy on CPU if CUDA unavailable (Mac Metal, no GPU, etc.)
 """
+from __future__ import annotations
 
 import json
 import math

@@ -19,6 +19,7 @@ Example:
     >>> order = trader.execute_order('SPY', 100.0, side='buy')
     >>> trader.set_stop_loss('SPY', 1.0, 450.0)
 """
+from __future__ import annotations
 
 import logging
 import os

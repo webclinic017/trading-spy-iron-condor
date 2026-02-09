@@ -9,6 +9,7 @@ Usage:
     python scripts/ralph_blog_publisher.py --discovery "Fixed flaky test" --details "..."
     python scripts/ralph_blog_publisher.py --from-results ralph_output.json
 """
+from __future__ import annotations
 
 import argparse
 import json

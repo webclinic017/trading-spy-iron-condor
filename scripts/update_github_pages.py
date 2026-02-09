@@ -7,6 +7,7 @@ This prevents stale data from being displayed on the public website.
 
 Created: Jan 3, 2026 - After discovering GitHub Pages showed Dec 29 data on Jan 3.
 """
+from __future__ import annotations
 
 import json
 import re

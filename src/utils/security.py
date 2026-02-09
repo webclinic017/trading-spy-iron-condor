@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # ruff: noqa: UP045
 """
 Security utilities for AI trading system.

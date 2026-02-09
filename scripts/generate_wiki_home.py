@@ -5,6 +5,7 @@ Generate Wiki Home Page with Current Account Data
 Pulls live data from Alpaca and generates an accurate wiki home page.
 Called by .github/workflows/update-wiki.yml
 """
+from __future__ import annotations
 
 import os
 from datetime import datetime

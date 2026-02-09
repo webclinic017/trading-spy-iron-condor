@@ -19,6 +19,7 @@ The circuit breaker:
 Author: AI Trading System
 Date: January 13, 2026
 """
+from __future__ import annotations
 
 import json
 import logging

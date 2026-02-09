@@ -8,6 +8,7 @@ Updates alpha (successes) and beta (failures) based on feedback.
 Called by: .claude/hooks/capture_feedback.sh
 Model file: models/ml/feedback_model.json
 """
+from __future__ import annotations
 
 import argparse
 import json

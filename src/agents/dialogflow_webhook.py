@@ -26,12 +26,14 @@ Architecture (v3.0.0):
 CEO Directive: "I want to be able to speak to Dialogflow about my trades
 and get accurate information" - requires semantic search.
 """
+from __future__ import annotations
 
 import logging
 import os
 import ssl
 import sys
 from pathlib import Path
+from typing import Optional
 
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.responses import JSONResponse
@@ -179,7 +181,7 @@ async def rag_search(request: Request):
     }
 
 
-def query_alpaca_api_direct() -> dict | None:
+def query_alpaca_api_direct() -> Optional[dict]:
     """
     Query Alpaca API directly for REAL-TIME portfolio data.
 
@@ -1344,7 +1346,7 @@ def create_dialogflow_response(text: str) -> dict:
     return {"fulfillmentResponse": {"messages": [{"text": {"text": [text]}}]}}
 
 
-def verify_webhook_auth(authorization: str | None = Header(None)) -> bool:
+def verify_webhook_auth(authorization: Optional[str] = Header(None)) -> bool:
     """
     Verify webhook authentication token.
 
@@ -1371,7 +1373,7 @@ def verify_webhook_auth(authorization: str | None = Header(None)) -> bool:
 @rate_limit("100/minute")  # Security: Rate limit webhook to 100 requests/minute per IP
 async def webhook(
     request: Request,
-    authorization: str | None = Header(None),
+    authorization: Optional[str] = Header(None),
 ) -> JSONResponse:
     """
     Handle Dialogflow CX webhook requests.
