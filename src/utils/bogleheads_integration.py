@@ -11,8 +11,8 @@ import json
 import os
 import re
 import urllib.request
-from datetime import datetime, timezone
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -243,7 +243,9 @@ def _entry_matches_symbol(entry: BogleheadsEntry, symbol: str) -> bool:
     if entry.ticker and entry.ticker.upper() == symbol_upper:
         return True
     pattern = rf"\\b{re.escape(symbol_upper)}\\b"
-    return bool(re.search(pattern, entry.title.upper()) or re.search(pattern, entry.content.upper()))
+    return bool(
+        re.search(pattern, entry.title.upper()) or re.search(pattern, entry.content.upper())
+    )
 
 
 def _get_bogleheads_entries(max_items: int = 100) -> tuple[list[BogleheadsEntry], str]:
