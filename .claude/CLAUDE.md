@@ -25,6 +25,7 @@ If you violate any protocol in this file: stop, acknowledge, fix completely, rec
 
 - Every commit on main MUST have green CI. If CI is red, fixing it is #1 priority.
 - Changes are NOT done until committed, pushed, PR'd, CI-green, and merged to main.
+- **Pre-existing CI failures are NOT acceptable.** If you see ANY workflow failing — even if it pre-dates your changes — you MUST fix it in the same session. "Pre-existing" is not an excuse to ignore broken CI.
 
 ---
 
