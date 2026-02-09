@@ -546,7 +546,9 @@ class TestChecklistStatus:
         )
 
         # CLAUDE.md strategy update Feb 8, 2026: SPY/SPX/XSP
-        assert any(ticker in status["ticker_allowed"]["requirement"] for ticker in ["SPY", "SPX", "XSP"])
+        assert any(
+            ticker in status["ticker_allowed"]["requirement"] for ticker in ["SPY", "SPX", "XSP"]
+        )
         assert "5%" in status["position_size"]["requirement"]
         assert "spread" in status["is_spread"]["requirement"].lower()
         assert "30-45" in status["dte_range"]["requirement"]
