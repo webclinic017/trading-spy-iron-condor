@@ -9,17 +9,22 @@ echo "🧠 Hybrid Memory Sync - MemAlign + Cortex"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# Check if pending feedback exists
-PENDING_FILE=".claude/memory/pending_cortex_sync.jsonl"
+# Check if pending feedback exists (support legacy + current paths)
+PENDING_FILE=".claude/memory/feedback/pending_cortex_sync.jsonl"
+LEGACY_PENDING_FILE=".claude/memory/pending_cortex_sync.jsonl"
 
-if [ ! -f "$PENDING_FILE" ] || [ ! -s "$PENDING_FILE" ]; then
+if [ -f "$PENDING_FILE" ] && [ -s "$PENDING_FILE" ]; then
+	ACTIVE_PENDING="$PENDING_FILE"
+elif [ -f "$LEGACY_PENDING_FILE" ] && [ -s "$LEGACY_PENDING_FILE" ]; then
+	ACTIVE_PENDING="$LEGACY_PENDING_FILE"
+else
 	echo "✅ No pending feedback - memory is up to date"
 	echo ""
 	exit 0
 fi
 
 # Count entries
-ENTRY_COUNT=$(wc -l <"$PENDING_FILE" | tr -d ' ')
+ENTRY_COUNT=$(wc -l <"$ACTIVE_PENDING" | tr -d ' ')
 
 echo "📥 Found $ENTRY_COUNT pending feedback entries"
 echo "🔄 Syncing to MemAlign dual-memory system..."
