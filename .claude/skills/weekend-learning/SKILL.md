@@ -1,3 +1,12 @@
+---
+name: weekend-learning
+description: Weekend auto-learning from YouTube transcripts, Phil Town content, trade analysis
+version: 1.1.0
+context: fork
+triggers:
+  - weekend-learn
+---
+
 # Weekend Learning Skill
 
 Trigger continuous learning during market-closed hours.
@@ -54,12 +63,3 @@ cat data/weekend_insights.json
 - Reindexes local LanceDB
 - Auto-creates PR with learned content
 - Auto-merges if only safe files changed
-
-## North Star Connection
-
-Continuous learning helps us:
-
-- Improve trading discipline
-- Learn from Phil Town's wisdom
-- Refine our iron condor strategy
-- Reach $6K/month by November 2029

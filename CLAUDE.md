@@ -123,7 +123,7 @@ Stores: `~/.shieldcortex/memories.db` (SQLite), `~/.shieldcortex/lancedb/` (vect
 ## Modular Rules (Auto-Loaded)
 
 Path-matched rules in `.claude/rules/` load automatically:
-[Trading](.claude/rules/trading.md) | [Risk Management](.claude/rules/risk-management.md) | [Data Integrity](.claude/rules/data-integrity.md) | [Compound Engineering](.claude/rules/compound-engineering.md) | [RLHF Feedback](.claude/rules/rlhf-feedback.md) | [Mandatory Rules](.claude/rules/MANDATORY_RULES.md)
+[Mandatory Rules](.claude/rules/MANDATORY_RULES.md) | [Trading](.claude/rules/trading.md) | [Risk Management](.claude/rules/risk-management.md) | [Data Integrity](.claude/rules/data-integrity.md) | [Compound Engineering](.claude/rules/compound-engineering.md) | [RLHF Feedback](.claude/rules/rlhf-feedback.md) | [Karpathy Principles](.claude/rules/karpathy-principles.md)
 
 ---
 
