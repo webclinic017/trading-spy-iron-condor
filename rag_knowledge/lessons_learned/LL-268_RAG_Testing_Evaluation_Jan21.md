@@ -22,7 +22,7 @@ Evaluated Medium article "RAG Testing — Validating Retrieval Accuracy, Groundi
 
 ### What We Already Have (No Changes Needed)
 
-- Vertex AI RAG with text-embedding-004 (768-dim)
+- legacy RAG with text-embedding-004 (768-dim)
 - Hybrid search (semantic + keyword)
 - TF-IDF local fallback
 - Basic smoke tests for imports
@@ -53,4 +53,4 @@ Evaluated Medium article "RAG Testing — Validating Retrieval Accuracy, Groundi
 
 ## Tags
 
-rag, testing, evaluation, retrieval, grounding, vertex-ai, valuable
+rag, testing, evaluation, retrieval, grounding, legacy-rag, valuable

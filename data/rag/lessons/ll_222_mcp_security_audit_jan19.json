@@ -32,7 +32,7 @@
     "servers_analyzed": 7,
     "critical_risk": ["alpaca", "trade-agent"],
     "high_risk": ["playwright", "pal"],
-    "medium_risk": ["rss", "youtube-transcript", "gmail", "slack", "vertex-ai"],
+    "medium_risk": ["rss", "youtube-transcript", "gmail", "slack", "legacy-rag"],
     "low_risk": [
       "trading-ui",
       "mcp-trader",

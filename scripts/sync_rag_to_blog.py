@@ -146,7 +146,7 @@ Every lesson we learn is captured, analyzed, and stored by our AI infrastructure
 flowchart LR
     subgraph Learning["Learning Pipeline"]
         ERROR["Error/Insight<br/>Detected"] --> CLAUDE["Claude Opus<br/>(Analysis)"]
-        CLAUDE --> RAG["Vertex AI RAG<br/>(Storage)"]
+        CLAUDE --> RAG["LanceDB RAG<br/>(Storage)"]
         RAG --> BLOG["GitHub Pages<br/>(Publishing)"]
         BLOG --> DEVTO["Dev.to<br/>(Distribution)"]
     end
@@ -157,7 +157,7 @@ flowchart LR
 | Component | Role in Learning |
 |-----------|------------------|
 | **Claude Opus 4.5** | Analyzes errors, extracts insights, determines severity |
-| **Vertex AI RAG** | Stores lessons with 768D embeddings for semantic search |
+| **LanceDB RAG** | Stores lessons with 768D embeddings for semantic search |
 | **Gemini 2.0 Flash** | Retrieves relevant past lessons before new trades |
 | **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research |
 
@@ -365,7 +365,7 @@ def post_lessons_to_devto(date_str: str, lessons: list[dict]) -> str | None:
 Our AI trading system uses:
 - **Claude Opus 4.5** - Primary reasoning engine for trade decisions
 - **OpenRouter** - Cost-optimized LLM gateway (DeepSeek, Mistral, Kimi)
-- **Vertex AI RAG** - Cloud semantic search with 768D embeddings
+- **LanceDB RAG** - Cloud semantic search with 768D embeddings
 - **Gemini 2.0 Flash** - Retrieval-augmented generation
 - **MCP Protocol** - Standardized tool integration layer
 

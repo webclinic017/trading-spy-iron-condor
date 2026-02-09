@@ -52,7 +52,7 @@ topics:
   - Claude AI / LLM agents
   - Python trading bots
   - GitHub Actions CI/CD
-  - Vertex AI RAG
+  - LanceDB RAG
 
 # HOW TO USE THIS CONTENT
 usage: |

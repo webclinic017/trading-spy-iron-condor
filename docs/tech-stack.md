@@ -26,7 +26,7 @@ flowchart TB
     subgraph AI["AI Layer"]
         CLAUDE["Claude Opus 4.5<br/>(Critical Decisions)"]
         OPENROUTER["OpenRouter Gateway<br/>(DeepSeek, Mistral, Kimi)"]
-        RAG["Vertex AI RAG<br/>(Lessons + Trades)"]
+        RAG["LanceDB RAG<br/>(Lessons + Trades)"]
         GEMINI["Gemini 2.0 Flash<br/>(Retrieval)"]
     end
 
@@ -165,66 +165,56 @@ class SentimentAnalyzer:
 
 ---
 
-### 3. Vertex AI RAG (Retrieval-Augmented Generation)
+### 3. LanceDB RAG (Local Retrieval)
 
-<span class="tech-badge active">ACTIVE</span> **Cloud Semantic Search**
+<span class="tech-badge active">ACTIVE</span> **Local Semantic Search**
 
-Our RAG system stores all trade history and lessons learned, enabling the system to learn from past mistakes and successes.
+Our RAG system stores all trade history and lessons learned locally, enabling the system to learn from past mistakes and successes without cloud dependencies.
 
 <div class="mermaid">
 flowchart TB
     subgraph Ingestion["Data Ingestion"]
-        TRADES["Trade History"] --> CHUNK["Chunking<br/>512 tokens, 100 overlap"]
+        TRADES["Trade History"] --> CHUNK["Document-aware chunking"]
         LESSONS["Lessons Learned"] --> CHUNK
-        CHUNK --> EMBED["text-embedding-004<br/>768 dimensions"]
+        CHUNK --> EMBED["Sentence-Transformers
+BAAI/bge-small-en-v1.5"]
     end
 
     subgraph Storage["Vector Storage"]
-        EMBED --> CORPUS["Vertex AI RAG Corpus<br/>(GCP Managed)"]
+        EMBED --> CORPUS["LanceDB (Local Index)"]
     end
 
     subgraph Query["Query Pipeline"]
-        QUERY["User Query"] --> RETRIEVAL["Hybrid Search<br/>(Semantic + Keyword)"]
+        QUERY["User Query"] --> RETRIEVAL["Semantic Search (LanceDB)"]
         CORPUS --> RETRIEVAL
-        RETRIEVAL --> RERANK["Re-ranking"]
-        RERANK --> GEMINI["Gemini 2.0 Flash<br/>Generation"]
-        GEMINI --> RESPONSE["Contextual Response"]
+        RETRIEVAL --> FALLBACK["Keyword fallback"]
+        FALLBACK --> RESPONSE["Contextual Response"]
     end
 
 </div>
 
 **Architecture Decisions:**
 
-- **768D Embeddings**: Google's text-embedding-004 (best price/performance)
-- **Hybrid Search**: Combines semantic similarity with keyword matching
-- **Chunking Strategy**: 512 tokens with 100 overlap (optimal for financial docs)
-- **Top-K**: Returns 5 most relevant chunks per query
+- **Local Embeddings**: Sentence-transformers for consistent offline indexing
+- **Document-Aware Chunking**: Preserves section structure for better recall
+- **Hybrid Retrieval**: Semantic search with keyword fallback
+- **Top-K**: Returns 5 most relevant sections per query
 
 **Key Files:**
 
-- `src/rag/vertex_rag.py` - Core RAG implementation
-- `rag_knowledge/lessons_learned/` - 200+ documented lessons
-- `scripts/query_vertex_rag.py` - CLI query interface
+- `src/memory/document_aware_rag.py` - Document-aware indexing + search
+- `src/rag/lessons_learned_rag.py` - LanceDB-first retrieval with fallback
+- `scripts/reindex_rag.py` - Build semantic index
+- `scripts/vectorize_rag_knowledge.py` - Keyword index
 
 ```python
-from vertexai.preview import rag
-from vertexai.preview.generative_models import GenerativeModel
+from src.memory.document_aware_rag import get_document_aware_rag
 
-class VertexRAG:
-    def query(self, query_text: str) -> list[dict]:
-        rag_retrieval = rag.Retrieval(
-            source=rag.VertexRagStore(
-                rag_corpora=[self.corpus.name],
-                similarity_top_k=5,
-                vector_distance_threshold=0.7,
-            ),
-        )
-
-        model = GenerativeModel(
-            model_name="gemini-2.0-flash",
-            tools=[rag_retrieval],
-        )
-        return model.generate_content(query_text)
+rag = get_document_aware_rag()
+rag.ensure_index()
+results = rag.search("iron condor management", limit=3)
+for r in results:
+    print(r.title, r.section_title)
 ```
 
 ---
@@ -366,7 +356,7 @@ flowchart LR
 
 | Service          | Provider                 | Purpose                       |
 | ---------------- | ------------------------ | ----------------------------- |
-| **RAG Corpus**   | Google Cloud (Vertex AI) | Vector search, embeddings     |
+| **RAG Corpus**   | LanceDB (local)          | Vector search, embeddings     |
 | **Webhook**      | Google Cloud Run         | Dialogflow integration        |
 | **CI/CD**        | GitHub Actions           | Automated testing, deployment |
 | **Blog Hosting** | GitHub Pages             | Static site hosting           |
@@ -378,7 +368,7 @@ flowchart LR
 pie title Monthly AI Cost Distribution (Target: $50/month)
     "Claude Opus (Critical)" : 40
     "OpenRouter (Bulk)" : 25
-    "Vertex AI RAG" : 20
+    "LanceDB RAG" : 20
     "Gemini Flash" : 15
 </div>
 
@@ -396,7 +386,7 @@ pie title Monthly AI Cost Distribution (Target: $50/month)
 | ------------------ | ----------------------------------------------------- | --------------------------------- |
 | Claude (Anthropic) | <span class="tech-badge active">ACTIVE</span>         | Primary reasoning engine          |
 | OpenRouter         | <span class="tech-badge active">ACTIVE</span>         | Multi-LLM gateway                 |
-| Vertex AI RAG      | <span class="tech-badge active">ACTIVE</span>         | Cloud semantic search             |
+| LanceDB RAG        | <span class="tech-badge active">ACTIVE</span>         | Local semantic search             |
 | MCP Protocol       | <span class="tech-badge active">ACTIVE</span>         | Tool integration layer            |
 | LangGraph          | <span class="tech-badge active">ACTIVE</span>         | Pipeline checkpointing            |
 | Gemini 2.0 Flash   | <span class="tech-badge active">ACTIVE</span>         | RAG retrieval                     |
@@ -427,7 +417,7 @@ pie title Monthly AI Cost Distribution (Target: $50/month)
 
 ### 4. Continuous Learning
 
-- **Vertex AI RAG** captures every lesson automatically
+- **LanceDB RAG** captures every lesson automatically
 - **Blog sync** shares learnings publicly
 - Result: System improves with every trade
 

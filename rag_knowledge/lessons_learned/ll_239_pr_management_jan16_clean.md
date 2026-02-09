@@ -26,8 +26,8 @@ PR Management & System Hygiene
 
 ### RAG Status: HEALTHY ✅
 
-- Vertex AI RAG: ENABLED
-- RAG Mode: vertex_ai_primary
+- legacy RAG: ENABLED
+- RAG Mode: cloud_ai_primary
 - Local Lessons: 83
 - Critical Lessons: 18
 - Trades Loaded: 0 (needs sync)

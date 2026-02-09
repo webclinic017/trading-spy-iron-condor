@@ -5,7 +5,7 @@ date: 2026-01-21
 day_number: 85
 lessons_count: 3
 critical_count: 0
-excerpt: "How we built an autonomous AI trading system combining Claude Opus 4.5, Vertex AI RAG, and iron condor options strategy to target $150-200/month income with 86% win rate."
+excerpt: "How we built an autonomous AI trading system combining Claude Opus 4.5, legacy RAG, and iron condor options strategy to target $150-200/month income with 86% win rate."
 tags:
   [
     iron-condors,
@@ -91,7 +91,7 @@ Every trade must pass these gates:
 
 ### What is the architecture for AI-powered trading?
 
-> The architecture uses Claude Opus 4.5 for trade decisions, Vertex AI RAG for lesson retrieval, LanceDB for semantic memory, and Thompson Sampling for strategy selection - all orchestrated through GitHub Actions CI/CD.
+> The architecture uses Claude Opus 4.5 for trade decisions, legacy RAG for lesson retrieval, LanceDB for semantic memory, and Thompson Sampling for strategy selection - all orchestrated through GitHub Actions CI/CD.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -106,7 +106,7 @@ Every trade must pass these gates:
 ┌─────────────────────────────────────────────────────────────┐
 │                      AI LAYER                                │
 │  ┌──────────────────┐  ┌──────────────────┐                 │
-│  │ Claude Opus 4.5  │  │ Vertex AI RAG    │                 │
+│  │ Claude Opus 4.5  │  │ legacy RAG    │                 │
 │  │ (Trade Decisions)│  │ (Lessons+Trades) │                 │
 │  └──────────────────┘  └──────────────────┘                 │
 │  ┌──────────────────┐  ┌──────────────────┐                 │
@@ -240,7 +240,7 @@ We're building an autonomous AI trading system that:
 
 1. **Trades iron condors** on SPY with 86% win rate
 2. **Uses Claude AI** for all critical decisions
-3. **Learns from every trade** via Vertex AI RAG and LanceDB
+3. **Learns from every trade** via legacy RAG and LanceDB
 4. **Applies Thompson Sampling** for strategy selection
 5. **Follows Phil Town Rule #1**: Don't lose money
 

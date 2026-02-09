@@ -18,7 +18,7 @@ CEO requested analysis of YouTube video about RAG (Retrieval-Augmented Generatio
 | Data Intake    | `rag_knowledge/` (37 files, 127KB) | ✅     |
 | Chunking       | 512 tokens, 100 overlap            | ✅     |
 | Embedding      | text-embedding-004 (768-dim)       | ✅     |
-| Vector Storage | Vertex AI RAG corpus               | ✅     |
+| Vector Storage | legacy RAG corpus               | ✅     |
 | Retrieval      | Hybrid search (semantic + keyword) | ✅     |
 | Synthesis      | Gemini 2.0 Flash                   | ✅     |
 
@@ -42,4 +42,4 @@ Before building new infrastructure:
 
 ## Tags
 
-architecture, rag, vertex-ai, decision, technical-debt-avoided
+architecture, rag, legacy-rag, decision, technical-debt-avoided

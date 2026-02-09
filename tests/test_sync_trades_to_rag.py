@@ -153,7 +153,7 @@ class TestFormatTradeDocument:
         assert "Trade Record: XYZ" in doc
         assert "unknown" in doc.lower()
 
-    # Note: Vertex AI sync tests removed - Vertex AI removed Feb 9, 2026
+    # Note: LanceDB RAG sync tests are skipped when the local index is unavailable
 
 
 if __name__ == "__main__":

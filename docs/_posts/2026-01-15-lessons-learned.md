@@ -68,7 +68,7 @@ _Not emergencies, but insights that will shape how we trade going forward._
 
 ### $100K Trade History Analysis Workflow
 
-During the $100K paper trading period (November-December 2025), lessons were recorded in Vertex AI but NOT synced to local files or the blog. This created a visibility gap.
+During the $100K paper trading period (November-December 2025), lessons were recorded in legacy RAG but NOT synced to local files or the blog. This created a visibility gap.
 
 ### Dashboard Showing Wrong $100K Balance
 

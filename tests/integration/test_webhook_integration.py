@@ -30,7 +30,8 @@ def test_webhook_health():
         print(f"  Status: {data.get('status')}")
         print(f"  Trades Loaded: {data.get('trades_loaded')}")
         print(f"  Trade Source: {data.get('trade_history_source')}")
-        print(f"  Vertex AI: {data.get('vertex_ai_rag_enabled')}")
+        print(f"  RAG Mode: {data.get('rag_mode')}")
+        print(f"  RAG Last Source: {data.get('rag_last_source')}")
 
         # CRITICAL: Verify trades are loaded
         # This catches the LL-230 bug where Cloud Run couldn't find trade files
@@ -43,6 +44,10 @@ def test_webhook_health():
 
         if data.get("status") != "healthy":
             print(f"\n❌ FAIL: status={data.get('status')}")
+            return False
+
+        if data.get("rag_mode") != "lancedb_first":
+            print(f"\n❌ FAIL: rag_mode={data.get('rag_mode')}")
             return False
 
         print(f"\n✅ PASS: Webhook healthy with {trades_loaded} trades loaded")

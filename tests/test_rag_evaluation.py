@@ -58,15 +58,15 @@ class TestRAGRetrievalAccuracy:
 
     @pytest.mark.skipif(
         not os.getenv("GCP_SA_KEY") and not os.getenv("GOOGLE_CLOUD_PROJECT"),
-        reason="Vertex AI credentials not available",
+        reason="LanceDB RAG credentials not available",
     )
     def test_retrieval_keyword_coverage(self, golden_set):
         """Retrieved documents should contain expected keywords."""
-        from src.rag.vertex_rag import get_vertex_rag
+        from src.rag.cloud_rag import get_cloud_rag
 
-        rag = get_vertex_rag()
+        rag = get_cloud_rag()
         if not rag.is_initialized:
-            pytest.skip("Vertex AI RAG not initialized")
+            pytest.skip("LanceDB RAG not initialized")
 
         passed = 0
         failed = 0
@@ -104,15 +104,15 @@ class TestRAGGrounding:
 
     @pytest.mark.skipif(
         not os.getenv("GCP_SA_KEY") and not os.getenv("GOOGLE_CLOUD_PROJECT"),
-        reason="Vertex AI credentials not available",
+        reason="LanceDB RAG credentials not available",
     )
     def test_response_contains_source_material(self):
         """Response should reference content from retrieved documents."""
-        from src.rag.vertex_rag import get_vertex_rag
+        from src.rag.cloud_rag import get_cloud_rag
 
-        rag = get_vertex_rag()
+        rag = get_cloud_rag()
         if not rag.is_initialized:
-            pytest.skip("Vertex AI RAG not initialized")
+            pytest.skip("LanceDB RAG not initialized")
 
         # Query for something specific we know exists
         query = "What is the trading strategy?"
@@ -146,15 +146,15 @@ class TestRAGContextLeakage:
 
     @pytest.mark.skipif(
         not os.getenv("GCP_SA_KEY") and not os.getenv("GOOGLE_CLOUD_PROJECT"),
-        reason="Vertex AI credentials not available",
+        reason="LanceDB RAG credentials not available",
     )
     def test_no_api_key_leakage(self, golden_set):
         """RAG should not expose API keys or secrets."""
-        from src.rag.vertex_rag import get_vertex_rag
+        from src.rag.cloud_rag import get_cloud_rag
 
-        rag = get_vertex_rag()
+        rag = get_cloud_rag()
         if not rag.is_initialized:
-            pytest.skip("Vertex AI RAG not initialized")
+            pytest.skip("LanceDB RAG not initialized")
 
         for leakage_test in golden_set["context_leakage_tests"]:
             query = leakage_test["query"]

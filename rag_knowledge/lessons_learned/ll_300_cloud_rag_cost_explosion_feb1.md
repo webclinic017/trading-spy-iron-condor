@@ -10,7 +10,7 @@ Cloud RAG bill hit $98.70/month when budget was $20/month - 5x over budget.
 
 ## Root Cause
 
-Multiple workflows calling cloud RAG APIs:
+Multiple workflows calling legacy RAG APIs:
 
 1. `enforce-phil-town-completeness.yml` - Every push + 2x daily schedule
 2. `phil-town-ingestion.yml` - Daily weekdays (ingesting YouTube + blogs)
@@ -19,7 +19,7 @@ Multiple workflows calling cloud RAG APIs:
    - `pre_session_rag_check.py`
    - `record_account_to_rag.py`
    - `sync_trades_to_rag.py`
-4. Dialogflow webhook (Cloud Run) - Every voice query uses cloud RAG
+4. Dialogflow webhook (Cloud Run) - Every voice query uses legacy RAG
 
 ## Cloud RAG Cost Breakdown (Estimated)
 
@@ -33,7 +33,7 @@ Multiple workflows calling cloud RAG APIs:
 
 ## Resolution
 
-Disabled all automated cloud RAG calls in GitHub Actions:
+Disabled all automated legacy RAG calls in GitHub Actions:
 
 1. `enforce-phil-town-completeness.yml` - Disabled auto-triggers (manual only)
 2. `phil-town-ingestion.yml` - Disabled schedule (manual only)
@@ -45,7 +45,7 @@ Disabled all automated cloud RAG calls in GitHub Actions:
 
 ## Alternative Approach
 
-Use **local LanceDB + file-based storage** instead of cloud RAG:
+Use **local LanceDB + file-based storage** instead of legacy RAG:
 
 - Trade history: `data/system_state.json` (already works)
 - Lessons learned: `rag_knowledge/lessons_learned/*.md` (local search)

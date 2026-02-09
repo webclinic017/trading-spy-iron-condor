@@ -299,7 +299,7 @@ Run full dashboard generation for AI insights.
 ### RL Training Status
 
 | **Status** | ⚠️ No training data available |
-| **Vertex AI Console** | [View Jobs →](https://console.cloud.google.com/vertex-ai/training/custom-jobs?project=email-outreach-ai-460404) |
+| **Local Metrics** | `data/feedback/metrics.json` |
 
 ### LangSmith Monitoring
 
@@ -397,14 +397,11 @@ Run verification tests to see detailed results.
   _Project ID: `04fa554e-f155-4039-bb7f-e866f082103b`_
 - **[All Projects](https://smith.langchain.com/o/default/projects)** - View all LangSmith projects
 
-### Vertex AI Cloud RL
+### Local RAG + RLHF
 
-- **[Vertex AI Console](https://console.cloud.google.com/vertex-ai?project=email-outreach-ai-460404)** - Main Vertex AI dashboard
-- **[Training Jobs](https://console.cloud.google.com/vertex-ai/training/custom-jobs?project=email-outreach-ai-460404)** - View RL training jobs
-- **[Models](https://console.cloud.google.com/vertex-ai/models?project=email-outreach-ai-460404)** - Trained models
-- **[Experiments](https://console.cloud.google.com/vertex-ai/experiments?project=email-outreach-ai-460404)** - Training experiments
-
-**Project**: `email-outreach-ai-460404` | **Location**: `us-central1`
+- **RAG Index**: `.claude/memory/lancedb/`
+- **Feedback Logs**: `.claude/memory/feedback/`
+- **Metrics**: `data/feedback/metrics.json`
 
 ---
 

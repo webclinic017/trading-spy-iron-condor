@@ -9,13 +9,13 @@
 
 1. **Local RAG files** (`rag_knowledge/lessons_learned/`) contain 49 lessons
 2. **Earliest local lesson**: ll_131 (January 12, 2026)
-3. **Vertex AI RAG** was created January 5, 2026 (per `vertex_rag.py` header)
-4. **Blog sync script** only reads from local files, not Vertex AI
+3. **legacy RAG** was created January 5, 2026 (per `cloud_rag.py` header)
+4. **Blog sync script** only reads from local files, not legacy RAG
 
 ## What We DON'T Know (Unverified)
 
-1. What lessons exist in Vertex AI datastore (can't query from sandbox)
-2. Whether lessons were recorded during $100K period but stored in Vertex AI only
+1. What lessons exist in legacy RAG datastore (can't query from sandbox)
+2. Whether lessons were recorded during $100K period but stored in legacy RAG only
 3. Whether there's an archive of older lessons elsewhere
 4. The actual root cause of the gap between Jan 5 (RAG created) and Jan 12 (first local lesson)
 
@@ -23,7 +23,7 @@
 
 The original version of this lesson claimed "ZERO lessons were recorded" during the $100K period. **This was an incorrect claim based on incomplete information.**
 
-The CTO (Claude) could only verify local files, not the Vertex AI datastore. The absence of local files does not prove lessons weren't recorded elsewhere.
+The CTO (Claude) could only verify local files, not the legacy RAG datastore. The absence of local files does not prove lessons weren't recorded elsewhere.
 
 ## What IS True
 
@@ -34,10 +34,10 @@ The CTO (Claude) could only verify local files, not the Vertex AI datastore. The
 
 ## Action Items
 
-1. **Investigate**: Query Vertex AI RAG from GitHub Actions to see what's stored there
-2. **Sync**: If lessons exist in Vertex AI, sync them to local files
+1. **Investigate**: Query legacy RAG from GitHub Actions to see what's stored there
+2. **Sync**: If lessons exist in legacy RAG, sync them to local files
 3. **Document**: Once verified, document the actual state of historical lessons
-4. **Fix Blog**: Ensure all lessons (local + Vertex AI) appear on blog
+4. **Fix Blog**: Ensure all lessons (local + legacy RAG) appear on blog
 
 ## Lesson for CTO
 
@@ -47,4 +47,4 @@ The original lesson violated the honesty protocol by making definitive claims wi
 
 ## Tags
 
-`data-gap`, `investigation-needed`, `vertex-ai`, `blog-sync`
+`data-gap`, `investigation-needed`, `legacy-rag`, `blog-sync`

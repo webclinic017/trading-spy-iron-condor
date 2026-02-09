@@ -48,7 +48,7 @@ Code cleanup PR deleted files without checking for cross-module dependencies. Th
 
 - 321 lesson files deleted in NUCLEAR CLEANUP
 - Only 3 lessons remain
-- Vertex AI sync workflows exist and are configured
+- legacy RAG sync workflows exist and are configured
 
 ## Key Takeaway
 

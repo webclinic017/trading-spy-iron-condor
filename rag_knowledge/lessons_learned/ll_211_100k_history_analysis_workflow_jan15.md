@@ -7,7 +7,7 @@
 
 ## Problem
 
-During the $100K paper trading period (November-December 2025), lessons were recorded in Vertex AI but NOT synced to local files or the blog. This created a visibility gap.
+During the $100K paper trading period (November-December 2025), lessons were recorded in legacy RAG but NOT synced to local files or the blog. This created a visibility gap.
 
 ## Solution Created
 

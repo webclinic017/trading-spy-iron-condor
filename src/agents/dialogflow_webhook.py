@@ -139,6 +139,46 @@ def format_rag_response(results: list, query: str, source: str) -> str:
     return "\n".join(response_parts)
 
 
+@app.post("/rag-search")
+async def rag_search(request: Request):
+    """Lightweight RAG search endpoint for UI/worker use."""
+    try:
+        payload = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid JSON payload")
+
+    query = (payload.get("query") or payload.get("message") or "").strip()
+    if not query:
+        raise HTTPException(status_code=400, detail="Query required")
+
+    try:
+        top_k = int(payload.get("top_k", 5))
+    except Exception:
+        top_k = 5
+    top_k = max(1, min(top_k, 10))
+
+    results, source = query_rag_hybrid(query, top_k=top_k)
+    trimmed = []
+    for r in results:
+        content = r.get("content") or r.get("snippet") or ""
+        trimmed.append(
+            {
+                "id": r.get("id"),
+                "title": r.get("title") or r.get("id"),
+                "severity": r.get("severity", "MEDIUM"),
+                "summary": content[:300],
+                "content": content[:2000],
+                "file": r.get("file"),
+            }
+        )
+
+    return {
+        "query": query,
+        "source": source,
+        "results": trimmed,
+    }
+
+
 def query_alpaca_api_direct() -> dict | None:
     """
     Query Alpaca API directly for REAL-TIME portfolio data.
@@ -1713,6 +1753,7 @@ async def root():
         "rag_last_source": local_rag.last_source,
         "endpoints": {
             "/webhook": "POST - Dialogflow CX webhook (lessons + trades + readiness)",
+            "/rag-search": "POST - RAG search (LanceDB-first, JSON response)",
             "/health": "GET - Health check",
             "/diagnostics": "GET - Detailed diagnostic info for debugging",
             "/test": "GET - Test lessons query",

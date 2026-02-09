@@ -44,20 +44,38 @@ class LessonsLearnedRAG:
             "true",
             "yes",
         }
+        self.lancedb_required = os.getenv("LANCEDB_REQUIRED", "true").lower() in {
+            "1",
+            "true",
+            "yes",
+        }
+        if os.getenv("CI", "").lower() in {"1", "true", "yes"}:
+            self.lancedb_required = True
         self.lancedb_auto_index = os.getenv("LANCEDB_AUTO_INDEX", "true").lower() in {
             "1",
             "true",
             "yes",
         }
-        if self.lancedb_enabled and LANCEDB_RAG_AVAILABLE:
-            try:
-                self.lancedb_rag = get_document_aware_rag()
-                if self.lancedb_auto_index:
-                    self.lancedb_rag.ensure_index()
-                logger.info("✅ LanceDB RAG initialized (primary)")
-            except Exception as e:
-                logger.warning(f"LanceDB RAG init failed: {e}")
-                self.lancedb_rag = None
+        if self.lancedb_enabled:
+            if not LANCEDB_RAG_AVAILABLE:
+                if self.lancedb_required:
+                    raise RuntimeError("LanceDB required but DocumentAwareRAG not available")
+                logger.warning("DocumentAwareRAG not available; falling back to keyword search")
+            else:
+                try:
+                    self.lancedb_rag = get_document_aware_rag()
+                    if self.lancedb_auto_index or self.lancedb_required:
+                        status = self.lancedb_rag.ensure_index()
+                        if status.get("error"):
+                            raise RuntimeError(
+                                f"LanceDB index unavailable: {status['error']}"
+                            )
+                    logger.info("✅ LanceDB RAG initialized (primary)")
+                except Exception as e:
+                    if self.lancedb_required:
+                        raise
+                    logger.warning(f"LanceDB RAG init failed: {e}")
+                    self.lancedb_rag = None
 
         # Use LessonsSearch for keyword-based search
         if LESSONS_SEARCH_AVAILABLE:

@@ -29,11 +29,13 @@ jobs:
           # Parse response
           STATUS=$(echo "$RESPONSE" | jq -r '.status')
           TRADES_LOADED=$(echo "$RESPONSE" | jq -r '.trades_loaded')
-          VERTEX_RAG=$(echo "$RESPONSE" | jq -r '.vertex_ai_rag_enabled')
+          RAG_MODE=$(echo "$RESPONSE" | jq -r '.rag_mode')
+          RAG_LAST_SOURCE=$(echo "$RESPONSE" | jq -r '.rag_last_source')
 
           echo "status=$STATUS" >> $GITHUB_OUTPUT
           echo "trades_loaded=$TRADES_LOADED" >> $GITHUB_OUTPUT
-          echo "vertex_rag=$VERTEX_RAG" >> $GITHUB_OUTPUT
+          echo "rag_mode=$RAG_MODE" >> $GITHUB_OUTPUT
+          echo "rag_last_source=$RAG_LAST_SOURCE" >> $GITHUB_OUTPUT
 
           # Validation
           FAILED=false
@@ -54,10 +56,11 @@ jobs:
             echo "✅ Trades loaded: $TRADES_LOADED"
           fi
 
-          if [ "$VERTEX_RAG" != "true" ]; then
-            echo "⚠️ WARNING: Vertex AI RAG is not enabled (expected for full functionality)"
+          if [ "$RAG_MODE" != "lancedb_first" ]; then
+            echo "❌ FAIL: RAG mode is '$RAG_MODE' (expected lancedb_first)"
+            FAILED=true
           else
-            echo "✅ Vertex AI RAG: enabled"
+            echo "✅ RAG mode: lancedb_first"
           fi
 
           if [ "$FAILED" = "true" ]; then
@@ -87,6 +90,29 @@ jobs:
 
           echo "✅ Trade query returned $RESULTS_COUNT trades"
 
+      - name: Test RAG Query (LanceDB)
+        if: success()
+        run: |
+          echo "🔍 Testing RAG query endpoint..."
+
+          TEST_URL="https://trading-dialogflow-webhook-cqlewkvzdq-uc.a.run.app/test"
+          RESPONSE=$(curl -s "$TEST_URL")
+
+          RAG_SOURCE=$(echo "$RESPONSE" | jq -r '.rag_source')
+          RESULTS_COUNT=$(echo "$RESPONSE" | jq -r '.results_count')
+
+          if [ "$RESULTS_COUNT" = "0" ] || [ "$RESULTS_COUNT" = "null" ]; then
+            echo "❌ FAIL: RAG query returned 0 results"
+            exit 1
+          fi
+
+          if [ "$RAG_SOURCE" != "lancedb" ]; then
+            echo "❌ FAIL: RAG source is '$RAG_SOURCE' (expected lancedb)"
+            exit 1
+          fi
+
+          echo "✅ RAG query returned $RESULTS_COUNT results (source: $RAG_SOURCE)"
+
       - name: Summary
         if: always()
         run: |
@@ -96,4 +122,5 @@ jobs:
           echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| Status | ${{ steps.health.outputs.status || 'unknown' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Trades Loaded | ${{ steps.health.outputs.trades_loaded || 'unknown' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Vertex AI RAG | ${{ steps.health.outputs.vertex_rag || 'unknown' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| RAG Mode | ${{ steps.health.outputs.rag_mode || 'unknown' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| RAG Last Source | ${{ steps.health.outputs.rag_last_source || 'unknown' }} |" >> $GITHUB_STEP_SUMMARY

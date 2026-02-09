@@ -845,182 +845,103 @@ layout: null
     </div>
 
     <script>
-      // Lessons data embedded from rag_knowledge/lessons_learned
-      const lessons = [
-        {
-          id: "LL-323",
-          title: "Iron Condor Management - 71,417 Trade Study",
-          date: "January 31, 2026",
-          category: "Research / Position Management",
-          severity: "HIGH",
-          summary:
-            "Analysis of 71,417 iron condor trades on SPY reveals optimal management: close at 50% profit for 85% win rate, 7 DTE mandatory close, risk:reward improves to 1.5:1.",
-          tags: [
-            "iron-condor",
-            "management",
-            "research",
-            "win-rate",
-            "capital-efficiency",
-          ],
-          content: `Study of 71,417 iron condor trades (2007-2017):
-- 16-delta setup: optimal profit target 50-75%
-- Win rate at 50% target: ~85%
-- Win rate at expiration: ~68%
-- Close at 50% captures most profit in ~40% of time
-- Capital efficiency: 2-3 trades/month vs 1 at expiration
-- VIX > 20 significantly outperforms other regimes`,
-        },
-        {
-          id: "LL-322",
-          title: "XSP vs SPY - Section 1256 Tax Optimization",
-          date: "January 31, 2026",
-          category: "Tax Strategy",
-          severity: "HIGH",
-          summary:
-            "XSP options qualify for 60/40 tax treatment, potentially saving 25%+ on taxes. At $72K/year profit: SPY taxes $25,200 vs XSP $18,720 = $6,480 annual savings.",
-          tags: [
-            "tax-optimization",
-            "section-1256",
-            "xsp",
-            "spy",
-            "north-star",
-          ],
-          content: `XSP (Mini-SPX) vs SPY comparison:
-- SPY: 100% short-term capital gains, wash sale rules apply
-- XSP: 60% long-term / 40% short-term (Section 1256)
-- At $72K profit: XSP saves ~$6,480/year in taxes
-- XSP = cash settled, European-style, no early assignment
-- Break-even: ~$10K annual profits for XSP to be worth it
-- Recommendation: Use SPY for paper, switch to XSP live at >$25K profit`,
-        },
-        {
-          id: "LL-321",
-          title: "VIX-Based Iron Condor Entry Rules",
-          date: "January 31, 2026",
-          category: "Strategy / Entry Timing",
-          severity: "HIGH",
-          summary:
-            "VIX < 15: avoid (premiums thin). VIX 15-20: tradeable with caution. VIX 20-25: OPTIMAL zone. IV Rank > 50% ideal.",
-          tags: ["iron-condor", "vix", "iv-rank", "entry-timing", "volatility"],
-          content: `VIX Entry Decision Matrix:
-- VIX < 15: WAIT - don't enter
-- VIX 15-20 + IV Rank < 30%: WAIT
-- VIX 15-20 + IV Rank > 50%: ENTER
-- VIX 20-25 + IV Rank > 30%: ENTER - optimal zone
-- VIX > 30: CAUTION - may whipsaw
-Key insight: High IV = vol crush benefit when IV reverts to mean`,
-        },
-        {
-          id: "LL-320",
-          title: "CEO Identity and North Star Commitment",
-          date: "January 30, 2026",
-          category: "North Star / Identity",
-          severity: "PERMANENT",
-          summary:
-            "Igor Ganapolsky, born Nov 14, 1979. By 50th birthday (Nov 14, 2029), MUST reach $6K/month after-tax = financial independence.",
-          tags: ["north-star", "identity", "mission", "commitment"],
-          content: `North Star: $6,000/month after-tax = FINANCIAL INDEPENDENCE
-Timeline: 3 years, 9 months, 15 days
-Path: $100K -> $600K via iron condors
-Why: Promise to late grandmother, freedom, security for family`,
-        },
-        {
-          id: "LL-319",
-          title: "CTO Failed Phil Town Rule #1 - Lost 86% of Account",
-          date: "January 30, 2026",
-          category: "CTO Accountability",
-          severity: "CRITICAL",
-          summary:
-            "CTO failed to protect capital. $30K reduced to $4,099 - 86% loss in 8 days. Complete Rule #1 failure.",
-          tags: ["critical", "rule-1-violation", "cto-failure", "trust-breach"],
-          content: `Failures:
-1. Dismissed CEO crisis concerns without verification
-2. Did not query RAG for past crisis patterns
-3. Looked at wrong number ($29,959 vs actual $4,099)
-4. Repeated mistakes from 9+ documented crisis lessons
-Recovery: Must validate 80%+ win rate for 30 days before trading`,
-        },
-        {
-          id: "LL-318",
-          title: "Claude Code Async Hooks for Performance",
-          date: "January 27, 2026",
-          category: "Performance Optimization",
-          severity: "MEDIUM",
-          summary:
-            "Add async: true to hooks that don't need to block execution. Reduced startup latency by 15-20 seconds.",
-          tags: ["performance", "hooks", "async", "optimization"],
-          content: `Make async: backup scripts, feedback capture, blog generators
-Keep synchronous: context injection, validation, format hooks
-Key: async: true runs in managed background vs shell & which may get killed`,
-        },
-        {
-          id: "LL-300",
-          title: "Vertex AI Cost Explosion - $98/mo vs $20/mo Budget",
-          date: "February 1, 2026",
-          category: "Cost Management",
-          severity: "CRITICAL",
-          summary:
-            "GCP bill hit $98.70 when budget was $20. Multiple workflows calling Vertex AI RAG APIs caused 5x overspend.",
-          tags: ["cost-management", "vertex-ai", "budget", "rag"],
-          content: `Root cause: Too many automated RAG calls
-- enforce-phil-town-completeness.yml
-- phil-town-ingestion.yml
-- daily-trading.yml (4 RAG calls)
-- Dialogflow webhook
-Resolution: Disabled all auto Vertex AI calls, switched to local file storage`,
-        },
-        {
-          id: "LL-268",
-          title: "Iron Condor Win Rate Research",
-          date: "January 21, 2026",
-          category: "Research",
-          severity: "HIGH",
-          summary:
-            "15-delta iron condors = 86% win rate. Close at 50% profit OR 7 DTE, whichever first. Risk/reward ~1.5:1.",
-          tags: ["iron-condor", "win-rate", "research", "strategy"],
-          content: `Key findings from research:
-- 15-delta = 86% probability of profit
-- Close at 50% max profit for optimal returns
-- 7 DTE exit to avoid gamma risk (changed from 21 DTE)
-- Better than credit spreads: profit from BOTH sides`,
-        },
-        {
-          id: "LL-282",
-          title: "CTO Failure Crisis Jan 22",
-          date: "January 22, 2026",
-          category: "Crisis",
-          severity: "CRITICAL",
-          summary:
-            "Position accumulation bug allowed 10+ simultaneous positions when limit was 2. Lost $1,472 in paper account.",
-          tags: ["crisis", "position-accumulation", "bug", "failure"],
-          content: `Root cause: Position count checked SHARES not CONTRACTS
-Fix: Count option contracts, not share equivalent
-Impact: $1,472 loss in paper, positions need manual close
-Prevention: Circuit breaker now checks contract count`,
-        },
-        {
-          id: "LL-230",
-          title: "Trade Data Source Priority Bug",
-          date: "January 15, 2026",
-          category: "Architecture",
-          severity: "HIGH",
-          summary:
-            "Webhook looked for trades_*.json which doesn't exist on Cloud Run. Must fetch from GitHub API.",
-          tags: ["architecture", "webhook", "cloud-run", "data-source"],
-          content: `CANONICAL data source: data/system_state.json -> trade_history
-Cloud Run has NO local files - must fetch via GitHub API
-Deprecated: data/trades_*.json (legacy)`,
-        },
-      ];
+      // Lessons loaded dynamically from data/rag/lessons_query.json
+      let lessons = [];
+      let lessonsLoaded = false;
+      let currentResults = [];
+      const LESSONS_URL = new URL(
+        "./data/rag/lessons_query.json",
+        window.location.href,
+      ).toString();
+      const LESSONS_FALLBACK_URL =
+        "https://raw.githubusercontent.com/IgorGanapolsky/trading/main/data/rag/lessons_query.json";
 
       // Initialize
       document.addEventListener("DOMContentLoaded", () => {
-        renderRecentLessons();
+        loadLessons();
         setupEventListeners();
       });
 
+      async function loadLessons() {
+        const sources = [LESSONS_URL, LESSONS_FALLBACK_URL];
+        for (const url of sources) {
+          try {
+            const res = await fetch(url, { cache: "no-store" });
+            if (!res.ok) continue;
+            const data = await res.json();
+            if (Array.isArray(data)) {
+              lessons = data.map((lesson) => normalizeLesson(lesson));
+              lessonsLoaded = true;
+              renderRecentLessons();
+              return;
+            }
+          } catch (err) {
+            // Try next source
+          }
+        }
+
+        lessonsLoaded = false;
+        const container = document.getElementById("recentLessons");
+        if (container) {
+          container.innerHTML =
+            '<div class="no-results">Unable to load lessons. Reindex and rebuild the query index.</div>';
+        }
+      }
+
+      function truncate(text, maxLen) {
+        if (!text) return "";
+        if (text.length <= maxLen) return text;
+        return text.slice(0, maxLen).trimEnd() + "...";
+      }
+
+      function normalizeLesson(raw) {
+        const id = raw.id || raw.lesson_id || raw.slug || "unknown";
+        const title = raw.title || raw.name || id;
+        const summarySource =
+          raw.summary || raw.snippet || raw.content || raw.text || "";
+        const summary = truncate(summarySource.replace(/\s+/g, " "), 240);
+        const contentSource = raw.content || raw.snippet || raw.summary || "";
+        const content = truncate(contentSource.replace(/\s+/g, " "), 2000);
+
+        return {
+          id,
+          title,
+          summary,
+          content,
+          category: raw.category || "Lesson",
+          tags: Array.isArray(raw.tags) ? raw.tags : [],
+          date: raw.date || raw.created_at || "",
+          severity: raw.severity || "MEDIUM",
+          file: raw.file || raw.source || "",
+        };
+      }
+
+      async function searchRemote(query) {
+        try {
+          const res = await fetch(WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mode: "search", query, top_k: 10 }),
+          });
+          if (!res.ok) return null;
+          const data = await res.json();
+          if (!Array.isArray(data.results)) return null;
+          return {
+            results: data.results.map((lesson) => normalizeLesson(lesson)),
+            source: data.source || "unknown",
+          };
+        } catch {
+          return null;
+        }
+      }
+
       function renderRecentLessons() {
         const container = document.getElementById("recentLessons");
+        if (!lessonsLoaded) {
+          container.innerHTML =
+            '<div class="no-results">Loading lessons...</div>';
+          return;
+        }
         container.innerHTML = lessons
           .slice(0, 10)
           .map((lesson) => createLessonCard(lesson))
@@ -1091,7 +1012,7 @@ Deprecated: data/trades_*.json (legacy)`,
         });
       }
 
-      function performSearch() {
+      async function performSearch() {
         const query = document
           .getElementById("searchInput")
           .value.toLowerCase()
@@ -1102,6 +1023,31 @@ Deprecated: data/trades_*.json (legacy)`,
         if (!query) {
           resultsContainer.innerHTML =
             '<div class="no-results">Enter a search term to find relevant lessons.</div>';
+          resultCount.textContent = "";
+          return;
+        }
+
+        currentResults = [];
+
+        const remote = await searchRemote(query);
+        if (remote) {
+          if (remote.results.length === 0) {
+            resultsContainer.innerHTML = `<div class="no-results">No lessons found for "${query}". Try different keywords.</div>`;
+            resultCount.textContent = "0 results";
+            return;
+          }
+
+          currentResults = remote.results;
+          resultsContainer.innerHTML = remote.results
+            .map((lesson) => createLessonCard(lesson))
+            .join("");
+          resultCount.textContent = `${remote.results.length} result${remote.results.length !== 1 ? "s" : ""} (${remote.source})`;
+          return;
+        }
+
+        if (!lessonsLoaded) {
+          resultsContainer.innerHTML =
+            '<div class="no-results">Lessons are still loading. Try again in a moment.</div>';
           resultCount.textContent = "";
           return;
         }
@@ -1127,14 +1073,17 @@ Deprecated: data/trades_*.json (legacy)`,
           return;
         }
 
+        currentResults = results;
         resultsContainer.innerHTML = results
           .map((lesson) => createLessonCard(lesson))
           .join("");
-        resultCount.textContent = `${results.length} result${results.length !== 1 ? "s" : ""}`;
+        resultCount.textContent = `${results.length} result${results.length !== 1 ? "s" : ""} (keyword)`;
       }
 
       function showLessonModal(lessonId) {
-        const lesson = lessons.find((l) => l.id === lessonId);
+        const lesson =
+          currentResults.find((l) => l.id === lessonId) ||
+          lessons.find((l) => l.id === lessonId);
         if (!lesson) return;
 
         document.getElementById("modalTitle").textContent =

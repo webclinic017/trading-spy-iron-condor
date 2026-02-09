@@ -110,7 +110,7 @@ Paper Account:
 
 You: "Why did we not make money yesterday?"
 
-DialogFlow: "Based on our lessons learned (Vertex AI RAG):
+DialogFlow: "Based on our lessons learned (LanceDB RAG):
 - No trades executed on weekends (market closed)
 - Next trading session: Monday 9:30 AM ET
 - Automation health: OK (last trade Jan 15)"
@@ -215,7 +215,7 @@ Capital sufficient, backtests passing, CI green."
 | **Report generation**   | ✅ Create docs, spreadsheets | ❌ Text only         |
 | **Real-time data**      | ❌ Uses screenshots          | ✅ Alpaca API direct |
 | **Voice interface**     | ❌ Desktop only              | ✅ Google Assistant  |
-| **RAG queries**         | ❌ No RAG                    | ✅ Vertex AI RAG     |
+| **RAG queries**         | ❌ No RAG                    | ✅ LanceDB RAG       |
 | **Trading questions**   | 🟡 Via screenshots           | ✅ Semantic search   |
 
 **Recommendation:** Use both!
@@ -321,7 +321,7 @@ python3 scripts/capture_trading_screenshots.py --dashboard progress
 curl https://trading-dialogflow-webhook-cqlewkvzdq-uc.a.run.app/health
 
 # Should return:
-# {"status":"healthy","vertex_ai_rag_enabled":true,...}
+# {"status":"healthy","cloud_ai_rag_enabled":true,...}
 ```
 
 **Test queries:**
@@ -349,7 +349,7 @@ curl -X POST https://trading-dialogflow-webhook-cqlewkvzdq-uc.a.run.app/webhook 
 **DialogFlow:** Free tier (1,000 requests/month)
 
 - Webhook hosting: Free (Cloud Run free tier)
-- Vertex AI RAG: $0.30/1K queries (≈$15/month for 50K queries)
+- LanceDB RAG: $0 (local index + embeddings)
 
 **Total estimated cost:** ~$115-215/month for full automation
 

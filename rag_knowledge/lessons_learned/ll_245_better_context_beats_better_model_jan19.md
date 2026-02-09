@@ -20,13 +20,13 @@ We already implement these principles:
 | Extract signal         | `inject_trading_context.sh` injects only ~30 lines |
 | Avoid context rot      | Live Alpaca API fetch, not history dumps           |
 | Filter at architecture | Hook-based injection on UserPromptSubmit           |
-| Optimal retrieval      | Vertex AI RAG: 512 tokens, top-5 results           |
+| Optimal retrieval      | legacy RAG: 512 tokens, top-5 results           |
 
 ## References
 
 - `.claude/hooks/inject_trading_context.sh` - Curated context injection
 - `.claude/hooks/mandatory_rag_check.sh` - Filtered critical lessons
-- `src/rag/vertex_rag.py` - Optimal RAG configuration
+- `src/rag/cloud_rag.py` - Optimal RAG configuration
 
 ## Decision
 

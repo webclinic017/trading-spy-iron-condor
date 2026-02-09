@@ -25,7 +25,7 @@ Query routing priority was inverted:
 1. Added `is_compound_pl_analytical_query()` detection function
 2. Check for compound queries BEFORE trade queries in routing logic
 3. Compound handler: Gets P/L answer + queries RAG for "why" explanation
-4. Fixed RAG field extraction (Vertex AI: `text`, Local: `content`)
+4. Fixed RAG field extraction (legacy RAG: `text`, Local: `content`)
 5. Fixed trade display to show order fills without fake P/L: $0.00
 
 ## Code Changes

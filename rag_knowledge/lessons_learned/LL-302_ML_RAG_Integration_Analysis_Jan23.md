@@ -12,8 +12,8 @@
 
 - **Lessons Learned**: 50+ lessons in `rag_knowledge/lessons_learned/`
 - **Strategy Docs**: Options research in `rag_knowledge/options_strategy/`
-- **Query Path**: Dialogflow → `query_rag_hybrid()` → Vertex AI or local fallback
-- **Cost Optimization**: Vertex AI queries limited to pre-trade and webhook only (Jan 23, 2026)
+- **Query Path**: Dialogflow → `query_rag_hybrid()` → legacy RAG or local fallback
+- **Cost Optimization**: legacy RAG queries limited to pre-trade and webhook only (Jan 23, 2026)
 
 ### ML Feedback Model
 
@@ -67,7 +67,7 @@ LL-268 research shows:
 
 ## Remaining Improvements
 
-1. **Automate lesson ingestion to Vertex AI**
+1. **Automate lesson ingestion to legacy RAG**
    - Currently manual via workflow
    - Consider: auto-sync on PR merge to main
 

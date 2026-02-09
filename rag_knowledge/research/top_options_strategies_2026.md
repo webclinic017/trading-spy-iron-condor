@@ -188,4 +188,4 @@ This is exactly Phil Town's approach - he learned from Buffett!
 
 ---
 
-_This research will be synced to Vertex AI RAG via CI workflow for future reference._
+_This research will be synced to LanceDB RAG via CI workflow for future reference._

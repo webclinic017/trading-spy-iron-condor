@@ -33,7 +33,7 @@ Deleted stale branches:
 - claude/investigate-gcp-charges-8VWfA
 - claude/rl-staleness-improvements-8VWfA
 - claude/tax-strategy-planning-Fc73z
-- claude/vertex-ai-cost-optimize-8VWfA
+- claude/legacy-rag-cost-optimize-8VWfA
 
 ### 3. Git Rebase Conflict Resolution
 

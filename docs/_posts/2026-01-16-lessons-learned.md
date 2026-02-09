@@ -45,9 +45,9 @@ Violations
 
 _Not emergencies, but insights that will shape how we trade going forward._
 
-### Vertex AI RAG Optimization - COMPLETE
+### legacy RAG Optimization - COMPLETE
 
-Vertex AI RAG was initialized but queries returned empty results, falling back to local keyword search.
+legacy RAG was initialized but queries returned empty results, falling back to local keyword search.
 
 ### Close Position Workflow Bugs Discovered
 

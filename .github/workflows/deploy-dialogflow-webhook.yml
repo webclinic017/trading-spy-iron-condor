@@ -63,7 +63,6 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           IMAGE=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }}
-          # CRITICAL: Set GOOGLE_CLOUD_PROJECT for Vertex AI RAG initialization
           # FIX Jan 15, 2026: Add Alpaca credentials for real-time P/L queries
           gcloud run deploy ${{ env.SERVICE_NAME }} \
             --image $IMAGE \
@@ -75,7 +74,7 @@ jobs:
             --min-instances 0 \
             --max-instances 3 \
             --timeout 60s \
-            --set-env-vars "GOOGLE_CLOUD_PROJECT=${{ env.PROJECT_ID }},VERTEX_AI_LOCATION=europe-west4,ALPACA_PAPER_TRADING_API_KEY=${{ secrets.ALPACA_PAPER_TRADING_API_KEY }},ALPACA_PAPER_TRADING_API_SECRET=${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}"
+            --set-env-vars "ALPACA_PAPER_TRADING_API_KEY=${{ secrets.ALPACA_PAPER_TRADING_API_KEY }},ALPACA_PAPER_TRADING_API_SECRET=${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}"
 
       - name: Get service URL
         run: |

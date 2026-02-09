@@ -78,7 +78,7 @@ Every backtest generates lessons that are:
 
 1. Saved to `data/backtests/backtest_lessons_*.json`
 2. Formatted for RAG in `data/rag_staging/`
-3. Ingested to Vertex AI RAG (when configured)
+3. Ingested to LanceDB RAG (when configured)
 
 ### Lesson Types
 

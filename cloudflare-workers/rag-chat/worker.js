@@ -4,85 +4,20 @@
  * Supports conversation history for follow-up questions
  */
 
-const LESSONS_CONTEXT = `You are a trading knowledge assistant for Igor's AI Trading System. Answer questions using ONLY the lessons below. If the answer isn't in the lessons, say "I don't have a lesson about that."
+const RAG_SEARCH_URL =
+  "https://trading-dialogflow-webhook-cqlewkvzdq-uc.a.run.app/rag-search";
+const LESSONS_INDEX_URL =
+  "https://raw.githubusercontent.com/IgorGanapolsky/trading/main/data/rag/lessons_query.json";
+const LESSONS_INDEX_FALLBACK_URL =
+  "https://igorganapolsky.github.io/trading/data/rag/lessons_query.json";
+const LESSONS_CACHE_TTL_MS = 5 * 60 * 1000;
+let lessonsCache = { data: null, fetchedAt: 0 };
 
-KEY LESSONS:
-
-LL-323: Iron Condor Management (71,417 trade study) - January 31, 2026
-- Close at 50% profit for 85% win rate
-- 7 DTE mandatory close (not expiration)
-- 16-delta setup optimal
-- VIX > 20 significantly outperforms
-
-LL-322: XSP vs SPY Tax Optimization - January 31, 2026
-- SPY: 100% short-term gains, wash sale rules apply
-- XSP: 60/40 tax treatment (Section 1256), cash settled
-- At $72K profit: XSP saves ~$6,480/year
-- Use SPY for paper, switch to XSP live at >$25K profit
-
-LL-321: VIX Entry Rules - January 31, 2026
-- VIX < 15: WAIT (premiums thin)
-- VIX 15-20 + IV Rank < 30%: WAIT
-- VIX 15-20 + IV Rank > 50%: ENTER
-- VIX 20-25: OPTIMAL zone
-- VIX > 30: CAUTION (may whipsaw)
-
-LL-320: North Star - January 30, 2026
-- Goal: $6,000/month after-tax = financial independence
-- Timeline: By Nov 14, 2029 (age 50)
-- Path: $100K -> $600K via iron condors
-- Monthly target: 8% returns (conservative iron condor avg)
-
-LL-319: CTO Crisis Failure - January 30, 2026
-- Lost 86% of $30K account in 8 days
-- Root cause: Dismissed CEO warnings, didn't query RAG
-- Never claim success without verification evidence
-- Must validate 80%+ win rate before live trading
-
-LL-324: Claude Date Hallucination - February 1, 2026
-- Claude wrote "Super Bowl weekend" on Feb 1 when Super Bowl is Feb 8
-- Must verify dates with web search before publishing
-- Never assume calendar knowledge is correct
-
-LL-325: CTO Lied About Secret Upload - February 1, 2026
-- Claimed success uploading empty API key
-- Must test endpoints after claiming success
-- Verification protocol violated
-
-LL-318: Async Hooks Performance - January 27, 2026
-- Use async: true for non-blocking hooks
-- Reduced startup by 15-20 seconds
-
-LL-300: Vertex AI Cost Explosion - February 1, 2026
-- GCP bill hit $98 vs $20 budget
-- Too many automated RAG calls
-- Solution: Disabled auto Vertex AI, use local files
-
-LL-268: Iron Condor Win Rate Research - January 21, 2026
-- 15-delta = 86% probability of profit
-- Close at 50% OR 7 DTE (whichever first)
-- Risk/reward ~1.5:1
-- Better than credit spreads: profit from BOTH sides
-
-LL-282: Position Accumulation Bug - January 22, 2026
-- Bug allowed 10+ positions when limit was 2
-- Root cause: Counted SHARES not CONTRACTS
-- Lost $1,472 in paper account
-- Fix: Circuit breaker checks contract count
-
-LL-230: Trade Data Architecture - January 15, 2026
-- CANONICAL source: data/system_state.json -> trade_history
-- Cloud Run has NO local files - fetch via GitHub API
-- Deprecated: trades_*.json files
-
-STRATEGY SUMMARY:
-- Ticker: SPY ONLY (best liquidity, tightest spreads)
-- Structure: Iron condors, 15-20 delta, $5-wide wings
-- DTE: 30-45 days, close at 7 DTE or 50% profit
-- Position size: Max 5% ($5,000 risk)
-- Stop-loss: 200% of credit received
-- Monthly target: 3-4 trades x $150-250 avg
-`;
+const SYSTEM_PREFIX = [
+  "You are a trading knowledge assistant for Igor's AI Trading System.",
+  "Answer questions using ONLY the lessons below.",
+  "If the answer isn't in the lessons, say \"I don't have a lesson about that.\"",
+].join("\n");
 
 const GITHUB_RAW_URL =
   "https://raw.githubusercontent.com/IgorGanapolsky/trading/main/data/system_state.json";
@@ -119,17 +54,150 @@ function parseOccSymbol(symbol) {
   };
 }
 
+function truncate(text, maxLen) {
+  if (!text) return "";
+  if (text.length <= maxLen) return text;
+  return text.slice(0, maxLen).trimEnd() + "...";
+}
+
+function normalizeLesson(raw) {
+  const id = raw.id || raw.lesson_id || raw.slug || "unknown";
+  const title = raw.title || raw.name || id;
+  const severity = raw.severity || "MEDIUM";
+  const summarySource =
+    raw.summary || raw.snippet || raw.content || raw.text || "";
+  const summary = truncate(summarySource.replace(/\s+/g, " "), 240);
+  const contentSource = raw.content || raw.snippet || raw.summary || "";
+  const content = truncate(contentSource.replace(/\s+/g, " "), 2000);
+
+  return {
+    id,
+    title,
+    summary,
+    content,
+    severity,
+    category: raw.category || "Lesson",
+    tags: Array.isArray(raw.tags) ? raw.tags : [],
+    date: raw.date || raw.created_at || "",
+    file: raw.file || raw.source || "",
+  };
+}
+
+function buildLessonsContext(lessons, source) {
+  const header = `KEY LESSONS (${source || "unknown"}):`;
+  if (!Array.isArray(lessons) || lessons.length === 0) {
+    return `${header}\n- No lessons available for this query.`;
+  }
+
+  const lines = lessons.map((lesson) => {
+    const l = normalizeLesson(lesson);
+    return `- ${l.id}: ${l.title} (${l.severity}) - ${l.summary}`;
+  });
+
+  return [header, ...lines].join("\n");
+}
+
+async function fetchLessonsIndex() {
+  const now = Date.now();
+  if (
+    lessonsCache.data &&
+    now - lessonsCache.fetchedAt < LESSONS_CACHE_TTL_MS
+  ) {
+    return lessonsCache.data;
+  }
+
+  const sources = [LESSONS_INDEX_URL, LESSONS_INDEX_FALLBACK_URL];
+  for (const url of sources) {
+    try {
+      const res = await fetch(url, { cf: { cacheTtl: 300 } });
+      if (!res.ok) continue;
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        lessonsCache = { data, fetchedAt: now };
+        return data;
+      }
+    } catch {
+      // try next source
+    }
+  }
+
+  return null;
+}
+
+function keywordSearch(lessons, query, topK) {
+  const q = query.toLowerCase();
+  return lessons
+    .map((lesson) => {
+      const normalized = normalizeLesson(lesson);
+      const searchable = [
+        normalized.title,
+        normalized.summary,
+        normalized.content,
+        normalized.category,
+        normalized.tags.join(" "),
+      ]
+        .join(" ")
+        .toLowerCase();
+      const score = searchable.includes(q) ? 1 : 0;
+      return { lesson: normalized, score };
+    })
+    .filter((item) => item.score > 0)
+    .slice(0, topK)
+    .map((item) => item.lesson);
+}
+
+async function fetchRagSearch(query, topK) {
+  try {
+    const res = await fetch(RAG_SEARCH_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, top_k: topK }),
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+async function getLessonsForQuery(query, topK) {
+  const rag = await fetchRagSearch(query, topK);
+  if (rag && Array.isArray(rag.results) && rag.results.length > 0) {
+    return {
+      results: rag.results.map(normalizeLesson),
+      source: rag.source || "lancedb",
+    };
+  }
+
+  const index = await fetchLessonsIndex();
+  if (Array.isArray(index)) {
+    return {
+      results: keywordSearch(index, query, topK),
+      source: "keyword_index",
+    };
+  }
+
+  return { results: [], source: "none" };
+}
+
 /**
  * Build a dynamic system prompt with live position data + lesson context.
  */
-function buildSystemPrompt(liveData) {
-  if (!liveData) return LESSONS_CONTEXT;
-
+function buildSystemPrompt(liveData, lessons, source) {
   const now = new Date();
   const lines = [];
 
+  lines.push(SYSTEM_PREFIX);
+  lines.push("");
+  lines.push(buildLessonsContext(lessons, source));
+  lines.push("");
+
+  if (!liveData) {
+    return lines.join("\n");
+  }
+
   lines.push(
-    "You are a trading knowledge assistant for Igor's AI Trading System. You have access to LIVE portfolio data below AND curated lessons. Use both to give actionable, position-specific advice.\n",
+    "You also have access to LIVE portfolio data below. Use both lessons and live data to give actionable, position-specific advice.\n",
   );
 
   // Portfolio overview
@@ -255,12 +323,41 @@ export default {
     }
 
     try {
-      const { message, history } = await request.json();
+      const payload = await request.json();
+      const mode = payload.mode || "chat";
+
+      if (mode === "search") {
+        const query = (payload.query || payload.message || "").trim();
+        if (!query) {
+          return new Response(JSON.stringify({ error: "Query required" }), {
+            status: 400,
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
+          });
+        }
+
+        const topK = Number(payload.top_k || 5);
+        const { results, source } = await getLessonsForQuery(query, topK);
+
+        return new Response(JSON.stringify({ results, source }), {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        });
+      }
+
+      const { message, history } = payload;
 
       if (!message || typeof message !== "string") {
         return new Response(JSON.stringify({ error: "Message required" }), {
           status: 400,
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
         });
       }
 
@@ -280,9 +377,10 @@ export default {
       // Add current message
       messages.push({ role: "user", content: message });
 
-      // Fetch live portfolio data (graceful fallback to static lessons)
+      // Fetch live portfolio data + lessons (LanceDB-first with fallback)
       const liveData = await fetchLiveData();
-      const systemPrompt = buildSystemPrompt(liveData);
+      const { results: lessons, source } = await getLessonsForQuery(message, 8);
+      const systemPrompt = buildSystemPrompt(liveData, lessons, source);
 
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",

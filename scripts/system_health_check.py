@@ -15,71 +15,29 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
 def check_vector_db():
-    """Verify ChromaDB vector database is installed and functional.
-
-    Added Dec 30, 2025: This check ensures the RAG vector packages
-    are actually installed and working, not silently falling back to TF-IDF.
-
-    Updated Jan 7, 2026: ChromaDB is now OPTIONAL (removed per CEO directive).
-    Simple keyword search on markdown files is sufficient.
-    """
-    results = {
-        "name": "Vector Database (ChromaDB - OPTIONAL)",
-        "status": "UNKNOWN",
-        "details": [],
-    }
+    """Verify LanceDB index exists and is queryable."""
+    results = {"name": "LanceDB Index", "status": "UNKNOWN", "details": []}
 
     try:
-        import chromadb
+        from src.memory.document_aware_rag import get_document_aware_rag
 
-        results["details"].append(f"✓ chromadb installed: v{chromadb.__version__}")
-
-        # Verify we can create a client
-        from pathlib import Path
-
-        from chromadb.config import Settings
-
-        vector_db_path = Path("data/vector_db")
-        if vector_db_path.exists():
-            client = chromadb.PersistentClient(
-                path=str(vector_db_path), settings=Settings(anonymized_telemetry=False)
-            )
-
-            # Check collection exists and has data
-            # Note: In ChromaDB v0.6.0+, list_collections() returns names (strings), not objects
-            collections = client.list_collections()
-            if collections:
-                col_name = (
-                    collections[0] if isinstance(collections[0], str) else collections[0].name
-                )
-                col = client.get_collection(col_name)
-                doc_count = col.count()
-                results["details"].append(f"✓ Vector DB has {doc_count} documents in '{col_name}'")
-
-                if doc_count == 0:
-                    results["details"].append(
-                        "⚠️ Vector DB is EMPTY - run: python3 scripts/vectorize_rag_knowledge.py --rebuild"
-                    )
-                    results["status"] = "BROKEN"
-                    return results
-            else:
-                results["details"].append(
-                    "✗ No collections found - run vectorize_rag_knowledge.py --rebuild"
-                )
-                results["status"] = "BROKEN"
-                return results
-        else:
-            results["details"].append(
-                "✗ data/vector_db/ not found - run vectorize_rag_knowledge.py --rebuild"
-            )
+        rag = get_document_aware_rag()
+        status = rag.ensure_index()
+        if status.get("error"):
             results["status"] = "BROKEN"
+            results["details"].append(f"✗ LanceDB index unavailable: {status['error']}")
+            return results
+
+        # Run a simple search to ensure table is non-empty
+        probe = rag.search("trading", limit=1)
+        if not probe:
+            results["status"] = "BROKEN"
+            results["details"].append("✗ LanceDB index empty - reindex required")
             return results
 
         results["status"] = "OK"
+        results["details"].append("✓ LanceDB index ready")
 
-    except ImportError:
-        results["status"] = "SKIPPED"
-        results["details"].append("ℹ️ chromadb not installed (OPTIONAL - removed Jan 7, 2026)")
     except Exception as e:
         results["status"] = "BROKEN"
         results["details"].append(f"✗ Error: {e}")
@@ -424,7 +382,7 @@ def check_blog_deployment():
     try:
         lessons_dir = Path("docs/_lessons")
         if not lessons_dir.exists():
-            # Lessons are now in Vertex AI RAG, not docs/_lessons
+            # Lessons are now in LanceDB RAG, not docs/_lessons
             rag_lessons = list(Path("rag_knowledge/lessons_learned").glob("*.md"))
             results["details"].append(
                 f"⚠️ docs/_lessons/ not synced (lessons in RAG: {len(rag_lessons)})"

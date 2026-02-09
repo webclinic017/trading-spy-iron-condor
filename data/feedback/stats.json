@@ -1,7 +1,8 @@
 {
-  "positive": 65,
-  "negative": 18,
-  "total": 83,
+  "positive": 37,
+  "negative": 25,
+  "total": 62,
   "last_feedback": "positive",
-  "last_updated": "2026-02-05T09:26:00.852175-05:00"
+  "last_updated": "2026-02-09T11:36:06.926736",
+  "satisfaction_rate": 59.68
 }

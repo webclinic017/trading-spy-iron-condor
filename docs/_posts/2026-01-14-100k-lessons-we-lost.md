@@ -163,7 +163,7 @@ Without records, we can't learn. This is the most expensive lesson: ~$95K in pap
 ### Immediate Actions
 
 1. **Mandatory Trade Recording**: Every trade logged to RAG within 24 hours
-2. **Daily Sync**: Automated daily sync of all trades to Vertex AI RAG
+2. **Daily Sync**: Automated daily sync of all trades to legacy RAG
 3. **Weekly Audit**: Verify RAG contains all executed trades
 4. **Multi-Backup**: Trade data in JSON + RAG + Git
 5. **Alert System**: No trades in 7 days during active trading = CEO alert

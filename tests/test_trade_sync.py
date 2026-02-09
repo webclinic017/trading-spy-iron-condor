@@ -6,7 +6,7 @@ Tests for Trade Sync Module.
 
 Tests:
 1. TradeSync initialization
-2. Sync to Vertex AI RAG
+2. Sync to LanceDB RAG
 3. Sync to system_state.json (single source of truth)
 4. Trade outcome calculation
 5. Trade history queries
@@ -52,7 +52,7 @@ class TestTradeSyncInitialization:
     def test_init_without_langsmith_key(self):
         """Should initialize without LangSmith when no key.
 
-        Note: LangSmith was REMOVED Jan 9, 2026 - only Vertex AI RAG now.
+        Note: LangSmith was REMOVED Jan 9, 2026 - only LanceDB RAG now.
         """
         from src.observability.trade_sync import TradeSync
 
@@ -180,7 +180,7 @@ class TestSyncTrade:
 
             # At minimum, system_state should succeed
             assert results["system_state"] is True
-            # Vertex AI removed Feb 2026 — only system_state result expected
+            # LanceDB RAG may be offline in tests — only system_state result required
 
     def test_sync_trade_with_metadata(self):
         """Should sync trade with custom metadata."""
