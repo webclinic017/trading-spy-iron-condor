@@ -307,9 +307,9 @@ class BogleheadsLearner:
 def get_bogleheads_signal_for_symbol(
     symbol: str, market_context: dict[str, Any] | None = None
 ) -> dict[str, Any]:
-    entries = _filter_bogleheads(_iter_normalized_entries())
+    entries, source = _get_bogleheads_entries(max_items=200)
     symbol_upper = symbol.upper()
-    symbol_entries = [entry for entry in entries if (entry.ticker or "").upper() == symbol_upper]
+    symbol_entries = [entry for entry in entries if _entry_matches_symbol(entry, symbol_upper)]
 
     sentiments = [_entry_sentiment(entry) for entry in symbol_entries]
     avg_sentiment = sum(sentiments) / len(sentiments) if sentiments else 0.0
