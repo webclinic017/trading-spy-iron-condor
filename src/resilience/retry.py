@@ -5,6 +5,7 @@ Provides reliable retry mechanisms for transient failures.
 
 Created: Jan 19, 2026 (LL-249)
 """
+
 from __future__ import annotations
 
 import logging
@@ -130,7 +131,7 @@ class RetryableOperation:
         self._attempt = 0
         self._last_error: Exception | None = None
 
-    def __enter__(self) -> "RetryableOperation":
+    def __enter__(self) -> RetryableOperation:
         return self
 
     def __exit__(self, _exc_type: Any, _exc_val: Any, _exc_tb: Any) -> None:

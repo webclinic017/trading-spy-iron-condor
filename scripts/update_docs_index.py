@@ -11,6 +11,7 @@ This prevents stale dashboard issues by automatically updating:
 
 Run by: update-progress-dashboard.yml, ralph-mode-cto.yml
 """
+
 from __future__ import annotations
 
 import json

@@ -17,6 +17,7 @@ Key Principles:
 - 10-year horizon for valuation
 - 15% Minimum Acceptable Rate of Return (MARR)
 """
+
 from __future__ import annotations
 
 import json

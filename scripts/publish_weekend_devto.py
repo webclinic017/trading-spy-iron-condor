@@ -8,6 +8,7 @@ real lessons from the trading journey.
 
 The goal: Make readers CARE about our journey from $5K to $100/day.
 """
+
 from __future__ import annotations
 
 import json

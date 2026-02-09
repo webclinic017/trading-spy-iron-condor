@@ -2,6 +2,7 @@
 Central logging configuration.
 Observability: LanceDB + Local logs (Jan 9, 2026)
 """
+
 from __future__ import annotations
 
 import logging

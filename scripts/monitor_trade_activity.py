@@ -14,6 +14,7 @@ Usage:
     python scripts/monitor_trade_activity.py
     python scripts/monitor_trade_activity.py --days 5 --alert-threshold 3
 """
+
 from __future__ import annotations
 
 import argparse

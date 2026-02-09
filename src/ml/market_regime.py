@@ -20,6 +20,7 @@ Usage:
         # Perfect for iron condors
         signal = 0.9
 """
+
 from __future__ import annotations
 
 import json

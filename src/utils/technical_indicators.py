@@ -9,6 +9,7 @@ Consolidates duplicate logic from:
 - src/strategies/core_strategy.py
 - src/strategies/growth_strategy.py
 """
+
 from __future__ import annotations
 
 import logging

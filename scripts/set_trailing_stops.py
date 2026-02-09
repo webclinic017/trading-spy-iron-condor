@@ -20,6 +20,7 @@ Usage:
 Created: 2026-01-07
 Author: Claude CTO
 """
+
 from __future__ import annotations
 
 import json

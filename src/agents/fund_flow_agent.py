@@ -11,6 +11,7 @@ Key capabilities:
 
 This provides LEADING indicators vs price which lags.
 """
+
 from __future__ import annotations
 
 import json

@@ -12,6 +12,7 @@ Exit codes:
 Environment override:
   ACCEPT_METRIC_DEGRADATION=true - Skip validation (for intentional changes)
 """
+
 from __future__ import annotations
 
 import json

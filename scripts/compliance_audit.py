@@ -14,6 +14,7 @@ Run: python scripts/compliance_audit.py [--fix]
 Author: Trading System CTO
 Created: 2025-12-11
 """
+
 from __future__ import annotations
 
 import argparse

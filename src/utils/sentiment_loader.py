@@ -21,6 +21,7 @@ Usage:
     if is_sentiment_fresh(sentiment_data):
         use_sentiment_in_strategy()
 """
+
 from __future__ import annotations
 
 import json
@@ -32,7 +33,7 @@ from typing import Optional
 try:
     from rag_store.sqlite_store import SentimentSQLiteStore
 except Exception:  # noqa: BLE001
-    _SQLITE_STORE: Optional["SentimentSQLiteStore"] = None
+    _SQLITE_STORE: Optional[SentimentSQLiteStore] = None
 else:
     _SQLITE_STORE = SentimentSQLiteStore()
 

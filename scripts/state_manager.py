@@ -9,6 +9,7 @@ Manages system_state.json for:
 Created: Jan 13, 2026
 Reason: CRITICAL - was imported but never created, causing silent failures
 """
+
 from __future__ import annotations
 
 import json

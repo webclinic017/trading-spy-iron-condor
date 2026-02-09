@@ -18,6 +18,7 @@ Usage:
     python3 scripts/manage_iron_condor_positions.py
     python3 scripts/manage_iron_condor_positions.py --dry-run
 """
+
 from __future__ import annotations
 
 import json

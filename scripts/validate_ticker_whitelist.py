@@ -8,6 +8,7 @@ Prevents incidents like LL-197 where SOFI was traded during earnings blackout.
 Created: January 15, 2026
 Author: CTO (Claude)
 """
+
 from __future__ import annotations
 
 import re

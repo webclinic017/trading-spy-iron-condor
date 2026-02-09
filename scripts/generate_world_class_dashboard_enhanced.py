@@ -5,6 +5,7 @@ Generate World-Class Trading Dashboard (Enhanced Version)
 Standalone dashboard generator that works without deleted dependencies.
 Displays recent trades, P/L, and key metrics from data files.
 """
+
 from __future__ import annotations
 
 import json

@@ -17,6 +17,7 @@ Usage:
     python scripts/iron_condor_scanner.py          # Scan and alert
     python scripts/iron_condor_scanner.py --dry-run  # Scan without alert
 """
+
 from __future__ import annotations
 
 import argparse

@@ -21,6 +21,7 @@ This is NOT optional. The AI cannot call the broker directly.
 Author: AI Trading System
 Date: December 2, 2025
 """
+
 from __future__ import annotations
 
 import json

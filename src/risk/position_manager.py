@@ -16,6 +16,7 @@ Author: Claude CTO
 Created: 2025-12-03
 Updated: 2025-12-16 - Disabled MACD momentum reversal exit (false signals in sideways markets)
 """
+
 from __future__ import annotations
 
 import json

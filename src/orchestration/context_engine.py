@@ -2,6 +2,7 @@
 Context Engineering Module
 Offloads context from prompts to persistent storage for better agent performance
 """
+
 from __future__ import annotations
 
 import json
@@ -41,7 +42,7 @@ class ContextMemory:
             self.timestamp = datetime.now()
 
 
-def get_context_engine() -> "ContextEngine":
+def get_context_engine() -> ContextEngine:
     """Get or create singleton ContextEngine instance"""
     global _context_engine_instance
     if _context_engine_instance is None:

@@ -14,6 +14,7 @@ Strategy Overview:
 3. Timeframe: Daily with hourly confirmation
 4. Risk: 2% position sizing, volatility-adjusted stops
 """
+
 from __future__ import annotations
 
 import logging

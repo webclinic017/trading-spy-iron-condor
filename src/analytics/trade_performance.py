@@ -27,6 +27,7 @@ Usage:
     metrics = tracker.calculate_metrics()
     print(f"Win rate: {metrics['win_rate']:.1%}")
 """
+
 from __future__ import annotations
 
 import json

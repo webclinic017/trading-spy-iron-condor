@@ -5,6 +5,7 @@ Close All Option Positions
 Closes all open option positions using Alpaca's close_position() API.
 Created Jan 26, 2026 to clean up orphan positions from partial fills.
 """
+
 from __future__ import annotations
 
 import os

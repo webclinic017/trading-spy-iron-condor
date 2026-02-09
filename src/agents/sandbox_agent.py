@@ -16,6 +16,7 @@ This enables our agents to:
 3. Fetch real-time external data without hard-coding
 4. Discover and validate new trading patterns autonomously
 """
+
 from __future__ import annotations
 
 import asyncio

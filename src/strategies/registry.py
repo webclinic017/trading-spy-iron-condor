@@ -2,7 +2,6 @@ from __future__ import annotations
 
 # Strategy registry stub - original deleted in cleanup PR #1445
 # Minimal implementation to prevent import errors
-
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum

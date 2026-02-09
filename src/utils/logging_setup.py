@@ -11,6 +11,7 @@ Usage:
     logger = setup_script_logging("my_script")
     logger.info("Script started")
 """
+
 from __future__ import annotations
 
 import logging

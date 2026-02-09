@@ -5,6 +5,7 @@ LinkedIn OAuth 2.0 Helper
 Gets an access token for LinkedIn API posting.
 Run once to get the token, then store in environment.
 """
+
 from __future__ import annotations
 
 import http.server

@@ -3,6 +3,7 @@
 This module provides a single interface for recording trade execution results
 to daily JSON files, eliminating duplicated file handling logic across scripts.
 """
+
 from __future__ import annotations
 
 import json

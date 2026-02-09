@@ -16,6 +16,7 @@ Example:
     >>> monitor.record_usage("execution_agent", 1500, 500)
     >>> print(monitor.get_summary())
 """
+
 from __future__ import annotations
 
 import json

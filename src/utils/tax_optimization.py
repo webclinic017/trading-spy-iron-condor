@@ -9,6 +9,7 @@ Handles:
 - After-tax return calculations
 - Integration with RL/ML pipeline for tax-aware decisions
 """
+
 from __future__ import annotations
 
 import logging

@@ -16,6 +16,7 @@ For new code, use:
 This module is kept for backwards compatibility with existing code
 (e.g., src/core/alpaca_trader.py uses this version with timeout features).
 """
+
 from __future__ import annotations
 
 import logging

@@ -15,6 +15,7 @@ Outputs:
 - Dev.to cross-posts
 - FAQ schema JSON-LD
 """
+
 from __future__ import annotations
 
 import json

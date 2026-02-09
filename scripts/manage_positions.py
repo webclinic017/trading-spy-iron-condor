@@ -25,6 +25,7 @@ Usage:
     python3 scripts/manage_positions.py
     python3 scripts/manage_positions.py --dry-run  # Preview without executing
 """
+
 from __future__ import annotations
 
 import json

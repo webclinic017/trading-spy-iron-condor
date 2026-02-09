@@ -67,9 +67,7 @@ class LessonsLearnedRAG:
                     if self.lancedb_auto_index or self.lancedb_required:
                         status = self.lancedb_rag.ensure_index()
                         if status.get("error"):
-                            raise RuntimeError(
-                                f"LanceDB index unavailable: {status['error']}"
-                            )
+                            raise RuntimeError(f"LanceDB index unavailable: {status['error']}")
                     logger.info("✅ LanceDB RAG initialized (primary)")
                 except Exception as e:
                     if self.lancedb_required:

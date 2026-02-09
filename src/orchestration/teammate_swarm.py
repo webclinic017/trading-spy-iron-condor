@@ -21,6 +21,7 @@ Integrates with:
 - daggr_workflow.py for visual debugging
 - agentic_guardrails.py for CEO approval gates
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -470,7 +471,7 @@ class TradingSwarm:
             )
         )
 
-    def add_agent(self, agent: SwarmAgent) -> "TradingSwarm":
+    def add_agent(self, agent: SwarmAgent) -> TradingSwarm:
         """Add an agent to the swarm."""
         self.agents[agent.name] = agent
         return self

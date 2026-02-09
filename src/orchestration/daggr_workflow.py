@@ -14,6 +14,7 @@ Integrates with:
 - Perplexity research agent
 - Agentic guardrails (review gates)
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -152,7 +153,7 @@ class TradingWorkflow:
         dependencies: list[str] | None = None,
         cache_enabled: bool = True,
         timeout_seconds: float = 30.0,
-    ) -> "TradingWorkflow":
+    ) -> TradingWorkflow:
         """Add a node to the workflow."""
         self.nodes[name] = WorkflowNode(
             name=name,

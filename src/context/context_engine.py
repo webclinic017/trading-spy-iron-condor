@@ -26,6 +26,7 @@ Usage:
     # Isolate: Create agent-specific context
     agent_ctx = engine.isolate("technical_agent", max_tokens=2000)
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -77,7 +78,7 @@ class ContextEntry:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "ContextEntry":
+    def from_dict(cls, data: dict) -> ContextEntry:
         return cls(
             key=data["key"],
             value=data["value"],
@@ -112,7 +113,7 @@ class CompressedPattern:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "CompressedPattern":
+    def from_dict(cls, data: dict) -> CompressedPattern:
         return cls(
             pattern_id=data["pattern_id"],
             description=data["description"],

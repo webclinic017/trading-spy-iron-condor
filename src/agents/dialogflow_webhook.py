@@ -26,6 +26,7 @@ Architecture (v3.0.0):
 CEO Directive: "I want to be able to speak to Dialogflow about my trades
 and get accurate information" - requires semantic search.
 """
+
 from __future__ import annotations
 
 import logging

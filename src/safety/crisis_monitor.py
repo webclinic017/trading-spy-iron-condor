@@ -20,6 +20,7 @@ Solution:
 Author: AI Trading System
 Date: January 22, 2026
 """
+
 from __future__ import annotations
 
 import json
