@@ -97,13 +97,13 @@ jobs:
                   "type": "option" if len(pos.symbol) > 10 else "stock"
               })
 
-          # Calculate total P/L from initial $30K (Jan 22, 2026 - CLAUDE.md)
-          initial_equity = 30000.0
+          # Calculate total P/L from initial $100K (PA3C5AG0CECQ - Jan 30, 2026)
+          initial_equity = 100000.0
           total_pl = equity - initial_equity
           total_pl_pct = (total_pl / initial_equity) * 100
 
           print(f"\nTotal Unrealized P/L: ${total_unrealized:,.2f}")
-          print(f"Total P/L (from $30K): ${total_pl:,.2f} ({total_pl_pct:.2f}%)")
+          print(f"Total P/L (from $100K): ${total_pl:,.2f} ({total_pl_pct:.2f}%)")
 
           # LL-237 FIX: Sync trade_history to prevent knowledge loss
           # Fetch ALL closed orders, not just today's
@@ -230,7 +230,7 @@ jobs:
                   # FIX: Calculate win_rate from actual trade pairs (LL-FIX Jan 27, 2026)
                   "win_rate": win_rate,
                   "win_rate_sample_size": total_closed,
-                  "starting_balance": 30000.0  # Per CLAUDE.md - $30K paper account (Jan 22, 2026)
+                  "starting_balance": 100000.0  # Per CLAUDE.md - $100K paper account PA3C5AG0CECQ
               },
               "positions": position_list,
               # LL-237 FIX: Add trade_history to prevent knowledge loss

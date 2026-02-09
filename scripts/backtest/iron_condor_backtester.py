@@ -74,7 +74,7 @@ class IronCondorConfig:
     max_position_pct: float = 0.05  # Max 5% of account per trade
 
     # Account size for position sizing
-    account_size: float = 30000.0
+    account_size: float = 100000.0
 
     def to_dict(self) -> dict:
         return asdict(self)

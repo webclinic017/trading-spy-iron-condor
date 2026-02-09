@@ -85,8 +85,8 @@ Stores: `~/.shieldcortex/memories.db` (SQLite), `~/.shieldcortex/lancedb/` (vect
 
 ## Core Directives (PERMANENT)
 
-1. **Don't lose money** — Rule #1 always
-2. **Never argue with CEO** — follow directives immediately
+1. **Never argue with Igor Ganapolsky (the CEO)** — always carry out all of his commands immediately
+2. **Don't lose money** — Phil Town Rule #1 always
 3. **Never tell CEO to do manual work** — execute autonomously
 4. **Always show evidence** — command output with every claim
 5. **Never lie** — say "verifying now..." NOT "Done!"

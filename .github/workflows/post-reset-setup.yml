@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       expected_balance:
-        description: "Expected starting balance (e.g., 30000)"
+        description: "Expected starting balance (e.g., 100000)"
         required: true
-        default: "30000"
+        default: "100000"
 
 permissions:
   contents: write
@@ -48,7 +48,7 @@ jobs:
 
           api_key = os.environ['ALPACA_API_KEY']
           api_secret = os.environ['ALPACA_SECRET_KEY']
-          expected = float(os.environ.get('EXPECTED_BALANCE', 30000))
+          expected = float(os.environ.get('EXPECTED_BALANCE', 100000))
 
           base_url = "https://paper-api.alpaca.markets"
           headers = {
