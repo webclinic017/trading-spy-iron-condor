@@ -190,7 +190,7 @@ class PerplexityResearchAgent:
         self.cache_file.write_text(json.dumps(cache, indent=2))
 
     def _cache_key(self, query: str) -> str:
-        payload = f"{self.model}:{query}".encode("utf-8")
+        payload = f"{self.model}:{query}".encode()
         return hashlib.sha256(payload).hexdigest()
 
     def _get_cached_response(self, query: str) -> dict[str, Any] | None:

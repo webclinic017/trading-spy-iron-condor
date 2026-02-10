@@ -93,7 +93,7 @@ class BacktestResult:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "BacktestResult":
+    def from_dict(cls, data: dict) -> BacktestResult:
         params_data = data.get("params", {})
         params = IronCondorParams(
             delta=params_data.get("delta", 0.15),
@@ -151,7 +151,7 @@ class GridSearchResult:
         return data
 
     @classmethod
-    def from_dict(cls, data: dict) -> "GridSearchResult":
+    def from_dict(cls, data: dict) -> GridSearchResult:
         params_data = data.get("best_params", {})
         best_params = IronCondorParams(
             delta=params_data.get("delta", 0.15),
