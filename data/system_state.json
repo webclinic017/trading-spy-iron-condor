@@ -944,7 +944,7 @@
     "last_trade_date": "2026-02-10",
     "today_trades": 0,
     "total_trades_today": 0,
-    "last_trade_symbol": "SPY260313C00725000"
+    "last_trade_symbol": "SYNCED"
   },
   "risk": {
     "status": "MONITORING",
