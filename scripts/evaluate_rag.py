@@ -119,6 +119,7 @@ Examples:
     )
     parser.add_argument(
         "-k",
+        "--k",
         type=int,
         default=5,
         help="Number of top results to consider (default: 5)",
@@ -211,7 +212,12 @@ Examples:
 
     if not args.json:
         print(f"Evaluating RAG with {len(DEFAULT_TEST_QUERIES)} test queries...")
-        print(f"Loaded {evaluator._get_search_engine().count()} lessons")
+        engine = evaluator._get_search_engine()
+        if hasattr(engine, "count"):
+            lesson_count = engine.count()
+        else:
+            lesson_count = len(getattr(engine, "lessons", []))
+        print(f"Loaded {lesson_count} lessons")
 
     report = evaluator.evaluate_all(
         k=args.k,
