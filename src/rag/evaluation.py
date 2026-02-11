@@ -261,6 +261,7 @@ class RAGEvaluator:
             }
         self.prefer_lancedb = prefer_lancedb
         self._search_engine = None
+        self._engine_source = None
 
     def _get_search_engine(self):
         """Lazy load the search engine."""
@@ -270,6 +271,10 @@ class RAGEvaluator:
                     from src.rag.lessons_learned_rag import LessonsLearnedRAG
 
                     self._search_engine = LessonsLearnedRAG()
+                    if getattr(self._search_engine, "lancedb_rag", None) is not None:
+                        self._engine_source = "lancedb"
+                    else:
+                        self._engine_source = "keyword"
                     return self._search_engine
                 except Exception as e:
                     logger.warning(f"LanceDB RAG unavailable: {e} - using keyword search")
@@ -278,12 +283,24 @@ class RAGEvaluator:
                 from src.rag.lessons_search import get_lessons_search
 
                 self._search_engine = get_lessons_search()
+                self._engine_source = "keyword"
             except ImportError:
                 # Fallback to LessonsLearnedRAG
                 from src.rag.lessons_learned_rag import LessonsLearnedRAG
 
                 self._search_engine = LessonsLearnedRAG()
+                self._engine_source = (
+                    "lancedb"
+                    if getattr(self._search_engine, "lancedb_rag", None) is not None
+                    else "keyword"
+                )
         return self._search_engine
+
+    def get_engine_source(self) -> Optional[str]:
+        """Return the active retrieval source (lancedb or keyword)."""
+        if self._search_engine is None:
+            self._get_search_engine()
+        return self._engine_source
 
     def _search_with_scores(self, query: str, top_k: int) -> list[dict]:
         """

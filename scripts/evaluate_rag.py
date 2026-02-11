@@ -209,6 +209,14 @@ Examples:
     ).lower() in {"1", "true", "yes"}
 
     evaluator = get_evaluator(prefer_lancedb=prefer_lancedb)
+    engine_source = evaluator.get_engine_source()
+
+    if prefer_lancedb and engine_source != "lancedb":
+        print(
+            f"SKIP: LanceDB retrieval unavailable (source={engine_source}). "
+            "Skipping evaluation to avoid false negatives."
+        )
+        return 0
 
     if not args.json:
         print(f"Evaluating RAG with {len(DEFAULT_TEST_QUERIES)} test queries...")
