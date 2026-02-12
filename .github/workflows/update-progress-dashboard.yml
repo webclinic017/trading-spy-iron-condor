@@ -23,6 +23,7 @@ concurrency:
 env:
   SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  GH_PAT: ${{ secrets.GH_PAT }}
 
 jobs:
   update-dashboard:
@@ -32,6 +33,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -119,5 +122,8 @@ jobs:
           git add data/system_state.json wiki/ docs/index.md 2>/dev/null || true
           if ! git diff --staged --quiet; then
             git commit -m "chore: Sync dashboard data [auto]"
-            git push || echo "Push to main skipped (no changes or protected)"
+            if [ -n "${GH_PAT}" ]; then
+              git remote set-url origin "https://x-access-token:${GH_PAT}@github.com/${GITHUB_REPOSITORY}.git"
+            fi
+            git push origin HEAD:main || echo "Push to main skipped (no changes or protected)"
           fi
