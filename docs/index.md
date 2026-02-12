@@ -13,22 +13,23 @@ This is the unfiltered story of building an autonomous AI trading system—every
 
 ---
 
-## Where We Are Today (Wednesday, February 5, 2026)
+<!-- AUTO_STATUS_START -->
+## Where We Are Today (Thursday, February 12, 2026)
 
-Day 7 of 90-day paper trading phase. One iron condor open, 15 days to expiration.
+Day 107 since project start (initial paper-phase target: 90 days).
 
-| What             | Status                    |
-| ---------------- | ------------------------- |
-| Account Equity   | $101,376                  |
-| Daily P/L        | -$56 (-0.06%)             |
-| Strategy         | Iron Condors on SPY       |
-| Open Positions   | 1 iron condor (Feb 20)    |
-| Position P/L     | -$23 (theta decay normal) |
-| PDT Restrictions | None (account > $25K)     |
+| What | Status |
+| --- | --- |
+| Account Equity | $101,445.56 |
+| Daily P/L | -$8.00 (-0.01%) |
+| Strategy | Iron Condors on SPY |
+| Open Positions | 1 iron condor (4 option legs) |
+| Position P/L | +$4.00 |
+| Win Rate | 37.5% (32 trades) |
+| Last Sync | 2026-02-12 19:34 UTC |
 
-**Active Trade**: SPY Feb 20 iron condor, 15 DTE. Exit criteria: 7 DTE (Feb 13), 50% profit target, or 200% stop-loss. Currently holding per Phil Town Rule #1.
-
-The goal: prove 80%+ win rate over 90 days of paper trading, then go live. No shortcuts, no YOLO trades, just boring, disciplined options selling.
+Source of truth: [data/system_state.json](https://github.com/IgorGanapolsky/trading/blob/main/data/system_state.json)
+<!-- AUTO_STATUS_END -->
 
 ---
 
