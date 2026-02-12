@@ -125,12 +125,13 @@ def build_status_metrics(state: dict[str, Any]) -> dict[str, Any]:
     else:
         win_rate_display = f"{_as_float(win_rate):.1f}%"
 
-    last_sync_raw = (
-        state.get("last_updated")
-        or state.get("sync_health", {}).get("last_successful_sync")
-        or state.get("meta", {}).get("last_updated")
-    )
-    parsed_sync = _parse_iso_datetime(last_sync_raw)
+    sync_candidates = [
+        state.get("last_updated"),
+        state.get("meta", {}).get("last_updated"),
+        state.get("sync_health", {}).get("last_successful_sync"),
+    ]
+    parsed_candidates = [_parse_iso_datetime(v) for v in sync_candidates]
+    parsed_sync = max((dt for dt in parsed_candidates if dt is not None), default=None)
     if parsed_sync:
         last_sync_display = parsed_sync.strftime("%Y-%m-%d %H:%M UTC")
     else:
