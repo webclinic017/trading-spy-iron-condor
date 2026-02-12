@@ -24,9 +24,9 @@ Day 107 since project start (initial paper-phase target: 90 days).
 | Daily P/L | -$8.00 (-0.01%) |
 | Strategy | Iron Condors on SPY |
 | Open Positions | 1 iron condor (4 option legs) |
-| Position P/L | +$4.00 |
+| Position P/L | +$6.00 |
 | Win Rate | 37.5% (32 trades) |
-| Last Sync | 2026-02-12 19:34 UTC |
+| Last Sync | 2026-02-12 20:14 UTC |
 
 Source of truth: [data/system_state.json](https://github.com/IgorGanapolsky/trading/blob/main/data/system_state.json)
 <!-- AUTO_STATUS_END -->
