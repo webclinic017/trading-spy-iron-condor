@@ -140,7 +140,9 @@ def get_guard_context(state_path: Path = DEFAULT_STATE_PATH) -> dict[str, Any]:
     # If target requires extreme CAGR, stay conservative even when not blocked.
     if req_cagr > 0.35 and not block_new_positions:
         max_position_pct = min(max_position_pct, 0.02)
-        reasons.append(f"Required CAGR to target is {req_cagr * 100:.1f}%/yr; keeping risk-on size conservative.")
+        reasons.append(
+            f"Required CAGR to target is {req_cagr * 100:.1f}%/yr; keeping risk-on size conservative."
+        )
 
     block_reason = ""
     if block_new_positions:
@@ -165,4 +167,3 @@ def get_guard_context(state_path: Path = DEFAULT_STATE_PATH) -> dict[str, Any]:
         "target_date": DEFAULT_TARGET_DATE.isoformat(),
         "reasons": reasons,
     }
-
