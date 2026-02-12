@@ -27,6 +27,8 @@ env:
 
 jobs:
   update-dashboard:
+    # Prevent infinite self-trigger loop from this workflow's own auto-commit pushes.
+    if: ${{ github.event_name != 'push' || !contains(github.event.head_commit.message, 'Sync dashboard data [auto]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
