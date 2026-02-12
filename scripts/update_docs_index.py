@@ -1,29 +1,21 @@
 #!/usr/bin/env python3
 """
-Auto-update docs/index.md with current data from data/system_state.json.
+Auto-refresh docs/index.md from data/system_state.json using explicit markers.
 
-This script replaces a marker-delimited status block on the homepage:
-- never relies on brittle regexes tied to specific prose
-- updates date/day/equity/P&L/open positions/win-rate/last-sync
-- keeps the rest of docs/index.md fully editable
-
-Run by: .github/workflows/update-progress-dashboard.yml
+This prevents stale snapshots from persisting on GitHub Pages.
 """
 
 from __future__ import annotations
 
 import json
-import re
-from datetime import date, datetime, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-PROJECT_START_DATE = date(2025, 10, 29)
-TARGET_PHASE_DAYS = 90
 SYSTEM_STATE_PATH = Path("data/system_state.json")
 DOCS_INDEX_PATH = Path("docs/index.md")
-AUTO_STATUS_START = "<!-- AUTO_STATUS_START -->"
-AUTO_STATUS_END = "<!-- AUTO_STATUS_END -->"
+STATUS_START = "<!-- AUTO_STATUS_START -->"
+STATUS_END = "<!-- AUTO_STATUS_END -->"
 
 
 def _as_float(value: Any, default: float = 0.0) -> float:
@@ -40,16 +32,27 @@ def _as_int(value: Any, default: int = 0) -> int:
         return default
 
 
-def _parse_iso_datetime(value: str | None) -> datetime | None:
+def _load_state() -> dict[str, Any]:
+    if not SYSTEM_STATE_PATH.exists():
+        return {}
+    try:
+        with SYSTEM_STATE_PATH.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def _parse_iso(value: Any) -> datetime | None:
     if not value:
         return None
-    text = str(value).strip()
-    if not text:
+    raw = str(value).strip()
+    if not raw:
         return None
-    if text.endswith("Z"):
-        text = text[:-1] + "+00:00"
+    if raw.endswith("Z"):
+        raw = raw[:-1] + "+00:00"
     try:
-        dt = datetime.fromisoformat(text)
+        dt = datetime.fromisoformat(raw)
     except ValueError:
         return None
     if dt.tzinfo is None:
@@ -57,177 +60,136 @@ def _parse_iso_datetime(value: str | None) -> datetime | None:
     return dt.astimezone(timezone.utc)
 
 
-def _format_signed_currency(value: float) -> str:
-    sign = "+" if value >= 0 else "-"
-    return f"{sign}${abs(value):,.2f}"
+def _pick_latest_timestamp(*candidates: Any) -> datetime | None:
+    parsed = [dt for dt in (_parse_iso(v) for v in candidates) if dt is not None]
+    if not parsed:
+        return None
+    return max(parsed)
 
 
-def calculate_day_number(today: date | None = None) -> int:
-    ref = today or datetime.now(timezone.utc).date()
-    return max(1, (ref - PROJECT_START_DATE).days + 1)
+def _calculate_day(state: dict[str, Any]) -> tuple[int, int]:
+    paper = state.get("paper_trading", {}) if isinstance(state, dict) else {}
+    target_days = _as_int(paper.get("target_duration_days"), 90)
+
+    explicit_day = _as_int(paper.get("current_day"), 0)
+    if explicit_day > 0:
+        return explicit_day, target_days
+
+    start = _parse_iso(paper.get("start_date"))
+    if start is None:
+        return 0, target_days
+
+    now = datetime.now(timezone.utc)
+    return max(0, (now.date() - start.date()).days), target_days
 
 
-def load_system_state() -> dict[str, Any]:
-    if not SYSTEM_STATE_PATH.exists():
-        return {}
-    try:
-        with SYSTEM_STATE_PATH.open("r", encoding="utf-8") as handle:
-            data = json.load(handle)
-        return data if isinstance(data, dict) else {}
-    except Exception:
-        return {}
+def _position_summary(state: dict[str, Any]) -> tuple[int, int]:
+    positions = state.get("positions", []) if isinstance(state, dict) else []
+    if not isinstance(positions, list):
+        positions = []
+    legs = len(positions)
+    structures = 1 if legs >= 4 else legs
+    return structures, legs
 
 
-def build_status_metrics(state: dict[str, Any]) -> dict[str, Any]:
-    paper = state.get("paper_account", {}) if isinstance(state, dict) else {}
+def _north_star_gate(win_rate: float, target_win_rate: float, sample_size: int, day: int, target_days: int) -> tuple[str, str]:
+    if sample_size >= 30 and day >= target_days and win_rate >= target_win_rate:
+        return "PASS", "ON_TRACK_TO_SCALE"
+    if sample_size >= 30 and win_rate < target_win_rate:
+        return "ACTIVE", "OFF_TRACK_WIN_RATE"
+    return "ACTIVE", "VALIDATING"
+
+
+def _format_money(amount: float) -> str:
+    sign = "+" if amount >= 0 else "-"
+    return f"{sign}${abs(amount):,.2f}"
+
+
+def build_status_block(state: dict[str, Any]) -> str:
     portfolio = state.get("portfolio", {}) if isinstance(state, dict) else {}
-    positions = state.get("positions", []) if isinstance(state.get("positions"), list) else []
+    paper = state.get("paper_account", {}) if isinstance(state, dict) else {}
+    paper_trading = state.get("paper_trading", {}) if isinstance(state, dict) else {}
+    risk = state.get("risk", {}) if isinstance(state, dict) else {}
+    meta = state.get("meta", {}) if isinstance(state, dict) else {}
+    sync_health = state.get("sync_health", {}) if isinstance(state, dict) else {}
 
-    equity = _as_float(paper.get("equity"), 0.0)
-    if equity <= 0:
-        equity = _as_float(paper.get("current_equity"), 0.0)
-    if equity <= 0:
-        equity = _as_float(portfolio.get("equity"), 0.0)
-
+    equity = _as_float(portfolio.get("equity"), _as_float(paper.get("equity"), 0.0))
     daily_pl = _as_float(paper.get("daily_change"), 0.0)
-    if daily_pl == 0:
-        daily_pl = _as_float(paper.get("todays_pl"), 0.0)
+    win_rate = _as_float(paper.get("win_rate"), 0.0)
+    sample_size = _as_int(paper.get("win_rate_sample_size"), 0)
+    target_win_rate = _as_float(paper_trading.get("target_win_rate"), 0.8)
+    if target_win_rate <= 1.0:
+        target_win_rate *= 100
 
-    daily_pl_pct = _as_float(paper.get("todays_pl_pct"), 0.0)
-    if daily_pl_pct == 0 and equity > 0 and (equity - daily_pl) > 0:
-        daily_pl_pct = (daily_pl / (equity - daily_pl)) * 100.0
+    day, target_days = _calculate_day(state)
+    structures, legs = _position_summary(state)
+    unrealized = _as_float(risk.get("unrealized_pl"), 0.0)
 
-    position_legs = _as_int(paper.get("positions_count"), 0)
-    if position_legs <= 0:
-        position_legs = len(positions)
+    gate, status = _north_star_gate(win_rate, target_win_rate, sample_size, day, target_days)
 
-    if position_legs > 0 and position_legs % 4 == 0:
-        condors = position_legs // 4
-        noun = "iron condor" if condors == 1 else "iron condors"
-        open_positions = f"{condors} {noun} ({position_legs} option legs)"
-    elif position_legs > 0:
-        open_positions = f"{position_legs} option legs"
-    else:
-        open_positions = "0"
-
-    position_pl = 0.0
-    for pos in positions:
-        if not isinstance(pos, dict):
-            continue
-        position_pl += _as_float(pos.get("pnl", pos.get("unrealized_pl", 0.0)), 0.0)
-
-    win_rate = paper.get("win_rate")
-    win_rate_sample = _as_int(paper.get("win_rate_sample_size"), 0)
-    if win_rate is None:
-        win_rate_display = "N/A"
-    elif win_rate_sample > 0:
-        win_rate_display = f"{_as_float(win_rate):.1f}% ({win_rate_sample} trades)"
-    else:
-        win_rate_display = f"{_as_float(win_rate):.1f}%"
-
-    sync_candidates = [
-        state.get("last_updated"),
-        state.get("meta", {}).get("last_updated"),
-        state.get("sync_health", {}).get("last_successful_sync"),
-    ]
-    parsed_candidates = [_parse_iso_datetime(v) for v in sync_candidates]
-    parsed_sync = max((dt for dt in parsed_candidates if dt is not None), default=None)
-    if parsed_sync:
-        last_sync_display = parsed_sync.strftime("%Y-%m-%d %H:%M UTC")
-    else:
-        last_sync_display = "Unknown"
-
-    day_number = calculate_day_number()
-    today_label = datetime.now(timezone.utc).strftime("%A, %B %d, %Y").replace(" 0", " ")
-    if day_number <= TARGET_PHASE_DAYS:
-        phase_line = f"Day {day_number} of {TARGET_PHASE_DAYS}-day paper trading phase."
-    else:
-        phase_line = (
-            f"Day {day_number} since project start "
-            f"(initial paper-phase target: {TARGET_PHASE_DAYS} days)."
-        )
-
-    return {
-        "day_number": day_number,
-        "phase_line": phase_line,
-        "today_label": today_label,
-        "equity": equity,
-        "daily_pl": daily_pl,
-        "daily_pl_pct": daily_pl_pct,
-        "open_positions": open_positions,
-        "position_pl": position_pl,
-        "win_rate": win_rate_display,
-        "last_sync": last_sync_display,
-    }
-
-
-def render_status_block(metrics: dict[str, Any]) -> str:
-    return (
-        f"{AUTO_STATUS_START}\n"
-        f"## Where We Are Today ({metrics['today_label']})\n\n"
-        f"{metrics['phase_line']}\n\n"
-        "| What | Status |\n"
-        "| --- | --- |\n"
-        f"| Account Equity | ${metrics['equity']:,.2f} |\n"
-        f"| Daily P/L | {_format_signed_currency(metrics['daily_pl'])} ({metrics['daily_pl_pct']:+.2f}%) |\n"
-        "| Strategy | Iron Condors on SPY |\n"
-        f"| Open Positions | {metrics['open_positions']} |\n"
-        f"| Position P/L | {_format_signed_currency(metrics['position_pl'])} |\n"
-        f"| Win Rate | {metrics['win_rate']} |\n"
-        f"| Last Sync | {metrics['last_sync']} |\n\n"
-        "Source of truth: [data/system_state.json](https://github.com/IgorGanapolsky/trading/blob/main/data/system_state.json)\n"
-        f"{AUTO_STATUS_END}"
+    latest_sync = _pick_latest_timestamp(
+        meta.get("last_updated"),
+        meta.get("last_sync"),
+        sync_health.get("last_successful_sync"),
     )
+    if latest_sync:
+        sync_text = latest_sync.strftime("%Y-%m-%d %H:%M UTC")
+    else:
+        sync_text = "unknown"
+
+    focus = (
+        "Do not scale risk until validation passes."
+        if gate == "ACTIVE"
+        else "Maintain discipline while scaling in fixed increments."
+    )
+
+    return "\n".join(
+        [
+            STATUS_START,
+            f"_Last Sync: {sync_text} (source: `data/system_state.json`)_",
+            "",
+            "| What | Status |",
+            "| ---- | ------ |",
+            f"| Account Equity | ${equity:,.2f} |",
+            f"| Daily P/L | {_format_money(daily_pl)} |",
+            f"| Win Rate | {win_rate:.1f}% ({sample_size} trades; target {target_win_rate:.1f}%) |",
+            f"| Paper Phase | Day {day}/{target_days} |",
+            f"| North Star Gate | {gate} ({status}) |",
+            f"| Open Positions | {structures} structure(s), {legs} option leg(s) |",
+            f"| Unrealized P/L | {_format_money(unrealized)} |",
+            "",
+            f"**Execution Focus:** {focus}",
+            STATUS_END,
+        ]
+    )
+
+
+def replace_marked_block(content: str, new_block: str) -> str:
+    start = content.find(STATUS_START)
+    end = content.find(STATUS_END)
+    if start != -1 and end != -1 and end > start:
+        end += len(STATUS_END)
+        return content[:start] + new_block + content[end:]
+    return content
 
 
 def update_docs_index() -> bool:
     if not DOCS_INDEX_PATH.exists():
-        print(f"Error: {DOCS_INDEX_PATH} not found")
+        raise FileNotFoundError(f"{DOCS_INDEX_PATH} not found")
+
+    state = _load_state()
+    original = DOCS_INDEX_PATH.read_text(encoding="utf-8")
+    new_block = build_status_block(state)
+    updated = replace_marked_block(original, new_block)
+
+    if updated == original:
+        print("No marker block found or no changes made to docs/index.md")
         return False
 
-    state = load_system_state()
-    metrics = build_status_metrics(state)
-    new_block = render_status_block(metrics)
-
-    content = DOCS_INDEX_PATH.read_text(encoding="utf-8")
-    original = content
-
-    marker_pattern = re.compile(
-        re.escape(AUTO_STATUS_START) + r".*?" + re.escape(AUTO_STATUS_END),
-        re.DOTALL,
-    )
-
-    if marker_pattern.search(content):
-        content = marker_pattern.sub(new_block, content, count=1)
-    else:
-        legacy_pattern = re.compile(
-            r"## Where We Are Today \([^)]+\)\n.*?\n---\n\n## The Story So Far",
-            re.DOTALL,
-        )
-        if legacy_pattern.search(content):
-            replacement = new_block + "\n\n---\n\n## The Story So Far"
-            content = legacy_pattern.sub(replacement, content, count=1)
-        else:
-            insertion_point = "\n---\n\n## The Story So Far"
-            if insertion_point in content:
-                content = content.replace(insertion_point, f"\n\n{new_block}{insertion_point}", 1)
-            else:
-                content = content.rstrip() + "\n\n---\n\n" + new_block + "\n"
-
-    if content == original:
-        print("No changes needed to docs/index.md")
-        return True
-
-    DOCS_INDEX_PATH.write_text(content, encoding="utf-8")
-    print("Updated docs/index.md:")
-    print(f"  - Day: {metrics['day_number']}")
-    print(f"  - Date: {metrics['today_label']}")
-    print(f"  - Equity: ${metrics['equity']:,.2f}")
-    print(f"  - Daily P/L: {_format_signed_currency(metrics['daily_pl'])}")
-    print(f"  - Open Positions: {metrics['open_positions']}")
-    print(f"  - Last Sync: {metrics['last_sync']}")
+    DOCS_INDEX_PATH.write_text(updated, encoding="utf-8")
+    print("Updated docs/index.md auto status block")
     return True
 
 
 if __name__ == "__main__":
-    raise SystemExit(0 if update_docs_index() else 1)
+    update_docs_index()

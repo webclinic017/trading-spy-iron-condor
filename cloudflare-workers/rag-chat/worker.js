@@ -54,6 +54,139 @@ function parseOccSymbol(symbol) {
   };
 }
 
+function asNumber(value, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function formatCurrency(value) {
+  const n = asNumber(value, 0);
+  return n.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function parseTimestamp(value) {
+  if (!value) return null;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function pickLatestTimestamp(candidates) {
+  const parsed = candidates
+    .map((v) => parseTimestamp(v))
+    .filter((d) => d !== null)
+    .sort((a, b) => b.getTime() - a.getTime());
+  return parsed.length > 0 ? parsed[0] : null;
+}
+
+function computeNorthStarSnapshot(liveData) {
+  const paper = (liveData && liveData.paper_account) || {};
+  const paperTrading = (liveData && liveData.paper_trading) || {};
+  const portfolio = (liveData && liveData.portfolio) || {};
+  const risk = (liveData && liveData.risk) || {};
+  const meta = (liveData && liveData.meta) || {};
+  const syncHealth = (liveData && liveData.sync_health) || {};
+
+  const winRate = asNumber(paper.win_rate, 0);
+  const sampleSize = asNumber(paper.win_rate_sample_size, 0);
+  const targetWinRate =
+    asNumber(paperTrading.target_win_rate, 0.8) > 1
+      ? asNumber(paperTrading.target_win_rate, 80)
+      : asNumber(paperTrading.target_win_rate, 0.8) * 100;
+  const day = asNumber(paperTrading.current_day, 0);
+  const targetDays = asNumber(paperTrading.target_duration_days, 90);
+  const equity = asNumber(portfolio.equity ?? paper.equity, 0);
+  const dailyChange = asNumber(paper.daily_change, 0);
+  const unrealized = asNumber(risk.unrealized_pl, 0);
+  const baseline = 100000;
+  const cumulativePl = equity - baseline;
+  const winRateGap = winRate - targetWinRate;
+
+  let status = "VALIDATING";
+  let gate = "ACTIVE";
+  if (sampleSize >= 30 && day >= targetDays) {
+    if (winRate >= targetWinRate) {
+      status = "ON_TRACK_TO_SCALE";
+      gate = "PASS";
+    } else {
+      status = "OFF_TRACK_WIN_RATE";
+      gate = "ACTIVE";
+    }
+  } else if (sampleSize >= 30 && winRate < targetWinRate) {
+    status = "OFF_TRACK_WIN_RATE";
+    gate = "ACTIVE";
+  }
+
+  const asOf = pickLatestTimestamp([
+    meta.last_updated,
+    meta.last_sync,
+    syncHealth.last_successful_sync,
+  ]);
+
+  return {
+    status,
+    gate,
+    winRate,
+    targetWinRate,
+    winRateGap,
+    sampleSize,
+    day,
+    targetDays,
+    equity,
+    cumulativePl,
+    dailyChange,
+    unrealized,
+    asOf: asOf ? asOf.toISOString() : null,
+  };
+}
+
+function isNorthStarQuestion(message) {
+  const q = String(message || "").toLowerCase();
+  return /north star|rule\s*#?\s*1|80%|win rate|on track|off track|reach/.test(q);
+}
+
+function buildNorthStarDeterministicReply(liveData) {
+  if (!liveData) {
+    return [
+      "North Star status unavailable: live portfolio data could not be fetched.",
+      "Action: retry when `data/system_state.json` is reachable and fresh.",
+    ].join("\n");
+  }
+
+  const s = computeNorthStarSnapshot(liveData);
+  const direction = s.winRateGap >= 0 ? "+" : "";
+
+  const lines = [
+    `North Star Status: ${s.status}`,
+    `Rule #1 Gate: ${s.gate}`,
+    "",
+    "Live evidence:",
+    `- Win rate: ${s.winRate.toFixed(1)}% vs target ${s.targetWinRate.toFixed(1)}% (${direction}${s.winRateGap.toFixed(1)} pp)`,
+    `- Sample size: ${s.sampleSize} trades (min 30)`,
+    `- Paper phase: day ${s.day}/${s.targetDays}`,
+    `- Equity: $${formatCurrency(s.equity)} (vs $100,000 baseline: ${s.cumulativePl >= 0 ? "+" : "-"}$${formatCurrency(Math.abs(s.cumulativePl))})`,
+    `- Daily P/L: ${s.dailyChange >= 0 ? "+" : "-"}$${formatCurrency(Math.abs(s.dailyChange))}; Unrealized P/L: ${s.unrealized >= 0 ? "+" : "-"}$${formatCurrency(Math.abs(s.unrealized))}`,
+    s.asOf ? `- Data as of: ${s.asOf}` : "- Data as of: unknown",
+    "",
+  ];
+
+  if (s.status === "ON_TRACK_TO_SCALE") {
+    lines.push("Execution focus:");
+    lines.push("1) Keep Rule #1 limits unchanged during scale-up.");
+    lines.push("2) Increase size only in predefined increments.");
+    lines.push("3) Continue publishing daily evidence and gate checks.");
+  } else {
+    lines.push("Execution focus:");
+    lines.push("1) Do not scale size until win rate is >= target on validated samples.");
+    lines.push("2) Enforce exits mechanically: 50% take-profit, 7 DTE close, 200% max loss.");
+    lines.push("3) Run post-trade root-cause on each loss and adjust entry filters before adding risk.");
+  }
+
+  return lines.join("\n");
+}
+
 function truncate(text, maxLen) {
   if (!text) return "";
   if (text.length <= maxLen) return text;
@@ -205,6 +338,12 @@ function buildSystemPrompt(liveData, lessons, source) {
   lines.push("");
   lines.push(buildLessonsContext(lessons, source));
   lines.push("");
+  lines.push("CRITICAL RESPONSE PROTOCOL:");
+  lines.push("- Report North Star status as a hard gate (PASS/ACTIVE), not a vibe.");
+  lines.push("- Always include exact metrics: win rate, target win rate, sample size, paper day/target day.");
+  lines.push("- If target is not met, provide only concrete corrective actions.");
+  lines.push("- Never claim North Star progress without citing live numbers.");
+  lines.push("");
 
   if (!liveData) {
     return lines.join("\n");
@@ -227,6 +366,21 @@ function buildSystemPrompt(liveData, lessons, source) {
   lines.push(
     `Win Rate: ${paper.win_rate || "N/A"}% (${paper.win_rate_sample_size || 0} trades)`,
   );
+  lines.push("");
+
+  const northStar = computeNorthStarSnapshot(liveData);
+  lines.push("=== NORTH STAR GATE ===");
+  lines.push(`Status: ${northStar.status}`);
+  lines.push(`Gate: ${northStar.gate}`);
+  lines.push(
+    `Win Rate Gap: ${northStar.winRateGap >= 0 ? "+" : ""}${northStar.winRateGap.toFixed(1)} pp`,
+  );
+  lines.push(
+    `Validation: ${northStar.sampleSize} trades, day ${northStar.day}/${northStar.targetDays}`,
+  );
+  if (northStar.asOf) {
+    lines.push(`Data As Of: ${northStar.asOf}`);
+  }
   lines.push("");
 
   // Paper trading progress
@@ -310,9 +464,29 @@ function buildSystemPrompt(liveData, lessons, source) {
   return lines.join("\n");
 }
 
-function buildFallbackReply(query, lessons, source) {
-  const header =
-    "AI chat is temporarily unavailable. Here are the most relevant lessons I can find:";
+function classifyAnthropicFailureReason(errorText) {
+  if (!errorText) return null;
+
+  const text = String(errorText).toLowerCase();
+  if (text.includes("credit balance is too low") || text.includes("insufficient")) {
+    return "Anthropic credits exhausted";
+  }
+  if (text.includes("invalid x-api-key") || text.includes("authentication_error")) {
+    return "Anthropic API key invalid/misconfigured";
+  }
+  if (text.includes("rate limit") || text.includes("too many requests")) {
+    return "Anthropic rate limited";
+  }
+  if (text.includes("overloaded")) {
+    return "Anthropic overloaded";
+  }
+
+  return "Anthropic API error";
+}
+
+function buildFallbackReply(query, lessons, source, reason) {
+  const reasonSuffix = reason ? ` (${reason})` : "";
+  const header = `AI chat is temporarily unavailable${reasonSuffix}. Here are the most relevant lessons I can find:`;
   const context = buildLessonsContext(lessons, source);
   return [header, "", `Query: ${query}`, "", context].join("\n");
 }
@@ -396,9 +570,21 @@ export default {
         8,
         env,
       );
+
+      if (isNorthStarQuestion(message)) {
+        const deterministicReply = buildNorthStarDeterministicReply(liveData);
+        return new Response(JSON.stringify({ reply: deterministicReply }), {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        });
+      }
+
       const systemPrompt = buildSystemPrompt(liveData, lessons, source);
 
       let reply = null;
+      let failureReason = null;
       try {
         const response = await fetch("https://api.anthropic.com/v1/messages", {
           method: "POST",
@@ -418,16 +604,23 @@ export default {
         if (!response.ok) {
           const error = await response.text();
           console.error("Claude API error:", error);
+          failureReason = classifyAnthropicFailureReason(error);
         } else {
           const data = await response.json();
           reply = data.content[0]?.text || "No response";
         }
       } catch (error) {
         console.error("Claude API fetch failed:", error);
+        failureReason = "Anthropic request failed";
       }
 
       if (!reply) {
-        const fallbackReply = buildFallbackReply(message, lessons, source);
+        const fallbackReply = buildFallbackReply(
+          message,
+          lessons,
+          source,
+          failureReason,
+        );
         return new Response(
           JSON.stringify({ reply: fallbackReply, fallback: true }),
           {
