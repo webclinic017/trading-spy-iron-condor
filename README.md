@@ -160,7 +160,7 @@ python3 scripts/daily_verification.py
 | Safeguard            | Description                       |
 | -------------------- | --------------------------------- |
 | **Position Limits**  | Max 5% per position               |
-| **Daily Loss Limit** | 2% max daily loss                 |
+| **Daily Loss Limit** | 5% max daily loss                 |
 | **Circuit Breakers** | Auto-halt on 3 consecutive losses |
 | **Paper Mode**       | 90-day validation before live     |
 
