@@ -1,4 +1,4 @@
-name: Ralph Loop - AI Self-Healing (Cost-Optimized)
+name: Ralph Loop - AI Self-Healing (24/7)
 
 # Real Ralph Wiggum implementation:
 # 1. Quick health check first (< 1 min)
@@ -7,7 +7,7 @@ name: Ralph Loop - AI Self-Healing (Cost-Optimized)
 # 4. Max 5 iterations to limit API costs
 
 # COST CONTROLS:
-# - Runs every 6 hours (not 4) = 4 runs/day max
+# - Runs every 30 minutes, 24/7
 # - Skips if healthy (no API calls)
 # - Concurrency limit = 1 (no parallel runs)
 # - Max 5 iterations per run
@@ -15,8 +15,8 @@ name: Ralph Loop - AI Self-Healing (Cost-Optimized)
 
 on:
   schedule:
-    # Run every 6 hours - cost efficient
-    - cron: "30 */6 * * *"
+    # Run every 30 minutes, 24/7
+    - cron: "*/30 * * * *"
   workflow_dispatch:
     inputs:
       task:
@@ -93,8 +93,8 @@ jobs:
   ralph-loop:
     runs-on: ubuntu-latest
     needs: health-check
-    # COST CONTROL: Only run if system needs fixing OR manual trigger
-    if: needs.health-check.outputs.needs_fixing == 'true' || github.event_name == 'workflow_dispatch'
+    # 24/7 MODE: Always execute loop on schedule; still allow manual dispatch.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.health-check.outputs.needs_fixing == 'true'
     timeout-minutes: 20
 
     steps:
@@ -142,7 +142,7 @@ jobs:
           fi
 
       - name: Run Ralph Loop
-        if: steps.status.outputs.status == 'needs_fixing' || github.event_name == 'workflow_dispatch'
+        if: steps.status.outputs.status == 'needs_fixing' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
@@ -166,7 +166,7 @@ jobs:
           fi
 
       - name: Push changes
-        if: steps.status.outputs.status == 'needs_fixing' || github.event_name == 'workflow_dispatch'
+        if: steps.status.outputs.status == 'needs_fixing' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
         run: |
           # Check for uncommitted changes
           if [ -n "$(git status --porcelain)" ]; then
@@ -205,8 +205,8 @@ jobs:
   research-learn:
     runs-on: ubuntu-latest
     needs: [health-check, ralph-loop]
-    # COST CONTROL: Only run if Ralph loop actually ran
-    if: needs.health-check.outputs.needs_fixing == 'true' || github.event_name == 'workflow_dispatch'
+    # 24/7 MODE: Run learning step after scheduled loop iterations too.
+    if: needs.health-check.outputs.needs_fixing == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
 
     steps:
       - uses: actions/checkout@v4

@@ -26,10 +26,16 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Normalize metadata outputs
+        id: metadata_outputs
+        run: |
+          update_type="${{ steps.metadata.outputs['update-type'] }}"
+          echo "update_type=${update_type}" >> "$GITHUB_OUTPUT"
+
       - name: Queue update via Trunk
         uses: actions/github-script@v7
         env:
-          UPDATE_TYPE: ${{ steps.metadata.outputs.update-type }}
+          UPDATE_TYPE: ${{ steps.metadata_outputs.outputs.update_type }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
