@@ -90,7 +90,9 @@ def _required_cagr(current_equity: float, target_capital: float, years_left: flo
     return (target_capital / current_equity) ** (1.0 / years_left) - 1.0
 
 
-def _extract_closed_trades(trades_data: dict[str, Any], rolling_window: int) -> list[dict[str, Any]]:
+def _extract_closed_trades(
+    trades_data: dict[str, Any], rolling_window: int
+) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     trades = trades_data.get("trades", [])
     if not isinstance(trades, list):
@@ -172,7 +174,9 @@ def _metrics_for_family(
                 {
                     "samples": paper_samples,
                     "wins": round((paper_win_rate / 100.0) * paper_samples),
-                    "losses": max(0, paper_samples - round((paper_win_rate / 100.0) * paper_samples)),
+                    "losses": max(
+                        0, paper_samples - round((paper_win_rate / 100.0) * paper_samples)
+                    ),
                     "win_rate_pct": round(paper_win_rate, 2),
                     "expectancy": None,
                     "evidence_source": "paper_account",
@@ -287,7 +291,9 @@ def _north_star_probability(
     if win_rate is None:
         win_score = 25.0
     else:
-        win_score = max(0.0, min(100.0, (_as_float(win_rate) / DEFAULT_TARGET_WIN_RATE_PCT) * 100.0))
+        win_score = max(
+            0.0, min(100.0, (_as_float(win_rate) / DEFAULT_TARGET_WIN_RATE_PCT) * 100.0)
+        )
 
     if estimated_cagr <= 0:
         edge_score = 0.0
@@ -355,7 +361,9 @@ def compute_milestone_snapshot(
         if family_state["paused"]:
             paused.append(family)
 
-    primary = DEFAULT_PRIMARY_FAMILY if DEFAULT_PRIMARY_FAMILY in KNOWN_FAMILIES else "options_income"
+    primary = (
+        DEFAULT_PRIMARY_FAMILY if DEFAULT_PRIMARY_FAMILY in KNOWN_FAMILIES else "options_income"
+    )
     primary_state = families.get(primary, families["options_income"])
     north_star = _north_star_probability(
         loaded_state,
@@ -429,4 +437,3 @@ def apply_snapshot_to_state(state: dict[str, Any], snapshot: dict[str, Any]) -> 
     north_star["target_date"] = probability.get("target_date")
     north_star["updated_at"] = snapshot.get("generated_at")
     return state
-
