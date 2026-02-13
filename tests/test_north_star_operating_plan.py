@@ -83,4 +83,3 @@ def test_apply_operating_plan_writes_state_fields(tmp_path):
     assert "north_star_weekly_gate" in updated
     assert "north_star_contributions" in updated
     assert "weekly_gate_mode" in updated["risk"]
-

@@ -77,7 +77,11 @@ def _load_json_list(path: Path) -> list[dict[str, Any]]:
     try:
         with path.open("r", encoding="utf-8") as handle:
             payload = json.load(handle)
-        return [item for item in payload if isinstance(item, dict)] if isinstance(payload, list) else []
+        return (
+            [item for item in payload if isinstance(item, dict)]
+            if isinstance(payload, list)
+            else []
+        )
     except Exception:
         return []
 
@@ -334,9 +338,7 @@ def compute_contribution_plan(
     if live_positions == 0:
         estimated_live_contribution = round(max(0.0, live_change_this_month), 2)
         contribution_confidence = "medium"
-        inference_note = (
-            "Live account has no open positions; live equity change is treated as estimated contribution."
-        )
+        inference_note = "Live account has no open positions; live equity change is treated as estimated contribution."
 
     assumed_return = 0.30
     required_at_assumed = _calc_required_monthly_contribution(
