@@ -408,13 +408,24 @@ class ModelSelector:
         # BUDGET ENFORCEMENT: Downgrade if selected tier would exceed budget
         if enforce_budget and not self.can_afford_model(tier):
             original_tier = tier
-            # Downgrade chain: R1 → KIMI → MISTRAL → DEEPSEEK → HAIKU
-            downgrade_chain = [
-                ModelTier.KIMI,
-                ModelTier.MISTRAL,
-                ModelTier.DEEPSEEK,
-                ModelTier.HAIKU,
-            ]
+            # Downgrade chain (only include OpenRouter tiers if the key is available).
+            # This prevents selecting an OpenRouter model that can't be called at runtime.
+            if openrouter_available:
+                if complexity == TaskComplexity.SIMPLE:
+                    downgrade_chain = [ModelTier.DEEPSEEK, ModelTier.HAIKU]
+                elif complexity == TaskComplexity.MEDIUM:
+                    downgrade_chain = [ModelTier.MISTRAL, ModelTier.DEEPSEEK, ModelTier.HAIKU]
+                else:
+                    downgrade_chain = [
+                        ModelTier.KIMI,
+                        ModelTier.MISTRAL,
+                        ModelTier.DEEPSEEK,
+                        ModelTier.HAIKU,
+                    ]
+            else:
+                downgrade_chain = [ModelTier.SONNET, ModelTier.HAIKU]
+
+            downgrade_chain = [t for t in downgrade_chain if t != original_tier]
             for fallback_tier in downgrade_chain:
                 if self.can_afford_model(fallback_tier):
                     tier = fallback_tier
@@ -425,12 +436,16 @@ class ModelSelector:
                     )
                     break
             else:
-                # Even HAIKU exceeds budget - log but allow (never completely block)
+                # Budget is too low for even the cheapest option. Still downgrade to the
+                # lowest-cost available tier to minimize overspend rather than allowing
+                # the originally selected (more expensive) tier.
+                tier = ModelTier.DEEPSEEK if openrouter_available else ModelTier.HAIKU
                 logger.error(
-                    f"BUDGET EXHAUSTED: All models exceed daily budget! "
-                    f"Allowing {tier.value} anyway. Spent: ${self.daily_spend:.2f}"
+                    "BUDGET EXHAUSTED: All models exceed daily budget; "
+                    f"forcing lowest-cost tier {tier.value}. "
+                    f"(spent: ${self.daily_spend:.2f}, budget: ${self.daily_budget:.2f})"
                 )
-                reason = "BUDGET_EXHAUSTED_ALLOWED"
+                reason = "BUDGET_EXHAUSTED_MIN_COST"
 
         selected = MODEL_REGISTRY[tier]
         self._log_selection(task_type, complexity, selected, reason)
