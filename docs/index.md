@@ -16,17 +16,17 @@ This is the unfiltered story of building an autonomous AI trading system—every
 ## Where We Are Today
 
 <!-- AUTO_STATUS_START -->
-_Last Sync: 2026-02-13 19:48 UTC (source: `data/system_state.json`)_
+_Last Sync: 2026-02-13 20:07 UTC (source: `data/system_state.json`)_
 
 | What | Status |
 | ---- | ------ |
-| Account Equity | $101,451.56 |
+| Account Equity | $101,445.56 |
 | Daily P/L | +$0.00 |
 | Win Rate | 37.5% (32 trades; target 80.0%) |
 | Paper Phase | Day 14/90 |
 | North Star Gate | ACTIVE (OFF_TRACK_WIN_RATE) |
 | Open Positions | 1 structure(s), 4 option leg(s) |
-| Unrealized P/L | +$12.00 |
+| Unrealized P/L | +$6.00 |
 
 **Execution Focus:** Do not scale risk until validation passes.
 <!-- AUTO_STATUS_END -->
