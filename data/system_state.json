@@ -1145,7 +1145,7 @@
     "reason": "Weekly win rate 37.5% is below 65% safety threshold.",
     "positive_weeks_streak": 0,
     "evidence_source": "paper_account_fallback",
-    "updated_at": "2026-02-13T15:49:06.949270+00:00"
+    "updated_at": "2026-02-13T15:50:35.683095+00:00"
   },
   "north_star_contributions": {
     "enabled": true,
@@ -1170,6 +1170,6 @@
     "estimated_live_contribution_this_month": 0.4,
     "contribution_estimate_confidence": "medium",
     "inference_note": "Live account has no open positions; live equity change is treated as estimated contribution.",
-    "updated_at": "2026-02-13T15:49:06.949332+00:00"
+    "updated_at": "2026-02-13T15:50:35.683155+00:00"
   }
 }
