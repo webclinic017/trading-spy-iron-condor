@@ -2,10 +2,10 @@ name: Weekend Learning Pipeline
 
 on:
   # RE-ENABLED Jan 30, 2026 - CEO directive: continuous learning for North Star
-  # COST-OPTIMIZED: Once per weekend (Sunday only) to stay under $50/mo GCP budget
+  # Run Saturday AND Sunday mornings for full weekend coverage
   schedule:
-    # Run Sunday at 8:00 AM Eastern (once per weekend, not twice)
-    - cron: "0 13 * * 0" # 13:00 UTC = 8:00 AM ET, Sunday only
+    - cron: "0 13 * * 6" # Saturday 8:00 AM ET (13:00 UTC)
+    - cron: "0 13 * * 0" # Sunday 8:00 AM ET (13:00 UTC)
   workflow_dispatch:
     inputs:
       full_rebuild:
