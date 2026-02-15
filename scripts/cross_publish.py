@@ -159,7 +159,9 @@ def publish_to_linkedin(title: str, body: str, canonical_url: str) -> bool:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Cross-publish markdown post to Dev.to and LinkedIn")
+    parser = argparse.ArgumentParser(
+        description="Cross-publish markdown post to Dev.to and LinkedIn"
+    )
     parser.add_argument("file", help="Path to markdown post file")
     parser.add_argument("--dry-run", action="store_true", help="Preview only, don't publish")
     parser.add_argument("--platform", choices=["devto", "linkedin", "all"], default="all")
