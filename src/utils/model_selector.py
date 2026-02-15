@@ -81,10 +81,32 @@ class ModelConfig:
     trading_sortino: float | None = None  # StockBench benchmark score (higher = better)
 
 
+# Model ID mappings: OpenRouter IDs → TARS gateway IDs
+# When LLM_GATEWAY_BASE_URL is set (TARS), use TARS-native model IDs
+_TARS_MODEL_MAP: dict[str, str] = {
+    "deepseek/deepseek-chat": "deepinfra/deepseek-ai/DeepSeek-V3.1",
+    "deepseek/deepseek-r1": "deepinfra/deepseek-ai/DeepSeek-R1-0528",
+    "mistralai/mistral-medium-3": "deepinfra/mistralai/Mistral-Small-3.2-24B-Instruct-2506",
+    "moonshotai/kimi-k2-0905": "deepinfra/moonshotai/Kimi-K2-Instruct-0905",
+    "claude-opus-4-5-20251101": "claude-opus-4-6",
+    "claude-3-5-haiku-20241022": "claude-3-5-haiku-20241022",
+    "claude-sonnet-4-5-20250929": "claude-sonnet-4-5",
+}
+
+
+def _resolve_model_id(openrouter_id: str) -> str:
+    """Resolve model ID based on whether TARS gateway is active."""
+    from src.utils.llm_gateway import get_llm_gateway_base_url
+
+    if get_llm_gateway_base_url():
+        return _TARS_MODEL_MAP.get(openrouter_id, openrouter_id)
+    return openrouter_id
+
+
 # January 2026 Model Registry (evidence-based selection)
 # Sources: StockBench benchmark, Mistral AI, arXiv:2412.20138
 MODEL_REGISTRY: dict[ModelTier, ModelConfig] = {
-    # === COST-OPTIMIZED TIERS (via OpenRouter) ===
+    # === COST-OPTIMIZED TIERS (via OpenRouter or TARS) ===
     ModelTier.DEEPSEEK: ModelConfig(
         model_id="deepseek/deepseek-chat",
         tier=ModelTier.DEEPSEEK,
@@ -122,7 +144,7 @@ MODEL_REGISTRY: dict[ModelTier, ModelConfig] = {
         provider="openrouter",
         trading_sortino=0.0420,  # StockBench: #1 ranked for trading
     ),
-    # === PREMIUM TIER (Anthropic API) ===
+    # === PREMIUM TIER (Anthropic API or TARS) ===
     ModelTier.OPUS: ModelConfig(
         model_id="claude-opus-4-5-20251101",
         tier=ModelTier.OPUS,
@@ -343,13 +365,13 @@ class ModelSelector:
         if complexity == TaskComplexity.CRITICAL:
             selected = MODEL_REGISTRY[ModelTier.OPUS]
             self._log_selection(task_type, complexity, selected, "CRITICAL_OVERRIDE")
-            return selected.model_id
+            return _resolve_model_id(selected.model_id)
 
         # Honor explicit tier override
         if force_tier:
             selected = MODEL_REGISTRY[force_tier]
             self._log_selection(task_type, complexity, selected, "FORCE_TIER")
-            return selected.model_id
+            return _resolve_model_id(selected.model_id)
 
         # Budget-aware selection
         budget_remaining = self.daily_budget - self.daily_spend
@@ -453,7 +475,7 @@ class ModelSelector:
 
         selected = MODEL_REGISTRY[tier]
         self._log_selection(task_type, complexity, selected, reason)
-        return selected.model_id
+        return _resolve_model_id(selected.model_id)
 
     def log_usage(
         self,
