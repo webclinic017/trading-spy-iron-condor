@@ -6,7 +6,6 @@ import re
 from collections import Counter
 from pathlib import Path
 
-
 FAILED_TEST_RE = re.compile(r"^FAILED\s+([^\s]+)")
 ERROR_TEST_RE = re.compile(r"^ERROR\s+([^\s]+)")
 PYTEST_ERR_FILE_RE = re.compile(r"^E\s+File \"([^\"]+)\"")

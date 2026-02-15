@@ -5,7 +5,6 @@ import argparse
 import re
 from pathlib import Path
 
-
 METRIC_RE = re.compile(r"^- ([^:]+): (.+) \[([A-Z]+)\] \((.*)\)$")
 
 
@@ -59,7 +58,6 @@ def main() -> int:
 
     scorecard = repo_root / "artifacts/devloop/profit_readiness_scorecard.md"
     checklist = repo_root / "artifacts/tars/judge_demo_checklist.md"
-    loop_tasks = repo_root / "artifacts/devloop/tasks.md"
 
     done, total = checklist_progress(checklist)
     metrics = parse_metrics(scorecard)
