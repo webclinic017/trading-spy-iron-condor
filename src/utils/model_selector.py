@@ -564,20 +564,38 @@ class ModelSelector:
         """
         Get the API provider for a model ID.
 
+        Handles both original (OpenRouter) and TARS-resolved model IDs.
+
         Returns:
             "anthropic" for Claude models, "openrouter" for cost-optimized models
         """
+        # Check original registry IDs
         for config in MODEL_REGISTRY.values():
             if config.model_id == model_id:
                 return config.provider
+        # Check TARS-resolved IDs (reverse lookup)
+        for original_id, tars_id in _TARS_MODEL_MAP.items():
+            if tars_id == model_id:
+                for config in MODEL_REGISTRY.values():
+                    if config.model_id == original_id:
+                        return config.provider
+        # TARS models with deepinfra/ or groq/ prefix are OpenRouter-equivalent
+        if model_id.startswith(("deepinfra/", "groq/")):
+            return "openrouter"
         # Default to anthropic for unknown models
         return "anthropic"
 
     def get_model_config(self, model_id: str) -> ModelConfig | None:
-        """Get full configuration for a model ID."""
+        """Get full configuration for a model ID (handles both original and TARS IDs)."""
         for config in MODEL_REGISTRY.values():
             if config.model_id == model_id:
                 return config
+        # Reverse lookup for TARS-resolved IDs
+        for original_id, tars_id in _TARS_MODEL_MAP.items():
+            if tars_id == model_id:
+                for config in MODEL_REGISTRY.values():
+                    if config.model_id == original_id:
+                        return config
         return None
 
     def get_model_for_agent(self, agent_name: str) -> str:
