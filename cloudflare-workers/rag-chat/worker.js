@@ -461,6 +461,71 @@ function buildSystemPrompt(liveData, lessons, source) {
     }
   }
 
+  // Trade history with weekly aggregation
+  const trades = liveData.trade_history || [];
+  if (trades.length > 0) {
+    lines.push("=== TRADE HISTORY (recent) ===");
+
+    // Group trades by week (ISO week starting Monday)
+    const byWeek = {};
+    for (const trade of trades) {
+      if (!trade.filled_at) continue;
+      const d = new Date(trade.filled_at);
+      if (Number.isNaN(d.getTime())) continue;
+      // Get Monday of that week
+      const day = d.getUTCDay();
+      const monday = new Date(d);
+      monday.setUTCDate(d.getUTCDate() - ((day + 6) % 7));
+      const weekKey = monday.toISOString().slice(0, 10);
+      if (!byWeek[weekKey]) byWeek[weekKey] = [];
+      byWeek[weekKey].push(trade);
+    }
+
+    // Sort weeks descending and show last 4 weeks
+    const sortedWeeks = Object.keys(byWeek).sort().reverse().slice(0, 4);
+    for (const weekStart of sortedWeeks) {
+      const weekTrades = byWeek[weekStart];
+      const weekEnd = new Date(weekStart);
+      weekEnd.setUTCDate(weekEnd.getUTCDate() + 6);
+      const weekEndStr = weekEnd.toISOString().slice(0, 10);
+      lines.push(`Week of ${weekStart} to ${weekEndStr}: ${weekTrades.length} fills`);
+      for (const t of weekTrades.slice(0, 8)) {
+        const sym = t.symbol ? parseOccSymbol(t.symbol) : null;
+        const symStr = sym
+          ? `${sym.ticker} ${sym.strike} ${sym.type} ${sym.expiry}`
+          : (t.symbol || "multi-leg close");
+        const side = String(t.side || "").replace("OrderSide.", "");
+        lines.push(`  ${t.filled_at.slice(0, 10)} ${side} ${symStr} @ $${t.price}`);
+      }
+      if (weekTrades.length > 8) {
+        lines.push(`  ... and ${weekTrades.length - 8} more fills`);
+      }
+    }
+    lines.push("");
+
+    // Equity snapshots for weekly P/L calculation
+    const history = (liveData.sync_health || {}).history || [];
+    if (history.length > 0) {
+      lines.push("=== EQUITY SNAPSHOTS ===");
+      // Show first and last equity per day for P/L calculation
+      const byDay = {};
+      for (const h of history) {
+        const day = (h.timestamp || "").slice(0, 10);
+        if (!day || !h.equity) continue;
+        if (!byDay[day]) byDay[day] = { first: h.equity, last: h.equity };
+        byDay[day].last = h.equity;
+      }
+      const days = Object.keys(byDay).sort().reverse().slice(0, 7);
+      for (const day of days) {
+        const { first, last } = byDay[day];
+        const change = last - first;
+        lines.push(`  ${day}: $${formatCurrency(last)} (intraday: ${change >= 0 ? "+" : ""}$${formatCurrency(change)})`);
+      }
+      lines.push(`  Baseline: $100,000 (started Jan 30, 2026)`);
+      lines.push("");
+    }
+  }
+
   return lines.join("\n");
 }
 
