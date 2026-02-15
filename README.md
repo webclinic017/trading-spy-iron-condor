@@ -145,6 +145,6 @@ This repo is optimized for AI agent collaboration:
 
 ---
 
-**Built with Python, Alpaca, TARS, and radical simplicity**
+**Built with** Python, [Alpaca](https://alpaca.markets), [TARS](https://router.tetrate.ai), [OpenRouter](https://openrouter.ai), [LanceDB](https://lancedb.com), [PaperBanana](https://github.com/llmsresearch/paperbanana), and GitHub Actions
 
 **Maintained by** [Igor Ganapolsky](https://github.com/IgorGanapolsky)
