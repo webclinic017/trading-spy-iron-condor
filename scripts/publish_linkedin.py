@@ -29,11 +29,15 @@ LINKEDIN_ME_URL = f"{LINKEDIN_API_BASE}/v2/userinfo"  # OpenID Connect endpoint
 
 def get_linkedin_credentials() -> dict:
     """Get LinkedIn credentials from environment."""
-    token = os.environ.get("LINKEDIN_ACCESS_TOKEN", "")
+    import re
+
+    raw_token = os.environ.get("LINKEDIN_ACCESS_TOKEN", "")
+    # Remove ALL whitespace (newlines, carriage returns, spaces) from token
+    token = re.sub(r"\s+", "", raw_token) if raw_token else None
     return {
         "client_id": os.environ.get("LINKEDIN_CLIENT_ID"),
         "client_secret": os.environ.get("LINKEDIN_CLIENT_SECRET"),
-        "access_token": token.strip() if token else None,
+        "access_token": token,
     }
 
 

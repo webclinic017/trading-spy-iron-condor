@@ -59,7 +59,7 @@ def publish_to_devto(title: str, body: str, tags: list[str], canonical_url: str)
             "title": title,
             "body_markdown": body,
             "published": True,
-            "tags": [t.replace(" ", "").lower()[:20] for t in tags[:4]],
+            "tags": [re.sub(r"[^a-z0-9]", "", t.lower())[:20] for t in tags[:4]],
             "canonical_url": canonical_url,
         }
     }
@@ -85,7 +85,8 @@ def publish_to_devto(title: str, body: str, tags: list[str], canonical_url: str)
 
 def publish_to_linkedin(title: str, body: str, canonical_url: str) -> bool:
     """Publish post to LinkedIn."""
-    token = (os.environ.get("LINKEDIN_ACCESS_TOKEN") or "").strip()
+    raw_token = os.environ.get("LINKEDIN_ACCESS_TOKEN") or ""
+    token = re.sub(r"\s+", "", raw_token)  # Remove ALL whitespace including internal newlines
     if not token:
         print("  LINKEDIN_ACCESS_TOKEN not set, skipping")
         return False
