@@ -585,32 +585,22 @@ def publish_to_devto(post: dict, *, canonical_url: str) -> dict | None:
 
 
 def post_to_linkedin_direct(post: dict, link_url: str) -> bool:
-    """Post directly to LinkedIn using browser automation - ACTUALLY POSTS."""
+    """Post to LinkedIn using the LinkedIn API via publish_linkedin.py."""
     import subprocess
 
-    link = link_url
-    emoji = "✅" if post["signal"] == "positive" else "📚"
-
-    content = f"""{emoji} {post["title"]}
-
-{post["summary"]}
-
-#AITrading #RLHF #BuildingInPublic #FinTech
-
-{link}"""
-
-    # Call linkedin_post_direct.py to actually post
     try:
         result = subprocess.run(  # nosec B603 B607 - safe call with no untrusted input
             [
                 "python3",
-                str(Path(__file__).parent / "linkedin_post_direct.py"),
-                "--text",
-                content,
+                str(Path(__file__).parent / "publish_linkedin.py"),
+                "--signal",
+                post["signal"],
+                "--context",
+                post["summary"][:200],
             ],
             capture_output=True,
             text=True,
-            timeout=180,
+            timeout=60,
         )
 
         if result.returncode == 0:
