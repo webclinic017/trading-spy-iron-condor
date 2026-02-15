@@ -201,6 +201,8 @@ jobs:
           ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          LLM_GATEWAY_BASE_URL: ${{ secrets.LLM_GATEWAY_BASE_URL }}
+          LLM_GATEWAY_API_KEY: ${{ secrets.LLM_GATEWAY_API_KEY }}
           ALPHA_VANTAGE_API_KEY: ${{ secrets.ALPHA_VANTAGE_API_KEY }}
           POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
@@ -617,6 +619,8 @@ jobs:
           ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          LLM_GATEWAY_BASE_URL: ${{ secrets.LLM_GATEWAY_BASE_URL }}
+          LLM_GATEWAY_API_KEY: ${{ secrets.LLM_GATEWAY_API_KEY }}
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
@@ -777,6 +781,8 @@ jobs:
           ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
           ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          LLM_GATEWAY_BASE_URL: ${{ secrets.LLM_GATEWAY_BASE_URL }}
+          LLM_GATEWAY_API_KEY: ${{ secrets.LLM_GATEWAY_API_KEY }}
           HELICONE_API_KEY: ${{ secrets.HELICONE_API_KEY }}
           # LangSmith removed Jan 9, 2026 - local observability only
           ALPHA_VANTAGE_API_KEY: ${{ secrets.ALPHA_VANTAGE_API_KEY }}
