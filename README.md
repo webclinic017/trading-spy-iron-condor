@@ -18,50 +18,10 @@ Autonomous AI trading system with multi-model routing via [Tetrate Agent Router 
 
 ## Architecture
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                         LLM Gateway                              │
-│          src/utils/llm_gateway.py + model_selector.py            │
-│                                                                  │
-│   ┌─────────────┐    ┌──────────────┐    ┌────────────────────┐  │
-│   │ TARS Gateway │    │  OpenRouter   │    │  Anthropic Direct  │  │
-│   │ (Tetrate)    │    │  (fallback)   │    │  (critical only)   │  │
-│   └──────┬──────┘    └──────┬───────┘    └────────┬───────────┘  │
-│          │                  │                      │              │
-│          ▼                  ▼                      ▼              │
-│   DeepSeek V3         Kimi K2 (#1          Claude Opus           │
-│   Mistral Med 3       StockBench)          (trade execution)     │
-│   DeepSeek-R1                                                    │
-└──────────────────────────────┬───────────────────────────────────┘
-                               │
-                               ▼
-┌──────────────────────────────────────────────────────────────────┐
-│                       Trading Pipeline                           │
-│                                                                  │
-│  ┌─────────────┐  ┌──────────────┐  ┌─────────────────────────┐ │
-│  │  Thompson    │  │ Trade Memory │  │    Risk Manager         │ │
-│  │  Sampler     │──│ (SQLite)     │──│ 5% max / 200% stop     │ │
-│  └─────────────┘  └──────────────┘  └────────────┬────────────┘ │
-│                                                   │              │
-│  ┌─────────────┐  ┌──────────────┐  ┌────────────▼────────────┐ │
-│  │  RAG System  │  │ RLHF        │  │ Iron Condor Strategy    │ │
-│  │  (LanceDB)   │──│ Feedback    │──│ SPY $5-wide, 30-45 DTE  │ │
-│  └─────────────┘  └──────────────┘  └────────────┬────────────┘ │
-└──────────────────────────────────────────────────┬───────────────┘
-                                                   │
-                               ┌───────────────────▼──────────────┐
-                               │      Alpaca API (Execution)      │
-                               │      Paper: PA3C5AG0CECQ         │
-                               └──────────────────────────────────┘
-                                                   │
-                               ┌───────────────────▼──────────────┐
-                               │   Ralph Mode (Self-Healing CI)   │
-                               │   84 GitHub Actions workflows    │
-                               │   15-min health checks           │
-                               └──────────────────────────────────┘
-```
-
 ### LLM Gateway & TARS Integration
+
+![LLM Gateway Architecture](docs/assets/llm_gateway_architecture.png)
+*Multi-model routing via TARS with budget-aware fallback to OpenRouter and Anthropic Direct*
 
 The system routes all LLM calls through a unified gateway (`src/utils/llm_gateway.py`) that supports [Tetrate Agent Router Service (TARS)](https://router.tetrate.ai) as the primary provider, with OpenRouter and direct Anthropic as fallbacks.
 
@@ -83,12 +43,20 @@ The system routes all LLM calls through a unified gateway (`src/utils/llm_gatewa
 
 Safety guarantee: trade execution **always** uses Opus regardless of budget. Fallback chain: Opus -> Kimi K2 -> Mistral -> DeepSeek.
 
-### RAG & Continuous Learning
+### Feedback-Driven Context Pipeline
+
+![Feedback Pipeline](docs/assets/feedback_pipeline.png)
+*Continuous learning: Signal Capture -> Thompson Sampling -> Memory Storage -> Context Injection*
 
 - **LanceDB vector store** — Semantic search over 300+ lessons learned (`rag_knowledge/lessons_learned/`)
-- **RLHF feedback pipeline** — Thompson Sampling with 30-day exponential decay, captures every thumbs up/down
+- **Thompson Sampling** — Beta-Bernoulli model per task category with 30-day exponential decay
 - **MemAlign** — Distills feedback into principles; syncs to ShieldCortex persistent memory
-- **Trade Memory** — SQLite journal queried before every new trade for pattern matching
+- **Context injection** — Weak categories and past failures injected into every session start
+
+### Trading Pipeline
+
+![Trading Pipeline](docs/assets/trading_pipeline.png)
+*6-stage execution with safety gates at every step and a closed learning loop*
 
 ### Ralph Mode (Autonomous CI)
 
