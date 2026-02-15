@@ -1,4 +1,4 @@
-# 🤖 Ralph Mode - AI Trading System
+# AI Trading System
 
 [![CI](https://github.com/IgorGanapolsky/trading/actions/workflows/ci.yml/badge.svg)](https://github.com/IgorGanapolsky/trading/actions/workflows/ci.yml)
 [![Ralph Loop](https://github.com/IgorGanapolsky/trading/actions/workflows/ralph-loop-ai.yml/badge.svg)](https://github.com/IgorGanapolsky/trading/actions/workflows/ralph-loop-ai.yml)
@@ -6,174 +6,157 @@
 [![Lessons](https://img.shields.io/badge/lessons_learned-growing-blue.svg)](https://igorganapolsky.github.io/trading/lessons/)
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](requirements.txt)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Dev.to](https://img.shields.io/badge/blog-dev.to-black.svg)](https://dev.to/igorganapolsky)
 [![GitHub Pages](https://img.shields.io/badge/docs-GitHub_Pages-blue.svg)](https://igorganapolsky.github.io/trading/)
 
-**Autonomous AI trading system** with scheduled self-healing ("Ralph Loop") workflows, continuous learning, and a defined-risk SPY options strategy.
+Autonomous AI trading system with multi-model routing via [Tetrate Agent Router Service (TARS)](https://router.tetrate.ai), self-healing CI, continuous learning from failures, and a defined-risk SPY iron condor strategy.
 
-> **🎯 North Star**: $6,000/month after-tax by Nov 14, 2029  
-> **📊 Current status**: [System State JSON](https://github.com/IgorGanapolsky/trading/blob/main/data/system_state.json) | [Progress Dashboard](https://github.com/IgorGanapolsky/trading/wiki/Progress-Dashboard) | [GitHub Pages](https://igorganapolsky.github.io/trading/) | [RAG Query](https://igorganapolsky.github.io/trading/rag-query/)  
-> **🔄 Ralph Loop**: scheduled around the clock; only runs fixes when unhealthy (cost-controlled)
-
-## ✨ What Makes This Special
-
-- **🔄 Self-Healing CI** - Scheduled workflows detect issues, auto-fix what they can, and keep CI green
-- **🤖 AI-Powered Fixes** - Uses Claude API in Ralph Loop to propose and apply fixes when needed
-- **📚 Lessons Learned (growing)** - Failures and fixes are documented for continuous learning
-- **📝 Auto-Published Blog** - Discoveries automatically posted to Dev.to and GitHub Pages
-- **🎯 SPY Options Strategy** - Defined-risk options trading focused on SPY during paper validation
-
----
-
-## Why This Project?
-
-Most trading bots fail because they:
-
-- Chase complex strategies that don't work
-- Ignore risk management
-- Don't learn from mistakes
-
-**This system is different:**
-
-- **Radically simplified** - Deleted 90% of bloat, kept what works
-- **Thompson Sampling** - Mathematically optimal strategy selection (~80 lines)
-- **SQLite trade memory** - Query past trades before new ones (~150 lines)
-- **Daily verification** - Honest reporting of actual results
-
----
-
-## Current Performance
-
-Performance metrics change frequently and are auto-synced.
-
-- Source of truth: [data/system_state.json](https://github.com/IgorGanapolsky/trading/blob/main/data/system_state.json)
-- Human-readable dashboard: [Progress Dashboard](https://github.com/IgorGanapolsky/trading/wiki/Progress-Dashboard)
-- Public site: [GitHub Pages](https://igorganapolsky.github.io/trading/)
-- Query lessons: [RAG Query UI](https://igorganapolsky.github.io/trading/rag-query/)
-
----
-
-## Strategy: SPY Iron Condors (Defined Risk)
-
-```
-Strategy: SPY iron condors (defined risk), 30-45 DTE, ~$5-wide spreads
-Focus:    Paper validation first; risk management is non-negotiable
-Source:   See CLAUDE.md for the canonical rules and guardrails
-```
-
-### Why It Works
-
-1. **Time decay (theta)** works in your favor every day
-2. **High probability** - 80%+ of options expire worthless
-3. **Defined risk** - You know max loss upfront
-4. **Works in sideways markets** - Don't need stocks to go up
-
----
-
-## Quick Start
-
-### 1. Clone & Install
-
-```bash
-git clone https://github.com/IgorGanapolsky/trading.git
-cd trading
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-### 2. Configure
-
-```bash
-cp .env.example .env
-# Edit .env with your Alpaca API keys
-```
-
-### 3. Run
-
-```bash
-# Paper trading
-python3 scripts/autonomous_trader.py
-
-# Sync latest broker state into data/system_state.json (requires Alpaca keys)
-python3 scripts/sync_alpaca_state.py
-
-# Daily verification
-python3 scripts/daily_verification.py
-```
+> **North Star**: $6,000/month after-tax by Nov 14, 2029
+> **Account**: Alpaca Paper ($100K) | **Strategy**: SPY iron condors, 15-20 delta, 30-45 DTE
+> **Status**: [System State](https://github.com/IgorGanapolsky/trading/blob/main/data/system_state.json) | [Dashboard](https://github.com/IgorGanapolsky/trading/wiki/Progress-Dashboard) | [GitHub Pages](https://igorganapolsky.github.io/trading/)
 
 ---
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Trading Pipeline                          │
-├─────────────────────────────────────────────────────────────┤
-│  1. Thompson Sampler - Select best strategy                 │
-│  2. Trade Memory - Query similar past trades                │
-│  3. Risk Manager - Position sizing, stops                   │
-│  4. Options Strategy - Defined-risk spreads                 │
-│  5. Daily Verification - Honest reporting                   │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-              ┌───────────────────────────┐
-              │   Alpaca API (Execution)  │
-              └───────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│                         LLM Gateway                              │
+│          src/utils/llm_gateway.py + model_selector.py            │
+│                                                                  │
+│   ┌─────────────┐    ┌──────────────┐    ┌────────────────────┐  │
+│   │ TARS Gateway │    │  OpenRouter   │    │  Anthropic Direct  │  │
+│   │ (Tetrate)    │    │  (fallback)   │    │  (critical only)   │  │
+│   └──────┬──────┘    └──────┬───────┘    └────────┬───────────┘  │
+│          │                  │                      │              │
+│          ▼                  ▼                      ▼              │
+│   DeepSeek V3         Kimi K2 (#1          Claude Opus           │
+│   Mistral Med 3       StockBench)          (trade execution)     │
+│   DeepSeek-R1                                                    │
+└──────────────────────────────┬───────────────────────────────────┘
+                               │
+                               ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                       Trading Pipeline                           │
+│                                                                  │
+│  ┌─────────────┐  ┌──────────────┐  ┌─────────────────────────┐ │
+│  │  Thompson    │  │ Trade Memory │  │    Risk Manager         │ │
+│  │  Sampler     │──│ (SQLite)     │──│ 5% max / 200% stop     │ │
+│  └─────────────┘  └──────────────┘  └────────────┬────────────┘ │
+│                                                   │              │
+│  ┌─────────────┐  ┌──────────────┐  ┌────────────▼────────────┐ │
+│  │  RAG System  │  │ RLHF        │  │ Iron Condor Strategy    │ │
+│  │  (LanceDB)   │──│ Feedback    │──│ SPY $5-wide, 30-45 DTE  │ │
+│  └─────────────┘  └──────────────┘  └────────────┬────────────┘ │
+└──────────────────────────────────────────────────┬───────────────┘
+                                                   │
+                               ┌───────────────────▼──────────────┐
+                               │      Alpaca API (Execution)      │
+                               │      Paper: PA3C5AG0CECQ         │
+                               └──────────────────────────────────┘
+                                                   │
+                               ┌───────────────────▼──────────────┐
+                               │   Ralph Mode (Self-Healing CI)   │
+                               │   84 GitHub Actions workflows    │
+                               │   15-min health checks           │
+                               └──────────────────────────────────┘
 ```
+
+### LLM Gateway & TARS Integration
+
+The system routes all LLM calls through a unified gateway (`src/utils/llm_gateway.py`) that supports [Tetrate Agent Router Service (TARS)](https://router.tetrate.ai) as the primary provider, with OpenRouter and direct Anthropic as fallbacks.
+
+| Env Var | Purpose |
+|---|---|
+| `LLM_GATEWAY_BASE_URL` | TARS endpoint (e.g. `https://api.router.tetrate.ai/v1`) |
+| `LLM_GATEWAY_API_KEY` / `TETRATE_API_KEY` | TARS authentication |
+| `OPENROUTER_API_KEY` | OpenRouter fallback for cost-optimized models |
+
+**Budget-Aware Model Selection** (`src/utils/model_selector.py`) implements the BATS framework — routing tasks to the cheapest model that can handle the complexity:
+
+| Task Complexity | Model | Cost (per 1M tokens) | Provider |
+|---|---|---|---|
+| Simple (parsing, classification) | DeepSeek V3 | $0.30 / $1.20 | TARS or OpenRouter |
+| Medium (analysis, signals) | Mistral Medium 3 | $0.40 / $2.00 | TARS or OpenRouter |
+| Complex (risk, strategy) | Kimi K2 | $0.39 / $1.90 | TARS or OpenRouter |
+| Reasoning (pre-trade research) | DeepSeek-R1 | $0.70 / $2.50 | TARS or OpenRouter |
+| Critical (trade execution) | Claude Opus | $15 / $75 | Anthropic Direct |
+
+Safety guarantee: trade execution **always** uses Opus regardless of budget. Fallback chain: Opus -> Kimi K2 -> Mistral -> DeepSeek.
+
+### RAG & Continuous Learning
+
+- **LanceDB vector store** — Semantic search over 300+ lessons learned (`rag_knowledge/lessons_learned/`)
+- **RLHF feedback pipeline** — Thompson Sampling with 30-day exponential decay, captures every thumbs up/down
+- **MemAlign** — Distills feedback into principles; syncs to ShieldCortex persistent memory
+- **Trade Memory** — SQLite journal queried before every new trade for pattern matching
+
+### Ralph Mode (Autonomous CI)
+
+Ralph is the self-healing loop that keeps the system operational:
+
+- **84 GitHub Actions workflows** — trading execution, position management, monitoring, learning
+- **Self-Healing Monitor** — runs every 15 minutes during market hours, auto-fixes issues
+- **Ralph Loop** — overnight autonomous coding sessions (design-first, atomic tasks, validation gates)
+- **Auto-published blog** — lessons and reports publish to GitHub Pages and Dev.to automatically
 
 ### Key Components
 
-| Component              | Purpose            | Location                           |
-| ---------------------- | ------------------ | ---------------------------------- |
-| **Orchestrator**       | Main trading logic | `src/orchestrator/main.py`         |
-| **Thompson Sampler**   | Strategy selection | `src/ml/trade_confidence.py`       |
-| **Trade Memory**       | SQLite journal     | `src/learning/trade_memory.py`     |
-| **Risk Manager**       | Position sizing    | `src/risk/`                        |
-| **Daily Verification** | Honest reporting   | `scripts/daily_verification.py`    |
+| Component | Purpose | Location |
+|---|---|---|
+| **LLM Gateway** | TARS/OpenRouter/Anthropic routing | `src/utils/llm_gateway.py` |
+| **Model Selector** | Budget-aware BATS framework | `src/utils/model_selector.py` |
+| **Orchestrator** | Main trading logic | `src/orchestrator/main.py` |
+| **Thompson Sampler** | Strategy selection | `src/ml/trade_confidence.py` |
+| **Trade Memory** | SQLite trade journal | `src/learning/trade_memory.py` |
+| **Risk Manager** | Position sizing, stops | `src/risk/` |
+| **RAG Index** | LanceDB semantic search | `scripts/build_rag_query_index.py` |
+| **RLHF Pipeline** | Feedback capture + learning | `.claude/rules/rlhf-feedback.md` |
+| **Autonomous Trader** | End-to-end execution | `scripts/autonomous_trader.py` |
 
 ---
 
-## Learning System
+## Strategy: SPY Iron Condors
 
-### Thompson Sampling (replaces complex RL)
+```
+Sell 15-20 delta put spread + 15-20 delta call spread
+$5-wide wings, 30-45 DTE
+Exit: 50% profit OR 7 DTE | Stop: 200% of credit
+Max risk: $5,000 per position (5% of $100K)
+```
 
-- Beta distribution for each strategy
-- Sample to select best strategy
-- Update based on win/loss outcomes
-- Proven optimal for <100 decisions
+**Why iron condors**: Defined risk on both sides, ~85% probability of profit at 15-delta, theta decay works daily, profits in sideways markets. Phil Town Rule #1 (don't lose money) enforced at every level.
 
-### Trade Memory (complements RAG)
+---
 
-- SQLite database of past trades
-- Query BEFORE each new trade
-- Pattern recognition: "This setup has 30% win rate - AVOID"
-- Simple but effective
+## Quick Start
+
+```bash
+git clone https://github.com/IgorGanapolsky/trading.git
+cd trading
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env  # Configure API keys (see .env.example for full list)
+```
+
+```bash
+python3 scripts/autonomous_trader.py     # Paper trading
+python3 scripts/sync_alpaca_state.py     # Sync broker state
+python3 scripts/system_health_check.py   # Health check
+pytest tests/ -q                         # Run tests
+ruff check src/                          # Lint
+```
 
 ---
 
 ## Risk Management
 
-**This is NOT financial advice. Paper trade first!**
-
-| Safeguard            | Description                       |
-| -------------------- | --------------------------------- |
-| **Position Limits**  | Max 5% per position               |
-| **Daily Loss Limit** | 5% max daily loss                 |
-| **Circuit Breakers** | Auto-halt on 3 consecutive losses |
-| **Paper Mode**       | 90-day validation before live     |
-
----
-
-## Follow Our Journey
-
-| Platform              | Link                                                                          | Description                            |
-| --------------------- | ----------------------------------------------------------------------------- | -------------------------------------- |
-| **GitHub Pages Blog** | [igorganapolsky.github.io/trading](https://igorganapolsky.github.io/trading/) | Daily trading reports, lessons learned |
-| **Dev.to**            | [@igorganapolsky](https://dev.to/igorganapolsky)                              | AI trading insights, tutorials         |
-| **Daily Reports**     | [/reports/](https://igorganapolsky.github.io/trading/reports/)                | Transparent P/L tracking               |
-| **Lessons Learned**   | [/lessons/](https://igorganapolsky.github.io/trading/lessons/)                | Continuously growing lessons           |
+| Safeguard | Rule |
+|---|---|
+| **Position Limits** | Max 5% per position ($5,000) |
+| **Stop-Loss** | 200% of credit received, no exceptions |
+| **Exit** | 50% profit OR 7 DTE, whichever first |
+| **Max Positions** | 2 iron condors at a time (Phase 1) |
+| **Paper First** | 90-day validation before live capital |
 
 ---
 
@@ -181,45 +164,19 @@ python3 scripts/daily_verification.py
 
 This repo is optimized for AI agent collaboration:
 
-- Quick context: `.claude/CLAUDE.md`
-- Rules: `.claude/rules/MANDATORY_RULES.md`
+- System rules: `.claude/CLAUDE.md`
+- Mandatory rules: `.claude/rules/MANDATORY_RULES.md`
 - RAG knowledge base: `rag_knowledge/`
-
----
-
-## Documentation
-
-- **[Lessons Learned](docs/lessons.md)** - Trading lessons from RAG
-- **[Reports](docs/reports.md)** - Performance reports
-
----
-
-## Development
-
-```bash
-# Run tests
-pytest tests/ -v
-
-# Type checking
-mypy src/ --ignore-missing-imports
-
-# Lint
-ruff check src/
-```
+- RLHF feedback: `.claude/memory/feedback/`
 
 ---
 
 ## Disclaimer
 
-**This software is for educational purposes only.**
-
-- Trading involves significant risk of loss
-- Past performance does not guarantee future results
-- Always paper trade before using real money
-- This is NOT financial advice
+**This software is for educational purposes only.** Trading involves significant risk of loss. Past performance does not guarantee future results. Always paper trade before using real money. This is NOT financial advice.
 
 ---
 
-**Built with Python, Alpaca, and radical simplicity**
+**Built with Python, Alpaca, TARS, and radical simplicity**
 
 **Maintained by** [Igor Ganapolsky](https://github.com/IgorGanapolsky)
