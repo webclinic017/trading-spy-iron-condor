@@ -1,10 +1,10 @@
 [
   {
     "week_start": "2026-02-09",
-    "updated_at": "2026-02-14T15:07:32.103327+00:00",
-    "sample_size": 32,
-    "win_rate_pct": 37.5,
-    "expectancy_per_trade": 45.0487,
-    "mode": "defensive"
+    "updated_at": "2026-02-15T11:04:52.281993+00:00",
+    "sample_size": 1,
+    "win_rate_pct": 100.0,
+    "expectancy_per_trade": 41.0,
+    "mode": "validation"
   }
 ]
