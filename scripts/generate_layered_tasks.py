@@ -188,7 +188,9 @@ def write_markdown(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate layered TDD backlog from lint/test output.")
+    parser = argparse.ArgumentParser(
+        description="Generate layered TDD backlog from lint/test output."
+    )
     parser.add_argument("--repo-root", default=".", help="Repository root")
     parser.add_argument("--ruff-log", required=True, help="Path to ruff output log")
     parser.add_argument("--pytest-log", required=True, help="Path to pytest output log")

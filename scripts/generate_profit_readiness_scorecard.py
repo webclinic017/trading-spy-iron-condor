@@ -51,7 +51,9 @@ def max_drawdown_pct(equity_points: list[float]) -> float | None:
     return worst
 
 
-def status_by_threshold(value: float | None, *, good_max: float | None = None, good_min: float | None = None) -> str:
+def status_by_threshold(
+    value: float | None, *, good_max: float | None = None, good_min: float | None = None
+) -> str:
     if value is None:
         return "UNKNOWN"
     if good_max is not None:
@@ -78,7 +80,9 @@ def parse_dt(value: str | None) -> datetime | None:
     return None
 
 
-def seven_day_delta_from_points(points: list[tuple[datetime, float]]) -> tuple[float | None, float | None, float | None, int]:
+def seven_day_delta_from_points(
+    points: list[tuple[datetime, float]],
+) -> tuple[float | None, float | None, float | None, int]:
     if len(points) < 2:
         return None, None, None, 0
     points.sort(key=lambda x: x[0])
@@ -117,7 +121,9 @@ def points_from_rows(rows: list[dict]) -> list[tuple[datetime, float]]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate profit readiness scorecard.")
     parser.add_argument("--repo-root", default=".", help="Repository root")
-    parser.add_argument("--artifact-dir", default="artifacts/devloop", help="Devloop artifact directory")
+    parser.add_argument(
+        "--artifact-dir", default="artifacts/devloop", help="Devloop artifact directory"
+    )
     parser.add_argument("--out", default="", help="Output markdown path")
     args = parser.parse_args()
 
@@ -136,7 +142,11 @@ def main() -> int:
     win_rate = paper.get("win_rate")
     sample_size = paper.get("win_rate_sample_size")
 
-    history = (((system_state.get("sync_health") or {}).get("history")) or []) if isinstance(system_state, dict) else []
+    history = (
+        (((system_state.get("sync_health") or {}).get("history")) or [])
+        if isinstance(system_state, dict)
+        else []
+    )
     equity_series: list[float] = []
     for row in history:
         if not isinstance(row, dict):
@@ -147,7 +157,9 @@ def main() -> int:
             continue
     drawdown = max_drawdown_pct(equity_series)
 
-    trade_history = (system_state.get("trade_history") or []) if isinstance(system_state, dict) else []
+    trade_history = (
+        (system_state.get("trade_history") or []) if isinstance(system_state, dict) else []
+    )
     valid = 0
     total = 0
     for row in trade_history[:100]:
@@ -188,7 +200,9 @@ def main() -> int:
         Metric(
             name="Win Rate",
             value=f"{float(win_rate):.2f}%" if win_rate is not None else "N/A",
-            status=status_by_threshold(float(win_rate) if win_rate is not None else None, good_min=55.0),
+            status=status_by_threshold(
+                float(win_rate) if win_rate is not None else None, good_min=55.0
+            ),
             note=f"sample_size={sample_size}" if sample_size is not None else "sample_size=N/A",
         ),
         Metric(
@@ -224,12 +238,16 @@ def main() -> int:
     delta_source = "none"
     sync_points = points_from_rows(history if isinstance(history, list) else [])
     if len(sync_points) >= 2:
-        delta_7d, delta_7d_pct, monthly_run_rate, delta_days = seven_day_delta_from_points(sync_points)
+        delta_7d, delta_7d_pct, monthly_run_rate, delta_days = seven_day_delta_from_points(
+            sync_points
+        )
         delta_source = "sync_health.history"
     elif isinstance(performance_log, list):
         perf_points = points_from_rows(performance_log)
         if len(perf_points) >= 2:
-            delta_7d, delta_7d_pct, monthly_run_rate, delta_days = seven_day_delta_from_points(perf_points)
+            delta_7d, delta_7d_pct, monthly_run_rate, delta_days = seven_day_delta_from_points(
+                perf_points
+            )
             delta_source = "performance_log"
 
     ruff_exit = loop_status.get("ruff_exit", "N/A")
@@ -252,7 +270,9 @@ def main() -> int:
         lines.append("- Monthly run-rate estimate: N/A [UNKNOWN]")
     else:
         delta_status = "PASS" if delta_7d > 0 else "WARN"
-        run_rate_status = "PASS" if monthly_run_rate is not None and monthly_run_rate >= 6000 else "WARN"
+        run_rate_status = (
+            "PASS" if monthly_run_rate is not None and monthly_run_rate >= 6000 else "WARN"
+        )
         delta_pct_text = f"{delta_7d_pct:.2f}%" if delta_7d_pct is not None else "N/A"
         run_rate_text = f"${monthly_run_rate:,.2f}/month" if monthly_run_rate is not None else "N/A"
         lines.append(

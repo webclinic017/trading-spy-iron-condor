@@ -42,7 +42,10 @@ def main() -> int:
         ("Smoke response recorded", file_nonempty(smoke_response)),
         ("Smoke response includes completion choices", contains(smoke_response, '"choices"')),
         ("Resilience report recorded", file_nonempty(resilience)),
-        ("Resilience report observed error-path signal", contains(resilience, "has_error_field=true")),
+        (
+            "Resilience report observed error-path signal",
+            contains(resilience, "has_error_field=true"),
+        ),
         ("Retrieval report recorded", file_nonempty(retrieval)),
         ("Submission summary generated", file_nonempty(summary)),
         ("Latency/cost metrics captured", file_nonempty(smoke_metrics)),
@@ -76,4 +79,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

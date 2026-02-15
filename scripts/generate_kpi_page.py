@@ -49,7 +49,9 @@ def extract_lines(path: Path, prefixes: list[str]) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate one-page KPI summary.")
     parser.add_argument("--repo-root", default=".", help="Repository root")
-    parser.add_argument("--out", default="artifacts/devloop/kpi_page.md", help="Output markdown path")
+    parser.add_argument(
+        "--out", default="artifacts/devloop/kpi_page.md", help="Output markdown path"
+    )
     args = parser.parse_args()
 
     repo_root = Path(args.repo_root).resolve()
@@ -63,7 +65,12 @@ def main() -> int:
     metrics = parse_metrics(scorecard)
     seven_day_lines = extract_lines(
         scorecard,
-        prefixes=["- Equity delta", "- Monthly run-rate estimate", "- Data source", "- North Star target"],
+        prefixes=[
+            "- Equity delta",
+            "- Monthly run-rate estimate",
+            "- Data source",
+            "- North Star target",
+        ],
     )
     pass_count = sum(1 for _, _, status, _ in metrics if status == "PASS")
     warn_count = sum(1 for _, _, status, _ in metrics if status == "WARN")
@@ -74,7 +81,9 @@ def main() -> int:
     lines.append("")
     lines.append("## Snapshot")
     lines.append(f"- Demo checklist completion: {done}/{total}")
-    lines.append(f"- Readiness metrics: PASS={pass_count}, WARN={warn_count}, UNKNOWN={unknown_count}")
+    lines.append(
+        f"- Readiness metrics: PASS={pass_count}, WARN={warn_count}, UNKNOWN={unknown_count}"
+    )
     lines.append("")
     lines.append("## Reliability")
     lines.append("- Dev loop status: `artifacts/devloop/tasks.md`")
