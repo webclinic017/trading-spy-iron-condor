@@ -11,7 +11,9 @@
 Autonomous AI trading system with multi-model routing via [Tetrate Agent Router Service (TARS)](https://router.tetrate.ai), self-healing CI, continuous learning from failures, and a defined-risk SPY iron condor strategy.
 
 > **North Star**: $6,000/month after-tax by Nov 14, 2029
+>
 > **Account**: Alpaca Paper ($100K) | **Strategy**: SPY iron condors, 15-20 delta, 30-45 DTE
+>
 > **Status**: [System State](https://github.com/IgorGanapolsky/trading/blob/main/data/system_state.json) | [Dashboard](https://github.com/IgorGanapolsky/trading/wiki/Progress-Dashboard) | [GitHub Pages](https://igorganapolsky.github.io/trading/)
 
 ---
@@ -48,7 +50,7 @@ Safety guarantee: trade execution **always** uses Opus regardless of budget. Fal
 ![Feedback Pipeline](docs/assets/feedback_pipeline.png)
 *Continuous learning: Signal Capture -> Thompson Sampling -> Memory Storage -> Context Injection*
 
-- **LanceDB vector store** — Semantic search over 300+ lessons learned (`rag_knowledge/lessons_learned/`)
+- **LanceDB vector store** — Semantic search over 170+ lessons learned (`rag_knowledge/lessons_learned/`)
 - **Thompson Sampling** — Beta-Bernoulli model per task category with 30-day exponential decay
 - **MemAlign** — Distills feedback into principles; syncs to ShieldCortex persistent memory
 - **Context injection** — Weak categories and past failures injected into every session start
