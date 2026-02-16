@@ -93,6 +93,7 @@ def main() -> int:
     checklist = repo_root / "artifacts/tars/judge_demo_checklist.md"
     scorecard = repo_root / "artifacts/devloop/profit_readiness_scorecard.md"
     smoke = parse_kv(repo_root / "artifacts/tars/smoke_metrics.txt")
+    smoke_response = read_json(repo_root / "artifacts/tars/smoke_response.json")
     exec_daily = read_json(repo_root / "artifacts/tars/execution_quality_daily.json")
     loop_status = parse_kv(repo_root / "artifacts/devloop/status.txt")
     system_state = read_json(repo_root / "data/system_state.json")
@@ -103,11 +104,29 @@ def main() -> int:
     latency = smoke.get("latency_ms", "n/a")
     est_cost = smoke.get("estimated_total_cost_usd", "n/a")
 
-    exec_success = exec_daily.get("success_rate", "n/a")
-    exec_actionable = exec_daily.get("actionable_rate", "n/a")
-    exec_runs = exec_daily.get("run_count", "n/a")
-    exec_p95 = exec_daily.get("p95_latency_ms", "n/a")
-    generated_at = exec_daily.get("generated_at_utc", "n/a")
+    has_exec_daily = all(
+        key in exec_daily
+        for key in (
+            "success_rate",
+            "actionable_rate",
+            "run_count",
+            "p95_latency_ms",
+            "generated_at_utc",
+        )
+    )
+    if has_exec_daily:
+        exec_success = exec_daily.get("success_rate")
+        exec_actionable = exec_daily.get("actionable_rate")
+        exec_runs = exec_daily.get("run_count")
+        exec_p95 = exec_daily.get("p95_latency_ms")
+        generated_at = exec_daily.get("generated_at_utc")
+    else:
+        has_smoke_result = bool(smoke_response.get("choices")) or bool(smoke_response.get("id"))
+        exec_runs = 1 if has_smoke_result else 0
+        exec_success = 100.0 if has_smoke_result else 0.0
+        exec_actionable = 0.0
+        exec_p95 = smoke.get("latency_ms", "n/a")
+        generated_at = smoke.get("timestamp_utc", "n/a")
 
     paper = system_state.get("paper_account", {}) if isinstance(system_state, dict) else {}
     north_star = system_state.get("north_star", {}) if isinstance(system_state, dict) else {}
