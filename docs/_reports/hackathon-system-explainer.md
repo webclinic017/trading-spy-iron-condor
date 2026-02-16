@@ -7,7 +7,7 @@ hero_image: "/assets/img/agent-loop-diagram.png"
 
 # Hackathon System Explainer
 
-Last Updated (UTC): 2026-02-16T10:29:52Z
+Last Updated (UTC): 2026-02-16T10:34:55Z
 
 ## Current Runtime Snapshot
 - Latest cycle: `n/a`
