@@ -118,6 +118,7 @@ def scan_todos(repo_root: Path, max_items: int) -> list[str]:
 def write_markdown(
     out_path: Path,
     *,
+    manual_layer1_file: Path,
     failed_tests: list[str],
     problem_files: Counter[str],
     todo_items: list[str],
@@ -125,12 +126,15 @@ def write_markdown(
     test_ok: bool,
 ) -> None:
     existing_status = parse_existing_checkboxes(out_path)
+    manual_status = parse_existing_checkboxes(manual_layer1_file)
 
     layer1_tasks: list[str] = []
+    manual_open_tasks = [task for task, checked in manual_status.items() if not checked]
     if not lint_ok:
         layer1_tasks.append("Fix lint/type/static issues blocking green checks.")
     for t in failed_tests[:50]:
         layer1_tasks.append(f"Fix failing test: `{t}`")
+    layer1_tasks.extend([f"MANUAL: {task}" for task in manual_open_tasks])
 
     prev_open = {task for task, checked in existing_status.items() if not checked}
     current_set = set(layer1_tasks)
@@ -198,6 +202,11 @@ def main() -> int:
     parser.add_argument("--max-todos", type=int, default=40, help="Max TODO-like lines to include")
     parser.add_argument("--lint-exit", type=int, default=0, help="Lint command exit code")
     parser.add_argument("--test-exit", type=int, default=0, help="Pytest command exit code")
+    parser.add_argument(
+        "--manual-layer1-file",
+        default="config/manual_layer1_tasks.md",
+        help="Path to persistent manual layer-1 task file",
+    )
     args = parser.parse_args()
 
     repo_root = Path(args.repo_root).resolve()
@@ -213,6 +222,7 @@ def main() -> int:
 
     write_markdown(
         Path(args.out),
+        manual_layer1_file=Path(args.manual_layer1_file),
         failed_tests=failed_tests,
         problem_files=problem_files,
         todo_items=todo_items,

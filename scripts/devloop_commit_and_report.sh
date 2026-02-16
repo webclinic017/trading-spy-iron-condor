@@ -6,6 +6,8 @@ cd "$REPO_ROOT"
 
 LOG_FILE="${LOG_FILE:-$REPO_ROOT/artifacts/devloop/auto_commit.log}"
 BRANCH="${BRANCH:-$(git rev-parse --abbrev-ref HEAD)}"
+ENFORCE_PR_GREEN="${ENFORCE_PR_GREEN:-1}"
+PR_NUMBER="${PR_NUMBER:-}"
 PYTHON_BIN="${PYTHON_BIN:-$REPO_ROOT/.venv-devloop/bin/python}"
 if [[ ! -x "$PYTHON_BIN" ]]; then
   PYTHON_BIN="python3"
@@ -17,6 +19,41 @@ touch "$LOG_FILE"
 log() {
   local msg="$1"
   printf "[%s] %s\n" "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" "$msg" | tee -a "$LOG_FILE"
+}
+
+resolve_pr_number() {
+  if [[ -n "$PR_NUMBER" ]]; then
+    echo "$PR_NUMBER"
+    return 0
+  fi
+  if ! command -v gh >/dev/null 2>&1; then
+    echo ""
+    return 0
+  fi
+  gh pr view --head "$BRANCH" --json number -q '.number' 2>/dev/null || true
+}
+
+wait_for_green_checks() {
+  if [[ "$ENFORCE_PR_GREEN" != "1" ]]; then
+    return 0
+  fi
+  if ! command -v gh >/dev/null 2>&1; then
+    log "gh not available; skipping PR-green enforcement"
+    return 0
+  fi
+  local pr
+  pr="$(resolve_pr_number)"
+  if [[ -z "$pr" ]]; then
+    log "no PR found for branch $BRANCH; skipping PR-green enforcement"
+    return 0
+  fi
+  log "waiting for PR checks to complete (PR #$pr)"
+  if gh pr checks "$pr" --watch --interval 15 >>"$LOG_FILE" 2>&1; then
+    log "PR #$pr checks are green"
+    return 0
+  fi
+  log "PR #$pr checks are not green; review required"
+  return 2
 }
 
 generate_report() {
@@ -70,6 +107,7 @@ commit_changes() {
   ts="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
   git commit -m "chore(devloop): auto snapshot ${ts}" >>"$LOG_FILE" 2>&1
   git push origin "$BRANCH" >>"$LOG_FILE" 2>&1
+  wait_for_green_checks
   log "auto-commit done"
 }
 
@@ -81,6 +119,10 @@ Commands:
   commit  Generate report, stage known artifacts, commit/push if changed.
   report  Generate morning report only.
   both    Report then commit (default).
+
+Environment:
+  ENFORCE_PR_GREEN=1  Wait for PR checks and fail if not green after push.
+  PR_NUMBER=3452      Optional explicit PR number.
 EOF
 }
 
