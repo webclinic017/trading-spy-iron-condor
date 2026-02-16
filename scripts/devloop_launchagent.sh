@@ -9,8 +9,11 @@ OUT_LOG="$LOG_DIR/launchd.out.log"
 ERR_LOG="$LOG_DIR/launchd.err.log"
 ENV_FILE="${ENV_FILE:-$REPO_ROOT/.env.devloop}"
 RUN_TARS_VALUE="${RUN_TARS:-0}"
+RUN_TARS_EVERY_VALUE="${RUN_TARS_EVERY:-2}"
 RUN_RAG_VALUE="${RUN_RAG:-0}"
 NO_SLEEP_VALUE="${NO_SLEEP:-0}"
+SYNC_GDOC_EVERY_VALUE="${SYNC_GDOC_EVERY:-2}"
+RENDER_DEMO_EVERY_VALUE="${RENDER_DEMO_EVERY:-2}"
 INTERVAL_SECONDS_VALUE="${INTERVAL_SECONDS:-300}"
 FULL_EVERY_VALUE="${FULL_EVERY:-6}"
 
@@ -45,10 +48,16 @@ install_agent() {
     <string>0</string>
     <key>RUN_TARS</key>
     <string>$RUN_TARS_VALUE</string>
+    <key>RUN_TARS_EVERY</key>
+    <string>$RUN_TARS_EVERY_VALUE</string>
     <key>RUN_RAG</key>
     <string>$RUN_RAG_VALUE</string>
     <key>NO_SLEEP</key>
     <string>$NO_SLEEP_VALUE</string>
+    <key>SYNC_GDOC_EVERY</key>
+    <string>$SYNC_GDOC_EVERY_VALUE</string>
+    <key>RENDER_DEMO_EVERY</key>
+    <string>$RENDER_DEMO_EVERY_VALUE</string>
     <key>PATH</key>
     <string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
   </dict>
@@ -100,8 +109,11 @@ Usage: $0 <install|uninstall|status|restart>
 
 Env overrides for install/restart:
   RUN_TARS=1           Enable TARS run each cycle
+  RUN_TARS_EVERY=3     Run TARS every N cycles
   RUN_RAG=1            Enable RAG refresh on full-profile cycles
   NO_SLEEP=1           Run cycles back-to-back (no pause)
+  RENDER_DEMO_EVERY=3  Rebuild judge demo every N cycles
+  SYNC_GDOC_EVERY=3    Sync Google Doc every N cycles
   INTERVAL_SECONDS=60  Loop interval
   FULL_EVERY=3         Run full profile every N cycles
   ENV_FILE=.env.devloop Env file sourced before loop startup

@@ -12,6 +12,8 @@ RUN_TARS="${RUN_TARS:-0}" # 1 enables TARS full run each cycle
 RUN_TARS_EVERY="${RUN_TARS_EVERY:-2}" # run TARS every N cycles when enabled
 RUN_RAG="${RUN_RAG:-0}" # 1 enables RAG refresh during full profile cycles
 SYNC_GDOC="${SYNC_GDOC:-0}" # 1 syncs explainer into Google Doc each cycle
+SYNC_GDOC_EVERY="${SYNC_GDOC_EVERY:-2}" # sync Google Doc every N cycles when enabled
+RENDER_DEMO_EVERY="${RENDER_DEMO_EVERY:-2}" # regenerate judge page every N cycles
 LAYER1_MAX_OPEN="${LAYER1_MAX_OPEN:-3}" # keep top N open Layer 1 tasks active
 GDRIVE_DOC_URL="${GDRIVE_DOC_URL:-}"
 GDRIVE_CREDS_FILE="${GDRIVE_CREDS_FILE:-.secrets/google-service-account.json}"
@@ -90,9 +92,27 @@ run_cycle() {
   "$PYTHON_BIN" scripts/generate_kpi_page.py --repo-root . --out artifacts/devloop/kpi_page.md >>"$LOG_FILE" 2>&1 || true
   "$PYTHON_BIN" scripts/generate_task_runtime_report.py --repo-root . --manual manual_layer1_tasks.md --state artifacts/devloop/task_runtime_state.json --log artifacts/devloop/continuous.log --out artifacts/devloop/task_runtime_report.md >>"$LOG_FILE" 2>&1 || true
   "$PYTHON_BIN" scripts/generate_system_explainer.py --repo-root . --out docs/_reports/hackathon-system-explainer.md >>"$LOG_FILE" 2>&1 || true
-  "$PYTHON_BIN" scripts/generate_judge_demo_page.py --repo-root . --out docs/lessons/judge-demo.html >>"$LOG_FILE" 2>&1 || true
+
+  local render_demo_cycle=1
+  if (( RENDER_DEMO_EVERY > 1 )) && (( cycle % RENDER_DEMO_EVERY != 0 )); then
+    render_demo_cycle=0
+  fi
+  if (( render_demo_cycle == 1 )); then
+    "$PYTHON_BIN" scripts/generate_judge_demo_page.py --repo-root . --out docs/lessons/judge-demo.html >>"$LOG_FILE" 2>&1 || true
+  else
+    log "cycle=$cycle judge demo render skipped (cadence RENDER_DEMO_EVERY=$RENDER_DEMO_EVERY)"
+  fi
+
   if [[ "$SYNC_GDOC" == "1" ]] && [[ -n "$GDRIVE_DOC_URL" ]]; then
-    "$PYTHON_BIN" scripts/sync_explainer_to_gdoc.py --doc "$GDRIVE_DOC_URL" --in docs/_reports/hackathon-system-explainer.md --creds "$GDRIVE_CREDS_FILE" >>"$LOG_FILE" 2>&1 || true
+    local sync_doc_cycle=1
+    if (( SYNC_GDOC_EVERY > 1 )) && (( cycle % SYNC_GDOC_EVERY != 0 )); then
+      sync_doc_cycle=0
+    fi
+    if (( sync_doc_cycle == 1 )); then
+      "$PYTHON_BIN" scripts/sync_explainer_to_gdoc.py --doc "$GDRIVE_DOC_URL" --in docs/_reports/hackathon-system-explainer.md --creds "$GDRIVE_CREDS_FILE" >>"$LOG_FILE" 2>&1 || true
+    else
+      log "cycle=$cycle gdoc sync skipped (cadence SYNC_GDOC_EVERY=$SYNC_GDOC_EVERY)"
+    fi
   fi
   "$PYTHON_BIN" scripts/generate_next_copilot_prompt.py --repo-root . --out artifacts/devloop/next_copilot_prompt.md >>"$LOG_FILE" 2>&1 || true
 }
@@ -114,7 +134,9 @@ Environment:
   RUN_TARS_EVERY    Run TARS every N cycles when RUN_TARS=1 (default: 2)
   RUN_RAG           1 to refresh RAG on full-profile cycles (default: 0)
   LAYER1_MAX_OPEN   Keep top N open Layer 1 tasks active (default: 3)
+  RENDER_DEMO_EVERY Regenerate judge demo page every N cycles (default: 2)
   SYNC_GDOC         1 to sync explainer to Google Doc (default: 0)
+  SYNC_GDOC_EVERY   Sync Google Doc every N cycles (default: 2)
   GDRIVE_DOC_URL    Google Doc URL or ID for explainer sync
   GDRIVE_CREDS_FILE Service account JSON path (default: .secrets/google-service-account.json)
   TARS_AUTOPILOT_SCRIPT Path to tars autopilot script (default: scripts/tars_autopilot.sh)
