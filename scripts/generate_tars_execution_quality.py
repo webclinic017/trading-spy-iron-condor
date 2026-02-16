@@ -102,7 +102,9 @@ def load_events_for_date(log_path: Path, date_utc: str) -> list[dict[str, Any]]:
 
 
 def aggregate(events: list[dict[str, Any]], date_utc: str) -> dict[str, Any]:
-    latencies = [float(v) for v in (e.get("latency_ms") for e in events) if isinstance(v, (int, float))]
+    latencies = [
+        float(v) for v in (e.get("latency_ms") for e in events) if isinstance(v, (int, float))
+    ]
     costs = [
         float(v)
         for v in (e.get("estimated_total_cost_usd") for e in events)

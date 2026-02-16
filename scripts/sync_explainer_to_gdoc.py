@@ -87,7 +87,9 @@ def parse_markdown_blocks(text: str) -> list[Block]:
     return blocks
 
 
-def compose_doc_text(blocks: list[Block]) -> tuple[str, list[tuple[int, int, str]], list[BlockRange]]:
+def compose_doc_text(
+    blocks: list[Block],
+) -> tuple[str, list[tuple[int, int, str]], list[BlockRange]]:
     """
     Returns text + style spans.
     spans: (start_idx, end_idx, style_key) with Google Docs 1-based indices.
@@ -109,9 +111,7 @@ def compose_doc_text(blocks: list[Block]) -> tuple[str, list[tuple[int, int, str
 
     for block in blocks:
         line = block.text
-        if block.kind == "bullet":
-            text = f"{line}\n"
-        elif block.kind == "numbered":
+        if block.kind == "bullet" or block.kind == "numbered":
             text = f"{line}\n"
         elif block.kind == "code":
             text = f"{line}\n\n"
@@ -179,7 +179,13 @@ def sync_markdown_to_doc(doc_id: str, markdown_text: str, creds_file: Path) -> N
             continue
         rng = {"startIndex": start, "endIndex": end + 1}
         if style_key in {"h1", "h2", "h3"}:
-            named = "HEADING_1" if style_key == "h1" else "HEADING_2" if style_key == "h2" else "HEADING_3"
+            named = (
+                "HEADING_1"
+                if style_key == "h1"
+                else "HEADING_2"
+                if style_key == "h2"
+                else "HEADING_3"
+            )
             requests.append(
                 {
                     "updateParagraphStyle": {
@@ -306,7 +312,9 @@ def sync_markdown_to_doc(doc_id: str, markdown_text: str, creds_file: Path) -> N
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Sync system explainer markdown into a Google Doc.")
+    parser = argparse.ArgumentParser(
+        description="Sync system explainer markdown into a Google Doc."
+    )
     parser.add_argument(
         "--doc",
         required=True,
