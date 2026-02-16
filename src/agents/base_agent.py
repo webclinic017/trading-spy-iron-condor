@@ -81,9 +81,7 @@ class BaseAgent(ABC):
                 from openai import OpenAI
 
                 primary_cfg, fallback_cfg = resolve_openrouter_primary_and_fallback_configs()
-                self._openrouter_primary_base_url = (
-                    primary_cfg.base_url or OPENROUTER_BASE_URL
-                )
+                self._openrouter_primary_base_url = primary_cfg.base_url or OPENROUTER_BASE_URL
                 self._openrouter_fallback_cfg = fallback_cfg
 
                 self._openrouter_client = OpenAI(
@@ -203,8 +201,7 @@ class BaseAgent(ABC):
             messages = [{"role": "user", "content": prompt}]
 
             using_gateway = bool(self._openrouter_primary_base_url) and (
-                self._openrouter_primary_base_url.rstrip("/")
-                != OPENROUTER_BASE_URL.rstrip("/")
+                self._openrouter_primary_base_url.rstrip("/") != OPENROUTER_BASE_URL.rstrip("/")
             )
             model_for_call = to_tars_model_id(self.model) if using_gateway else self.model
 

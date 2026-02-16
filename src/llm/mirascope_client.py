@@ -193,12 +193,8 @@ class MirascopeTradingClient:
                 from openai import OpenAI
 
                 if self.provider == LLMProvider.OPENROUTER:
-                    primary_cfg, fallback_cfg = (
-                        resolve_openrouter_primary_and_fallback_configs()
-                    )
-                    self._openrouter_primary_base_url = (
-                        primary_cfg.base_url or OPENROUTER_BASE_URL
-                    )
+                    primary_cfg, fallback_cfg = resolve_openrouter_primary_and_fallback_configs()
+                    self._openrouter_primary_base_url = primary_cfg.base_url or OPENROUTER_BASE_URL
                     self._openrouter_fallback_cfg = fallback_cfg
                     cfg = primary_cfg
                 else:
@@ -230,8 +226,7 @@ class MirascopeTradingClient:
 
         model = str(kwargs.get("model") or "")
         using_gateway = bool(self._openrouter_primary_base_url) and (
-            self._openrouter_primary_base_url.rstrip("/")
-            != OPENROUTER_BASE_URL.rstrip("/")
+            self._openrouter_primary_base_url.rstrip("/") != OPENROUTER_BASE_URL.rstrip("/")
         )
         if using_gateway:
             kwargs = dict(kwargs)
@@ -424,9 +419,7 @@ class MirascopeTradingClient:
             from openai import AsyncOpenAI
 
             if self.provider == LLMProvider.OPENROUTER:
-                primary_cfg, fallback_cfg = (
-                    resolve_openrouter_primary_and_fallback_configs()
-                )
+                primary_cfg, fallback_cfg = resolve_openrouter_primary_and_fallback_configs()
                 cfg = primary_cfg
             else:
                 fallback_cfg = None
