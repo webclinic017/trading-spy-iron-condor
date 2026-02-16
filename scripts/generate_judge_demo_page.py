@@ -80,6 +80,7 @@ def main() -> int:
     smoke = parse_kv(repo_root / "artifacts/tars/smoke_metrics.txt")
     exec_daily = read_json(repo_root / "artifacts/tars/execution_quality_daily.json")
     loop_status = parse_kv(repo_root / "artifacts/devloop/status.txt")
+    system_state = read_json(repo_root / "data/system_state.json")
 
     done, total = checklist_progress(checklist)
     metrics = parse_scorecard_metrics(scorecard)
@@ -93,6 +94,16 @@ def main() -> int:
     exec_runs = exec_daily.get("run_count", "n/a")
     exec_p95 = exec_daily.get("p95_latency_ms", "n/a")
     generated_at = exec_daily.get("generated_at_utc", "n/a")
+
+    paper = system_state.get("paper_account", {}) if isinstance(system_state, dict) else {}
+    north_star = system_state.get("north_star", {}) if isinstance(system_state, dict) else {}
+    starting_balance = float(paper.get("starting_balance", 0.0) or 0.0)
+    current_equity = float(paper.get("current_equity", paper.get("equity", 0.0)) or 0.0)
+    total_pl = float(paper.get("total_pl", current_equity - starting_balance) or 0.0)
+    total_pl_pct = float(paper.get("total_pl_pct", 0.0) or 0.0)
+    paper_win_rate = float(paper.get("win_rate", 0.0) or 0.0)
+    paper_win_samples = int(paper.get("win_rate_sample_size", 0) or 0)
+    north_star_prob = north_star.get("probability_label", "unknown")
 
     metric_rows = (
         "\n".join(
@@ -236,6 +247,22 @@ def main() -> int:
         <div class="flow" style="margin-top:10px">
           <div class="node">4. KPI + Scorecard</div><div class="arr">-></div><div class="node">5. Update Knowledge</div><div class="arr">-></div><div class="node">6. Improve Quality</div>
         </div>
+      </article>
+
+      <article class="card span6">
+        <div class="k">What Is A Judge?</div>
+        <p style="margin-top:10px">In this hackathon, a judge is the reviewer scoring whether the product is real, useful, safe, and measurable.
+        This page is built to help judges verify outcomes quickly from evidence, not promises.</p>
+      </article>
+
+      <article class="card span6">
+        <div class="k">How Much Money Made (Paper) + Why</div>
+        <table class="table">
+          <tr><td>Starting balance</td><td>${starting_balance:,.2f}</td></tr>
+          <tr><td>Current equity</td><td>${current_equity:,.2f}</td></tr>
+          <tr><td>Net P/L</td><td>${total_pl:,.2f} ({total_pl_pct:.2f}%)</td></tr>
+          <tr><td>Why (current drivers)</td><td>Win rate {paper_win_rate:.1f}% over {paper_win_samples} samples, strategy gate status: {north_star_prob.upper()}</td></tr>
+        </table>
       </article>
 
       <article class="card span8">
