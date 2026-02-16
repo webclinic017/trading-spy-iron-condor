@@ -11,6 +11,7 @@
 - Reports: https://igorganapolsky.github.io/trading/reports/
 - Lessons index: https://igorganapolsky.github.io/trading/lessons/
 - RAG query UI: https://igorganapolsky.github.io/trading/rag-query/
+- Judge demo evidence: https://igorganapolsky.github.io/trading/lessons/judge-demo.html
 - Repository: https://github.com/IgorGanapolsky/trading
 - Full markdown catalog: https://igorganapolsky.github.io/trading/llms-full.txt
 

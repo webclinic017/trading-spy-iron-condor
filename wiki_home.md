@@ -24,6 +24,7 @@ The system tracks progress toward accessible automated trading:
 ### System Status
 - [GitHub Actions](https://github.com/IgorGanapolsky/trading/actions) - Execution logs
 - [RAG Chat](https://igorganapolsky.github.io/trading/rag-query/) - Query lessons learned
+- [Judge Demo Evidence](https://igorganapolsky.github.io/trading/lessons/judge-demo.html) - TARS routing proof & readiness metrics
 
 ### Key Features
 - **Iron Condor Guardian**: Automated Rule #1 enforcement (stop loss, 7 DTE exit, 50% profit take)

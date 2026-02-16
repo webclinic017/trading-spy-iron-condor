@@ -4,6 +4,8 @@
 **Auto-Updated**: Daily via GitHub Actions
 **Dashboard Version**: Enhanced World-Class (v2.0)
 
+**👉 [Judge Demo Evidence →](https://igorganapolsky.github.io/trading/lessons/judge-demo.html)** | [Ops Status](https://igorganapolsky.github.io/trading/lessons/ops-status.html) | [Live Site](https://igorganapolsky.github.io/trading/)
+
 ---
 
 ## 💰 Account Summary (All-Time)

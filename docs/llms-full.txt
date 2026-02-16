@@ -6,6 +6,7 @@
 - LLM full: https://igorganapolsky.github.io/trading/llms-full.txt
 - Sitemap: https://igorganapolsky.github.io/trading/sitemap.xml
 - RSS: https://igorganapolsky.github.io/trading/feed.xml
+- Judge demo evidence: https://igorganapolsky.github.io/trading/lessons/judge-demo.html
 
 ## Repository Discoverability
 - Repo root: https://github.com/IgorGanapolsky/trading
