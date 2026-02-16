@@ -68,6 +68,7 @@ class BaseAgent(ABC):
 
         # Route to correct provider based on model selection
         self._provider = model_selector.get_model_provider(self.model)
+        self._transport_model = model_selector.get_transport_model_id(self.model)
 
         # OpenRouter is an OpenAI-compatible provider. If a gateway (e.g. TARS) is configured
         # via `LLM_GATEWAY_BASE_URL`, we'll route through it and optionally retry via
@@ -98,6 +99,14 @@ class BaseAgent(ABC):
         else:
             self._openrouter_client = None
             self.client = Anthropic(api_key=get_anthropic_api_key())
+
+        logger.info(
+            "%s: llm_route provider=%s canonical_model=%s transport_model=%s",
+            name,
+            self._provider,
+            self.model,
+            self._transport_model,
+        )
         self.memory: list[dict[str, Any]] = []  # Legacy memory (backward compatibility)
         self.decision_log: list[dict[str, Any]] = []
         self.use_context_engine = use_context_engine
@@ -139,6 +148,11 @@ class BaseAgent(ABC):
     ) -> dict[str, Any]:
         """Reason using Anthropic API (Claude models)."""
         try:
+            logger.info(
+                "%s: llm_request provider=anthropic model=%s",
+                self.name,
+                self.model,
+            )
             messages = [{"role": "user", "content": prompt}]
 
             if tools:
@@ -171,6 +185,12 @@ class BaseAgent(ABC):
                     "input": response.usage.input_tokens if response.usage else 0,
                     "output": response.usage.output_tokens if response.usage else 0,
                 },
+                "llm_route": {
+                    "provider": "anthropic",
+                    "canonical_model": self.model,
+                    "transport_model": self.model,
+                    "gateway_enabled": False,
+                },
             }
 
             for block in response.content:
@@ -189,6 +209,12 @@ class BaseAgent(ABC):
                 "confidence": 0.0,
                 "tool_calls": [],
                 "token_usage": {"input": 0, "output": 0},
+                "llm_route": {
+                    "provider": "anthropic",
+                    "canonical_model": self.model,
+                    "transport_model": self.model,
+                    "gateway_enabled": False,
+                },
             }
 
     def _reason_with_openrouter(
@@ -204,6 +230,13 @@ class BaseAgent(ABC):
                 self._openrouter_primary_base_url.rstrip("/") != OPENROUTER_BASE_URL.rstrip("/")
             )
             model_for_call = to_tars_model_id(self.model) if using_gateway else self.model
+            logger.info(
+                "%s: llm_request provider=openrouter canonical_model=%s transport_model=%s gateway=%s",
+                self.name,
+                self.model,
+                model_for_call,
+                using_gateway,
+            )
 
             kwargs: dict[str, Any] = {
                 "model": model_for_call,
@@ -294,6 +327,12 @@ class BaseAgent(ABC):
                     "input": input_tokens,
                     "output": output_tokens,
                 },
+                "llm_route": {
+                    "provider": "openrouter",
+                    "canonical_model": self.model,
+                    "transport_model": model_for_call,
+                    "gateway_enabled": using_gateway,
+                },
             }
 
         except Exception as e:
@@ -304,6 +343,12 @@ class BaseAgent(ABC):
                 "confidence": 0.0,
                 "tool_calls": [],
                 "token_usage": {"input": 0, "output": 0},
+                "llm_route": {
+                    "provider": "openrouter",
+                    "canonical_model": self.model,
+                    "transport_model": self.model,
+                    "gateway_enabled": bool(self._openrouter_fallback_cfg),
+                },
             }
 
     def log_decision(self, decision: dict[str, Any]) -> None:

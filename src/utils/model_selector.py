@@ -33,12 +33,16 @@ Sources:
 
 from __future__ import annotations
 
+import json
 import logging
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime
 from enum import Enum
+from pathlib import Path
 from typing import Any
+
+from src.utils.llm_gateway import OPENROUTER_BASE_URL, get_llm_gateway_base_url
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +62,7 @@ class ModelTier(Enum):
     # Cost-optimized tiers (via OpenRouter)
     DEEPSEEK = "deepseek"  # SIMPLE tasks - $0.14/$0.28 per M tokens
     DEEPSEEK_R1 = "deepseek_r1"  # REASONING tasks - $0.55/$2.19 per M tokens (chain-of-thought)
+    GLM5 = "glm5"  # Cost-efficient coding/content tier - $1.00/$3.20 per M tokens
     MISTRAL = "mistral"  # MEDIUM tasks - $0.40/$2.00 per M tokens (90% Sonnet quality)
     KIMI = "kimi"  # COMPLEX tasks - $0.39/$1.90 per M tokens (#1 trading benchmark)
     # Premium tier (direct Anthropic API)
@@ -88,6 +93,7 @@ class ModelConfig:
 _TARS_MODEL_MAP: dict[str, str] = {
     "deepseek/deepseek-chat": "deepinfra/deepseek-ai/DeepSeek-V3.1",
     "deepseek/deepseek-r1": "deepinfra/deepseek-ai/DeepSeek-R1-0528",
+    "z-ai/glm-5": "z-ai/glm-5",
     # Keep Medium as Medium. If your gateway requires a different model ID, update
     # this mapping (and keep the OpenRouter key as the canonical ID).
     "mistralai/mistral-medium-3": "mistralai/mistral-medium-3",
@@ -129,6 +135,14 @@ MODEL_REGISTRY: dict[ModelTier, ModelConfig] = {
         provider="openrouter",
         supports_extended_thinking=True,  # Chain-of-thought reasoning
         trading_sortino=0.0380,  # Strong reasoning for options structure
+    ),
+    ModelTier.GLM5: ModelConfig(
+        model_id="z-ai/glm-5",
+        tier=ModelTier.GLM5,
+        input_cost_per_1m=1.0,
+        output_cost_per_1m=3.2,
+        max_context=128000,
+        provider="openrouter",
     ),
     ModelTier.MISTRAL: ModelConfig(
         model_id="mistralai/mistral-medium-3",
@@ -188,6 +202,9 @@ TASK_COMPLEXITY_MAP: dict[str, TaskComplexity] = {
     "summarization": TaskComplexity.SIMPLE,
     "notification": TaskComplexity.SIMPLE,
     "logging": TaskComplexity.SIMPLE,
+    "code_generation": TaskComplexity.SIMPLE,
+    "test_generation": TaskComplexity.SIMPLE,
+    "issue_triage": TaskComplexity.SIMPLE,
     # MEDIUM tasks - use Sonnet
     "technical_analysis": TaskComplexity.MEDIUM,
     "market_research": TaskComplexity.MEDIUM,
@@ -195,6 +212,9 @@ TASK_COMPLEXITY_MAP: dict[str, TaskComplexity] = {
     "portfolio_analysis": TaskComplexity.MEDIUM,
     "news_analysis": TaskComplexity.MEDIUM,
     "pattern_recognition": TaskComplexity.MEDIUM,
+    "blog_drafting": TaskComplexity.MEDIUM,
+    "docs_drafting": TaskComplexity.MEDIUM,
+    "repo_discoverability": TaskComplexity.MEDIUM,
     # COMPLEX tasks - use Opus when budget allows
     "strategy_planning": TaskComplexity.COMPLEX,
     "risk_assessment": TaskComplexity.COMPLEX,
@@ -208,6 +228,15 @@ TASK_COMPLEXITY_MAP: dict[str, TaskComplexity] = {
     "position_sizing": TaskComplexity.CRITICAL,
     "stop_loss_calculation": TaskComplexity.CRITICAL,
     "approval_decision": TaskComplexity.CRITICAL,
+}
+
+GLM5_ROUTING_TASKS = {
+    "code_generation",
+    "test_generation",
+    "issue_triage",
+    "blog_drafting",
+    "docs_drafting",
+    "repo_discoverability",
 }
 
 
@@ -239,10 +268,21 @@ class ModelSelector:
 
         # Decision log for audit
         self.selection_log: list[dict[str, Any]] = []
+        self.model_routing_telemetry_enabled = self._is_truthy(
+            os.getenv("MODEL_ROUTING_TELEMETRY", "false")
+        )
+        self.model_routing_log_path = Path(
+            os.getenv("MODEL_ROUTING_LOG_PATH", "data/telemetry/model_routing.jsonl")
+        )
 
         logger.info(
             f"ModelSelector initialized: daily=${daily_budget:.2f}, monthly=${monthly_budget:.2f}"
         )
+
+    @staticmethod
+    def _is_truthy(value: str | None) -> bool:
+        """Return True for standard truthy env values."""
+        return str(value or "").strip().lower() in {"1", "true", "yes", "on"}
 
     def _reset_daily_if_needed(self) -> None:
         """Reset daily spend at midnight."""
@@ -258,6 +298,49 @@ class ModelSelector:
             if today.day == 1:
                 logger.info(f"Monthly budget reset: ${self.monthly_spend:.2f} spent")
                 self.monthly_spend = 0.0
+
+    def _glm5_model_id(self) -> str:
+        """Resolve GLM-5 model id from environment with a safe default."""
+        env_model_id = (os.getenv("GLM5_MODEL_ID") or "").strip()
+        return env_model_id or MODEL_REGISTRY[ModelTier.GLM5].model_id
+
+    def _is_glm5_enabled(self) -> bool:
+        """
+        GLM-5 routing is opt-in so existing trading behavior remains unchanged.
+
+        Enable with: ENABLE_GLM5_ROUTING=true
+        """
+        if not self._is_truthy(os.getenv("ENABLE_GLM5_ROUTING")):
+            return False
+        return bool(
+            os.getenv("OPENROUTER_API_KEY")
+            or os.getenv("LLM_GATEWAY_API_KEY")
+            or os.getenv("TETRATE_API_KEY")
+        )
+
+    def _resolve_config_for_tier(self, tier: ModelTier) -> ModelConfig:
+        """
+        Return ModelConfig for tier, applying env overrides where applicable.
+        """
+        config = MODEL_REGISTRY[tier]
+        if tier == ModelTier.GLM5:
+            return replace(config, model_id=self._glm5_model_id())
+        return config
+
+    def get_transport_model_id(self, model_id: str) -> str:
+        """
+        Resolve the model ID that will actually be sent over the wire.
+
+        OpenRouter-style models are translated when a non-OpenRouter gateway is configured.
+        """
+        provider = self.get_model_provider(model_id)
+        if provider != "openrouter":
+            return model_id
+
+        gateway_base_url = get_llm_gateway_base_url()
+        if gateway_base_url and gateway_base_url.rstrip("/") != OPENROUTER_BASE_URL.rstrip("/"):
+            return to_tars_model_id(model_id)
+        return model_id
 
     def get_task_complexity(self, task_type: str) -> TaskComplexity:
         """
@@ -357,23 +440,24 @@ class ModelSelector:
         """
         self._reset_daily_if_needed()
 
-        # Check for forced model (testing/override)
-        if self.force_model:
-            logger.info(f"Using forced model: {self.force_model}")
-            return self.force_model
-
         # Get task complexity
         complexity = self.get_task_complexity(task_type)
 
         # CRITICAL tasks ALWAYS use Opus - no cost-cutting on money decisions
         if complexity == TaskComplexity.CRITICAL:
-            selected = MODEL_REGISTRY[ModelTier.OPUS]
-            self._log_selection(task_type, complexity, selected, "CRITICAL_OVERRIDE")
+            selected = self._resolve_config_for_tier(ModelTier.OPUS)
+            self._log_selection(task_type, complexity, selected, "TRADE_CRITICAL_CLAUDE_ONLY")
             return selected.model_id
+
+        # Check for forced model (testing/override) AFTER critical override.
+        # Safety rule: forced model can never bypass trade-critical Claude routing.
+        if self.force_model:
+            logger.info(f"Using forced model: {self.force_model}")
+            return self.force_model
 
         # Honor explicit tier override
         if force_tier:
-            selected = MODEL_REGISTRY[force_tier]
+            selected = self._resolve_config_for_tier(force_tier)
             self._log_selection(task_type, complexity, selected, "FORCE_TIER")
             return selected.model_id
 
@@ -387,20 +471,28 @@ class ModelSelector:
             or os.getenv("LLM_GATEWAY_API_KEY")
             or os.getenv("TETRATE_API_KEY")
         )
+        glm5_enabled = self._is_glm5_enabled() and openrouter_available
 
         # Determine tier based on complexity and budget
         # January 2026 evidence-based routing (StockBench, TradingAgents framework)
         if complexity == TaskComplexity.SIMPLE:
-            # SIMPLE → DeepSeek V3 ($0.14/$0.28) - fast, efficient
-            if openrouter_available:
+            # Optional GLM-5 routing for coding/content autonomy tasks.
+            if glm5_enabled and task_type in GLM5_ROUTING_TASKS:
+                tier = ModelTier.GLM5
+                reason = "SIMPLE_TASK_GLM5_OPT_IN"
+            # SIMPLE → DeepSeek V3 ($0.30/$1.20) - fast, efficient
+            elif openrouter_available:
                 tier = ModelTier.DEEPSEEK
                 reason = "SIMPLE_TASK_DEEPSEEK"
             else:
                 tier = ModelTier.HAIKU
                 reason = "SIMPLE_TASK_HAIKU_FALLBACK"
         elif complexity == TaskComplexity.MEDIUM:
+            if glm5_enabled and task_type in GLM5_ROUTING_TASKS:
+                tier = ModelTier.GLM5
+                reason = "MEDIUM_TASK_GLM5_OPT_IN"
             # MEDIUM → Mistral Medium 3 ($0.40/$2.00) - 90% Sonnet quality
-            if openrouter_available:
+            elif openrouter_available:
                 tier = ModelTier.MISTRAL
                 reason = "MEDIUM_TASK_MISTRAL"
             elif budget_pct > 0.3:
@@ -442,11 +534,17 @@ class ModelSelector:
             # This prevents selecting an OpenRouter model that can't be called at runtime.
             if openrouter_available:
                 if complexity == TaskComplexity.SIMPLE:
-                    downgrade_chain = [ModelTier.DEEPSEEK, ModelTier.HAIKU]
+                    downgrade_chain = [ModelTier.GLM5, ModelTier.DEEPSEEK, ModelTier.HAIKU]
                 elif complexity == TaskComplexity.MEDIUM:
-                    downgrade_chain = [ModelTier.MISTRAL, ModelTier.DEEPSEEK, ModelTier.HAIKU]
+                    downgrade_chain = [
+                        ModelTier.GLM5,
+                        ModelTier.MISTRAL,
+                        ModelTier.DEEPSEEK,
+                        ModelTier.HAIKU,
+                    ]
                 else:
                     downgrade_chain = [
+                        ModelTier.GLM5,
                         ModelTier.KIMI,
                         ModelTier.MISTRAL,
                         ModelTier.DEEPSEEK,
@@ -457,6 +555,8 @@ class ModelSelector:
 
             downgrade_chain = [t for t in downgrade_chain if t != original_tier]
             for fallback_tier in downgrade_chain:
+                if fallback_tier == ModelTier.GLM5 and not glm5_enabled:
+                    continue
                 if self.can_afford_model(fallback_tier):
                     tier = fallback_tier
                     reason = f"BUDGET_DOWNGRADE_FROM_{original_tier.value.upper()}"
@@ -478,6 +578,7 @@ class ModelSelector:
                 reason = "BUDGET_EXHAUSTED_MIN_COST"
 
         selected = MODEL_REGISTRY[tier]
+        selected = self._resolve_config_for_tier(tier)
         self._log_selection(task_type, complexity, selected, reason)
         return selected.model_id
 
@@ -522,27 +623,54 @@ class ModelSelector:
         reason: str,
     ) -> None:
         """Log model selection for audit trail."""
+        transport_model = self.get_transport_model_id(selected.model_id)
+        provider = self.get_model_provider(selected.model_id)
         entry = {
             "timestamp": datetime.now().isoformat(),
             "task_type": task_type,
             "complexity": complexity.value,
             "selected_model": selected.model_id,
+            "transport_model": transport_model,
             "selected_tier": selected.tier.value,
+            "selected_provider": provider,
             "reason": reason,
             "daily_spend": self.daily_spend,
             "daily_budget": self.daily_budget,
+            "gateway_enabled": transport_model != selected.model_id,
         }
         self.selection_log.append(entry)
+        self._emit_routing_telemetry(entry)
 
         # Keep log bounded (last 1000 entries)
         if len(self.selection_log) > 1000:
             self.selection_log = self.selection_log[-500:]
 
         logger.info(
-            f"Model selected: {selected.tier.value.upper()} ({selected.model_id}) "
+            f"Model selected: {selected.tier.value.upper()} "
+            f"(provider={provider}, model={selected.model_id}, transport={transport_model}) "
             f"for {task_type} [{reason}] "
             f"(budget: ${self.daily_spend:.2f}/${self.daily_budget:.2f})"
         )
+
+    def _emit_routing_telemetry(self, entry: dict[str, Any]) -> None:
+        """
+        Persist optional structured routing telemetry to JSONL for audits.
+
+        Disabled by default. Enable via MODEL_ROUTING_TELEMETRY=true.
+        """
+        if not self.model_routing_telemetry_enabled:
+            return
+
+        try:
+            self.model_routing_log_path.parent.mkdir(parents=True, exist_ok=True)
+            with self.model_routing_log_path.open("a", encoding="utf-8") as handle:
+                handle.write(json.dumps(entry, sort_keys=True) + "\n")
+        except Exception as exc:
+            logger.warning("Failed to persist model routing telemetry: %s", exc)
+
+    def get_last_selection(self) -> dict[str, Any] | None:
+        """Return the most recent selection telemetry entry."""
+        return self.selection_log[-1] if self.selection_log else None
 
     def get_budget_status(self) -> dict[str, Any]:
         """Get current budget status for monitoring."""
@@ -572,6 +700,9 @@ class ModelSelector:
         for config in MODEL_REGISTRY.values():
             if config.model_id == model_id:
                 return config.provider
+        # GLM model ID may be overridden via env
+        if model_id == self._glm5_model_id():
+            return "openrouter"
         # Check TARS-resolved IDs (reverse lookup)
         for original_id, tars_id in _TARS_MODEL_MAP.items():
             if tars_id == model_id:
@@ -589,6 +720,8 @@ class ModelSelector:
         for config in MODEL_REGISTRY.values():
             if config.model_id == model_id:
                 return config
+        if model_id == self._glm5_model_id():
+            return replace(MODEL_REGISTRY[ModelTier.GLM5], model_id=model_id)
         # Reverse lookup for TARS-resolved IDs
         for original_id, tars_id in _TARS_MODEL_MAP.items():
             if tars_id == model_id:

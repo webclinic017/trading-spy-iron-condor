@@ -92,23 +92,30 @@ def get_trade_opinion(
     selector = get_model_selector()
     model_id = selector.select_model("pre_trade_research")
     provider = selector.get_model_provider(model_id)
+    transport_model_id = selector.get_transport_model_id(model_id)
 
     if provider != "openrouter":
         logger.info(f"Trade opinion: model {model_id} is not OpenRouter, skipping")
         return None
+
+    logger.info(
+        "Trade opinion route: provider=%s canonical_model=%s transport_model=%s",
+        provider,
+        model_id,
+        transport_model_id,
+    )
 
     # Build the prompt
     prompt = _build_prompt(vix_current, thompson_stats, regime, recent_lessons)
 
     try:
         from openai import OpenAI
-        from src.utils.model_selector import to_tars_model_id
 
         client = OpenAI(api_key=primary_cfg.api_key, base_url=primary_cfg.base_url)
         using_gateway = bool(primary_cfg.base_url) and (
             primary_cfg.base_url.rstrip("/") != OPENROUTER_BASE_URL.rstrip("/")
         )
-        model_for_call = to_tars_model_id(model_id) if using_gateway else model_id
+        model_for_call = transport_model_id if using_gateway else model_id
 
         try:
             response = client.chat.completions.create(

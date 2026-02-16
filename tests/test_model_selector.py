@@ -33,6 +33,7 @@ class TestModelTier:
     def test_tier_values(self):
         """All expected tiers exist."""
         assert ModelTier.DEEPSEEK.value == "deepseek"
+        assert ModelTier.GLM5.value == "glm5"
         assert ModelTier.MISTRAL.value == "mistral"
         assert ModelTier.KIMI.value == "kimi"
         assert ModelTier.OPUS.value == "opus"
@@ -79,6 +80,7 @@ class TestModelRegistry:
         expected_tiers = {
             ModelTier.DEEPSEEK,
             ModelTier.DEEPSEEK_R1,
+            ModelTier.GLM5,
             ModelTier.MISTRAL,
             ModelTier.KIMI,
             ModelTier.OPUS,
@@ -90,6 +92,7 @@ class TestModelRegistry:
     def test_cost_optimized_models_use_openrouter(self):
         """Cost-optimized models use OpenRouter provider."""
         assert MODEL_REGISTRY[ModelTier.DEEPSEEK].provider == "openrouter"
+        assert MODEL_REGISTRY[ModelTier.GLM5].provider == "openrouter"
         assert MODEL_REGISTRY[ModelTier.MISTRAL].provider == "openrouter"
         assert MODEL_REGISTRY[ModelTier.KIMI].provider == "openrouter"
 
@@ -210,6 +213,13 @@ class TestModelSelector:
         result = selector.select_model("any_task")
         assert result == "env-override-model"
 
+    @patch.dict(os.environ, {"FORCE_LLM_MODEL": "env-override-model"})
+    def test_force_model_does_not_override_trade_critical(self):
+        """Trade-critical tasks ignore FORCE_LLM_MODEL for safety."""
+        selector = ModelSelector()
+        result = selector.select_model("trade_execution")
+        assert result == MODEL_REGISTRY[ModelTier.OPUS].model_id
+
     def test_critical_always_opus(self):
         """CRITICAL tasks always use Opus regardless of budget."""
         selector = ModelSelector(daily_budget=0.01)  # Nearly exhausted
@@ -231,6 +241,20 @@ class TestModelSelector:
         selector = ModelSelector()
         result = selector.select_model("sentiment_classification")
         assert result == MODEL_REGISTRY[ModelTier.DEEPSEEK].model_id
+
+    @patch.dict(
+        os.environ,
+        {
+            "OPENROUTER_API_KEY": "test-key",
+            "ENABLE_GLM5_ROUTING": "true",
+            "GLM5_MODEL_ID": "z-ai/glm-5",
+        },
+    )
+    def test_glm5_routes_opt_in_tasks_only(self):
+        """GLM-5 routing is opt-in and limited to non-trade autonomy tasks."""
+        selector = ModelSelector()
+        assert selector.select_model("blog_drafting") == "z-ai/glm-5"
+        assert selector.select_model("technical_analysis") == MODEL_REGISTRY[ModelTier.MISTRAL].model_id
 
     @patch.dict(os.environ, {}, clear=True)
     def test_simple_falls_back_to_haiku(self):
@@ -357,6 +381,26 @@ class TestModelSelector:
 
         # Log should be trimmed to 500
         assert len(selector.selection_log) <= 1000
+
+    @patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"})
+    def test_selection_log_contains_provider_and_transport(self):
+        """Selection telemetry includes provider and transport model fields."""
+        selector = ModelSelector()
+        selector.select_model("technical_analysis")
+        entry = selector.get_last_selection()
+        assert entry is not None
+        assert entry["selected_provider"] == "openrouter"
+        assert "transport_model" in entry
+        assert "gateway_enabled" in entry
+
+    @patch.dict(os.environ, {"LLM_GATEWAY_BASE_URL": "https://api.router.tetrate.ai/v1"})
+    def test_transport_model_id_uses_gateway_mapping(self):
+        """Transport model should use TARS mapping when gateway is configured."""
+        selector = ModelSelector()
+        assert (
+            selector.get_transport_model_id("deepseek/deepseek-chat")
+            == "deepinfra/deepseek-ai/DeepSeek-V3.1"
+        )
 
     def test_daily_reset(self):
         """Daily spend resets when date changes."""

@@ -170,6 +170,7 @@ class MirascopeTradingClient:
         self._openrouter_primary_base_url: str | None = None
         self._openrouter_fallback_cfg: Any = None
         self._openrouter_fallback_client: Any = None
+        self._last_route: dict[str, Any] | None = None
 
         logger.info(f"MirascopeTradingClient initialized with provider: {provider.value}")
 
@@ -219,8 +220,6 @@ class MirascopeTradingClient:
         if self.provider != LLMProvider.OPENROUTER:
             return self.openai_client.chat.completions.create(**kwargs)
 
-        from src.utils.model_selector import to_tars_model_id
-
         # Ensure openai_client is initialized and primary/fallback are populated.
         _ = self.openai_client
 
@@ -230,7 +229,7 @@ class MirascopeTradingClient:
         )
         if using_gateway:
             kwargs = dict(kwargs)
-            kwargs["model"] = to_tars_model_id(model)
+            kwargs["model"] = self.model_selector.get_transport_model_id(model)
 
         try:
             return self.openai_client.chat.completions.create(**kwargs)
@@ -267,7 +266,18 @@ class MirascopeTradingClient:
 
     def _get_model(self, task_type: str = "technical_analysis") -> str:
         """Get appropriate model for task using BATS framework."""
-        return self.model_selector.select_model(task_type)
+        model_id = self.model_selector.select_model(task_type)
+        self._last_route = self.model_selector.get_last_selection()
+        if self._last_route:
+            logger.info(
+                "Mirascope route: task=%s provider=%s canonical_model=%s transport_model=%s reason=%s",
+                task_type,
+                self._last_route.get("selected_provider"),
+                self._last_route.get("selected_model"),
+                self._last_route.get("transport_model"),
+                self._last_route.get("reason"),
+            )
+        return model_id
 
     def _record_usage(self, model: str, input_tokens: int, output_tokens: int) -> None:
         """Record token usage for monitoring."""
