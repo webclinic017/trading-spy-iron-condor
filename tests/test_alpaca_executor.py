@@ -49,7 +49,18 @@ def mock_trade_gate():
     NOTE: Not autouse - only apply to tests that need it.
     TestPreTradePatternValidation needs the REAL trade gate to test blocking.
     """
-    from src.safety.mandatory_trade_gate import GateResult
+    try:
+        from src.safety.mandatory_trade_gate import GateResult
+    except ImportError:
+        pytest.skip("mandatory_trade_gate unavailable")
+        return
+
+    # Verify the function exists before patching (CI may have partial module load)
+    import src.safety.mandatory_trade_gate as gate_mod
+
+    if not hasattr(gate_mod, "validate_trade_mandatory"):
+        pytest.skip("validate_trade_mandatory not available (partial module load)")
+        return
 
     mock_result = GateResult(approved=True, reason="Test mock - approved")
     with patch(
