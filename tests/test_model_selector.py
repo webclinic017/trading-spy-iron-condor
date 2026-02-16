@@ -254,7 +254,10 @@ class TestModelSelector:
         """GLM-5 routing is opt-in and limited to non-trade autonomy tasks."""
         selector = ModelSelector()
         assert selector.select_model("blog_drafting") == "z-ai/glm-5"
-        assert selector.select_model("technical_analysis") == MODEL_REGISTRY[ModelTier.MISTRAL].model_id
+        assert (
+            selector.select_model("technical_analysis")
+            == MODEL_REGISTRY[ModelTier.MISTRAL].model_id
+        )
 
     @patch.dict(os.environ, {}, clear=True)
     def test_simple_falls_back_to_haiku(self):
