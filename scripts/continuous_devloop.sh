@@ -89,19 +89,43 @@ run_cycle() {
     log "cycle=$cycle promotions detected; refreshing analyze"
     ./scripts/layered_tdd_loop.sh analyze >>"$LOG_FILE" 2>&1 || true
   fi
-  "$PYTHON_BIN" scripts/generate_kpi_page.py --repo-root . --out artifacts/devloop/kpi_page.md >>"$LOG_FILE" 2>&1 || true
-  "$PYTHON_BIN" scripts/generate_task_runtime_report.py --repo-root . --manual manual_layer1_tasks.md --state artifacts/devloop/task_runtime_state.json --log artifacts/devloop/continuous.log --out artifacts/devloop/task_runtime_report.md >>"$LOG_FILE" 2>&1 || true
-  "$PYTHON_BIN" scripts/generate_system_explainer.py --repo-root . --out docs/_reports/hackathon-system-explainer.md >>"$LOG_FILE" 2>&1 || true
+  log "cycle=$cycle parallel artifact generation start"
+  (
+    "$PYTHON_BIN" scripts/generate_kpi_page.py --repo-root . --out artifacts/devloop/kpi_page.md >>"$LOG_FILE" 2>&1 || true
+  ) &
+  local pid_kpi=$!
+  (
+    "$PYTHON_BIN" scripts/generate_task_runtime_report.py --repo-root . --manual manual_layer1_tasks.md --state artifacts/devloop/task_runtime_state.json --log artifacts/devloop/continuous.log --out artifacts/devloop/task_runtime_report.md >>"$LOG_FILE" 2>&1 || true
+  ) &
+  local pid_runtime=$!
 
   local render_demo_cycle=1
   if (( RENDER_DEMO_EVERY > 1 )) && (( cycle % RENDER_DEMO_EVERY != 0 )); then
     render_demo_cycle=0
   fi
   if (( render_demo_cycle == 1 )); then
-    "$PYTHON_BIN" scripts/generate_judge_demo_page.py --repo-root . --out docs/lessons/judge-demo.html >>"$LOG_FILE" 2>&1 || true
+    (
+      "$PYTHON_BIN" scripts/generate_judge_demo_page.py --repo-root . --out docs/lessons/judge-demo.html >>"$LOG_FILE" 2>&1 || true
+    ) &
+    local pid_demo=$!
   else
     log "cycle=$cycle judge demo render skipped (cadence RENDER_DEMO_EVERY=$RENDER_DEMO_EVERY)"
+    local pid_demo=""
   fi
+
+  (
+    "$PYTHON_BIN" scripts/generate_next_copilot_prompt.py --repo-root . --out artifacts/devloop/next_copilot_prompt.md >>"$LOG_FILE" 2>&1 || true
+  ) &
+  local pid_prompt=$!
+
+  wait "$pid_kpi" || true
+  wait "$pid_runtime" || true
+  if [[ -n "$pid_demo" ]]; then
+    wait "$pid_demo" || true
+  fi
+  wait "$pid_prompt" || true
+
+  "$PYTHON_BIN" scripts/generate_system_explainer.py --repo-root . --out docs/_reports/hackathon-system-explainer.md >>"$LOG_FILE" 2>&1 || true
 
   if [[ "$SYNC_GDOC" == "1" ]] && [[ -n "$GDRIVE_DOC_URL" ]]; then
     local sync_doc_cycle=1
@@ -114,7 +138,7 @@ run_cycle() {
       log "cycle=$cycle gdoc sync skipped (cadence SYNC_GDOC_EVERY=$SYNC_GDOC_EVERY)"
     fi
   fi
-  "$PYTHON_BIN" scripts/generate_next_copilot_prompt.py --repo-root . --out artifacts/devloop/next_copilot_prompt.md >>"$LOG_FILE" 2>&1 || true
+  log "cycle=$cycle parallel artifact generation done"
 }
 
 usage() {
