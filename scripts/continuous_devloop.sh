@@ -52,6 +52,13 @@ run_cycle() {
   fi
 
   python3 scripts/generate_profit_readiness_scorecard.py --repo-root . --artifact-dir artifacts/devloop --out artifacts/devloop/profit_readiness_scorecard.md >>"$LOG_FILE" 2>&1 || true
+  local expand_output
+  expand_output="$(python3 scripts/expand_layers.py --tasks artifacts/devloop/tasks.md --scorecard artifacts/devloop/profit_readiness_scorecard.md --manual-file manual_layer1_tasks.md --mirror-manual-file config/manual_layer1_tasks.md --out artifacts/devloop/layer_expansion_report.md 2>&1 || true)"
+  printf "%s\n" "$expand_output" >>"$LOG_FILE"
+  if printf "%s\n" "$expand_output" | grep -q "promoted_count=[1-9]"; then
+    log "cycle=$cycle promotions detected; refreshing analyze"
+    ./scripts/layered_tdd_loop.sh analyze >>"$LOG_FILE" 2>&1 || true
+  fi
   python3 scripts/generate_kpi_page.py --repo-root . --out artifacts/devloop/kpi_page.md >>"$LOG_FILE" 2>&1 || true
   python3 scripts/generate_next_copilot_prompt.py --repo-root . --out artifacts/devloop/next_copilot_prompt.md >>"$LOG_FILE" 2>&1 || true
 }
