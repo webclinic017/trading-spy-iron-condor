@@ -48,6 +48,7 @@ jobs:
 
       - name: Commit and push updates
         run: |
+          set -euo pipefail
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
           git add docs/llms.txt docs/llms-full.txt
@@ -58,4 +59,17 @@ jobs:
           fi
 
           git commit -m "docs(seo): refresh llms manifests [auto]"
-          git push origin HEAD:main
+
+          # Retry push after rebasing to avoid race conditions with other bots.
+          for i in 1 2 3; do
+            if git push origin HEAD:main; then
+              echo "Manifest update pushed on attempt ${i}."
+              exit 0
+            fi
+            echo "Push attempt ${i} failed, rebasing onto latest main..."
+            git pull --rebase origin main || true
+            sleep 3
+          done
+
+          echo "::warning::Unable to push llms update after retries; another workflow likely updated main."
+          exit 0
