@@ -83,6 +83,8 @@ def build_index() -> list[dict]:
         return lessons
 
     for path in sorted(RAG_ROOT.rglob("*.md")):
+        if path.stem.startswith("tars_"):
+            continue
         text = path.read_text(encoding="utf-8", errors="ignore")
         rel_path = path.relative_to(RAG_ROOT)
         category = rel_path.parts[0] if rel_path.parts else "general"
@@ -142,7 +144,7 @@ def _build_lessons_page(lessons: list[dict]) -> str:
     rows = []
     for lesson in items:
         title = lesson.get("title") or lesson.get("id") or "Lesson"
-        severity = lesson.get("severity") or "UNKNOWN"
+        severity = lesson.get("severity") or "INFO"
         date = lesson.get("date") or ""
         category = lesson.get("category") or ""
         source = lesson.get("file") or ""

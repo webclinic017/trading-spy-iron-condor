@@ -95,7 +95,7 @@ class TestOptionsRiskMonitorInit:
         monitor = OptionsRiskMonitor()
         assert monitor.max_loss_percent == 5.0
         assert monitor.stop_loss_multiplier == DEFAULT_STOP_LOSS_MULTIPLIER
-        assert monitor.stop_loss_multiplier == 2.0
+        assert monitor.stop_loss_multiplier == 1.0
 
     def test_custom_stop_loss_multiplier(self):
         """OptionsRiskMonitor accepts custom stop-loss multiplier."""

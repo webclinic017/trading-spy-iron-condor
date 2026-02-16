@@ -65,8 +65,8 @@ class IronCondorConfig:
     dte_max: int = 45
 
     # Exit conditions (per LL-268 research)
-    profit_target_pct: float = 0.50  # Take profit at 50% of credit
-    stop_loss_pct: float = 2.00  # Exit at 200% of credit (1:2 risk/reward)
+    profit_target_pct: float = 0.75  # Take profit at 75% of credit
+    stop_loss_pct: float = 1.00  # Exit at 100% of credit (positive EV)
     max_dte: int = 7  # Close at 7 DTE regardless (gamma risk)
 
     # Risk parameters

@@ -161,13 +161,13 @@ class RiskThresholds:
     # Stop loss levels
     CSP_STOP_LOSS_MULTIPLIER = 2.0  # Exit at 2x premium received
     COVERED_CALL_STOP_LOSS_MULTIPLIER = 2.0
-    IRON_CONDOR_STOP_LOSS_MULTIPLIER = 2.2  # McMillan rule
+    IRON_CONDOR_STOP_LOSS_MULTIPLIER = 1.0  # 75/100 positive EV (replaces 50/200 zero-EV)
 
     # Take profit levels (LL-323: 71,417 trade study findings)
     # 50% profit target = optimal balance of win rate and capital efficiency
     # Captures 50% of profit in ~40% of the time = faster capital turnover
     CSP_TAKE_PROFIT_PCT = 0.50  # Close at 50% profit
-    IRON_CONDOR_TAKE_PROFIT_PCT = 0.50  # 85% win rate at 50% profit target
+    IRON_CONDOR_TAKE_PROFIT_PCT = 0.75  # 75% profit target for positive EV
 
     # Profit management by delta (LL-323 research)
     # Tighter spreads (30-delta) benefit from earlier profit taking

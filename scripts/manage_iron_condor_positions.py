@@ -39,8 +39,8 @@ logger = logging.getLogger(__name__)
 
 # Iron condor exit thresholds per CLAUDE.md and LL-268/LL-277
 IC_EXIT_CONFIG = {
-    "profit_target_pct": 0.50,  # Close at 50% profit (of credit)
-    "stop_loss_pct": 2.00,  # Close at 200% loss (2x credit)
+    "profit_target_pct": 0.75,  # Close at 75% profit (positive EV)
+    "stop_loss_pct": 1.00,  # Close at 100% loss (1x credit)
     "exit_dte": 7,  # Close at 7 DTE (gamma risk)
 }
 

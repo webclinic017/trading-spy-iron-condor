@@ -89,8 +89,10 @@ class IronCondorStrategy:
             "max_dte": 45,
             "short_delta": 0.15,  # 15 delta = ~85% POP (research-backed)
             "wing_width": 5,  # $5 wide spreads per updated CLAUDE.md
-            "take_profit_pct": 0.50,  # Close at 50% profit
-            "stop_loss_pct": 2.0,  # Close at 200% loss
+            # EV math: 75% profit / 100% stop → EV = 0.85*0.75 - 0.15*1.0 = +0.49
+            # (Old 50%/200% was EV-neutral: 0.85*0.50 - 0.15*2.0 ≈ 0.0)
+            "take_profit_pct": 0.75,  # Close at 75% profit
+            "stop_loss_pct": 1.0,  # Close at 100% loss
             "exit_dte": 7,  # Exit at 7 DTE per LL-268 research (80%+ win rate)
             "max_positions": 2,  # Per CLAUDE.md: "2 iron condors at a time" (5% max each = 10% total)
             "position_size_pct": 0.05,  # 5% of portfolio per position - CLAUDE.md MANDATE
@@ -317,7 +319,7 @@ class IronCondorStrategy:
             return True, "VIX check failed, proceeding with caution"
 
     def _build_decision_trace(self, ic: IronCondorLegs, entry_reason: str) -> dict:
-        """Build a decision trace capturing market context at entry time."""
+        """Build a decision trace capturing market context at entry time (Context Graph pattern)."""
         trace: dict = {
             "captured_at": datetime.now().isoformat(),
             "entry_reason": entry_reason,

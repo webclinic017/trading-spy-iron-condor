@@ -6,7 +6,7 @@ list_title: " "
 
 This is the unfiltered story of building an autonomous AI trading system—every bug, every breakthrough, every lesson learned.
 
-**The goal:** $6,000/month passive income through disciplined iron condor trading on SPY.
+**The goal:** An accessible automated iron condor system anyone can enter with as little as $200.
 
 **The method:** A full autonomous stack where each layer has a strict role:
 

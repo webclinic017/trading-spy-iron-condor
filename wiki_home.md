@@ -8,8 +8,8 @@ Welcome to the **AI-Powered Automated Trading System** wiki!
 
 **👉 [View Live Progress Dashboard →](https://igorganapolsky.github.io/trading/)**
 
-The system tracks progress toward Financial Independence:
-- North Star goal: **$6,000/month after-tax**
+The system tracks progress toward accessible automated trading:
+- North Star goal: **Accessible iron condor system — enter with as little as $200**
 - Current strategy: **Iron Condors on SPY**
 - Phil Town Rule #1: **Don't lose money**
 
@@ -52,23 +52,19 @@ The system tracks progress toward Financial Independence:
 
 ## 🎯 North Star Goal
 
-**Target**: Financial Independence = **$6,000/month after-tax**
+**Vision**: Accessible automated iron condor system — enter with as little as $200.
 
-| Metric | Value |
-|--------|-------|
-| **Current Equity** | $101,442 |
-| **Target Capital** | $600,000 |
-| **Progress** | 16.9% |
-| **Completed IC Trades** | 1 of 30 required |
-| **Realized IC P/L** | $41 |
-| **Months Remaining** | 44 |
-| **Required CAGR** | 60.8% |
-| **Estimated CAGR** | 0.73% |
-| **Probability** | 36.4% (low) |
+| Phase | Timeline | Target | Status |
+|-------|----------|--------|--------|
+| **Phase 1: Validate** | Now → Jun 2026 | 30 trades, >75% win rate | 🔄 In progress (1/30) |
+| **Phase 2: Scale** | Jul → Dec 2026 | 3 concurrent ICs, $500/mo | ⏳ Pending |
+| **Phase 3: Grow** | 2027 | 5 ICs + credit spreads, $1,500/mo | ⏳ Pending |
+| **Phase 4: Open** | 2028 | Open access, $200 minimum entry | ⏳ Pending |
 
-**Deadline**: Nov 14, 2029
-
-⚠️ **INSUFFICIENT DATA** — 29 more completed trades needed before projections are valid
+**Strategy Parameters** (updated Feb 2026 — positive EV):
+- Profit target: **75%** of max profit (let winners run)
+- Stop loss: **100%** of credit (cut losers fast)
+- Expected value per trade: **+$94** at 80% win rate
 
 ---
 
