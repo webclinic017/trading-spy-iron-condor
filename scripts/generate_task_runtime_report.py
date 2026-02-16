@@ -191,6 +191,18 @@ def main() -> int:
     else:
         lines.append("- No open Layer-1 tasks.")
     lines.append("")
+    lines.append("## Current Task In Progress")
+    if open_tasks:
+        current_task = open_tasks[0]
+        current_start_raw = first_seen.get(current_task, now_s)
+        current_start = parse_ts(current_start_raw) or now
+        current_elapsed = format_elapsed((now - current_start).total_seconds())
+        lines.append(f"- Task: {current_task}")
+        lines.append(f"- Started (UTC): `{current_start.strftime('%Y-%m-%dT%H:%M:%SZ')}`")
+        lines.append(f"- Elapsed: `{current_elapsed}`")
+    else:
+        lines.append("- No active task.")
+    lines.append("")
     lines.append("## Runtime Phases")
     if phases:
         if "analyze_current" in phases:
