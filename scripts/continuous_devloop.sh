@@ -8,6 +8,7 @@ INTERVAL_SECONDS="${INTERVAL_SECONDS:-900}"
 FULL_EVERY="${FULL_EVERY:-6}"
 MAX_CYCLES="${MAX_CYCLES:-0}" # 0 = infinite
 RUN_TARS="${RUN_TARS:-0}" # 1 enables TARS full run each cycle
+RUN_TARS_EVERY="${RUN_TARS_EVERY:-2}" # run TARS every N cycles when enabled
 RUN_RAG="${RUN_RAG:-0}" # 1 enables RAG refresh during full profile cycles
 SYNC_GDOC="${SYNC_GDOC:-0}" # 1 syncs explainer into Google Doc each cycle
 LAYER1_MAX_OPEN="${LAYER1_MAX_OPEN:-3}" # keep top N open Layer 1 tasks active
@@ -53,12 +54,20 @@ run_cycle() {
   log "cycle=$cycle profile=$profile analyze done"
 
   if [[ "$RUN_TARS" == "1" ]]; then
-    if [[ -n "${LLM_GATEWAY_BASE_URL:-}" ]] && [[ -n "${LLM_GATEWAY_API_KEY:-}${TETRATE_API_KEY:-}" ]]; then
-      log "cycle=$cycle tars full start"
-      "$TARS_AUTOPILOT_SCRIPT" full >>"$LOG_FILE" 2>&1 || true
-      log "cycle=$cycle tars full done"
+    local run_tars_cycle=1
+    if (( RUN_TARS_EVERY > 1 )) && (( cycle % RUN_TARS_EVERY != 0 )); then
+      run_tars_cycle=0
+    fi
+    if (( run_tars_cycle == 0 )); then
+      log "cycle=$cycle tars skipped (cadence RUN_TARS_EVERY=$RUN_TARS_EVERY)"
     else
-      log "cycle=$cycle tars skipped (gateway env missing)"
+      if [[ -n "${LLM_GATEWAY_BASE_URL:-}" ]] && [[ -n "${LLM_GATEWAY_API_KEY:-}${TETRATE_API_KEY:-}" ]]; then
+        log "cycle=$cycle tars full start"
+        "$TARS_AUTOPILOT_SCRIPT" full >>"$LOG_FILE" 2>&1 || true
+        log "cycle=$cycle tars full done"
+      else
+        log "cycle=$cycle tars skipped (gateway env missing)"
+      fi
     fi
   fi
 
@@ -100,6 +109,7 @@ Environment:
   FULL_EVERY        Every N cycles run PROFILE=full (default: 6)
   MAX_CYCLES        Max cycles then exit, 0=infinite (default: 0)
   RUN_TARS          1 to run TARS full each cycle (default: 0)
+  RUN_TARS_EVERY    Run TARS every N cycles when RUN_TARS=1 (default: 2)
   RUN_RAG           1 to refresh RAG on full-profile cycles (default: 0)
   LAYER1_MAX_OPEN   Keep top N open Layer 1 tasks active (default: 3)
   SYNC_GDOC         1 to sync explainer to Google Doc (default: 0)
