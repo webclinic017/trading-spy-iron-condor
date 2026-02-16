@@ -183,6 +183,10 @@ class TestLocalRAGFallback:
         except ImportError:
             pytest.skip("LessonsLearnedRAG not available")
 
+        # Guard against MagicMock from test_decision_trace sys.modules stub
+        if not isinstance(LessonsLearnedRAG, type):
+            pytest.skip("LessonsLearnedRAG is a mock (partial module load)")
+
         rag = LessonsLearnedRAG()
 
         # Query for a term that should exist
@@ -199,6 +203,10 @@ class TestLocalRAGFallback:
             from src.rag.lessons_learned_rag import LessonsLearnedRAG
         except ImportError:
             pytest.skip("LessonsLearnedRAG not available")
+
+        # Guard against MagicMock from test_decision_trace sys.modules stub
+        if not isinstance(LessonsLearnedRAG, type):
+            pytest.skip("LessonsLearnedRAG is a mock (partial module load)")
 
         rag = LessonsLearnedRAG()
         critical = rag.get_critical_lessons()
