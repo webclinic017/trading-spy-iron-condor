@@ -251,39 +251,45 @@ async function buildDeterministicPnlReply(message, liveData) {
   }
 
   let start = null;
+  let end = asOfNow;
   let label = "";
+  const day = asOfNow.getUTCDay(); // 0=Sun..6=Sat
+  const daysSinceMonday = (day + 6) % 7;
+  const currentWeekStart = new Date(
+    Date.UTC(
+      asOfNow.getUTCFullYear(),
+      asOfNow.getUTCMonth(),
+      asOfNow.getUTCDate() - daysSinceMonday,
+      0,
+      0,
+      0,
+    ),
+  );
+
   if (timeframe === "this_week") {
-    // Week boundary uses UTC Monday 00:00 for determinism (no timezone ambiguity).
-    const day = asOfNow.getUTCDay(); // 0=Sun..6=Sat
-    const daysSinceMonday = (day + 6) % 7;
-    start = new Date(
-      Date.UTC(
-        asOfNow.getUTCFullYear(),
-        asOfNow.getUTCMonth(),
-        asOfNow.getUTCDate() - daysSinceMonday,
-        0,
-        0,
-        0,
-      ),
-    );
+    // Week boundary uses UTC Monday 00:00 for determinism.
+    start = currentWeekStart;
     label = `This week (since ${start.toISOString().slice(0, 10)} UTC)`;
   } else if (timeframe === "last_week") {
-    // Interpret "last week" as the last 7 days ending at the latest snapshot.
-    start = new Date(asOfNow.getTime() - 7 * 24 * 60 * 60 * 1000);
-    label = "Last 7 days";
+    // Previous full trading week window (Mon-Fri), measured from Monday 00:00 UTC
+    // of prior week to Saturday 00:00 UTC (exclusive), so weekend snapshots are excluded.
+    start = new Date(currentWeekStart.getTime() - 7 * 24 * 60 * 60 * 1000);
+    end = new Date(start.getTime() + 5 * 24 * 60 * 60 * 1000);
+    const friday = new Date(start.getTime() + 4 * 24 * 60 * 60 * 1000);
+    label = `Previous trading week (Mon-Fri ${start.toISOString().slice(0, 10)} to ${friday.toISOString().slice(0, 10)})`;
   }
 
   if (!start) return null;
 
-  const commitMeta = await fetchSystemStateCommitAtOrBefore(start.toISOString());
-  if (!commitMeta || !commitMeta.sha) {
+  const startCommit = await fetchSystemStateCommitAtOrBefore(start.toISOString());
+  if (!startCommit || !startCommit.sha) {
     return [
       `${label} P/L unavailable: could not find a historical snapshot.`,
       `Current equity: $${formatCurrency(equityNow)} (as of ${asOfNow.toISOString()})`,
     ].join("\n");
   }
 
-  const startState = await fetchSystemStateAtCommit(commitMeta.sha);
+  const startState = await fetchSystemStateAtCommit(startCommit.sha);
   if (!startState) {
     return [
       `${label} P/L unavailable: could not load historical snapshot.`,
@@ -295,7 +301,32 @@ async function buildDeterministicPnlReply(message, liveData) {
   const asOfStartRaw = extractAsOf(startState);
   const asOfStart = parseTimestamp(asOfStartRaw);
 
-  const pnl = equityNow - equityStart;
+  let equityEnd = equityNow;
+  let asOfEnd = asOfNow;
+  let endCommit = null;
+
+  if (timeframe === "last_week") {
+    endCommit = await fetchSystemStateCommitAtOrBefore(end.toISOString());
+    if (!endCommit || !endCommit.sha) {
+      return [
+        `${label} P/L unavailable: could not find end-of-week snapshot.`,
+        `Start equity: $${formatCurrency(equityStart)} (as of ${asOfStart ? asOfStart.toISOString() : "unknown"})`,
+      ].join("\n");
+    }
+
+    const endState = await fetchSystemStateAtCommit(endCommit.sha);
+    if (!endState) {
+      return [
+        `${label} P/L unavailable: could not load end-of-week snapshot.`,
+        `Start equity: $${formatCurrency(equityStart)} (as of ${asOfStart ? asOfStart.toISOString() : "unknown"})`,
+      ].join("\n");
+    }
+
+    equityEnd = extractEquity(endState);
+    asOfEnd = parseTimestamp(extractAsOf(endState)) || end;
+  }
+
+  const pnl = equityEnd - equityStart;
   const pct = equityStart > 0 ? (pnl / equityStart) * 100 : 0;
 
   const lines = [];
@@ -303,17 +334,22 @@ async function buildDeterministicPnlReply(message, liveData) {
     `${label} P/L: ${pnl >= 0 ? "+" : "-"}$${formatCurrency(Math.abs(pnl))} (${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%)`,
   );
   lines.push(
-    `Equity: $${formatCurrency(equityNow)} (start: $${formatCurrency(equityStart)})`,
+    `Equity: $${formatCurrency(equityEnd)} (start: $${formatCurrency(equityStart)})`,
   );
   if (asOfStart) lines.push(`Start snapshot as of: ${asOfStart.toISOString()}`);
-  lines.push(`End snapshot as of: ${asOfNow.toISOString()}`);
-  if (commitMeta.commitDate) {
+  lines.push(`End snapshot as of: ${asOfEnd.toISOString()}`);
+  if (startCommit.commitDate) {
     lines.push(
-      `Baseline source: data/system_state.json @ ${String(commitMeta.sha).slice(0, 7)} (${commitMeta.commitDate})`,
+      `Baseline source: data/system_state.json @ ${String(startCommit.sha).slice(0, 7)} (${startCommit.commitDate})`,
     );
   } else {
     lines.push(
-      `Baseline source: data/system_state.json @ ${String(commitMeta.sha).slice(0, 7)}`,
+      `Baseline source: data/system_state.json @ ${String(startCommit.sha).slice(0, 7)}`,
+    );
+  }
+  if (endCommit && endCommit.sha) {
+    lines.push(
+      `End source: data/system_state.json @ ${String(endCommit.sha).slice(0, 7)}${endCommit.commitDate ? ` (${endCommit.commitDate})` : ""}`,
     );
   }
   return lines.join("\n");
