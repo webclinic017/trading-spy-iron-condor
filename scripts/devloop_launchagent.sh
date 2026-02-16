@@ -7,6 +7,7 @@ PLIST_PATH="$HOME/Library/LaunchAgents/$LABEL.plist"
 LOG_DIR="$REPO_ROOT/artifacts/devloop"
 OUT_LOG="$LOG_DIR/launchd.out.log"
 ERR_LOG="$LOG_DIR/launchd.err.log"
+ENV_FILE="${ENV_FILE:-$REPO_ROOT/.env.devloop}"
 RUN_TARS_VALUE="${RUN_TARS:-0}"
 RUN_RAG_VALUE="${RUN_RAG:-0}"
 INTERVAL_SECONDS_VALUE="${INTERVAL_SECONDS:-300}"
@@ -27,7 +28,7 @@ install_agent() {
   <array>
     <string>/bin/zsh</string>
     <string>-lc</string>
-    <string>cd "$REPO_ROOT" &amp;&amp; ./scripts/continuous_devloop.sh start</string>
+    <string>cd "$REPO_ROOT" &amp;&amp; set -a &amp;&amp; [ -f "$ENV_FILE" ] &amp;&amp; source "$ENV_FILE" ; set +a ; ./scripts/continuous_devloop.sh start</string>
   </array>
 
   <key>WorkingDirectory</key>
@@ -99,6 +100,7 @@ Env overrides for install/restart:
   RUN_RAG=1            Enable RAG refresh on full-profile cycles
   INTERVAL_SECONDS=60  Loop interval
   FULL_EVERY=3         Run full profile every N cycles
+  ENV_FILE=.env.devloop Env file sourced before loop startup
 EOF
 }
 

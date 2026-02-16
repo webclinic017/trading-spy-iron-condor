@@ -68,6 +68,7 @@ run_cycle() {
     ./scripts/layered_tdd_loop.sh analyze >>"$LOG_FILE" 2>&1 || true
   fi
   python3 scripts/generate_kpi_page.py --repo-root . --out artifacts/devloop/kpi_page.md >>"$LOG_FILE" 2>&1 || true
+  python3 scripts/generate_system_explainer.py --repo-root . --out docs/_reports/hackathon-system-explainer.md >>"$LOG_FILE" 2>&1 || true
   python3 scripts/generate_next_copilot_prompt.py --repo-root . --out artifacts/devloop/next_copilot_prompt.md >>"$LOG_FILE" 2>&1 || true
 }
 

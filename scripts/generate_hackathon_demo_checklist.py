@@ -32,6 +32,7 @@ def main() -> int:
 
     env_status = artifact_dir / "env_status.txt"
     smoke_response = artifact_dir / "smoke_response.json"
+    trade_opinion_smoke = artifact_dir / "trade_opinion_smoke.json"
     smoke_metrics = artifact_dir / "smoke_metrics.txt"
     resilience = artifact_dir / "resilience_report.txt"
     retrieval = artifact_dir / "retrieval_report.txt"
@@ -41,6 +42,8 @@ def main() -> int:
         ("Gateway environment captured", file_nonempty(env_status)),
         ("Smoke response recorded", file_nonempty(smoke_response)),
         ("Smoke response includes completion choices", contains(smoke_response, '"choices"')),
+        ("Trade opinion smoke recorded", file_nonempty(trade_opinion_smoke)),
+        ("Trade opinion smoke is actionable", contains(trade_opinion_smoke, '"actionable": true')),
         ("Resilience report recorded", file_nonempty(resilience)),
         (
             "Resilience report observed error-path signal",
@@ -60,6 +63,7 @@ def main() -> int:
     lines.append("")
     lines.append("## Claim -> Evidence Mapping")
     lines.append(f"- Routed model call works -> `{smoke_response}`")
+    lines.append(f"- Routed trade opinion is actionable -> `{trade_opinion_smoke}`")
     lines.append(f"- Failure path is handled -> `{resilience}`")
     lines.append(f"- Retrieval/memory readiness -> `{retrieval}`")
     lines.append(f"- Config + run summary -> `{env_status}`, `{summary}`")
@@ -67,9 +71,10 @@ def main() -> int:
     lines.append("## Live Demo Sequence")
     lines.append("1. Open `submission_summary.md` and state the claims.")
     lines.append("2. Show `smoke_response.json` and point to completion choices.")
-    lines.append("3. Show `resilience_report.txt` and explain fallback/error-path behavior.")
-    lines.append("4. Show `retrieval_report.txt` and describe memory/retrieval readiness.")
-    lines.append("5. Show `smoke_metrics.txt` for latency/token/cost context.")
+    lines.append("3. Show `trade_opinion_smoke.json` and point to `actionable: true`.")
+    lines.append("4. Show `resilience_report.txt` and explain fallback/error-path behavior.")
+    lines.append("5. Show `retrieval_report.txt` and describe memory/retrieval readiness.")
+    lines.append("6. Show `smoke_metrics.txt` for latency/token/cost context.")
     lines.append("")
 
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")

@@ -218,6 +218,28 @@ retrieval_check() {
   echo "ok: retrieval report generated -> $out"
 }
 
+trade_opinion_smoke() {
+  local out="$ARTIFACT_DIR/trade_opinion_smoke.json"
+  if [[ ! -f "$REPO_ROOT/scripts/tetrate_trade_opinion_smoke.py" ]]; then
+    echo "error: missing script scripts/tetrate_trade_opinion_smoke.py"
+    return 1
+  fi
+  python3 "$REPO_ROOT/scripts/tetrate_trade_opinion_smoke.py" --out "$out"
+  if command -v jq >/dev/null 2>&1; then
+    if jq -e '.actionable == true' "$out" >/dev/null 2>&1; then
+      echo "ok: trade opinion smoke actionable -> $out"
+      return 0
+    fi
+  else
+    if rg -q '"actionable": true' "$out"; then
+      echo "ok: trade opinion smoke actionable -> $out"
+      return 0
+    fi
+  fi
+  echo "error: trade opinion smoke not actionable -> $out"
+  return 1
+}
+
 package_summary() {
   local out="$ARTIFACT_DIR/submission_summary.md"
   local checklist_script="$REPO_ROOT/scripts/generate_hackathon_demo_checklist.py"
@@ -229,12 +251,14 @@ package_summary() {
     echo "## Artifacts"
     echo "- env status: \`$ARTIFACT_DIR/env_status.txt\`"
     echo "- smoke response: \`$ARTIFACT_DIR/smoke_response.json\`"
+    echo "- trade opinion smoke: \`$ARTIFACT_DIR/trade_opinion_smoke.json\`"
     echo "- smoke metrics: \`$ARTIFACT_DIR/smoke_metrics.txt\`"
     echo "- resilience report: \`$ARTIFACT_DIR/resilience_report.txt\`"
     echo "- retrieval report: \`$ARTIFACT_DIR/retrieval_report.txt\`"
     echo
     echo "## Judge-ready claims (evidence-backed)"
     echo "- Gateway route configured and validated via smoke call output"
+    echo "- Trade opinion route validated with actionable output gate"
     echo "- Error-path behavior validated via invalid-model resilience test"
     echo "- Retrieval stack readiness validated via repo checks"
   } > "$out"
@@ -249,6 +273,7 @@ package_summary() {
 full_run() {
   verify_env
   smoke_call
+  trade_opinion_smoke
   resilience_check
   retrieval_check
   package_summary

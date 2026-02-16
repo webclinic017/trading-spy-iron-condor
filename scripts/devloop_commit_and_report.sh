@@ -59,6 +59,7 @@ wait_for_green_checks() {
 generate_report() {
   log "generate morning report start"
   "$PYTHON_BIN" scripts/generate_morning_report.py --repo-root . --out artifacts/devloop/morning_report.md >>"$LOG_FILE" 2>&1
+  "$PYTHON_BIN" scripts/generate_system_explainer.py --repo-root . --out docs/_reports/hackathon-system-explainer.md >>"$LOG_FILE" 2>&1 || true
   log "generate morning report done"
 }
 
@@ -83,9 +84,11 @@ stage_targets() {
     artifacts/tars/retrieval_report.txt \
     artifacts/tars/smoke_metrics.txt \
     artifacts/tars/smoke_response.json \
+    artifacts/tars/trade_opinion_smoke.json \
     artifacts/tars/submission_summary.md \
     || true
   git add \
+    docs/_reports/hackathon-system-explainer.md \
     manual_layer1_tasks.md \
     config/manual_layer1_tasks.md \
     data/rag/lessons_query.json \
