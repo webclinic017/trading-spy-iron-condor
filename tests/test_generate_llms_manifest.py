@@ -15,11 +15,7 @@ def test_generate_manifests_indexes_site_and_repo_content(tmp_path: Path) -> Non
 
     _write(
         root / "docs/_posts/2026-02-15-my-latest-post.md",
-        "---\n"
-        "title: My Latest Post\n"
-        "---\n"
-        "\n"
-        "# Body\n",
+        "---\ntitle: My Latest Post\n---\n\n# Body\n",
     )
     _write(
         root / "docs/_posts/2026-02-14-older-post.md",
@@ -27,14 +23,11 @@ def test_generate_manifests_indexes_site_and_repo_content(tmp_path: Path) -> Non
     )
     _write(
         root / "docs/_reports/daily-report.md",
-        "---\n"
-        "title: Daily Report\n"
-        "---\n",
+        "---\ntitle: Daily Report\n---\n",
     )
     _write(
         root / "rag_knowledge/lessons_learned/LL-001.md",
-        "# LL-001: Test Lesson\n\n"
-        "**Date**: 2026-02-13\n",
+        "# LL-001: Test Lesson\n\n**Date**: 2026-02-13\n",
     )
     _write(root / ".github/workflows/ci.yml", "name: CI\n")
     _write(root / ".github/workflows/deploy-pages.yml", "name: Deploy\n")
