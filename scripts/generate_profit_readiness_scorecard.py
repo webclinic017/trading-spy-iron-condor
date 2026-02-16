@@ -352,7 +352,9 @@ def main() -> int:
         lines.append(f"- Blocked Gate Categories: {', '.join(str(x) for x in blocked_categories)}")
     else:
         lines.append("- Blocked Gate Categories: none")
-    diagnostic_summary = str(no_trade_diagnostic.get("summary") or "No weekly diagnostic available.")
+    diagnostic_summary = str(
+        no_trade_diagnostic.get("summary") or "No weekly diagnostic available."
+    )
     lines.append(f"- Diagnostic Summary: {diagnostic_summary}")
     lines.append("")
 

@@ -179,7 +179,9 @@ def _categorize_reason(reason: str) -> set[str]:
         )
     ):
         categories.add("risk_caps")
-    if any(token in text for token in ("liquid", "volume", "vol=", "spread", "bid/ask", "illiquid")):
+    if any(
+        token in text for token in ("liquid", "volume", "vol=", "spread", "bid/ask", "illiquid")
+    ):
         categories.add("liquidity")
     return categories
 
@@ -207,8 +209,14 @@ def _compute_no_trade_diagnostic(
     iron_regime = _safe_nested_dict(iron_condor_state, "results", "regime_gate", "output")
     options_chain = _safe_nested_dict(iron_condor_state, "results", "options_chain", "output")
     swarm_risk = _safe_nested_dict(swarm_state, "results", "risk_gate", "output")
-    risk_checks = swarm_risk.get("risk_checks", {}) if isinstance(swarm_risk.get("risk_checks"), dict) else {}
-    regime_check = risk_checks.get("regime_check", {}) if isinstance(risk_checks.get("regime_check"), dict) else {}
+    risk_checks = (
+        swarm_risk.get("risk_checks", {}) if isinstance(swarm_risk.get("risk_checks"), dict) else {}
+    )
+    regime_check = (
+        risk_checks.get("regime_check", {})
+        if isinstance(risk_checks.get("regime_check"), dict)
+        else {}
+    )
     position_size_check = (
         risk_checks.get("position_size_check", {})
         if isinstance(risk_checks.get("position_size_check"), dict)
@@ -254,8 +262,12 @@ def _compute_no_trade_diagnostic(
     gate_status = {
         "regime": {
             "status": _status(regime_pass_signal),
-            "detail": str(regime_check.get("note") or iron_regime.get("regime") or "No regime evidence"),
-            "evidence_date": str(iron_condor_state.get("last_updated") or swarm_state.get("last_updated") or ""),
+            "detail": str(
+                regime_check.get("note") or iron_regime.get("regime") or "No regime evidence"
+            ),
+            "evidence_date": str(
+                iron_condor_state.get("last_updated") or swarm_state.get("last_updated") or ""
+            ),
         },
         "vix": {
             "status": _status(regime_pass_signal),
@@ -266,7 +278,11 @@ def _compute_no_trade_diagnostic(
             "status": (
                 "unknown"
                 if dte_value is None
-                else ("pass" if DEFAULT_MIN_TARGET_DTE <= dte_value <= DEFAULT_MAX_TARGET_DTE else "blocked")
+                else (
+                    "pass"
+                    if DEFAULT_MIN_TARGET_DTE <= dte_value <= DEFAULT_MAX_TARGET_DTE
+                    else "blocked"
+                )
             ),
             "value": dte_value,
             "target_range": f"{DEFAULT_MIN_TARGET_DTE}-{DEFAULT_MAX_TARGET_DTE}",
@@ -287,7 +303,8 @@ def _compute_no_trade_diagnostic(
                 if not recent_decisions
                 else (
                     "blocked"
-                    if low_liquidity_events >= max(1, len(volume_ratios) // 2 if volume_ratios else 1)
+                    if low_liquidity_events
+                    >= max(1, len(volume_ratios) // 2 if volume_ratios else 1)
                     else "pass"
                 )
             ),
@@ -302,7 +319,9 @@ def _compute_no_trade_diagnostic(
     ]
 
     if closed_trades_recent > 0:
-        summary = "Closed trades exist in lookback window; no-trade root cause not currently active."
+        summary = (
+            "Closed trades exist in lookback window; no-trade root cause not currently active."
+        )
     elif qualified_setups_recent == 0:
         summary = (
             "No qualified setups captured in lookback window. "
@@ -319,7 +338,9 @@ def _compute_no_trade_diagnostic(
     top_reasons = [
         {"reason": reason, "count": count} for reason, count in reason_counter.most_common(5)
     ]
-    gate_block_counts = {category: int(count) for category, count in sorted(category_counter.items())}
+    gate_block_counts = {
+        category: int(count) for category, count in sorted(category_counter.items())
+    }
 
     return {
         "lookback_days": DEFAULT_LOOKBACK_DAYS,
