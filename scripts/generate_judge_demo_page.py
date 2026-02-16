@@ -64,7 +64,9 @@ def status_chip(status: str) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate polished judge demo page from artifacts.")
+    parser = argparse.ArgumentParser(
+        description="Generate polished judge demo page from artifacts."
+    )
     parser.add_argument("--repo-root", default=".", help="Repository root")
     parser.add_argument("--out", default="docs/lessons/judge-demo.html", help="Output HTML path")
     args = parser.parse_args()
@@ -92,10 +94,13 @@ def main() -> int:
     exec_p95 = exec_daily.get("p95_latency_ms", "n/a")
     generated_at = exec_daily.get("generated_at_utc", "n/a")
 
-    metric_rows = "\n".join(
-        f"<tr><td>{name}</td><td>{value}</td><td>{status_chip(status)}</td></tr>"
-        for name, value, status in metrics[:12]
-    ) or '<tr><td colspan="3">No scorecard metrics found yet.</td></tr>'
+    metric_rows = (
+        "\n".join(
+            f"<tr><td>{name}</td><td>{value}</td><td>{status_chip(status)}</td></tr>"
+            for name, value, status in metrics[:12]
+        )
+        or '<tr><td colspan="3">No scorecard metrics found yet.</td></tr>'
+    )
 
     html = f"""<!doctype html>
 <html lang="en">
