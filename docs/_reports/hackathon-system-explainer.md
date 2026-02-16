@@ -7,7 +7,7 @@ hero_image: "/assets/img/agent-loop-diagram.png"
 
 # Hackathon System Explainer
 
-Last Updated (UTC): 2026-02-16T14:36:42Z
+Last Updated (UTC): 2026-02-16T14:41:44Z
 
 ## Current Runtime Snapshot
 - Latest cycle: `n/a`
@@ -64,20 +64,20 @@ flowchart TD
 The section below is auto-generated each cycle from the active Layer-1 task board and runtime logs.
 
 
-- Generated (UTC): `2026-02-16T14:36:02Z`
+- Generated (UTC): `2026-02-16T14:41:21Z`
 - Open Layer-1 tasks: `2`
 
 ## Active Tasks (with elapsed time)
-- `ACTIVE` Add expectancy metrics (profit factor, avg winner, avg loser) to `scripts/generate_profit_readiness_scorecard.py`. (elapsed: 16m 47s)
-- `ACTIVE` Add a promotion gate artifact that blocks strategy promotion when win rate/run-rate thresholds are below target. (elapsed: 16m 47s)
+- `ACTIVE` Add expectancy metrics (profit factor, avg winner, avg loser) to `scripts/generate_profit_readiness_scorecard.py`. (elapsed: 22m 6s)
+- `ACTIVE` Add a promotion gate artifact that blocks strategy promotion when win rate/run-rate thresholds are below target. (elapsed: 22m 6s)
 
 ## Current Task In Progress
 - Task: Add expectancy metrics (profit factor, avg winner, avg loser) to `scripts/generate_profit_readiness_scorecard.py`.
 - Started (UTC): `2026-02-16T14:19:15Z`
-- Elapsed: `16m 47s`
+- Elapsed: `22m 6s`
 
 ## Runtime Phases
-- Last analyze: cycle=3 profile=profit duration=18s
+- Last analyze: cycle=1 profile=profit duration=22s
 - Last TARS: cycle=2 duration=1m 46s
 - Last RAG: cycle=4 duration=23s
 
