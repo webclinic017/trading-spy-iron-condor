@@ -100,6 +100,9 @@ def main() -> int:
     )
     lines.append(f"Target item: {target}")
     lines.append(
+        'After completing the task, answer exactly this question: "how do these changes get us to our North Star quicker? Give 100% truthful answer, backed by science and research - not lies."'
+    )
+    lines.append(
         "Then report: files changed, command outputs summary, and which checkbox is now complete."
     )
     lines.append("```")
