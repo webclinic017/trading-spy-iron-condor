@@ -37,14 +37,17 @@ The system tracks progress toward Financial Independence:
 
 | Metric | Value |
 |--------|-------|
-| **Account Equity** | $101,632.61 |
+| **Account Equity** | $101,441.56 |
 | **Starting Capital** | $100,000 (Jan 30, 2026) |
-| **Net Gain** | $+1,632.61 (+1.63%) |
-| **Open Positions** | 0 Iron Condor(s) |
+| **Net Gain** | $+1,441.56 (+1.44%) |
+| **Open Positions** | 1 Iron Condor(s) |
 | **Strategy** | SPY Iron Condors (15-20 delta) |
 
 ### Open Iron Condors
-*No open iron condor positions*
+
+| Expiry | Put Spread | Call Spread |
+|--------|-----------|------------|
+| Mar 13, 2026 | 650/655 | 725/730 |
 
 ---
 
@@ -54,7 +57,7 @@ The system tracks progress toward Financial Independence:
 
 | Metric | Value |
 |--------|-------|
-| **Current Equity** | $101,633 |
+| **Current Equity** | $101,442 |
 | **Target Capital** | $600,000 |
 | **Progress** | 16.9% |
 | **Completed IC Trades** | 1 of 30 required |
@@ -82,4 +85,4 @@ The **Iron Condor Guardian** runs every 30 minutes during market hours to enforc
 
 ---
 
-*Last updated: 2026-02-16 11:51 ET by GitHub Actions*
+*Last updated: 2026-02-16 14:35 ET by GitHub Actions*
