@@ -7,13 +7,13 @@ hero_image: "/assets/img/agent-loop-diagram.png"
 
 # Hackathon System Explainer
 
-Last Updated (UTC): 2026-02-16T14:11:30Z
+Last Updated (UTC): 2026-02-16T14:21:34Z
 
 ## Current Runtime Snapshot
 - Latest cycle: `n/a`
 - Latest profile: `n/a`
 - Latest loop status timestamp: `n/a`
-- Latest Tetrate latency: `1614 ms`
+- Latest Tetrate latency: `958 ms`
 - Latest Tetrate estimated call cost: `0.00004500`
 
 ## Proof Checklist
@@ -59,4 +59,28 @@ flowchart TD
 - `artifacts/tars/trade_opinion_smoke.json`
 - `artifacts/devloop/profit_readiness_scorecard.md`
 - `artifacts/devloop/kpi_priority_report.md`
+
+## Live Tasks and Timing
+The section below is auto-generated each cycle from the active Layer-1 task board and runtime logs.
+
+
+- Generated (UTC): `2026-02-16T14:19:15Z`
+- Open Layer-1 tasks: `2`
+
+## Active Tasks (with elapsed time)
+- `NEW` Add expectancy metrics (profit factor, avg winner, avg loser) to `scripts/generate_profit_readiness_scorecard.py`. (elapsed: 0s)
+- `NEW` Add a promotion gate artifact that blocks strategy promotion when win rate/run-rate thresholds are below target. (elapsed: 0s)
+
+## Runtime Phases
+- Analyze in progress: cycle=4 profile=full elapsed=4m 33s
+- Last TARS: cycle=3 duration=2m 47s
+- Last RAG: cycle=6 duration=22s
+
+## Newly Added Tasks This Run
+- Add expectancy metrics (profit factor, avg winner, avg loser) to `scripts/generate_profit_readiness_scorecard.py`.
+- Add a promotion gate artifact that blocks strategy promotion when win rate/run-rate thresholds are below target.
+
+## Sources
+- `manual_layer1_tasks.md`
+- `artifacts/devloop/continuous.log`
 
