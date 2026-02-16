@@ -9,6 +9,9 @@ FULL_EVERY="${FULL_EVERY:-6}"
 MAX_CYCLES="${MAX_CYCLES:-0}" # 0 = infinite
 RUN_TARS="${RUN_TARS:-0}" # 1 enables TARS full run each cycle
 RUN_RAG="${RUN_RAG:-0}" # 1 enables RAG refresh during full profile cycles
+SYNC_GDOC="${SYNC_GDOC:-0}" # 1 syncs explainer into Google Doc each cycle
+GDRIVE_DOC_URL="${GDRIVE_DOC_URL:-}"
+GDRIVE_CREDS_FILE="${GDRIVE_CREDS_FILE:-.secrets/google-service-account.json}"
 STOP_FILE="${STOP_FILE:-$REPO_ROOT/artifacts/devloop/STOP}"
 LOG_FILE="${LOG_FILE:-$REPO_ROOT/artifacts/devloop/continuous.log}"
 TARS_AUTOPILOT_SCRIPT="${TARS_AUTOPILOT_SCRIPT:-$REPO_ROOT/scripts/tars_autopilot.sh}"
@@ -69,6 +72,9 @@ run_cycle() {
   fi
   python3 scripts/generate_kpi_page.py --repo-root . --out artifacts/devloop/kpi_page.md >>"$LOG_FILE" 2>&1 || true
   python3 scripts/generate_system_explainer.py --repo-root . --out docs/_reports/hackathon-system-explainer.md >>"$LOG_FILE" 2>&1 || true
+  if [[ "$SYNC_GDOC" == "1" ]] && [[ -n "$GDRIVE_DOC_URL" ]]; then
+    python3 scripts/sync_explainer_to_gdoc.py --doc "$GDRIVE_DOC_URL" --in docs/_reports/hackathon-system-explainer.md --creds "$GDRIVE_CREDS_FILE" >>"$LOG_FILE" 2>&1 || true
+  fi
   python3 scripts/generate_next_copilot_prompt.py --repo-root . --out artifacts/devloop/next_copilot_prompt.md >>"$LOG_FILE" 2>&1 || true
 }
 
@@ -86,6 +92,9 @@ Environment:
   MAX_CYCLES        Max cycles then exit, 0=infinite (default: 0)
   RUN_TARS          1 to run TARS full each cycle (default: 0)
   RUN_RAG           1 to refresh RAG on full-profile cycles (default: 0)
+  SYNC_GDOC         1 to sync explainer to Google Doc (default: 0)
+  GDRIVE_DOC_URL    Google Doc URL or ID for explainer sync
+  GDRIVE_CREDS_FILE Service account JSON path (default: .secrets/google-service-account.json)
   TARS_AUTOPILOT_SCRIPT Path to tars autopilot script (default: scripts/tars_autopilot.sh)
   STOP_FILE         Stop marker file path
   LOG_FILE          Log file path

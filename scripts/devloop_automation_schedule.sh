@@ -7,6 +7,7 @@ REPORT_LABEL="com.joeyrahme.trading.devloop.report9am"
 COMMIT_PLIST="$HOME/Library/LaunchAgents/$COMMIT_LABEL.plist"
 REPORT_PLIST="$HOME/Library/LaunchAgents/$REPORT_LABEL.plist"
 LOG_DIR="$REPO_ROOT/artifacts/devloop"
+ENV_FILE="${ENV_FILE:-$REPO_ROOT/.env.devloop}"
 
 mkdir -p "$HOME/Library/LaunchAgents" "$LOG_DIR"
 
@@ -22,7 +23,7 @@ write_commit_plist() {
   <array>
     <string>/bin/zsh</string>
     <string>-lc</string>
-    <string>cd "$REPO_ROOT" &amp;&amp; ./scripts/devloop_commit_and_report.sh commit</string>
+    <string>cd "$REPO_ROOT" &amp;&amp; set -a &amp;&amp; [ -f "$ENV_FILE" ] &amp;&amp; source "$ENV_FILE" ; set +a ; ./scripts/devloop_commit_and_report.sh commit</string>
   </array>
   <key>WorkingDirectory</key>
   <string>$REPO_ROOT</string>
@@ -56,7 +57,7 @@ write_report_plist() {
   <array>
     <string>/bin/zsh</string>
     <string>-lc</string>
-    <string>cd "$REPO_ROOT" &amp;&amp; ./scripts/devloop_commit_and_report.sh report</string>
+    <string>cd "$REPO_ROOT" &amp;&amp; set -a &amp;&amp; [ -f "$ENV_FILE" ] &amp;&amp; source "$ENV_FILE" ; set +a ; ./scripts/devloop_commit_and_report.sh report</string>
   </array>
   <key>WorkingDirectory</key>
   <string>$REPO_ROOT</string>

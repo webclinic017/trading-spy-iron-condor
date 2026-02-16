@@ -8,6 +8,9 @@ LOG_FILE="${LOG_FILE:-$REPO_ROOT/artifacts/devloop/auto_commit.log}"
 BRANCH="${BRANCH:-$(git rev-parse --abbrev-ref HEAD)}"
 ENFORCE_PR_GREEN="${ENFORCE_PR_GREEN:-1}"
 PR_NUMBER="${PR_NUMBER:-}"
+SYNC_GDOC="${SYNC_GDOC:-0}"
+GDRIVE_DOC_URL="${GDRIVE_DOC_URL:-}"
+GDRIVE_CREDS_FILE="${GDRIVE_CREDS_FILE:-.secrets/google-service-account.json}"
 PYTHON_BIN="${PYTHON_BIN:-$REPO_ROOT/.venv-devloop/bin/python}"
 if [[ ! -x "$PYTHON_BIN" ]]; then
   PYTHON_BIN="python3"
@@ -60,6 +63,9 @@ generate_report() {
   log "generate morning report start"
   "$PYTHON_BIN" scripts/generate_morning_report.py --repo-root . --out artifacts/devloop/morning_report.md >>"$LOG_FILE" 2>&1
   "$PYTHON_BIN" scripts/generate_system_explainer.py --repo-root . --out docs/_reports/hackathon-system-explainer.md >>"$LOG_FILE" 2>&1 || true
+  if [[ "$SYNC_GDOC" == "1" ]] && [[ -n "$GDRIVE_DOC_URL" ]]; then
+    "$PYTHON_BIN" scripts/sync_explainer_to_gdoc.py --doc "$GDRIVE_DOC_URL" --in docs/_reports/hackathon-system-explainer.md --creds "$GDRIVE_CREDS_FILE" >>"$LOG_FILE" 2>&1 || true
+  fi
   log "generate morning report done"
 }
 
@@ -126,6 +132,9 @@ Commands:
 Environment:
   ENFORCE_PR_GREEN=1  Wait for PR checks and fail if not green after push.
   PR_NUMBER=3452      Optional explicit PR number.
+  SYNC_GDOC=1         Sync explainer to Google Doc during report step.
+  GDRIVE_DOC_URL=...  Google Doc URL or ID.
+  GDRIVE_CREDS_FILE=... Service account JSON path.
 EOF
 }
 
