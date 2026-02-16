@@ -47,17 +47,25 @@ def get_account_data() -> dict:
                             expiries[expiry] = {"puts": [], "calls": []}
                         strike = int(sym[10:18]) / 1000
                         opt_type = "puts" if "P" in sym[9:10] else "calls"
-                        expiries[expiry][opt_type].append({"strike": strike, "qty": int(float(pos.get("qty", 0)))})
+                        expiries[expiry][opt_type].append(
+                            {"strike": strike, "qty": int(float(pos.get("qty", 0)))}
+                        )
                 for expiry, legs in expiries.items():
                     if legs["puts"] and legs["calls"]:
                         put_strikes = sorted([p["strike"] for p in legs["puts"]])
                         call_strikes = sorted([c["strike"] for c in legs["calls"]])
                         exp_date = datetime.strptime(f"20{expiry}", "%Y%m%d")
-                        iron_condors.append({
-                            "expiry": exp_date.strftime("%b %d, %Y"),
-                            "put_spread": f"{put_strikes[0]:.0f}/{put_strikes[-1]:.0f}" if len(put_strikes) >= 2 else str(put_strikes[0]),
-                            "call_spread": f"{call_strikes[0]:.0f}/{call_strikes[-1]:.0f}" if len(call_strikes) >= 2 else str(call_strikes[0]),
-                        })
+                        iron_condors.append(
+                            {
+                                "expiry": exp_date.strftime("%b %d, %Y"),
+                                "put_spread": f"{put_strikes[0]:.0f}/{put_strikes[-1]:.0f}"
+                                if len(put_strikes) >= 2
+                                else str(put_strikes[0]),
+                                "call_spread": f"{call_strikes[0]:.0f}/{call_strikes[-1]:.0f}"
+                                if len(call_strikes) >= 2
+                                else str(call_strikes[0]),
+                            }
+                        )
                 return {
                     "equity": portfolio.get("equity", STARTING_CAPITAL),
                     "cash": portfolio.get("cash", STARTING_CAPITAL),
