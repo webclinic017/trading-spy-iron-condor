@@ -85,7 +85,6 @@ def _update_system_state_with_prediction_trade(trade_record: dict[str, Any], log
     pass
 
 
-
 def _flag_enabled(env_name: str, default: str = "true") -> bool:
     return os.getenv(env_name, default).strip().lower() in {"1", "true", "yes", "on"}
 
@@ -856,7 +855,6 @@ def calc_daily_input(equity: float) -> float:
     # Ensure we respect a reasonable floor ($10) but remove the artificial ceiling
     # Update: Cap at $1000.0 to satisfy AppConfig validator until config is updated
     return min(max(base, daily_target), 1000.0)
-
 
 
 def main() -> None:

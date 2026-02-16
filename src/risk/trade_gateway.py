@@ -417,8 +417,10 @@ class TradeGateway:
             inferred_width = request.spread_width
             if inferred_width is None:
                 inferred_width = 10.0 if account_equity >= 100_000 else 5.0
-            inferred_credit = request.premium_received if request.premium_received is not None else (
-                2.0 if inferred_width >= 10 else 1.2
+            inferred_credit = (
+                request.premium_received
+                if request.premium_received is not None
+                else (2.0 if inferred_width >= 10 else 1.2)
             )
             max_loss = max(0.0, (inferred_width * 100) - (inferred_credit * 100)) * (
                 request.quantity or 1

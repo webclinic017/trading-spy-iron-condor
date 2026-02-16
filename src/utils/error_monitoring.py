@@ -120,8 +120,6 @@ def _get_account_context() -> dict | None:
     return None
 
 
-
-
 def capture_data_source_failure(source: str, symbol: str, error: str):
     """Capture data source failure in Sentry."""
     if not _sentry_initialized:
@@ -279,5 +277,3 @@ def send_slack_alert(
     except Exception as e:
         logger.warning(f"Failed to send Slack alert: {e}")
         return False
-
-
