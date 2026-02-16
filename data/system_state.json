@@ -1201,9 +1201,9 @@
       "gate_block_counts": {},
       "top_rejection_reasons": [],
       "summary": "Closed trades exist in lookback window; no-trade root cause not currently active.",
-      "updated_at": "2026-02-16T16:45:26.107416+00:00"
+      "updated_at": "2026-02-16T16:45:52.481680+00:00"
     },
-    "updated_at": "2026-02-16T16:45:26.107603+00:00"
+    "updated_at": "2026-02-16T16:45:52.481872+00:00"
   },
   "north_star_contributions": {
     "enabled": true,
@@ -1228,7 +1228,7 @@
     "estimated_live_contribution_this_month": 0.5,
     "contribution_estimate_confidence": "medium",
     "inference_note": "Live account has no open positions; live equity change is treated as estimated contribution.",
-    "updated_at": "2026-02-16T16:45:26.107654+00:00"
+    "updated_at": "2026-02-16T16:45:52.481938+00:00"
   },
   "ic_position_management": {
     "last_run": "2026-02-16T16:45:26.837078",
