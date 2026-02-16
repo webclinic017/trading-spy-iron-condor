@@ -1235,5 +1235,13 @@
     "iron_condors_evaluated": 1,
     "exits_triggered": 0,
     "exits_executed": 0
+  },
+  "trailing_stops": {
+    "last_set": "2026-02-16T11:53:15.509112",
+    "stops_active": 1,
+    "positions_skipped": 0,
+    "value_protected": 500.0,
+    "default_trail_pct": 0.1,
+    "options_trail_pct": 0.2
   }
 }

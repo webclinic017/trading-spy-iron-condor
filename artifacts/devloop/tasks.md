@@ -5,10 +5,8 @@
 - Tests: PASS
 
 ## Layer 1: Red Build/Test Failures
-- [ ] MANUAL: Add a promotion gate artifact that blocks strategy promotion when win rate/run-rate thresholds are below target.
-- [ ] MANUAL: Add automated weekly delta section (7d and 30d) with warning flags for flat/negative run-rate.
-- [ ] MANUAL: Add demo evidence index page linking all `artifacts/tars/*` and `artifacts/devloop/*` outputs for judges.
 - [ ] MANUAL: Add expectancy metrics (profit factor, avg winner, avg loser) to `scripts/generate_profit_readiness_scorecard.py`.
+- [ ] MANUAL: Add a promotion gate artifact that blocks strategy promotion when win rate/run-rate thresholds are below target.
 
 ## Completed Since Last Iteration
 - [x] None

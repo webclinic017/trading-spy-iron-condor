@@ -71,20 +71,8 @@ generate_report() {
 }
 
 stage_targets() {
+  # Stage only product-facing outputs, not devloop internals.
   git add -f \
-    artifacts/devloop/tasks.md \
-    artifacts/devloop/profit_readiness_scorecard.md \
-    artifacts/devloop/kpi_page.md \
-    artifacts/devloop/next_copilot_prompt.md \
-    artifacts/devloop/kpi_priority_report.md \
-    artifacts/devloop/kpi_priority.json \
-    artifacts/devloop/kpi_priority_state.json \
-    artifacts/devloop/layer_expansion_report.md \
-    artifacts/devloop/rag_status.md \
-    artifacts/devloop/rag_refresh.log \
-    artifacts/devloop/rag_refresh_status.txt \
-    artifacts/devloop/morning_report.md \
-    artifacts/devloop/status.txt \
     artifacts/tars/env_status.txt \
     artifacts/tars/judge_demo_checklist.md \
     artifacts/tars/resilience_report.txt \
@@ -98,13 +86,34 @@ stage_targets() {
     artifacts/tars/submission_summary.md \
     || true
   git add \
+    src \
+    tests \
+    scripts \
+    data \
+    docs \
     docs/_reports/hackathon-system-explainer.md \
     docs/lessons/judge-demo.html \
-    manual_layer1_tasks.md \
-    config/manual_layer1_tasks.md \
     data/rag/lessons_query.json \
     docs/data/rag/lessons_query.json \
     docs/lessons/index.html \
+    || true
+
+  # Never publish internal loop orchestration / prompting mechanics.
+  git restore --staged \
+    scripts/continuous_devloop.sh \
+    scripts/devloop_launchagent.sh \
+    scripts/devloop_resource_guard.sh \
+    scripts/devloop_resource_guard_launchagent.sh \
+    scripts/monitor_devloops.sh \
+    scripts/devloop_self_heal.sh \
+    scripts/loop_monitor_launchagent.sh \
+    scripts/layered_tdd_loop.sh \
+    scripts/generate_layered_tasks.py \
+    scripts/generate_next_copilot_prompt.py \
+    scripts/enforce_layer1_focus.py \
+    manual_layer1_tasks.md \
+    config/manual_layer1_tasks.md \
+    artifacts/devloop \
     || true
 }
 
@@ -119,7 +128,7 @@ commit_changes() {
   fi
   local ts
   ts="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-  git commit -m "chore(devloop): auto snapshot ${ts}" >>"$LOG_FILE" 2>&1
+  git commit -m "chore(product): auto snapshot ${ts}" >>"$LOG_FILE" 2>&1
   git push origin "$BRANCH" >>"$LOG_FILE" 2>&1
   wait_for_green_checks
   log "auto-commit done"

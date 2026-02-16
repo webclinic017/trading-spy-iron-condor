@@ -70,11 +70,10 @@ def check_workflow_tickers() -> list[str]:
     if not workflow_dir.exists():
         return errors
 
-    # Patterns that indicate trading ticker selection
     ticker_patterns = [
-        r'TICKERS="([^"]+)"',  # TICKERS="SPY IWM"
-        r"--symbol\s+(\w+)",  # --symbol SPY
-        r"for\s+TICKER\s+in\s+([A-Z\s]+)",  # for TICKER in SPY IWM
+        r'TICKERS="([^"]+)"',
+        r"--symbol\s+(\w+)",
+        r"for\s+TICKER\s+in\s+([A-Z\s]+)",
     ]
 
     for workflow in workflow_dir.glob("*.yml"):
@@ -83,7 +82,6 @@ def check_workflow_tickers() -> list[str]:
         for pattern in ticker_patterns:
             matches = re.findall(pattern, content)
             for match in matches:
-                # Split on whitespace to get individual tickers
                 tickers = match.split()
                 for ticker in tickers:
                     ticker = ticker.upper().strip()
@@ -95,6 +93,12 @@ def check_workflow_tickers() -> list[str]:
                         errors.append(
                             f"BLACKOUT: {workflow.name} uses {ticker} "
                             f"which is in CLAUDE.md blackout list"
+                        )
+                    # Check if ticker is not in approved whitelist
+                    if ticker not in _approved:
+                        errors.append(
+                            f"WHITELIST: {workflow.name} uses {ticker} "
+                            f"which is NOT in CLAUDE.md approved list"
                         )
 
     return errors

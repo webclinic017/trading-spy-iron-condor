@@ -8,7 +8,7 @@ LOG_DIR="$REPO_ROOT/artifacts/devloop"
 OUT_LOG="$LOG_DIR/pr_green_guard.out.log"
 ERR_LOG="$LOG_DIR/pr_green_guard.err.log"
 INTERVAL_SECONDS_VALUE="${INTERVAL_SECONDS:-300}"
-PR_NUMBER_VALUE="${PR_NUMBER:-3452}"
+PR_NUMBER_VALUE="${PR_NUMBER:-}"
 
 mkdir -p "$LOG_DIR" "$HOME/Library/LaunchAgents"
 
@@ -24,7 +24,7 @@ install_agent() {
   <array>
     <string>/bin/zsh</string>
     <string>-lc</string>
-    <string>cd "$REPO_ROOT" &amp;&amp; BRANCH=Joey-1 PR_NUMBER=$PR_NUMBER_VALUE INTERVAL_SECONDS=$INTERVAL_SECONDS_VALUE ./scripts/pr_green_guard.sh</string>
+    <string>cd "$REPO_ROOT" &amp;&amp; BRANCH=Joey-1 INTERVAL_SECONDS=$INTERVAL_SECONDS_VALUE ${PR_NUMBER_VALUE:+PR_NUMBER=$PR_NUMBER_VALUE }./scripts/pr_green_guard.sh</string>
   </array>
   <key>WorkingDirectory</key>
   <string>$REPO_ROOT</string>
@@ -70,7 +70,7 @@ usage() {
   cat <<EOF
 Usage: $0 <install|uninstall|status|restart>
 Env overrides:
-  PR_NUMBER=3452
+  PR_NUMBER=3466
   INTERVAL_SECONDS=300
 EOF
 }

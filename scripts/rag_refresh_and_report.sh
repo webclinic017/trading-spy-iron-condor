@@ -54,6 +54,53 @@ PY
   log "RAG reindex done (exit=$exit_code cmd=$cmd_exit health=$health_exit)"
 }
 
+run_tars_ingest() {
+  log "TARS artifact ingest to RAG start"
+  local exit_code=0
+  set +e
+  "$PYTHON_BIN" scripts/ingest_tars_artifacts_to_rag.py \
+    --artifact-dir artifacts/tars \
+    --out-dir rag_knowledge/lessons_learned \
+    --manifest artifacts/devloop/tars_rag_ingest_manifest.json \
+    --report artifacts/devloop/tars_rag_ingest_report.md >>"$LOG_FILE" 2>&1
+  exit_code=$?
+  set -e
+  printf "tars_ingest_exit=%s\n" "$exit_code" >>"$STATUS_FILE"
+  log "TARS artifact ingest to RAG done (exit=$exit_code)"
+}
+
+snapshot_index_stats() {
+  local out="$1"
+  local src="$REPO_ROOT/.claude/memory/lancedb/index_stats.json"
+  if [[ -f "$src" ]]; then
+    cp "$src" "$out"
+  else
+    printf '{"files_processed":0,"chunks_created":0,"errors":["missing_index_stats"]}\n' >"$out"
+  fi
+}
+
+run_tars_rag_validation() {
+  local before_stats="$REPO_ROOT/artifacts/devloop/index_stats_before_tars_ingest.json"
+  local after_stats="$REPO_ROOT/artifacts/devloop/index_stats_after_tars_ingest.json"
+  snapshot_index_stats "$before_stats"
+  run_tars_ingest
+  run_reindex
+  snapshot_index_stats "$after_stats"
+  log "TARS->RAG validation artifact generation start"
+  local exit_code=0
+  set +e
+  "$PYTHON_BIN" scripts/generate_tars_rag_validation.py \
+    --before-stats "$before_stats" \
+    --after-stats "$after_stats" \
+    --ingest-report artifacts/devloop/tars_rag_ingest_report.md \
+    --out-json artifacts/devloop/tars_rag_validation.json \
+    --out-md artifacts/devloop/tars_rag_validation.md >>"$LOG_FILE" 2>&1
+  exit_code=$?
+  set -e
+  printf "tars_rag_validation_exit=%s\n" "$exit_code" >>"$STATUS_FILE"
+  log "TARS->RAG validation artifact generation done (exit=$exit_code)"
+}
+
 run_query_index() {
   log "RAG query-index build start"
   local exit_code=0
@@ -82,8 +129,9 @@ Usage: $0 <refresh|report|full>
 
 Commands:
   refresh  Run reindex + query index update.
+  tars     Run TARS artifact ingest + reindex + validation.
   report   Generate status report only.
-  full     Refresh and then generate status report.
+  full     Run tars ingest/validation, refresh, and then generate status report.
 
 Environment:
   FORCE=1           Force rebuild reindex table
@@ -102,11 +150,15 @@ main() {
       run_reindex
       run_query_index
       ;;
+    tars)
+      run_tars_rag_validation
+      run_query_index
+      ;;
     report)
       run_status_report
       ;;
     full)
-      run_reindex
+      run_tars_rag_validation
       run_query_index
       run_status_report
       ;;

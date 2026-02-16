@@ -1,7 +1,7 @@
 {
-  "focus_metric": "Equity delta (1d)",
-  "focus_deficit": 100.0,
-  "same_focus_cycles": 5,
-  "stall_pivot": false,
+  "focus_metric": "Monthly run-rate estimate",
+  "focus_deficit": 100.5,
+  "same_focus_cycles": 93,
+  "stall_pivot": true,
   "stall_window": 6
 }

@@ -1,7 +1,7 @@
 # KPI Page
 
 ## Snapshot
-- Demo checklist completion: 8/8
+- Demo checklist completion: 8/10
 - Readiness metrics: PASS=4, WARN=1, UNKNOWN=0
 
 ## Reliability
@@ -12,12 +12,12 @@
 - Win Rate: 37.50% [WARN]
 - Max Drawdown (sync history): 0.03% [PASS]
 - Execution Quality (valid trade records): 97.89% [PASS]
-- Gateway Latency: 897 ms [PASS]
+- Gateway Latency: 1626 ms [PASS]
 - Gateway Cost (smoke call): $0.000045 [PASS]
 
 ## 7-Day Trend
-- Equity delta (1d): $0.00 (0.00%) [WARN]
-- Monthly run-rate estimate: $0.00/month [WARN]
+- Equity delta (2d): $-2.00 (-0.00%) [WARN]
+- Monthly run-rate estimate: $-30.00/month [WARN]
 - Data source: sync_health.history
 - North Star target: $6,000/month after tax
 

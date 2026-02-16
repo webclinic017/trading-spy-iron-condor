@@ -2,18 +2,21 @@
 
 ## Decision
 - Layer 1 has open items; no promotions this cycle.
-- Open Layer 1 count: 4
-- Candidate pool size: 7
+- Open Layer 1 count: 2
+- Candidate pool size: 10
 - Promoted this cycle: 0
-- Focus metric: Equity delta (1d)
+- Focus metric: Monthly run-rate estimate
 
 ## KPI Signals
 - Win Rate
-- Equity delta (1d)
+- Equity delta (2d)
 - Monthly run-rate estimate
 
 ## Top Candidates
-- Improve KPI metric: Equity delta (1d) with measurable artifact proof.
+- Add a run-rate promotion gate artifact that fails when monthly estimate is below $6,000 target.
+- Implement one measurable strategy improvement and produce before/after run-rate artifact using same sampling window.
+- STALL PIVOT: For focus metric `Monthly run-rate estimate`, run a simulation/backtest matrix and generate artifact proving best configuration before further feature work.
+- STALL PIVOT: Add an implementation-level gate test that must fail if KPI regresses versus baseline artifact.
 - Improve win rate with stricter entry filters and add a validation report proving >=55% over the latest sample window.
 - Improve 7-day equity delta by adding one measurable strategy change and a before/after artifact.
 - Increase monthly run-rate with a promotion gate tied to run-rate threshold and backtest proof artifact.

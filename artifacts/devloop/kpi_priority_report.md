@@ -1,23 +1,25 @@
 # KPI Priority Report
 
 ## Focus
-- Focus metric: Equity delta (1d)
-- Deficit score: 100.00
-- Same-focus cycles: 5
-- Stall pivot active: no
+- Focus metric: Monthly run-rate estimate
+- Deficit score: 100.50
+- Same-focus cycles: 93
+- Stall pivot active: yes
 
 ## Ranked Gaps
-- Equity delta (1d): $0.00 (0.00%) [WARN] deficit=100.00
-- Monthly run-rate estimate: $0.00/month [WARN] deficit=100.00
+- Monthly run-rate estimate: $-30.00/month [WARN] deficit=100.50
+- Equity delta (2d): $-2.00 (-0.00%) [WARN] deficit=100.00
 - Win Rate: 37.50% [WARN] deficit=31.82
 - Max Drawdown (sync history): 0.03% [PASS] deficit=0.00
 - Execution Quality (valid trade records): 97.89% [PASS] deficit=0.00
-- Gateway Latency: 897 ms [PASS] deficit=0.00
+- Gateway Latency: 1626 ms [PASS] deficit=0.00
 - Gateway Cost (smoke call): $0.000045 [PASS] deficit=0.00
 
 ## Recommended Tasks
-- Improve KPI metric: Equity delta (1d) with measurable artifact proof.
+- Add a run-rate promotion gate artifact that fails when monthly estimate is below $6,000 target.
+- Implement one measurable strategy improvement and produce before/after run-rate artifact using same sampling window.
 
 ## Stall Pivot Tasks
-- None
+- STALL PIVOT: For focus metric `Monthly run-rate estimate`, run a simulation/backtest matrix and generate artifact proving best configuration before further feature work.
+- STALL PIVOT: Add an implementation-level gate test that must fail if KPI regresses versus baseline artifact.
 
