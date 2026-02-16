@@ -8,8 +8,13 @@ INTERVAL_SECONDS="${INTERVAL_SECONDS:-900}"
 FULL_EVERY="${FULL_EVERY:-6}"
 MAX_CYCLES="${MAX_CYCLES:-0}" # 0 = infinite
 RUN_TARS="${RUN_TARS:-0}" # 1 enables TARS full run each cycle
+RUN_RAG="${RUN_RAG:-0}" # 1 enables RAG refresh during full profile cycles
+SYNC_GDOC="${SYNC_GDOC:-0}" # 1 syncs explainer into Google Doc each cycle
+GDRIVE_DOC_URL="${GDRIVE_DOC_URL:-}"
+GDRIVE_CREDS_FILE="${GDRIVE_CREDS_FILE:-.secrets/google-service-account.json}"
 STOP_FILE="${STOP_FILE:-$REPO_ROOT/artifacts/devloop/STOP}"
 LOG_FILE="${LOG_FILE:-$REPO_ROOT/artifacts/devloop/continuous.log}"
+TARS_AUTOPILOT_SCRIPT="${TARS_AUTOPILOT_SCRIPT:-$REPO_ROOT/scripts/tars_autopilot.sh}"
 
 mkdir -p "$REPO_ROOT/artifacts/devloop"
 touch "$LOG_FILE"
@@ -43,15 +48,34 @@ run_cycle() {
   if [[ "$RUN_TARS" == "1" ]]; then
     if [[ -n "${LLM_GATEWAY_BASE_URL:-}" ]] && [[ -n "${LLM_GATEWAY_API_KEY:-}${TETRATE_API_KEY:-}" ]]; then
       log "cycle=$cycle tars full start"
-      /Users/joeyrahme/.codex/skills/tars-hackathon-autopilot/scripts/tars_autopilot.sh full >>"$LOG_FILE" 2>&1 || true
+      "$TARS_AUTOPILOT_SCRIPT" full >>"$LOG_FILE" 2>&1 || true
       log "cycle=$cycle tars full done"
     else
       log "cycle=$cycle tars skipped (gateway env missing)"
     fi
   fi
 
+  if [[ "$RUN_RAG" == "1" ]] && [[ "$profile" == "full" ]]; then
+    log "cycle=$cycle rag refresh start"
+    ./scripts/rag_refresh_and_report.sh full >>"$LOG_FILE" 2>&1 || true
+    log "cycle=$cycle rag refresh done"
+  fi
+
   python3 scripts/generate_profit_readiness_scorecard.py --repo-root . --artifact-dir artifacts/devloop --out artifacts/devloop/profit_readiness_scorecard.md >>"$LOG_FILE" 2>&1 || true
+  python3 scripts/generate_kpi_priority.py --scorecard artifacts/devloop/profit_readiness_scorecard.md --state artifacts/devloop/kpi_priority_state.json --out-md artifacts/devloop/kpi_priority_report.md --out-json artifacts/devloop/kpi_priority.json --stall-window 6 >>"$LOG_FILE" 2>&1 || true
+  local expand_output
+  expand_output="$(python3 scripts/expand_layers.py --tasks artifacts/devloop/tasks.md --scorecard artifacts/devloop/profit_readiness_scorecard.md --manual-file manual_layer1_tasks.md --mirror-manual-file config/manual_layer1_tasks.md --out artifacts/devloop/layer_expansion_report.md --priority-json artifacts/devloop/kpi_priority.json 2>&1 || true)"
+  printf "%s\n" "$expand_output" >>"$LOG_FILE"
+  if printf "%s\n" "$expand_output" | grep -q "promoted_count=[1-9]"; then
+    log "cycle=$cycle promotions detected; refreshing analyze"
+    ./scripts/layered_tdd_loop.sh analyze >>"$LOG_FILE" 2>&1 || true
+  fi
   python3 scripts/generate_kpi_page.py --repo-root . --out artifacts/devloop/kpi_page.md >>"$LOG_FILE" 2>&1 || true
+  python3 scripts/generate_system_explainer.py --repo-root . --out docs/_reports/hackathon-system-explainer.md >>"$LOG_FILE" 2>&1 || true
+  if [[ "$SYNC_GDOC" == "1" ]] && [[ -n "$GDRIVE_DOC_URL" ]]; then
+    python3 scripts/sync_explainer_to_gdoc.py --doc "$GDRIVE_DOC_URL" --in docs/_reports/hackathon-system-explainer.md --creds "$GDRIVE_CREDS_FILE" >>"$LOG_FILE" 2>&1 || true
+  fi
+  python3 scripts/generate_next_copilot_prompt.py --repo-root . --out artifacts/devloop/next_copilot_prompt.md >>"$LOG_FILE" 2>&1 || true
 }
 
 usage() {
@@ -67,6 +91,11 @@ Environment:
   FULL_EVERY        Every N cycles run PROFILE=full (default: 6)
   MAX_CYCLES        Max cycles then exit, 0=infinite (default: 0)
   RUN_TARS          1 to run TARS full each cycle (default: 0)
+  RUN_RAG           1 to refresh RAG on full-profile cycles (default: 0)
+  SYNC_GDOC         1 to sync explainer to Google Doc (default: 0)
+  GDRIVE_DOC_URL    Google Doc URL or ID for explainer sync
+  GDRIVE_CREDS_FILE Service account JSON path (default: .secrets/google-service-account.json)
+  TARS_AUTOPILOT_SCRIPT Path to tars autopilot script (default: scripts/tars_autopilot.sh)
   STOP_FILE         Stop marker file path
   LOG_FILE          Log file path
 EOF
@@ -105,4 +134,3 @@ main() {
 }
 
 main "$@"
-

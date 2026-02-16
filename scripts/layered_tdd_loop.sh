@@ -6,6 +6,15 @@ ARTIFACT_DIR="${ARTIFACT_DIR:-$REPO_ROOT/artifacts/devloop}"
 MAX_ITERS="${MAX_ITERS:-5}"
 DEVLOOP_VENV="${DEVLOOP_VENV:-$REPO_ROOT/.venv-devloop}"
 PROFILE="${PROFILE:-profit}"
+MANUAL_LAYER1_FILE="${MANUAL_LAYER1_FILE:-}"
+
+if [[ -z "$MANUAL_LAYER1_FILE" ]]; then
+  if [[ -f "$REPO_ROOT/manual_layer1_tasks.md" ]]; then
+    MANUAL_LAYER1_FILE="$REPO_ROOT/manual_layer1_tasks.md"
+  else
+    MANUAL_LAYER1_FILE="$REPO_ROOT/config/manual_layer1_tasks.md"
+  fi
+fi
 
 if [[ -x "$DEVLOOP_VENV/bin/ruff" ]]; then
   _default_ruff="$DEVLOOP_VENV/bin/ruff"
@@ -56,6 +65,7 @@ run_iteration() {
     --ruff-log "$iter_dir/ruff.log" \
     --pytest-log "$iter_dir/pytest.log" \
     --out "$iter_dir/tasks.md" \
+    --manual-layer1-file "$MANUAL_LAYER1_FILE" \
     --lint-exit "$ruff_exit" \
     --test-exit "$pytest_exit"
 
@@ -92,6 +102,7 @@ Env overrides:
   MAX_ITERS     (default: 5)
   PROFILE       (default: profit; options: profit, full)
   DEVLOOP_VENV  (default: .venv-devloop)
+  MANUAL_LAYER1_FILE (default: manual_layer1_tasks.md if present, else config/manual_layer1_tasks.md)
   RUFF_CMD      (default: profile-based command)
   PYTEST_CMD    (default: profile-based command)
 EOF

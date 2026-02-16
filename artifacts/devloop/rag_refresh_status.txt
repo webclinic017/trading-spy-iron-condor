@@ -1,0 +1,3 @@
+reindex_exit=0
+query_index_exit=0
+report_exit=0

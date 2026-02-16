@@ -1,0 +1,7 @@
+{
+  "focus_metric": "Equity delta (1d)",
+  "focus_deficit": 100.0,
+  "same_focus_cycles": 5,
+  "stall_pivot": false,
+  "stall_window": 6
+}
