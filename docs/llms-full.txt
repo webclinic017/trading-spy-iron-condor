@@ -17,7 +17,7 @@
 - Workflows configured: 88
 - Blog posts indexed: 54
 - Reports indexed: 2
-- Lessons indexed: 170
+- Lessons indexed: 171
 
 ## Blog Posts (Newest First)
 - [Building an AI Trading System for the Tetrate Buildathon](https://igorganapolsky.github.io/trading/2026/02/15/tetrate-buildathon-ai-trading-system.html) - 2026-02-15
