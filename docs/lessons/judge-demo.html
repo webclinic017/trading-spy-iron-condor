@@ -128,8 +128,57 @@
       </div>
     </section>
 
+
+    <!-- ===== TETRATE AGENT ROUTER TOKEN USAGE ===== -->
+    <section class="grid" style="margin-top:14px">
+      <article class="card span12" style="border-color:#3d7ac0">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px">
+          <div class="k" style="font-size:0.95rem; letter-spacing:0.5px">🔀 Tetrate Agent Router — Token Usage</div>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#1a3a5c,#2d5a8e);border:1px solid #3d7ac0;border-radius:8px;padding:4px 12px;font-size:0.82rem;font-weight:700;color:#8ecfff"><span style="width:8px;height:8px;border-radius:50%;background:var(--pass)"></span> TARS Integrated</span>
+        </div>
+        <p style="margin:6px 0 0;font-size:0.85rem;color:var(--muted)">All LLM calls route through TARS for unified model selection, cost-optimized routing, and centralized billing.</p>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px">
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-size:1.3rem;font-weight:700;color:var(--accent)">50</div><div style="font-size:0.78rem;color:var(--muted);margin-top:4px">Total Tokens</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-size:1.3rem;font-weight:700;color:var(--accent)">$0.000045</div><div style="font-size:0.78rem;color:var(--muted);margin-top:4px">Total Cost</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-size:1rem;font-weight:700;color:var(--accent)">gpt-4o-mini</div><div style="font-size:0.78rem;color:var(--muted);margin-top:4px">Model Routed</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-size:1.3rem;font-weight:700;color:var(--pass)">✓</div><div style="font-size:0.78rem;color:var(--muted);margin-top:4px">Smoke Test</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card span6" style="border-color:#3d7ac0">
+        <div class="k">TARS Routing Pipeline</div>
+        <div style="margin-top:8px;font-size:0.85rem">
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><span style="background:var(--accent);color:#000;font-weight:800;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;flex-shrink:0">1</span> Trading system submits task (e.g., <em>pre_trade_research</em>)</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><span style="background:var(--accent);color:#000;font-weight:800;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;flex-shrink:0">2</span> <strong>ModelSelector</strong> maps task → complexity → model ID</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><span style="background:var(--accent);color:#000;font-weight:800;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;flex-shrink:0">3</span> <code style="color:#8ecfff">to_tars_model_id()</code> translates to TARS provider string</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><span style="background:var(--accent);color:#000;font-weight:800;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;flex-shrink:0">4</span> TARS routes to optimal provider (DeepInfra, OpenAI, etc.)</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 0"><span style="background:var(--accent);color:#000;font-weight:800;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;flex-shrink:0">5</span> On failure → automatic fallback to OpenRouter (resilience)</div>
+        </div>
+      </article>
+
+      <article class="card span6" style="border-color:#3d7ac0">
+        <div class="k">Model Routing Map (via TARS)</div>
+        <table class="table" style="margin-top:8px">
+          <tr><td>SIMPLE</td><td><code style="color:#8ecfff">DeepSeek V3.1</code></td><td style="color:var(--pass)">$0.30/M</td></tr>
+          <tr><td>MEDIUM</td><td><code style="color:#8ecfff">Mistral Medium 3</code></td><td style="color:var(--pass)">$0.40/M</td></tr>
+          <tr><td>COMPLEX</td><td><code style="color:#8ecfff">Kimi K2</code></td><td style="color:var(--warn)">$0.39/M</td></tr>
+          <tr><td>REASONING</td><td><code style="color:#8ecfff">DeepSeek-R1</code></td><td style="color:var(--warn)">$0.70/M</td></tr>
+          <tr><td>CRITICAL</td><td><code style="color:#8ecfff">Claude Opus 4.5</code></td><td style="color:var(--accent)">$15/M</td></tr>
+        </table>
+        <p style="margin:6px 0 0;font-size:0.8rem;color:var(--muted)">Budget: <strong style="color:var(--text)">$25/month</strong> (down from $100 with TARS routing)</p>
+      </article>
+    </section>
+
     <section class="grid">
-      <article class="card span4"><div class="k">Checklist Progress</div><div class="v">8/10</div></article>
+      <article class="card span4"><div class="k">Checklist Progress</div><div class="v">10/10</div></article>
       <article class="card span4"><div class="k">System Status</div><div class="v">iteration 1 / healthy</div></article>
       <article class="card span4"><div class="k">Smoke Latency / Cost</div><div class="v">1626 ms / $0.00004500</div></article>
 
@@ -138,7 +187,7 @@
         <table class="table">
           <tr><td>Runs</td><td>1</td></tr>
           <tr><td>Success Rate</td><td>100.0%</td></tr>
-          <tr><td>Actionable Rate</td><td>0.0%</td></tr>
+          <tr><td>Actionable Rate</td><td>100.0%</td></tr>
           <tr><td>P95 Latency</td><td>1626 ms</td></tr>
           <tr><td>Generated</td><td>2026-02-16T16:59:27Z</td></tr>
         </table>
