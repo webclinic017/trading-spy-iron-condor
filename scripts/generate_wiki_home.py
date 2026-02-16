@@ -20,9 +20,8 @@ from alpaca.trading.client import TradingClient
 API_KEY = os.environ.get("ALPACA_API_KEY")
 SECRET_KEY = os.environ.get("ALPACA_SECRET_KEY")
 STARTING_CAPITAL = 100000.0  # $100K account started Jan 30, 2026
-NORTH_STAR_TARGET = 600000.0  # $600K = Financial Independence
-MONTHLY_INCOME_TARGET = 6000.0  # $6K/month after-tax
-MIN_TRADES_FOR_PROJECTION = 30  # No projections until 30+ completed trades
+PHASE1_REQUIRED_TRADES = 30  # Phase 1: Validate with 30 trades
+PHASE1_WIN_RATE_TARGET = 0.75  # >75% win rate required
 SYSTEM_STATE_PATH = Path("data/system_state.json")
 TRADES_PATH = Path("data/trades.json")
 
@@ -133,43 +132,24 @@ def get_account_data() -> dict:
     }
 
 
-def get_north_star_metrics() -> dict:
-    """Load North Star metrics from system_state.json."""
+def get_phase1_metrics() -> dict:
+    """Load Phase 1 validation metrics from trades.json."""
     defaults = {
-        "probability_score": 0,
-        "probability_label": "unknown",
-        "required_cagr": 0,
-        "estimated_cagr": 0,
         "closed_trades": 0,
-        "realized_pl": 0,
-        "months_remaining": 44,
+        "win_rate": 0.0,
+        "realized_pl": 0.0,
     }
-    if not SYSTEM_STATE_PATH.exists():
+    if not TRADES_PATH.exists():
         return defaults
     try:
-        state = json.loads(SYSTEM_STATE_PATH.read_text())
-        ns = state.get("north_star", {})
-        contribs = state.get("north_star_contributions", {})
-
-        # Closed trade stats from trades.json (canonical source)
-        samples = 0
-        total_pnl = 0.0
-        if TRADES_PATH.exists():
-            try:
-                trades_data = json.loads(TRADES_PATH.read_text())
-                stats = trades_data.get("stats", {})
-                samples = stats.get("closed_trades", 0)
-                total_pnl = stats.get("total_realized_pnl", 0.0)
-            except (json.JSONDecodeError, KeyError):
-                pass
+        trades_data = json.loads(TRADES_PATH.read_text())
+        stats = trades_data.get("stats", {})
+        closed = stats.get("closed_trades", 0)
+        wins = stats.get("winning_trades", 0)
         return {
-            "probability_score": ns.get("probability_score", 0),
-            "probability_label": ns.get("probability_label", "unknown"),
-            "required_cagr": ns.get("required_cagr", 0),
-            "estimated_cagr": ns.get("estimated_cagr_from_expectancy", 0),
-            "closed_trades": samples,
-            "realized_pl": total_pnl,
-            "months_remaining": contribs.get("months_remaining", 44),
+            "closed_trades": closed,
+            "win_rate": (wins / closed * 100) if closed > 0 else 0.0,
+            "realized_pl": stats.get("total_realized_pnl", 0.0),
         }
     except (json.JSONDecodeError, KeyError):
         return defaults
@@ -186,11 +166,8 @@ def generate_wiki_home(data: dict) -> str:
     net_gain_pct = (net_gain / STARTING_CAPITAL) * 100
     iron_condors = data.get("iron_condors", [])
 
-    # Progress calculations
-    progress_to_goal = (equity / NORTH_STAR_TARGET) * 100
-
-    # North Star data-driven metrics
-    ns = get_north_star_metrics()
+    # Phase 1 validation metrics
+    p1 = get_phase1_metrics()
 
     # Generate iron condor table
     ic_table = ""
@@ -211,8 +188,8 @@ Welcome to the **AI-Powered Automated Trading System** wiki!
 
 **👉 [View Live Progress Dashboard →](https://igorganapolsky.github.io/trading/)**
 
-The system tracks progress toward Financial Independence:
-- North Star goal: **$6,000/month after-tax**
+The system tracks progress toward accessible automated trading:
+- North Star goal: **Accessible iron condor system — enter with as little as $200**
 - Current strategy: **Iron Condors on SPY**
 - Phil Town Rule #1: **Don't lose money**
 
@@ -252,23 +229,19 @@ The system tracks progress toward Financial Independence:
 
 ## 🎯 North Star Goal
 
-**Target**: Financial Independence = **$6,000/month after-tax**
+**Vision**: Accessible automated iron condor system — enter with as little as $200.
 
-| Metric | Value |
-|--------|-------|
-| **Current Equity** | ${equity:,.0f} |
-| **Target Capital** | $600,000 |
-| **Progress** | {progress_to_goal:.1f}% |
-| **Completed IC Trades** | {ns["closed_trades"]} of {MIN_TRADES_FOR_PROJECTION} required |
-| **Realized IC P/L** | ${ns["realized_pl"]:,.0f} |
-| **Months Remaining** | {ns["months_remaining"]} |
-| **Required CAGR** | {ns["required_cagr"] * 100:.1f}% |
-| **Estimated CAGR** | {ns["estimated_cagr"] * 100:.2f}% |
-| **Probability** | {ns["probability_score"]:.1f}% ({ns["probability_label"]}) |
+| Phase | Timeline | Target | Status |
+|-------|----------|--------|--------|
+| **Phase 1: Validate** | Now → Jun 2026 | 30 trades, >75% win rate | 🔄 In progress ({p1["closed_trades"]}/{PHASE1_REQUIRED_TRADES}) |
+| **Phase 2: Scale** | Jul → Dec 2026 | 3 concurrent ICs, $500/mo | ⏳ Pending |
+| **Phase 3: Grow** | 2027 | 5 ICs + credit spreads, $1,500/mo | ⏳ Pending |
+| **Phase 4: Open** | 2028 | Open access, $200 minimum entry | ⏳ Pending |
 
-**Deadline**: Nov 14, 2029
-
-{"⚠️ **INSUFFICIENT DATA** — " + str(MIN_TRADES_FOR_PROJECTION - ns["closed_trades"]) + " more completed trades needed before projections are valid" if ns["closed_trades"] < MIN_TRADES_FOR_PROJECTION else "📊 **DATA-DRIVEN** — Projections based on " + str(ns["closed_trades"]) + " completed trades"}
+**Strategy Parameters** (updated Feb 2026 — positive EV):
+- Profit target: **75%** of max profit (let winners run)
+- Stop loss: **100%** of credit (cut losers fast)
+- Expected value per trade: **+$94** at 80% win rate
 
 ---
 
