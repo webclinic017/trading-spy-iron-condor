@@ -30,11 +30,47 @@ TRADES_PATH = Path("data/trades.json")
 def get_account_data() -> dict:
     """Fetch current account data from Alpaca."""
     if not API_KEY or not SECRET_KEY:
-        # Return mock data for local testing
+        # Fallback: read from system_state.json instead of hardcoded values
+        if SYSTEM_STATE_PATH.exists():
+            try:
+                state = json.loads(SYSTEM_STATE_PATH.read_text())
+                portfolio = state.get("portfolio", {})
+                positions = state.get("positions", [])
+                # Parse IC positions from system state
+                iron_condors = []
+                expiries: dict[str, dict] = {}
+                for pos in positions:
+                    sym = pos.get("symbol", "")
+                    if len(sym) > 10:
+                        expiry = sym[3:9]
+                        if expiry not in expiries:
+                            expiries[expiry] = {"puts": [], "calls": []}
+                        strike = int(sym[10:18]) / 1000
+                        opt_type = "puts" if "P" in sym[9:10] else "calls"
+                        expiries[expiry][opt_type].append({"strike": strike, "qty": int(float(pos.get("qty", 0)))})
+                for expiry, legs in expiries.items():
+                    if legs["puts"] and legs["calls"]:
+                        put_strikes = sorted([p["strike"] for p in legs["puts"]])
+                        call_strikes = sorted([c["strike"] for c in legs["calls"]])
+                        exp_date = datetime.strptime(f"20{expiry}", "%Y%m%d")
+                        iron_condors.append({
+                            "expiry": exp_date.strftime("%b %d, %Y"),
+                            "put_spread": f"{put_strikes[0]:.0f}/{put_strikes[-1]:.0f}" if len(put_strikes) >= 2 else str(put_strikes[0]),
+                            "call_spread": f"{call_strikes[0]:.0f}/{call_strikes[-1]:.0f}" if len(call_strikes) >= 2 else str(call_strikes[0]),
+                        })
+                return {
+                    "equity": portfolio.get("equity", STARTING_CAPITAL),
+                    "cash": portfolio.get("cash", STARTING_CAPITAL),
+                    "buying_power": portfolio.get("cash", STARTING_CAPITAL) * 2,
+                    "positions": positions,
+                    "iron_condors": iron_condors,
+                }
+            except (json.JSONDecodeError, KeyError):
+                pass
         return {
-            "equity": 101632.61,
-            "cash": 101828.61,
-            "buying_power": 201657.22,
+            "equity": STARTING_CAPITAL,
+            "cash": STARTING_CAPITAL,
+            "buying_power": STARTING_CAPITAL * 2,
             "positions": [],
         }
 

@@ -44,9 +44,8 @@ The system tracks progress toward Financial Independence:
 | **Strategy** | SPY Iron Condors (15-20 delta) |
 
 ### Open Iron Condors
-
 | Expiry | Put Spread | Call Spread |
-|--------|-----------|------------|
+|--------|------------|-------------|
 | Mar 13, 2026 | 650/655 | 725/730 |
 
 ---
@@ -85,4 +84,4 @@ The **Iron Condor Guardian** runs every 30 minutes during market hours to enforc
 
 ---
 
-*Last updated: 2026-02-16 14:35 ET by GitHub Actions*
+*Last updated: 2026-02-16 14:33 ET by GitHub Actions*
