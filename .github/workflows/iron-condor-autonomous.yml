@@ -34,9 +34,36 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install alpaca-py python-dotenv pytz
+        run: pip install -r requirements-minimal.txt
+
+      - name: Check market hours
+        id: market
+        env:
+          ALPACA_PAPER_TRADING_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
+          ALPACA_PAPER_TRADING_API_SECRET: ${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}
+        run: |
+          python3 << 'PYTHON'
+          import os
+          from alpaca.trading.client import TradingClient
+
+          api_key = os.environ.get('ALPACA_PAPER_TRADING_API_KEY')
+          secret = os.environ.get('ALPACA_PAPER_TRADING_API_SECRET')
+          client = TradingClient(api_key, secret, paper=True)
+
+          clock = client.get_clock()
+          print(f"Market open: {clock.is_open}")
+          print(f"Next open: {clock.next_open}")
+          print(f"Next close: {clock.next_close}")
+
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f'is_open={"true" if clock.is_open else "false"}\n')
+
+          if not clock.is_open:
+              print("⏸️ Market is closed — skipping trade scan")
+          PYTHON
 
       - name: Check positions first
+        if: steps.market.outputs.is_open == 'true'
         id: positions
         env:
           ALPACA_PAPER_TRADING_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
@@ -63,7 +90,7 @@ jobs:
           PYTHON
 
       - name: Scan for opportunity
-        if: steps.positions.outputs.can_trade == 'true'
+        if: steps.market.outputs.is_open == 'true' && steps.positions.outputs.can_trade == 'true'
         id: scan
         env:
           ALPACA_PAPER_TRADING_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
@@ -91,7 +118,7 @@ jobs:
           PYTHON
 
       - name: Execute trade (AUTONOMOUS)
-        if: steps.scan.outputs.found == 'true'
+        if: steps.market.outputs.is_open == 'true' && steps.scan.outputs.found == 'true'
         env:
           ALPACA_PAPER_TRADING_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
           ALPACA_PAPER_TRADING_API_SECRET: ${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}
@@ -145,7 +172,7 @@ jobs:
           PYTHON
 
       - name: Log trade
-        if: steps.scan.outputs.found == 'true'
+        if: steps.market.outputs.is_open == 'true' && steps.scan.outputs.found == 'true'
         run: |
           echo "Trade executed autonomously by workflow"
           echo "CTO did not touch this - Phil Town Rule #1 enforced"
