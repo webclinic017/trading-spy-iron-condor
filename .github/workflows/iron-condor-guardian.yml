@@ -29,7 +29,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install alpaca-py
+          pip install -r requirements-minimal.txt
 
       - name: Run Iron Condor Guardian
         env:
@@ -41,7 +41,7 @@ jobs:
 
       - name: Upload guardian log
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: guardian-log-${{ github.run_id }}
           path: data/ic_entries.json

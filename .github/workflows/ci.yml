@@ -158,7 +158,7 @@ jobs:
             --threshold-utility 0.1 \
             --threshold-unanswerable-accuracy 0.67
       - name: Upload coverage report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage.xml
@@ -189,7 +189,7 @@ jobs:
           mkdir -p out
           ./scripts/run_smoke.sh tests/fixtures/fixture.csv 42 out/smoke.json
       - name: Upload smoke artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: smoke-result
           path: out/smoke.json
