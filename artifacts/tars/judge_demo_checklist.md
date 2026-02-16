@@ -4,8 +4,8 @@
 - [x] Gateway environment captured
 - [x] Smoke response recorded
 - [x] Smoke response includes completion choices
-- [ ] Trade opinion smoke recorded
-- [ ] Trade opinion smoke is actionable
+- [x] Trade opinion smoke recorded
+- [x] Trade opinion smoke is actionable
 - [x] Resilience report recorded
 - [x] Resilience report observed error-path signal
 - [x] Retrieval report recorded

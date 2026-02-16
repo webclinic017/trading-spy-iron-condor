@@ -19,17 +19,15 @@ except (ImportError, AttributeError):
     _LOCK_AVAILABLE = False
 
 try:
-    from src.safety.crisis_monitor import check_crisis_conditions as _crisis_check
+    import importlib.util
 
-    _CRISIS_AVAILABLE = True
+    _CRISIS_AVAILABLE = importlib.util.find_spec("src.safety.crisis_monitor") is not None
 except (ImportError, AttributeError):
     _CRISIS_AVAILABLE = False
 
 try:
-    from src.safety.auto_close_bleeding import analyze_positions_for_closure as _ac_check
-
-    _AUTO_CLOSE_AVAILABLE = True
-except (ImportError, AttributeError):
+    _AUTO_CLOSE_AVAILABLE = importlib.util.find_spec("src.safety.auto_close_bleeding") is not None
+except (ImportError, AttributeError, NameError):
     _AUTO_CLOSE_AVAILABLE = False
 
 
