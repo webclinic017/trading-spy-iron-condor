@@ -138,9 +138,19 @@ This repo is optimized for AI agent collaboration:
 - Mandatory rules: `.claude/rules/MANDATORY_RULES.md`
 - RAG knowledge base: `rag_knowledge/`
 - RLHF feedback: `.claude/memory/feedback/`
+- Agent terminal toolkit: `scripts/agent_workflow_toolkit.py`
+- Toolkit usage guide: `docs/agentic-terminal-workflow.md`
 - LLM manifest (summary): `https://igorganapolsky.github.io/trading/llms.txt`
 - LLM manifest (full catalog): `https://igorganapolsky.github.io/trading/llms-full.txt`
 - Auto-refresh workflow: `.github/workflows/refresh-llms-manifests.yml`
+
+Quick bootstrap:
+
+```bash
+python3 scripts/agent_workflow_toolkit.py zsh-snippet   # x/p/s/funked helpers
+python3 scripts/agent_workflow_toolkit.py slim-logs --in artifacts/devloop/continuous.log
+python3 scripts/agent_workflow_toolkit.py bundle README.md src/utils/llm_gateway.py --out artifacts/devloop/context_bundle.md
+```
 
 ---
 
