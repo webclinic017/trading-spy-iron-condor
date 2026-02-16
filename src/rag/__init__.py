@@ -17,9 +17,12 @@ from src.rag.evaluation import (
     get_evaluator,
 )
 from src.rag.lessons_learned_rag import LessonsLearnedRAG
+from src.rag.unified_search import UnifiedSearch, get_unified_search
 
 __all__ = [
     "LessonsLearnedRAG",
+    "UnifiedSearch",
+    "get_unified_search",
     "RAGEvaluator",
     "EvaluationQuery",
     "EvaluationReport",
