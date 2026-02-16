@@ -462,6 +462,11 @@ def build_zsh_snippet(*, toolkit_path: Path) -> str:
     return "\n".join(
         [
             "# ---- agent workflow toolkit ----",
+            "for __agent_fn in x p s funked bundlectx slimlog retroday chainagents runlog; do",
+            '  unalias "$__agent_fn" 2>/dev/null || true',
+            "done",
+            "unset __agent_fn",
+            "",
             "x() {",
             '  local cmd="${AGENT_FAST_CMD:-codex}"',
             '  if [[ -n "${AGENT_FAST_FLAGS:-}" ]]; then',
