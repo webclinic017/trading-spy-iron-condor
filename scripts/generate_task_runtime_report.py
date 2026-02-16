@@ -95,7 +95,11 @@ def parse_phase_times(log_path: Path) -> dict[str, str]:
             analyze_done = None
             continue
         a_done = ANALYZE_DONE_RE.search(msg)
-        if a_done and analyze_start and f"cycle={a_done.group(1)} profile={a_done.group(2)}" in analyze_start[1]:
+        if (
+            a_done
+            and analyze_start
+            and f"cycle={a_done.group(1)} profile={a_done.group(2)}" in analyze_start[1]
+        ):
             analyze_done = (ts, analyze_start[1])
             continue
 
@@ -122,29 +126,51 @@ def parse_phase_times(log_path: Path) -> dict[str, str]:
     out: dict[str, str] = {}
     if analyze_start:
         if analyze_done:
-            out["analyze_last"] = f"{analyze_start[1]} duration={format_elapsed((analyze_done[0] - analyze_start[0]).total_seconds())}"
+            out["analyze_last"] = (
+                f"{analyze_start[1]} duration={format_elapsed((analyze_done[0] - analyze_start[0]).total_seconds())}"
+            )
         else:
-            out["analyze_current"] = f"{analyze_start[1]} elapsed={format_elapsed((now_utc() - analyze_start[0]).total_seconds())}"
+            out["analyze_current"] = (
+                f"{analyze_start[1]} elapsed={format_elapsed((now_utc() - analyze_start[0]).total_seconds())}"
+            )
     if tars_start:
         if tars_done:
-            out["tars_last"] = f"{tars_start[1]} duration={format_elapsed((tars_done[0] - tars_start[0]).total_seconds())}"
+            out["tars_last"] = (
+                f"{tars_start[1]} duration={format_elapsed((tars_done[0] - tars_start[0]).total_seconds())}"
+            )
         else:
-            out["tars_current"] = f"{tars_start[1]} elapsed={format_elapsed((now_utc() - tars_start[0]).total_seconds())}"
+            out["tars_current"] = (
+                f"{tars_start[1]} elapsed={format_elapsed((now_utc() - tars_start[0]).total_seconds())}"
+            )
     if rag_start:
         if rag_done:
-            out["rag_last"] = f"{rag_start[1]} duration={format_elapsed((rag_done[0] - rag_start[0]).total_seconds())}"
+            out["rag_last"] = (
+                f"{rag_start[1]} duration={format_elapsed((rag_done[0] - rag_start[0]).total_seconds())}"
+            )
         else:
-            out["rag_current"] = f"{rag_start[1]} elapsed={format_elapsed((now_utc() - rag_start[0]).total_seconds())}"
+            out["rag_current"] = (
+                f"{rag_start[1]} elapsed={format_elapsed((now_utc() - rag_start[0]).total_seconds())}"
+            )
     return out
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate active task runtime report for the live loop.")
+    parser = argparse.ArgumentParser(
+        description="Generate active task runtime report for the live loop."
+    )
     parser.add_argument("--repo-root", default=".", help="Repository root")
-    parser.add_argument("--manual", default="manual_layer1_tasks.md", help="Manual layer-1 task file")
-    parser.add_argument("--state", default="artifacts/devloop/task_runtime_state.json", help="State file path")
-    parser.add_argument("--log", default="artifacts/devloop/continuous.log", help="Continuous loop log path")
-    parser.add_argument("--out", default="artifacts/devloop/task_runtime_report.md", help="Output report markdown")
+    parser.add_argument(
+        "--manual", default="manual_layer1_tasks.md", help="Manual layer-1 task file"
+    )
+    parser.add_argument(
+        "--state", default="artifacts/devloop/task_runtime_state.json", help="State file path"
+    )
+    parser.add_argument(
+        "--log", default="artifacts/devloop/continuous.log", help="Continuous loop log path"
+    )
+    parser.add_argument(
+        "--out", default="artifacts/devloop/task_runtime_report.md", help="Output report markdown"
+    )
     args = parser.parse_args()
 
     root = Path(args.repo_root).resolve()
@@ -159,7 +185,9 @@ def main() -> int:
     open_tasks = parse_open_tasks(manual)
 
     state = read_json(state_path)
-    first_seen = state.get("first_seen", {}) if isinstance(state.get("first_seen", {}), dict) else {}
+    first_seen = (
+        state.get("first_seen", {}) if isinstance(state.get("first_seen", {}), dict) else {}
+    )
 
     new_tasks: list[str] = []
     for task in open_tasks:
