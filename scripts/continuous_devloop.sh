@@ -10,6 +10,7 @@ MAX_CYCLES="${MAX_CYCLES:-0}" # 0 = infinite
 RUN_TARS="${RUN_TARS:-0}" # 1 enables TARS full run each cycle
 RUN_RAG="${RUN_RAG:-0}" # 1 enables RAG refresh during full profile cycles
 SYNC_GDOC="${SYNC_GDOC:-0}" # 1 syncs explainer into Google Doc each cycle
+LAYER1_MAX_OPEN="${LAYER1_MAX_OPEN:-3}" # keep top N open Layer 1 tasks active
 GDRIVE_DOC_URL="${GDRIVE_DOC_URL:-}"
 GDRIVE_CREDS_FILE="${GDRIVE_CREDS_FILE:-.secrets/google-service-account.json}"
 STOP_FILE="${STOP_FILE:-$REPO_ROOT/artifacts/devloop/STOP}"
@@ -40,6 +41,8 @@ run_cycle() {
   if (( FULL_EVERY > 0 )) && (( cycle % FULL_EVERY == 0 )); then
     profile="full"
   fi
+
+  "$PYTHON_BIN" scripts/enforce_layer1_focus.py --max-open "$LAYER1_MAX_OPEN" --manual manual_layer1_tasks.md --mirror config/manual_layer1_tasks.md >>"$LOG_FILE" 2>&1 || true
 
   log "cycle=$cycle profile=$profile analyze start"
   if [[ "$profile" == "full" ]]; then
@@ -75,6 +78,7 @@ run_cycle() {
     ./scripts/layered_tdd_loop.sh analyze >>"$LOG_FILE" 2>&1 || true
   fi
   "$PYTHON_BIN" scripts/generate_kpi_page.py --repo-root . --out artifacts/devloop/kpi_page.md >>"$LOG_FILE" 2>&1 || true
+  "$PYTHON_BIN" scripts/generate_task_runtime_report.py --repo-root . --manual manual_layer1_tasks.md --state artifacts/devloop/task_runtime_state.json --log artifacts/devloop/continuous.log --out artifacts/devloop/task_runtime_report.md >>"$LOG_FILE" 2>&1 || true
   "$PYTHON_BIN" scripts/generate_system_explainer.py --repo-root . --out docs/_reports/hackathon-system-explainer.md >>"$LOG_FILE" 2>&1 || true
   "$PYTHON_BIN" scripts/generate_judge_demo_page.py --repo-root . --out docs/lessons/judge-demo.html >>"$LOG_FILE" 2>&1 || true
   if [[ "$SYNC_GDOC" == "1" ]] && [[ -n "$GDRIVE_DOC_URL" ]]; then
@@ -97,6 +101,7 @@ Environment:
   MAX_CYCLES        Max cycles then exit, 0=infinite (default: 0)
   RUN_TARS          1 to run TARS full each cycle (default: 0)
   RUN_RAG           1 to refresh RAG on full-profile cycles (default: 0)
+  LAYER1_MAX_OPEN   Keep top N open Layer 1 tasks active (default: 3)
   SYNC_GDOC         1 to sync explainer to Google Doc (default: 0)
   GDRIVE_DOC_URL    Google Doc URL or ID for explainer sync
   GDRIVE_CREDS_FILE Service account JSON path (default: .secrets/google-service-account.json)

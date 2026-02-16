@@ -57,6 +57,7 @@ def main() -> int:
     devloop_dir = repo_root / "artifacts/devloop"
     scorecard = read_text(devloop_dir / "profit_readiness_scorecard.md")
     kpi = read_text(devloop_dir / "kpi_priority_report.md")
+    task_runtime = read_text(devloop_dir / "task_runtime_report.md")
     status = parse_kv(devloop_dir / "status.txt")
     smoke_metrics = parse_kv(tars_dir / "smoke_metrics.txt")
     smoke_response = read_json(tars_dir / "smoke_response.json")
@@ -141,6 +142,18 @@ def main() -> int:
     lines.append("- `artifacts/devloop/profit_readiness_scorecard.md`")
     lines.append("- `artifacts/devloop/kpi_priority_report.md`")
     lines.append("")
+
+    if task_runtime.strip():
+        lines.append("## Live Tasks and Timing")
+        lines.append("The section below is auto-generated each cycle from the active Layer-1 task board and runtime logs.")
+        lines.append("")
+        task_lines = task_runtime.strip().splitlines()
+        # Skip the report title to avoid nested heading noise.
+        for raw in task_lines:
+            if raw.strip() == "# Live Task Runtime Report":
+                continue
+            lines.append(raw)
+        lines.append("")
 
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"ok: system explainer updated -> {out}")
