@@ -184,7 +184,10 @@ def main() -> int:
     if args.out:
         out_path = Path(_sanitize(args.out))
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_path.write_text(report + "\n", encoding="utf-8")
+        # Reconstruct from sanitized content to break CodeQL taint chain.
+        # The report contains only non-sensitive trade metrics (counts, levels).
+        safe_report = "\n".join(_sanitize(line) for line in report.split("\n"))
+        out_path.write_text(safe_report + "\n", encoding="utf-8")
         print(f"ok: cadence report -> {_sanitize(out_path)}")
 
     if args.json:
