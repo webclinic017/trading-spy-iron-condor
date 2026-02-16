@@ -15,6 +15,8 @@ SYNC_GDOC="${SYNC_GDOC:-0}" # 1 syncs explainer into Google Doc each cycle
 SYNC_GDOC_EVERY="${SYNC_GDOC_EVERY:-2}" # sync Google Doc every N cycles when enabled
 RENDER_DEMO_EVERY="${RENDER_DEMO_EVERY:-2}" # regenerate judge page every N cycles
 LAYER1_MAX_OPEN="${LAYER1_MAX_OPEN:-3}" # keep top N open Layer 1 tasks active
+MANUAL_TASK_FILE="${MANUAL_TASK_FILE:-manual_layer1_tasks.md}"
+MIRROR_MANUAL_TASK_FILE="${MIRROR_MANUAL_TASK_FILE:-config/manual_layer1_tasks.md}"
 GDRIVE_DOC_URL="${GDRIVE_DOC_URL:-}"
 GDRIVE_CREDS_FILE="${GDRIVE_CREDS_FILE:-.secrets/google-service-account.json}"
 STOP_FILE="${STOP_FILE:-$REPO_ROOT/artifacts/devloop/STOP}"
@@ -46,7 +48,7 @@ run_cycle() {
     profile="full"
   fi
 
-  "$PYTHON_BIN" scripts/enforce_layer1_focus.py --max-open "$LAYER1_MAX_OPEN" --manual manual_layer1_tasks.md --mirror config/manual_layer1_tasks.md >>"$LOG_FILE" 2>&1 || true
+  "$PYTHON_BIN" scripts/enforce_layer1_focus.py --max-open "$LAYER1_MAX_OPEN" --manual "$MANUAL_TASK_FILE" --mirror "$MIRROR_MANUAL_TASK_FILE" >>"$LOG_FILE" 2>&1 || true
 
   log "cycle=$cycle profile=$profile analyze start"
   if [[ "$profile" == "full" ]]; then
@@ -83,7 +85,7 @@ run_cycle() {
   "$PYTHON_BIN" scripts/generate_profit_readiness_scorecard.py --repo-root . --artifact-dir artifacts/devloop --out artifacts/devloop/profit_readiness_scorecard.md >>"$LOG_FILE" 2>&1 || true
   "$PYTHON_BIN" scripts/generate_kpi_priority.py --scorecard artifacts/devloop/profit_readiness_scorecard.md --state artifacts/devloop/kpi_priority_state.json --out-md artifacts/devloop/kpi_priority_report.md --out-json artifacts/devloop/kpi_priority.json --stall-window 6 >>"$LOG_FILE" 2>&1 || true
   local expand_output
-  expand_output="$("$PYTHON_BIN" scripts/expand_layers.py --tasks artifacts/devloop/tasks.md --scorecard artifacts/devloop/profit_readiness_scorecard.md --manual-file manual_layer1_tasks.md --mirror-manual-file config/manual_layer1_tasks.md --out artifacts/devloop/layer_expansion_report.md --priority-json artifacts/devloop/kpi_priority.json 2>&1 || true)"
+  expand_output="$("$PYTHON_BIN" scripts/expand_layers.py --tasks artifacts/devloop/tasks.md --scorecard artifacts/devloop/profit_readiness_scorecard.md --manual-file "$MANUAL_TASK_FILE" --mirror-manual-file "$MIRROR_MANUAL_TASK_FILE" --out artifacts/devloop/layer_expansion_report.md --priority-json artifacts/devloop/kpi_priority.json 2>&1 || true)"
   printf "%s\n" "$expand_output" >>"$LOG_FILE"
   if printf "%s\n" "$expand_output" | grep -q "promoted_count=[1-9]"; then
     log "cycle=$cycle promotions detected; refreshing analyze"
@@ -95,7 +97,7 @@ run_cycle() {
   ) &
   local pid_kpi=$!
   (
-    "$PYTHON_BIN" scripts/generate_task_runtime_report.py --repo-root . --manual manual_layer1_tasks.md --state artifacts/devloop/task_runtime_state.json --log artifacts/devloop/continuous.log --out artifacts/devloop/task_runtime_report.md >>"$LOG_FILE" 2>&1 || true
+    "$PYTHON_BIN" scripts/generate_task_runtime_report.py --repo-root . --manual "$MANUAL_TASK_FILE" --state artifacts/devloop/task_runtime_state.json --log artifacts/devloop/continuous.log --out artifacts/devloop/task_runtime_report.md >>"$LOG_FILE" 2>&1 || true
   ) &
   local pid_runtime=$!
 
@@ -158,6 +160,8 @@ Environment:
   RUN_TARS_EVERY    Run TARS every N cycles when RUN_TARS=1 (default: 2)
   RUN_RAG           1 to refresh RAG on full-profile cycles (default: 0)
   LAYER1_MAX_OPEN   Keep top N open Layer 1 tasks active (default: 3)
+  MANUAL_TASK_FILE  Task file used by loop focus/expansion (default: manual_layer1_tasks.md)
+  MIRROR_MANUAL_TASK_FILE Mirror task file (default: config/manual_layer1_tasks.md)
   RENDER_DEMO_EVERY Regenerate judge demo page every N cycles (default: 2)
   SYNC_GDOC         1 to sync explainer to Google Doc (default: 0)
   SYNC_GDOC_EVERY   Sync Google Doc every N cycles (default: 2)
@@ -177,12 +181,18 @@ main() {
       run_cycle 1
       ;;
     start)
+      # If paused by STOP_FILE, wait here instead of exiting and thrashing launchd restarts.
+      while [[ -f "$STOP_FILE" ]]; do
+        log "pause detected before bootstrap: $STOP_FILE"
+        sleep 30
+      done
       bootstrap_once
       local cycle=1
       while true; do
         if [[ -f "$STOP_FILE" ]]; then
-          log "stop file detected: $STOP_FILE"
-          break
+          log "pause detected: $STOP_FILE"
+          sleep 30
+          continue
         fi
         run_cycle "$cycle"
         if (( MAX_CYCLES > 0 && cycle >= MAX_CYCLES )); then
