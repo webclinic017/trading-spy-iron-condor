@@ -158,7 +158,9 @@ def sync_markdown_to_doc(doc_id: str, markdown_text: str, creds_file: Path) -> N
 
     end_index = fetch_doc_end_index(docs, doc_id)
     requests = []
-    if end_index > 1:
+    # Google Docs keeps a trailing newline. Deleting [1, end_index-1] is only valid
+    # when there is actual content beyond that single newline.
+    if end_index > 2:
         requests.append(
             {
                 "deleteContentRange": {

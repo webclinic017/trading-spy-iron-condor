@@ -15,6 +15,10 @@ GDRIVE_CREDS_FILE="${GDRIVE_CREDS_FILE:-.secrets/google-service-account.json}"
 STOP_FILE="${STOP_FILE:-$REPO_ROOT/artifacts/devloop/STOP}"
 LOG_FILE="${LOG_FILE:-$REPO_ROOT/artifacts/devloop/continuous.log}"
 TARS_AUTOPILOT_SCRIPT="${TARS_AUTOPILOT_SCRIPT:-$REPO_ROOT/scripts/tars_autopilot.sh}"
+PYTHON_BIN="${PYTHON_BIN:-$REPO_ROOT/.venv-devloop/bin/python}"
+if [[ ! -x "$PYTHON_BIN" ]]; then
+  PYTHON_BIN="python3"
+fi
 
 mkdir -p "$REPO_ROOT/artifacts/devloop"
 touch "$LOG_FILE"
@@ -61,21 +65,21 @@ run_cycle() {
     log "cycle=$cycle rag refresh done"
   fi
 
-  python3 scripts/generate_profit_readiness_scorecard.py --repo-root . --artifact-dir artifacts/devloop --out artifacts/devloop/profit_readiness_scorecard.md >>"$LOG_FILE" 2>&1 || true
-  python3 scripts/generate_kpi_priority.py --scorecard artifacts/devloop/profit_readiness_scorecard.md --state artifacts/devloop/kpi_priority_state.json --out-md artifacts/devloop/kpi_priority_report.md --out-json artifacts/devloop/kpi_priority.json --stall-window 6 >>"$LOG_FILE" 2>&1 || true
+  "$PYTHON_BIN" scripts/generate_profit_readiness_scorecard.py --repo-root . --artifact-dir artifacts/devloop --out artifacts/devloop/profit_readiness_scorecard.md >>"$LOG_FILE" 2>&1 || true
+  "$PYTHON_BIN" scripts/generate_kpi_priority.py --scorecard artifacts/devloop/profit_readiness_scorecard.md --state artifacts/devloop/kpi_priority_state.json --out-md artifacts/devloop/kpi_priority_report.md --out-json artifacts/devloop/kpi_priority.json --stall-window 6 >>"$LOG_FILE" 2>&1 || true
   local expand_output
-  expand_output="$(python3 scripts/expand_layers.py --tasks artifacts/devloop/tasks.md --scorecard artifacts/devloop/profit_readiness_scorecard.md --manual-file manual_layer1_tasks.md --mirror-manual-file config/manual_layer1_tasks.md --out artifacts/devloop/layer_expansion_report.md --priority-json artifacts/devloop/kpi_priority.json 2>&1 || true)"
+  expand_output="$("$PYTHON_BIN" scripts/expand_layers.py --tasks artifacts/devloop/tasks.md --scorecard artifacts/devloop/profit_readiness_scorecard.md --manual-file manual_layer1_tasks.md --mirror-manual-file config/manual_layer1_tasks.md --out artifacts/devloop/layer_expansion_report.md --priority-json artifacts/devloop/kpi_priority.json 2>&1 || true)"
   printf "%s\n" "$expand_output" >>"$LOG_FILE"
   if printf "%s\n" "$expand_output" | grep -q "promoted_count=[1-9]"; then
     log "cycle=$cycle promotions detected; refreshing analyze"
     ./scripts/layered_tdd_loop.sh analyze >>"$LOG_FILE" 2>&1 || true
   fi
-  python3 scripts/generate_kpi_page.py --repo-root . --out artifacts/devloop/kpi_page.md >>"$LOG_FILE" 2>&1 || true
-  python3 scripts/generate_system_explainer.py --repo-root . --out docs/_reports/hackathon-system-explainer.md >>"$LOG_FILE" 2>&1 || true
+  "$PYTHON_BIN" scripts/generate_kpi_page.py --repo-root . --out artifacts/devloop/kpi_page.md >>"$LOG_FILE" 2>&1 || true
+  "$PYTHON_BIN" scripts/generate_system_explainer.py --repo-root . --out docs/_reports/hackathon-system-explainer.md >>"$LOG_FILE" 2>&1 || true
   if [[ "$SYNC_GDOC" == "1" ]] && [[ -n "$GDRIVE_DOC_URL" ]]; then
-    python3 scripts/sync_explainer_to_gdoc.py --doc "$GDRIVE_DOC_URL" --in docs/_reports/hackathon-system-explainer.md --creds "$GDRIVE_CREDS_FILE" >>"$LOG_FILE" 2>&1 || true
+    "$PYTHON_BIN" scripts/sync_explainer_to_gdoc.py --doc "$GDRIVE_DOC_URL" --in docs/_reports/hackathon-system-explainer.md --creds "$GDRIVE_CREDS_FILE" >>"$LOG_FILE" 2>&1 || true
   fi
-  python3 scripts/generate_next_copilot_prompt.py --repo-root . --out artifacts/devloop/next_copilot_prompt.md >>"$LOG_FILE" 2>&1 || true
+  "$PYTHON_BIN" scripts/generate_next_copilot_prompt.py --repo-root . --out artifacts/devloop/next_copilot_prompt.md >>"$LOG_FILE" 2>&1 || true
 }
 
 usage() {
