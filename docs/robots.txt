@@ -1,24 +1,30 @@
-# Robots.txt for AI Trading Journey
-# Allow all search engines and AI bots to crawl
+# robots.txt for AI Trading Journey
 
 User-agent: *
 Allow: /
 
-# Sitemap location
+# Core discovery endpoints
 Sitemap: https://igorganapolsky.github.io/trading/sitemap.xml
+# LLM summary manifest: https://igorganapolsky.github.io/trading/llms.txt
+# LLM full manifest: https://igorganapolsky.github.io/trading/llms-full.txt
 
-# Encourage frequent crawling of blog posts
+# Search engines
 User-agent: Googlebot
 Crawl-delay: 1
 
 User-agent: Bingbot
 Crawl-delay: 1
 
-# Welcome AI training bots
+# AI assistants and research crawlers
 User-agent: GPTBot
 Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
 
 User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
 Allow: /
 
 User-agent: Claude-Web
@@ -30,11 +36,8 @@ Allow: /
 User-agent: CCBot
 Allow: /
 
-User-agent: Google-Extended
+User-agent: PerplexityBot
 Allow: /
 
-# Key pages to prioritize
-# Home: /trading/
-# Blog: /trading/blog/
-# Lessons: /trading/lessons/
-# Reports: /trading/reports/
+User-agent: Google-Extended
+Allow: /

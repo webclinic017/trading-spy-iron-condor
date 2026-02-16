@@ -1,0 +1,61 @@
+name: Refresh LLM Manifests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/_posts/**"
+      - "docs/_reports/**"
+      - "rag_knowledge/lessons_learned/**"
+      - "scripts/generate_llms_manifest.py"
+      - ".github/workflows/refresh-llms-manifests.yml"
+  schedule:
+    - cron: "30 12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-llms-manifests
+  cancel-in-progress: true
+
+env:
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'push' || !contains(github.event.head_commit.message, 'refresh llms manifests [auto]') }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT || github.token }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate manifests
+        run: python3 scripts/generate_llms_manifest.py
+
+      - name: Validate GitHub Pages templates
+        run: python3 scripts/validate_github_pages_links.py --templates-only
+
+      - name: Commit and push updates
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add docs/llms.txt docs/llms-full.txt
+
+          if git diff --staged --quiet; then
+            echo "No llms manifest changes detected."
+            exit 0
+          fi
+
+          git commit -m "docs(seo): refresh llms manifests [auto]"
+          git push origin HEAD:main
