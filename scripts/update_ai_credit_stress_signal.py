@@ -92,7 +92,9 @@ def parse_fred_csv(csv_text: str) -> list[tuple[date, float]]:
     return rows
 
 
-def summarize_series(series_id: str, points: list[tuple[date, float]], lookback_points: int) -> SeriesSummary:
+def summarize_series(
+    series_id: str, points: list[tuple[date, float]], lookback_points: int
+) -> SeriesSummary:
     if not points:
         return SeriesSummary(
             series_id=series_id,
@@ -115,7 +117,9 @@ def summarize_series(series_id: str, points: list[tuple[date, float]], lookback_
     )
 
 
-def evaluate_ai_credit_stress_signal(metrics: dict[str, SeriesSummary]) -> tuple[str, float, list[str]]:
+def evaluate_ai_credit_stress_signal(
+    metrics: dict[str, SeriesSummary],
+) -> tuple[str, float, list[str]]:
     """Return (status, severity_score, reasons)."""
     score = 0.0
     reasons: list[str] = []
@@ -123,7 +127,9 @@ def evaluate_ai_credit_stress_signal(metrics: dict[str, SeriesSummary]) -> tuple
     hy = metrics.get("high_yield_oas")
     baa = metrics.get("baa_minus_10y")
     has_data = any(
-        summary.latest_value is not None for summary in metrics.values() if isinstance(summary, SeriesSummary)
+        summary.latest_value is not None
+        for summary in metrics.values()
+        if isinstance(summary, SeriesSummary)
     )
     if not has_data:
         return "unknown", 0.0, ["No credit spread data available."]

@@ -47,7 +47,9 @@ def evaluate_weekly_cadence(state: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(top_reasons, list):
         top_reasons = []
     gate_status = diagnostic.get("gate_status", {})
-    ai_credit_stress = gate_status.get("ai_credit_stress", {}) if isinstance(gate_status, dict) else {}
+    ai_credit_stress = (
+        gate_status.get("ai_credit_stress", {}) if isinstance(gate_status, dict) else {}
+    )
     ai_credit_status = str(ai_credit_stress.get("status") or "unknown").lower()
     ai_credit_score = ai_credit_stress.get("severity_score")
     ai_credit_source = str(ai_credit_stress.get("source") or "none")

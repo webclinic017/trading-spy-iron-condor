@@ -165,7 +165,9 @@ def main() -> int:
     gate_status = (
         no_trade_diagnostic.get("gate_status", {}) if isinstance(no_trade_diagnostic, dict) else {}
     )
-    ai_credit_stress = gate_status.get("ai_credit_stress", {}) if isinstance(gate_status, dict) else {}
+    ai_credit_stress = (
+        gate_status.get("ai_credit_stress", {}) if isinstance(gate_status, dict) else {}
+    )
     win_rate = paper.get("win_rate")
     sample_size = paper.get("win_rate_sample_size")
 
