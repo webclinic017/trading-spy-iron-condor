@@ -240,6 +240,19 @@ trade_opinion_smoke() {
   return 1
 }
 
+execution_quality_aggregate() {
+  local script="$REPO_ROOT/scripts/generate_tars_execution_quality.py"
+  if [[ ! -f "$script" ]]; then
+    echo "error: missing script scripts/generate_tars_execution_quality.py"
+    return 1
+  fi
+  python3 "$script" \
+    --artifact-dir "$ARTIFACT_DIR" \
+    --events-log "$ARTIFACT_DIR/execution_quality_events.jsonl" \
+    --out-json "$ARTIFACT_DIR/execution_quality_daily.json" \
+    --out-md "$ARTIFACT_DIR/execution_quality_daily.md"
+}
+
 package_summary() {
   local out="$ARTIFACT_DIR/submission_summary.md"
   local checklist_script="$REPO_ROOT/scripts/generate_hackathon_demo_checklist.py"
@@ -253,12 +266,14 @@ package_summary() {
     echo "- smoke response: \`$ARTIFACT_DIR/smoke_response.json\`"
     echo "- trade opinion smoke: \`$ARTIFACT_DIR/trade_opinion_smoke.json\`"
     echo "- smoke metrics: \`$ARTIFACT_DIR/smoke_metrics.txt\`"
+    echo "- execution quality daily: \`$ARTIFACT_DIR/execution_quality_daily.json\`"
     echo "- resilience report: \`$ARTIFACT_DIR/resilience_report.txt\`"
     echo "- retrieval report: \`$ARTIFACT_DIR/retrieval_report.txt\`"
     echo
     echo "## Judge-ready claims (evidence-backed)"
     echo "- Gateway route configured and validated via smoke call output"
     echo "- Trade opinion route validated with actionable output gate"
+    echo "- Daily execution quality aggregation tracks latency/cost/success trends"
     echo "- Error-path behavior validated via invalid-model resilience test"
     echo "- Retrieval stack readiness validated via repo checks"
   } > "$out"
@@ -274,6 +289,7 @@ full_run() {
   verify_env
   smoke_call
   trade_opinion_smoke
+  execution_quality_aggregate
   resilience_check
   retrieval_check
   package_summary

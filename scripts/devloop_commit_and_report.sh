@@ -88,6 +88,9 @@ stage_targets() {
     artifacts/tars/judge_demo_checklist.md \
     artifacts/tars/resilience_report.txt \
     artifacts/tars/retrieval_report.txt \
+    artifacts/tars/execution_quality_events.jsonl \
+    artifacts/tars/execution_quality_daily.json \
+    artifacts/tars/execution_quality_daily.md \
     artifacts/tars/smoke_metrics.txt \
     artifacts/tars/smoke_response.json \
     artifacts/tars/trade_opinion_smoke.json \
