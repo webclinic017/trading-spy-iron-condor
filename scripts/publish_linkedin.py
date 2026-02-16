@@ -133,16 +133,31 @@ def create_linkedin_post(
         return None
 
 
-def generate_linkedin_text(signal: str, context: str, equity: float = 101638.61) -> str:
+def generate_linkedin_text(signal: str, context: str, equity: float = 0.0) -> str:
     """Generate engaging LinkedIn post text from RLHF feedback."""
     import json
     from pathlib import Path
 
-    gain = equity - 100000
-    gain_pct = (gain / 100000) * 100
+    # Load equity from canonical source if not provided
+    if equity <= 0:
+        state_file = Path("data/system_state.json")
+        if state_file.exists():
+            with open(state_file) as f:
+                state = json.load(f)
+            equity = state.get("paper_account", {}).get("equity", 0.0)
+
+    starting = 100000.0
+    state_file = Path("data/system_state.json")
+    if state_file.exists():
+        with open(state_file) as f:
+            state = json.load(f)
+        starting = state.get("paper_account", {}).get("starting_balance", 100000.0)
+
+    gain = equity - starting
+    gain_pct = (gain / starting) * 100 if starting > 0 else 0
 
     # Load RLHF stats for technical details
-    rlhf_stats = {"positive": 0, "negative": 0, "total": 0, "alpha": 20.75, "beta": 4.0}
+    rlhf_stats = {"positive": 0, "negative": 0, "total": 0, "alpha": 1.0, "beta": 1.0}
     stats_file = Path("data/feedback/stats.json")
     if stats_file.exists():
         with open(stats_file) as f:

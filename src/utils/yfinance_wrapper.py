@@ -294,11 +294,16 @@ class MockTicker:
         if self._info_cache:
             return self._info_cache
 
+        logger.warning(
+            "MockTicker used for %s — yfinance unavailable. "
+            "Price data will be ZERO to prevent bad calculations.",
+            self.symbol,
+        )
         self._info_cache = {
             "symbol": self.symbol,
-            "shortName": f"{self.symbol} (Mock)",
-            "regularMarketPrice": 100.0,
-            "previousClose": 100.0,
+            "shortName": f"{self.symbol} (MOCK - NO REAL DATA)",
+            "regularMarketPrice": 0.0,
+            "previousClose": 0.0,
             "volume": 0,
             "marketCap": 0,
             "trailingPE": None,

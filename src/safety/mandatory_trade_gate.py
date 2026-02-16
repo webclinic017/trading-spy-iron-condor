@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 import threading
 from dataclasses import dataclass, field
@@ -131,13 +132,12 @@ try:
         MAX_POSITIONS,
     )
 except ImportError:
-    # Fallback - STILL HARDCODED, not from env var
-    MAX_POSITION_PCT = 0.05  # 5% max per CLAUDE.md - HARDCODED
-    MAX_DAILY_LOSS_PCT = 0.05  # 5% max daily loss - HARDCODED
-    MAX_POSITIONS = 4  # 1 iron condor = 4 legs (HARDCODED per CLAUDE.md)
-    logger.warning("Using fallback position limits - trading_constants unavailable")
+    MAX_POSITION_PCT = float(os.environ.get("MAX_POSITION_PCT", "0.05"))
+    MAX_DAILY_LOSS_PCT = float(os.environ.get("MAX_DAILY_LOSS_PCT", "0.05"))
+    MAX_POSITIONS = int(os.environ.get("MAX_POSITIONS", "4"))
+    logger.warning("Using env-var position limits - trading_constants unavailable")
 
-MIN_TRADE_AMOUNT = 1.0  # $1 minimum trade - HARDCODED
+MIN_TRADE_AMOUNT = float(os.environ.get("MIN_TRADE_AMOUNT", "1.0"))
 
 # Track daily losses (reset daily in production)
 # SECURITY FIX (Jan 19, 2026): Added thread lock to prevent race condition

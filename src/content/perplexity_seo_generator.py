@@ -415,7 +415,7 @@ Closing iron condors at 50% of maximum profit historically improves risk-adjuste
             ),
             FAQItem(
                 question="How much can you make with iron condors?",
-                answer="With proper risk management, iron condors can generate 3-8% monthly returns. A $100,000 account trading 2 iron condors per week targeting $150-250 per trade can realistically earn $400-800/month.",
+                answer="Returns depend on market conditions, strike selection, and risk management. Iron condors on SPY with 15-delta short strikes and $10-wide wings typically collect $150-250 per contract. Actual results vary — track your own win rate over 30+ trades before projecting returns.",
             ),
             FAQItem(
                 question="Are iron condors safe?",
