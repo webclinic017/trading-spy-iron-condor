@@ -8,6 +8,7 @@ INTERVAL_SECONDS="${INTERVAL_SECONDS:-900}"
 FULL_EVERY="${FULL_EVERY:-6}"
 MAX_CYCLES="${MAX_CYCLES:-0}" # 0 = infinite
 RUN_TARS="${RUN_TARS:-0}" # 1 enables TARS full run each cycle
+RUN_RAG="${RUN_RAG:-0}" # 1 enables RAG refresh during full profile cycles
 STOP_FILE="${STOP_FILE:-$REPO_ROOT/artifacts/devloop/STOP}"
 LOG_FILE="${LOG_FILE:-$REPO_ROOT/artifacts/devloop/continuous.log}"
 TARS_AUTOPILOT_SCRIPT="${TARS_AUTOPILOT_SCRIPT:-$REPO_ROOT/scripts/tars_autopilot.sh}"
@@ -51,6 +52,12 @@ run_cycle() {
     fi
   fi
 
+  if [[ "$RUN_RAG" == "1" ]] && [[ "$profile" == "full" ]]; then
+    log "cycle=$cycle rag refresh start"
+    ./scripts/rag_refresh_and_report.sh full >>"$LOG_FILE" 2>&1 || true
+    log "cycle=$cycle rag refresh done"
+  fi
+
   python3 scripts/generate_profit_readiness_scorecard.py --repo-root . --artifact-dir artifacts/devloop --out artifacts/devloop/profit_readiness_scorecard.md >>"$LOG_FILE" 2>&1 || true
   python3 scripts/generate_kpi_priority.py --scorecard artifacts/devloop/profit_readiness_scorecard.md --state artifacts/devloop/kpi_priority_state.json --out-md artifacts/devloop/kpi_priority_report.md --out-json artifacts/devloop/kpi_priority.json --stall-window 6 >>"$LOG_FILE" 2>&1 || true
   local expand_output
@@ -77,6 +84,7 @@ Environment:
   FULL_EVERY        Every N cycles run PROFILE=full (default: 6)
   MAX_CYCLES        Max cycles then exit, 0=infinite (default: 0)
   RUN_TARS          1 to run TARS full each cycle (default: 0)
+  RUN_RAG           1 to refresh RAG on full-profile cycles (default: 0)
   TARS_AUTOPILOT_SCRIPT Path to tars autopilot script (default: scripts/tars_autopilot.sh)
   STOP_FILE         Stop marker file path
   LOG_FILE          Log file path

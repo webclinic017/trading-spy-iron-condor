@@ -8,6 +8,7 @@ LOG_DIR="$REPO_ROOT/artifacts/devloop"
 OUT_LOG="$LOG_DIR/launchd.out.log"
 ERR_LOG="$LOG_DIR/launchd.err.log"
 RUN_TARS_VALUE="${RUN_TARS:-0}"
+RUN_RAG_VALUE="${RUN_RAG:-0}"
 INTERVAL_SECONDS_VALUE="${INTERVAL_SECONDS:-300}"
 FULL_EVERY_VALUE="${FULL_EVERY:-6}"
 
@@ -42,6 +43,8 @@ install_agent() {
     <string>0</string>
     <key>RUN_TARS</key>
     <string>$RUN_TARS_VALUE</string>
+    <key>RUN_RAG</key>
+    <string>$RUN_RAG_VALUE</string>
     <key>PATH</key>
     <string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
   </dict>
@@ -93,6 +96,7 @@ Usage: $0 <install|uninstall|status|restart>
 
 Env overrides for install/restart:
   RUN_TARS=1           Enable TARS run each cycle
+  RUN_RAG=1            Enable RAG refresh on full-profile cycles
   INTERVAL_SECONDS=60  Loop interval
   FULL_EVERY=3         Run full profile every N cycles
 EOF

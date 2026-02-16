@@ -340,6 +340,7 @@ def main():
 
     # Save stats
     stats_file = LANCEDB_PATH / "index_stats.json"
+    stats_file.parent.mkdir(parents=True, exist_ok=True)
     stats["last_indexed"] = datetime.now().isoformat()
     stats_file.write_text(json.dumps(stats, indent=2))
     print(f"\nStats saved to: {stats_file}")
