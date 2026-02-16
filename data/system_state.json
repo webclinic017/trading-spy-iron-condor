@@ -955,7 +955,9 @@
     "weekly_gate_mode": "validation",
     "weekly_gate_recommended_max_position_pct": 0.015,
     "weekly_cadence_kpi_passed": false,
-    "weekly_scaling_sample_gate_passed": false
+    "weekly_scaling_sample_gate_passed": false,
+    "weekly_ai_credit_stress_status": "unknown",
+    "weekly_ai_credit_stress_score": 0.0
   },
   "account": {
     "current_equity": 101441.56,
@@ -1159,6 +1161,15 @@
       "summary": "Cadence KPI miss: one or more weekly minimums not met."
     },
     "scale_blocked_by_cadence": true,
+    "ai_credit_stress": {
+      "status": "unknown",
+      "signal_status": "unknown",
+      "severity_score": 0.0,
+      "signal_date": null,
+      "source": "fred_public",
+      "detail": "No credit spread data available."
+    },
+    "scale_blocked_by_ai_credit_stress": false,
     "scaling_sample_gate": {
       "enabled": true,
       "min_closed_trades_for_scaling": 30,
@@ -1195,15 +1206,23 @@
           "avg_volume_ratio": null,
           "low_liquidity_events": 0,
           "threshold_min_volume_ratio": 0.2
+        },
+        "ai_credit_stress": {
+          "status": "unknown",
+          "signal_status": "unknown",
+          "severity_score": 0.0,
+          "signal_date": null,
+          "source": "fred_public",
+          "detail": "No credit spread data available."
         }
       },
       "blocked_categories": [],
       "gate_block_counts": {},
       "top_rejection_reasons": [],
       "summary": "Closed trades exist in lookback window; no-trade root cause not currently active.",
-      "updated_at": "2026-02-16T16:45:52.481680+00:00"
+      "updated_at": "2026-02-16T17:04:56.554862+00:00"
     },
-    "updated_at": "2026-02-16T16:45:52.481872+00:00"
+    "updated_at": "2026-02-16T17:04:56.555063+00:00"
   },
   "north_star_contributions": {
     "enabled": true,
@@ -1228,12 +1247,44 @@
     "estimated_live_contribution_this_month": 0.5,
     "contribution_estimate_confidence": "medium",
     "inference_note": "Live account has no open positions; live equity change is treated as estimated contribution.",
-    "updated_at": "2026-02-16T16:45:52.481938+00:00"
+    "updated_at": "2026-02-16T17:04:56.555113+00:00"
   },
   "ic_position_management": {
     "last_run": "2026-02-16T16:45:26.837078",
     "iron_condors_evaluated": 1,
     "exits_triggered": 0,
     "exits_executed": 0
+  },
+  "market_signals": {
+    "ai_credit_stress": {
+      "signal": "ai_credit_stress",
+      "status": "unknown",
+      "severity_score": 0.0,
+      "blocked": false,
+      "watch": false,
+      "reasons": [
+        "No credit spread data available."
+      ],
+      "latest_data_date": null,
+      "stale_days": null,
+      "metrics": {
+        "high_yield_oas": {
+          "series_id": "BAMLH0A0HYM2",
+          "latest_value": null,
+          "latest_date": null,
+          "lookback_change": null,
+          "point_count": 0
+        },
+        "baa_minus_10y": {
+          "series_id": "BAA10Y",
+          "latest_value": null,
+          "latest_date": null,
+          "lookback_change": null,
+          "point_count": 0
+        }
+      },
+      "source": "fred_public",
+      "updated_at": "2026-02-16T17:04:56.483651+00:00"
+    }
   }
 }
