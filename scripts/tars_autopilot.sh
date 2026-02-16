@@ -4,10 +4,15 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$REPO_ROOT"
+export PYTHONPATH="$REPO_ROOT:${PYTHONPATH:-}"
 
 ARTIFACT_DIR="${ARTIFACT_DIR:-artifacts/tars}"
 OPENAI_MODEL="${OPENAI_MODEL:-gpt-4o-mini}"
 SMOKE_PROMPT="${SMOKE_PROMPT:-Return a short JSON object with fields status and router_check.}"
+PYTHON_BIN="${PYTHON_BIN:-$REPO_ROOT/.venv-devloop/bin/python}"
+if [[ ! -x "$PYTHON_BIN" ]]; then
+  PYTHON_BIN="python3"
+fi
 
 mkdir -p "$ARTIFACT_DIR"
 
@@ -224,7 +229,7 @@ trade_opinion_smoke() {
     echo "error: missing script scripts/tetrate_trade_opinion_smoke.py"
     return 1
   fi
-  python3 "$REPO_ROOT/scripts/tetrate_trade_opinion_smoke.py" --out "$out"
+  "$PYTHON_BIN" "$REPO_ROOT/scripts/tetrate_trade_opinion_smoke.py" --out "$out"
   if command -v jq >/dev/null 2>&1; then
     if jq -e '.actionable == true' "$out" >/dev/null 2>&1; then
       echo "ok: trade opinion smoke actionable -> $out"
@@ -246,7 +251,7 @@ execution_quality_aggregate() {
     echo "error: missing script scripts/generate_tars_execution_quality.py"
     return 1
   fi
-  python3 "$script" \
+  "$PYTHON_BIN" "$script" \
     --artifact-dir "$ARTIFACT_DIR" \
     --events-log "$ARTIFACT_DIR/execution_quality_events.jsonl" \
     --out-json "$ARTIFACT_DIR/execution_quality_daily.json" \
@@ -279,7 +284,7 @@ package_summary() {
   } > "$out"
 
   if [[ -f "$checklist_script" ]]; then
-    python3 "$checklist_script" --artifact-dir "$ARTIFACT_DIR" >/dev/null 2>&1 || true
+    "$PYTHON_BIN" "$checklist_script" --artifact-dir "$ARTIFACT_DIR" >/dev/null 2>&1 || true
   fi
 
   echo "ok: package summary generated -> $out"

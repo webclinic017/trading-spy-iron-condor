@@ -22,7 +22,7 @@ resolve_pr() {
     echo "$PR_NUMBER"
     return 0
   fi
-  gh pr view --head "$BRANCH" --json number -q '.number' 2>/dev/null || true
+  gh pr list --head "$BRANCH" --state open --json number -q '.[0].number' 2>/dev/null || true
 }
 
 checks_text() {
