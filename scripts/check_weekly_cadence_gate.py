@@ -32,9 +32,7 @@ def _to_int(value: Any, default: int = 0) -> int:
 def evaluate_weekly_cadence(state: dict[str, Any]) -> dict[str, Any]:
     weekly_gate = state.get("north_star_weekly_gate", {})
     cadence = weekly_gate.get("cadence_kpi", {}) if isinstance(weekly_gate, dict) else {}
-    diagnostic = (
-        weekly_gate.get("no_trade_diagnostic", {}) if isinstance(weekly_gate, dict) else {}
-    )
+    diagnostic = weekly_gate.get("no_trade_diagnostic", {}) if isinstance(weekly_gate, dict) else {}
 
     passed = bool(cadence.get("passed"))
     alert_level = str(cadence.get("alert_level") or "unknown").lower()
@@ -110,7 +108,9 @@ def _should_fail(*, result: dict[str, Any], strict: bool, fail_on: str) -> bool:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check weekly cadence KPI and emit CI alerts.")
-    parser.add_argument("--state", default=str(DEFAULT_STATE_PATH), help="Path to system_state.json")
+    parser.add_argument(
+        "--state", default=str(DEFAULT_STATE_PATH), help="Path to system_state.json"
+    )
     parser.add_argument("--out", default="", help="Optional markdown output path")
     parser.add_argument(
         "--fail-on",
