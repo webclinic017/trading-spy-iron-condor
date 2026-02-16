@@ -213,7 +213,10 @@ def _safe_nested_dict(payload: dict[str, Any], *keys: str) -> dict[str, Any]:
 def _normalize_ai_credit_stress_status(signal: dict[str, Any]) -> str:
     raw_status = str(signal.get("status") or "").strip().lower()
     score = _as_float(signal.get("severity_score"), 0.0)
-    if raw_status in {"blocked", "high", "stress", "critical"} or score >= DEFAULT_AI_CREDIT_BLOCK_SCORE:
+    if (
+        raw_status in {"blocked", "high", "stress", "critical"}
+        or score >= DEFAULT_AI_CREDIT_BLOCK_SCORE
+    ):
         return "blocked"
     if raw_status in {"watch", "warning", "elevated"} or score >= DEFAULT_AI_CREDIT_WATCH_SCORE:
         return "watch"
@@ -701,10 +704,7 @@ def compute_weekly_gate(
         block_new_positions = (
             block_new_positions or ai_credit_score >= DEFAULT_AI_CREDIT_HARD_BLOCK_SCORE
         )
-        reason = (
-            f"{reason} AI credit stress blocked: "
-            f"score={ai_credit_score:.1f}."
-        )
+        reason = f"{reason} AI credit stress blocked: score={ai_credit_score:.1f}."
     elif ai_credit_status == "watch":
         if mode == "expansion_candidate":
             mode = "cautious"

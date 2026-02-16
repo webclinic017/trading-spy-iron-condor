@@ -8,6 +8,7 @@ Called by .github/workflows/update-wiki.yml
 
 from __future__ import annotations
 
+import json
 import os
 from datetime import datetime
 from pathlib import Path
@@ -21,6 +22,9 @@ SECRET_KEY = os.environ.get("ALPACA_SECRET_KEY")
 STARTING_CAPITAL = 100000.0  # $100K account started Jan 30, 2026
 NORTH_STAR_TARGET = 600000.0  # $600K = Financial Independence
 MONTHLY_INCOME_TARGET = 6000.0  # $6K/month after-tax
+MIN_TRADES_FOR_PROJECTION = 30  # No projections until 30+ completed trades
+SYSTEM_STATE_PATH = Path("data/system_state.json")
+TRADES_PATH = Path("data/trades.json")
 
 
 def get_account_data() -> dict:
@@ -85,6 +89,48 @@ def get_account_data() -> dict:
     }
 
 
+def get_north_star_metrics() -> dict:
+    """Load North Star metrics from system_state.json."""
+    defaults = {
+        "probability_score": 0,
+        "probability_label": "unknown",
+        "required_cagr": 0,
+        "estimated_cagr": 0,
+        "closed_trades": 0,
+        "realized_pl": 0,
+        "months_remaining": 44,
+    }
+    if not SYSTEM_STATE_PATH.exists():
+        return defaults
+    try:
+        state = json.loads(SYSTEM_STATE_PATH.read_text())
+        ns = state.get("north_star", {})
+        contribs = state.get("north_star_contributions", {})
+
+        # Closed trade stats from trades.json (canonical source)
+        samples = 0
+        total_pnl = 0.0
+        if TRADES_PATH.exists():
+            try:
+                trades_data = json.loads(TRADES_PATH.read_text())
+                stats = trades_data.get("stats", {})
+                samples = stats.get("closed_trades", 0)
+                total_pnl = stats.get("total_realized_pnl", 0.0)
+            except (json.JSONDecodeError, KeyError):
+                pass
+        return {
+            "probability_score": ns.get("probability_score", 0),
+            "probability_label": ns.get("probability_label", "unknown"),
+            "required_cagr": ns.get("required_cagr", 0),
+            "estimated_cagr": ns.get("estimated_cagr_from_expectancy", 0),
+            "closed_trades": samples,
+            "realized_pl": total_pnl,
+            "months_remaining": contribs.get("months_remaining", 44),
+        }
+    except (json.JSONDecodeError, KeyError):
+        return defaults
+
+
 def generate_wiki_home(data: dict) -> str:
     """Generate wiki home page markdown."""
     et = ZoneInfo("America/New_York")
@@ -98,6 +144,9 @@ def generate_wiki_home(data: dict) -> str:
 
     # Progress calculations
     progress_to_goal = (equity / NORTH_STAR_TARGET) * 100
+
+    # North Star data-driven metrics
+    ns = get_north_star_metrics()
 
     # Generate iron condor table
     ic_table = ""
@@ -161,18 +210,21 @@ The system tracks progress toward Financial Independence:
 
 **Target**: Financial Independence = **$6,000/month after-tax**
 
-| Phase | Capital | Monthly Income | Timeline |
-|-------|---------|----------------|----------|
-| **NOW** | ${equity:,.0f} | ~$1,100 | {now.strftime("%b %Y")} |
-| Phase 2 | $250,000 | ~$2,800 | Jan 2027 |
-| Phase 3 | $400,000 | ~$4,500 | Jul 2027 |
-| **GOAL** | $600,000 | **$6,700** | Jan 2028 🎯 |
+| Metric | Value |
+|--------|-------|
+| **Current Equity** | ${equity:,.0f} |
+| **Target Capital** | $600,000 |
+| **Progress** | {progress_to_goal:.1f}% |
+| **Completed IC Trades** | {ns["closed_trades"]} of {MIN_TRADES_FOR_PROJECTION} required |
+| **Realized IC P/L** | ${ns["realized_pl"]:,.0f} |
+| **Months Remaining** | {ns["months_remaining"]} |
+| **Required CAGR** | {ns["required_cagr"] * 100:.1f}% |
+| **Estimated CAGR** | {ns["estimated_cagr"] * 100:.2f}% |
+| **Probability** | {ns["probability_score"]:.1f}% ({ns["probability_label"]}) |
 
-**Progress**: {progress_to_goal:.1f}% toward $600K goal
+**Deadline**: Nov 14, 2029
 
-**Deadline**: Nov 14, 2029 (CEO's 50th birthday)
-
-**Status**: {"✅ **ON TRACK**" if net_gain >= 0 else "⚠️ **NEEDS ATTENTION**"} - Compounding at ~8% monthly reaches goal by Jan 2028
+{"⚠️ **INSUFFICIENT DATA** — " + str(MIN_TRADES_FOR_PROJECTION - ns["closed_trades"]) + " more completed trades needed before projections are valid" if ns["closed_trades"] < MIN_TRADES_FOR_PROJECTION else "📊 **DATA-DRIVEN** — Projections based on " + str(ns["closed_trades"]) + " completed trades"}
 
 ---
 

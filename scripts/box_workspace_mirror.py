@@ -219,7 +219,9 @@ def sync_manifest_to_box(
     for entry in entries:
         rel_path = Path(entry.path)
         folder_parts = list(rel_path.parent.parts) if rel_path.parent != Path(".") else []
-        remote_folder_id = client.ensure_folder_path(root_id=namespace_folder_id, parts=folder_parts)
+        remote_folder_id = client.ensure_folder_path(
+            root_id=namespace_folder_id, parts=folder_parts
+        )
         local_path = repo_root / rel_path
         try:
             existed = False
@@ -265,9 +267,13 @@ def _sync_state(state_path: Path, payload: dict[str, Any]) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate and sync Box workspace mirror manifest.")
     parser.add_argument("--repo-root", default=str(PROJECT_ROOT), help="Repository root path.")
-    parser.add_argument("--manifest-out", default=str(DEFAULT_MANIFEST_PATH), help="Manifest JSON output.")
+    parser.add_argument(
+        "--manifest-out", default=str(DEFAULT_MANIFEST_PATH), help="Manifest JSON output."
+    )
     parser.add_argument("--state", default=str(DEFAULT_STATE_PATH), help="system_state.json path.")
-    parser.add_argument("--sync-state", action="store_true", help="Write run summary to system_state.ops.")
+    parser.add_argument(
+        "--sync-state", action="store_true", help="Write run summary to system_state.ops."
+    )
     parser.add_argument(
         "--include",
         action="append",
@@ -286,7 +292,9 @@ def main() -> int:
         default=5_000_000,
         help="Skip files larger than this size (default: 5MB).",
     )
-    parser.add_argument("--sync", action="store_true", help="Require Box sync (fails on missing creds).")
+    parser.add_argument(
+        "--sync", action="store_true", help="Require Box sync (fails on missing creds)."
+    )
     parser.add_argument(
         "--sync-if-credentials",
         action="store_true",
