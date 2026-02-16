@@ -7,13 +7,13 @@ hero_image: "/assets/img/agent-loop-diagram.png"
 
 # Hackathon System Explainer
 
-Last Updated (UTC): 2026-02-16T14:41:44Z
+Last Updated (UTC): 2026-02-16T14:46:47Z
 
 ## Current Runtime Snapshot
 - Latest cycle: `n/a`
 - Latest profile: `n/a`
 - Latest loop status timestamp: `n/a`
-- Latest Tetrate latency: `861 ms`
+- Latest Tetrate latency: `1637 ms`
 - Latest Tetrate estimated call cost: `0.00004500`
 
 ## Proof Checklist
@@ -64,21 +64,21 @@ flowchart TD
 The section below is auto-generated each cycle from the active Layer-1 task board and runtime logs.
 
 
-- Generated (UTC): `2026-02-16T14:41:21Z`
+- Generated (UTC): `2026-02-16T14:46:36Z`
 - Open Layer-1 tasks: `2`
 
 ## Active Tasks (with elapsed time)
-- `ACTIVE` Add expectancy metrics (profit factor, avg winner, avg loser) to `scripts/generate_profit_readiness_scorecard.py`. (elapsed: 22m 6s)
-- `ACTIVE` Add a promotion gate artifact that blocks strategy promotion when win rate/run-rate thresholds are below target. (elapsed: 22m 6s)
+- `ACTIVE` Add expectancy metrics (profit factor, avg winner, avg loser) to `scripts/generate_profit_readiness_scorecard.py`. (elapsed: 27m 21s)
+- `ACTIVE` Add a promotion gate artifact that blocks strategy promotion when win rate/run-rate thresholds are below target. (elapsed: 27m 21s)
 
 ## Current Task In Progress
 - Task: Add expectancy metrics (profit factor, avg winner, avg loser) to `scripts/generate_profit_readiness_scorecard.py`.
 - Started (UTC): `2026-02-16T14:19:15Z`
-- Elapsed: `22m 6s`
+- Elapsed: `27m 21s`
 
 ## Runtime Phases
-- Last analyze: cycle=1 profile=profit duration=22s
-- Last TARS: cycle=2 duration=1m 46s
+- Last analyze: cycle=5 profile=profit duration=17s
+- Last TARS: cycle=3 duration=1m 27s
 - Last RAG: cycle=4 duration=23s
 
 ## Newly Added Tasks This Run
