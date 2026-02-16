@@ -62,11 +62,11 @@ Every OpenAI-compatible call in the system routes through TARS with zero code ch
 
 ## Architecture
 
-![LLM Gateway Architecture](../assets/llm_gateway_architecture.png)
+![LLM Gateway Architecture](/trading/assets/llm_gateway_architecture.png)
 
-![Trading Pipeline](../assets/trading_pipeline.png)
+![Trading Pipeline](/trading/assets/trading_pipeline.png)
 
-![Feedback Pipeline](../assets/feedback_pipeline.png)
+![Feedback Pipeline](/trading/assets/feedback_pipeline.png)
 
 ## What We Built Today
 

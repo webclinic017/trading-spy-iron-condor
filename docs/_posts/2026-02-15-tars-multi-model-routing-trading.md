@@ -38,7 +38,7 @@ The hard part is routing correctly — making sure cheap models handle cheap tas
 
 [Tetrate Agent Router Service (TARS)](https://router.tetrate.ai) gives us a single gateway endpoint that routes to any provider:
 
-![LLM Gateway Architecture](../assets/llm_gateway_architecture.png)
+![LLM Gateway Architecture](/trading/assets/llm_gateway_architecture.png)
 
 One API key. One base URL. Five models across three providers. The trading code doesn't know or care which model handles a request — it calls the gateway, and the gateway routes.
 
@@ -92,7 +92,7 @@ TARS adds a second layer of fallback at the gateway level — if Anthropic's API
 
 Every trade passes through six stages, each with its own model routing:
 
-![Trading Pipeline](../assets/trading_pipeline.png)
+![Trading Pipeline](/trading/assets/trading_pipeline.png)
 
 1. **Thompson Sampler** — strategy selection (local, no LLM)
 2. **Trade Memory** — SQLite pattern matching (local)
