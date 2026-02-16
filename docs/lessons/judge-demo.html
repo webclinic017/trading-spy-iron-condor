@@ -24,26 +24,26 @@
       color: var(--text);
       font-family: "Avenir Next", "Segoe UI", sans-serif;
     }
-    .wrap { max-width: 1120px; margin: 0 auto; padding: 28px 18px 42px; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 22px 16px 34px; }
     .hero {
       border: 1px solid var(--line);
       background: linear-gradient(135deg, var(--panel), var(--panel2));
       border-radius: 16px;
       padding: 22px;
     }
-    h1 { margin: 0 0 8px; font-size: clamp(1.6rem, 3vw, 2.2rem); }
-    p { margin: 0; color: var(--muted); line-height: 1.5; }
+    h1 { margin: 0 0 6px; font-size: clamp(1.3rem, 2.2vw, 1.8rem); }
+    p { margin: 0; color: var(--muted); line-height: 1.45; font-size: 0.92rem; }
     .grid {
       display: grid;
       grid-template-columns: repeat(12, 1fr);
-      gap: 14px;
-      margin-top: 14px;
+      gap: 12px;
+      margin-top: 12px;
     }
     .card {
       border: 1px solid var(--line);
       background: var(--panel);
-      border-radius: 14px;
-      padding: 14px;
+      border-radius: 12px;
+      padding: 12px;
     }
     .span4 { grid-column: span 4; }
     .span6 { grid-column: span 6; }
@@ -51,17 +51,17 @@
     .span12 { grid-column: span 12; }
     .k {
       color: var(--muted);
-      font-size: 0.85rem;
+      font-size: 0.78rem;
       text-transform: uppercase;
       letter-spacing: 0.3px;
     }
-    .v { font-size: 1.45rem; font-weight: 700; margin-top: 4px; }
+    .v { font-size: 1.12rem; font-weight: 700; margin-top: 3px; }
     .table { width: 100%; border-collapse: collapse; }
     .table td {
       border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding: 10px 6px;
+      padding: 8px 6px;
       vertical-align: top;
-      font-size: 0.95rem;
+      font-size: 0.86rem;
     }
     .chip {
       border-radius: 999px;
@@ -82,13 +82,13 @@
       border: 1px solid var(--line);
       background: rgba(255,255,255,0.03);
       border-radius: 10px;
-      min-height: 60px;
+      min-height: 52px;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
       padding: 8px;
-      font-size: 0.88rem;
+      font-size: 0.8rem;
     }
     .arr { text-align: center; color: var(--accent); font-weight: 800; }
     .links a { color: #9ed0ff; text-decoration: none; }
@@ -146,17 +146,20 @@
           <tr><td>Starting balance</td><td>$100,000.00</td></tr>
           <tr><td>Current equity</td><td>$101,441.56</td></tr>
           <tr><td>Net P/L</td><td>$1,441.56 (1.44%)</td></tr>
-          <tr><td>Why (current drivers)</td><td>Win rate 37.5% over 32 samples, strategy gate status: CRITICAL</td></tr>
+          <tr><td>Why (current drivers)</td><td>Win rate 100.0% over 1 samples, strategy gate status: LOW</td></tr>
         </table>
       </article>
 
       <article class="card span8">
         <div class="k">Readiness Metrics</div>
-        <table class="table"><tr><td>Win Rate</td><td>37.50%</td><td><span class="chip warn">WARN</span></td></tr>
+        <table class="table"><tr><td>Win Rate</td><td>100.00%</td><td><span class="chip pass">PASS</span></td></tr>
 <tr><td>Max Drawdown (sync history)</td><td>0.03%</td><td><span class="chip pass">PASS</span></td></tr>
 <tr><td>Execution Quality (valid trade records)</td><td>97.89%</td><td><span class="chip pass">PASS</span></td></tr>
 <tr><td>Gateway Latency</td><td>1626 ms</td><td><span class="chip pass">PASS</span></td></tr>
-<tr><td>Gateway Cost (smoke call)</td><td>$0.000045</td><td><span class="chip pass">PASS</span></td></tr></table>
+<tr><td>Gateway Cost (smoke call)</td><td>$0.000045</td><td><span class="chip pass">PASS</span></td></tr>
+<tr><td>Weekly Qualified Setups</td><td>0/3</td><td><span class="chip warn">WARN</span></td></tr>
+<tr><td>Weekly Closed Trades</td><td>1/1</td><td><span class="chip pass">PASS</span></td></tr>
+<tr><td>AI Credit Stress Gate</td><td>unknown</td><td><span class="chip unknown">UNKNOWN</span></td></tr></table>
       </article>
 
       <article class="card span4 links">

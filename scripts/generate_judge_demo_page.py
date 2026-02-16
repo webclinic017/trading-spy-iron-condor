@@ -139,26 +139,26 @@ def main() -> int:
       color: var(--text);
       font-family: "Avenir Next", "Segoe UI", sans-serif;
     }}
-    .wrap {{ max-width: 1120px; margin: 0 auto; padding: 28px 18px 42px; }}
+    .wrap {{ max-width: 1120px; margin: 0 auto; padding: 22px 16px 34px; }}
     .hero {{
       border: 1px solid var(--line);
       background: linear-gradient(135deg, var(--panel), var(--panel2));
       border-radius: 16px;
       padding: 22px;
     }}
-    h1 {{ margin: 0 0 8px; font-size: clamp(1.6rem, 3vw, 2.2rem); }}
-    p {{ margin: 0; color: var(--muted); line-height: 1.5; }}
+    h1 {{ margin: 0 0 6px; font-size: clamp(1.3rem, 2.2vw, 1.8rem); }}
+    p {{ margin: 0; color: var(--muted); line-height: 1.45; font-size: 0.92rem; }}
     .grid {{
       display: grid;
       grid-template-columns: repeat(12, 1fr);
-      gap: 14px;
-      margin-top: 14px;
+      gap: 12px;
+      margin-top: 12px;
     }}
     .card {{
       border: 1px solid var(--line);
       background: var(--panel);
-      border-radius: 14px;
-      padding: 14px;
+      border-radius: 12px;
+      padding: 12px;
     }}
     .span4 {{ grid-column: span 4; }}
     .span6 {{ grid-column: span 6; }}
@@ -166,17 +166,17 @@ def main() -> int:
     .span12 {{ grid-column: span 12; }}
     .k {{
       color: var(--muted);
-      font-size: 0.85rem;
+      font-size: 0.78rem;
       text-transform: uppercase;
       letter-spacing: 0.3px;
     }}
-    .v {{ font-size: 1.45rem; font-weight: 700; margin-top: 4px; }}
+    .v {{ font-size: 1.12rem; font-weight: 700; margin-top: 3px; }}
     .table {{ width: 100%; border-collapse: collapse; }}
     .table td {{
       border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding: 10px 6px;
+      padding: 8px 6px;
       vertical-align: top;
-      font-size: 0.95rem;
+      font-size: 0.86rem;
     }}
     .chip {{
       border-radius: 999px;
@@ -197,13 +197,13 @@ def main() -> int:
       border: 1px solid var(--line);
       background: rgba(255,255,255,0.03);
       border-radius: 10px;
-      min-height: 60px;
+      min-height: 52px;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
       padding: 8px;
-      font-size: 0.88rem;
+      font-size: 0.8rem;
     }}
     .arr {{ text-align: center; color: var(--accent); font-weight: 800; }}
     .links a {{ color: #9ed0ff; text-decoration: none; }}
