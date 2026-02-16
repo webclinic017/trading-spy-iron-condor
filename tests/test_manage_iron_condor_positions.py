@@ -127,6 +127,6 @@ class TestExitConditions:
 
     def test_config_values_aligned_with_strategy(self):
         """Verify config matches CLAUDE.md strategy."""
-        assert IC_EXIT_CONFIG["profit_target_pct"] == 0.50  # 50% profit
-        assert IC_EXIT_CONFIG["stop_loss_pct"] == 2.00  # 200% stop
+        assert IC_EXIT_CONFIG["profit_target_pct"] == 0.75  # 75% profit
+        assert IC_EXIT_CONFIG["stop_loss_pct"] == 1.00  # 100% stop
         assert IC_EXIT_CONFIG["exit_dte"] == 7  # 7 DTE per LL-268

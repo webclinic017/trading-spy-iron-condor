@@ -54,7 +54,7 @@ class TradeExecutionEvals:
         self.max_dte = 45
         self.target_delta_min = 0.15
         self.target_delta_max = 0.20
-        self.required_stop_loss_multiplier = 2.0
+        self.required_stop_loss_multiplier = 1.0
 
     def eval_ticker(self, proposal: TradeProposal) -> EvalResult:
         """EVAL-001: Ticker must be SPY, SPX, or XSP."""
@@ -115,7 +115,7 @@ class TradeExecutionEvals:
         )
 
     def eval_stop_loss_defined(self, proposal: TradeProposal) -> EvalResult:
-        """EVAL-007: Stop loss at 200% of credit must be defined."""
+        """EVAL-007: Stop loss at 100% of credit must be defined."""
         passed = proposal.stop_loss_multiplier == self.required_stop_loss_multiplier
         return EvalResult(
             passed=passed,
@@ -189,7 +189,7 @@ class TestTradeExecutionEvals:
             dte=35,
             max_risk=Decimal("500"),
             credit_received=Decimal("300"),
-            stop_loss_multiplier=2.0,
+            stop_loss_multiplier=1.0,
             account_value=Decimal("30000"),
         )
 

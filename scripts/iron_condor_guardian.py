@@ -35,8 +35,8 @@ if not API_KEY or not SECRET_KEY:
 PAPER = True
 
 # Phil Town Rule #1 Parameters
-STOP_LOSS_MULTIPLIER = 2.0  # 200% of credit
-PROFIT_TAKE_PCT = 0.50  # 50% of max profit
+STOP_LOSS_MULTIPLIER = 1.0  # 100% of credit (positive EV: 75/100 beats 50/200)
+PROFIT_TAKE_PCT = 0.75  # 75% of max profit
 MIN_DTE = 7  # Exit at 7 DTE
 
 # Track iron condor entry credits

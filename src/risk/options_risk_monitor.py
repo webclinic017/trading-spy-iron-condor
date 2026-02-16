@@ -14,13 +14,12 @@ from typing import Literal
 
 logger = logging.getLogger(__name__)
 
-# Default stop-loss multiplier: close when loss = 2x credit received
-# For $60 credit, close when loss reaches $120 (spread value = $180 = 3x credit)
-DEFAULT_STOP_LOSS_MULTIPLIER = 2.0
+# Default stop-loss multiplier: close when loss = 1x credit received
+# 75% profit / 100% stop = positive EV (old 50/200 was EV-neutral)
+DEFAULT_STOP_LOSS_MULTIPLIER = 1.0
 
-# Jan 2026: 50% profit exit - close when spread value drops to 50% of entry credit
-# This improves win rate from ~75% to ~85% by taking profits early
-DEFAULT_PROFIT_TARGET_PCT = 0.50
+# 75% profit exit for positive EV with 100% stop loss
+DEFAULT_PROFIT_TARGET_PCT = 0.75
 
 
 @dataclass
