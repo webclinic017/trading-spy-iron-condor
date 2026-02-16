@@ -118,6 +118,22 @@ def points_from_rows(rows: list[dict]) -> list[tuple[datetime, float]]:
     return points
 
 
+def estimate_gateway_cost(prompt_tokens: int, completion_tokens: int) -> float | None:
+    """Estimate gateway cost using default envs or hardcoded safe fallback."""
+    import os
+
+    # Try env vars first
+    try:
+        input_cost = float(os.environ.get("TARS_INPUT_COST_PER_1M", "0.50"))  # $/1M tokens
+        output_cost = float(os.environ.get("TARS_OUTPUT_COST_PER_1M", "1.50"))
+    except Exception:
+        input_cost = 0.50
+        output_cost = 1.50
+    # Compute cost
+    cost = (prompt_tokens / 1_000_000) * input_cost + (completion_tokens / 1_000_000) * output_cost
+    return round(cost, 8) if cost > 0 else None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate profit readiness scorecard.")
     parser.add_argument("--repo-root", default=".", help="Repository root")
@@ -192,7 +208,7 @@ def main() -> int:
             prompt_tokens = int(usage.get("prompt_tokens", 0))
             completion_tokens = int(usage.get("completion_tokens", 0))
             if prompt_tokens + completion_tokens > 0:
-                total_cost = None
+                total_cost = estimate_gateway_cost(prompt_tokens, completion_tokens)
         except Exception:
             pass
 

@@ -50,7 +50,9 @@ def tail_lines(path: Path, n: int = 20) -> list[str]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate morning status report from devloop artifacts.")
+    parser = argparse.ArgumentParser(
+        description="Generate morning status report from devloop artifacts."
+    )
     parser.add_argument("--repo-root", default=".", help="Repository root")
     parser.add_argument(
         "--out", default="artifacts/devloop/morning_report.md", help="Output report path"

@@ -128,7 +128,9 @@ def main() -> int:
     lines.append("## Query Index Health")
     lines.append(f"- `data/rag/lessons_query.json` exists: {yes_no(query_index.exists())}")
     lines.append(f"- `data/rag/lessons_query.json` mtime: {fmt_mtime(query_index)}")
-    lines.append(f"- `docs/data/rag/lessons_query.json` exists: {yes_no(docs_query_index.exists())}")
+    lines.append(
+        f"- `docs/data/rag/lessons_query.json` exists: {yes_no(docs_query_index.exists())}"
+    )
     lines.append(f"- `docs/data/rag/lessons_query.json` mtime: {fmt_mtime(docs_query_index)}")
     lines.append("")
     lines.append("## Refresh Log")

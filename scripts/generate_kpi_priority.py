@@ -129,7 +129,9 @@ def task_bank(metric_name: str) -> list[str]:
             "Implement prompt/token budget regression check and artifact that tracks cost trend by cycle.",
         ],
     }
-    return mapping.get(metric_name, [f"Improve KPI metric: {metric_name} with measurable artifact proof."])
+    return mapping.get(
+        metric_name, [f"Improve KPI metric: {metric_name} with measurable artifact proof."]
+    )
 
 
 def load_state(path: Path) -> dict:
