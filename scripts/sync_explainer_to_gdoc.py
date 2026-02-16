@@ -122,7 +122,6 @@ def compose_doc_text(
 
         out.append(text)
         start = cursor
-        end = cursor + len(text) - 1
         cursor += len(text)
 
         if block.kind in {"h1", "h2", "h3", "code", "body", "bullet", "numbered"} and line:

@@ -63,6 +63,7 @@ generate_report() {
   log "generate morning report start"
   "$PYTHON_BIN" scripts/generate_morning_report.py --repo-root . --out artifacts/devloop/morning_report.md >>"$LOG_FILE" 2>&1
   "$PYTHON_BIN" scripts/generate_system_explainer.py --repo-root . --out docs/_reports/hackathon-system-explainer.md >>"$LOG_FILE" 2>&1 || true
+  "$PYTHON_BIN" scripts/generate_judge_demo_page.py --repo-root . --out docs/lessons/judge-demo.html >>"$LOG_FILE" 2>&1 || true
   if [[ "$SYNC_GDOC" == "1" ]] && [[ -n "$GDRIVE_DOC_URL" ]]; then
     "$PYTHON_BIN" scripts/sync_explainer_to_gdoc.py --doc "$GDRIVE_DOC_URL" --in docs/_reports/hackathon-system-explainer.md --creds "$GDRIVE_CREDS_FILE" >>"$LOG_FILE" 2>&1 || true
   fi
@@ -98,6 +99,7 @@ stage_targets() {
     || true
   git add \
     docs/_reports/hackathon-system-explainer.md \
+    docs/lessons/judge-demo.html \
     manual_layer1_tasks.md \
     config/manual_layer1_tasks.md \
     data/rag/lessons_query.json \
