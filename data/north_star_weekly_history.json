@@ -9,10 +9,12 @@
   },
   {
     "week_start": "2026-02-16",
-    "updated_at": "2026-02-16T12:47:37.342140+00:00",
     "sample_size": 1,
     "win_rate_pct": 100.0,
     "expectancy_per_trade": 41.0,
-    "mode": "validation"
+    "mode": "validation",
+    "qualified_setups": 0,
+    "cadence_passed": false,
+    "updated_at": "2026-02-16T16:00:02.725534+00:00"
   }
 ]
