@@ -58,6 +58,7 @@ A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
 - [Cadence gate checker](https://github.com/IgorGanapolsky/trading/blob/main/scripts/check_weekly_cadence_gate.py)
 - [North Star operating plan updater](https://github.com/IgorGanapolsky/trading/blob/main/scripts/update_north_star_operating_plan.py)
 - [Live site dashboard](https://igorganapolsky.github.io/trading/)
+- [Judge Demo Evidence](https://igorganapolsky.github.io/trading/lessons/judge-demo.html)
 
 ## Data Freshness
 

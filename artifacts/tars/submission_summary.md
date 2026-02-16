@@ -9,6 +9,9 @@ Generated: 2026-02-15T19:23:16Z
 - resilience report: `artifacts/tars/resilience_report.txt`
 - retrieval report: `artifacts/tars/retrieval_report.txt`
 
+## Live Evidence
+- **[Judge Demo Evidence Hub](https://igorganapolsky.github.io/trading/lessons/judge-demo.html)** — interactive dashboard with TARS routing proof, readiness metrics, and technical deep-dive
+
 ## Judge-ready claims (evidence-backed)
 - Gateway route configured and validated via smoke call output
 - Error-path behavior validated via invalid-model resilience test

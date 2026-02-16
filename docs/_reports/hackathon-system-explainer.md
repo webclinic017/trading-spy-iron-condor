@@ -53,6 +53,7 @@ flowchart TD
 ```
 
 ## Demo Artifacts
+- **[Judge Demo Evidence](https://igorganapolsky.github.io/trading/lessons/judge-demo.html)** — live dashboard with TARS metrics, readiness scores, and technical deep-dive
 - `artifacts/tars/submission_summary.md`
 - `artifacts/tars/judge_demo_checklist.md`
 - `artifacts/tars/smoke_metrics.txt`
