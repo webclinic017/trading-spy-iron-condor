@@ -7,22 +7,54 @@ This is the unfiltered story of building an autonomous AI trading system—every
 
 **The goal:** $6,000/month passive income through disciplined iron condor trading on SPY.
 
-**The method:** Claude Opus 4.5 as CTO, running autonomous workflows for trading, risk, and system maintenance. Ralph Mode is one subsystem focused on iterative code repair and self-healing CI.
+**The method:** A full autonomous stack where each layer has a strict role:
+
+- **Signal + market data layer**: Alpaca + macro/news inputs feed the orchestrator.
+- **Decision layer**: Claude Opus handles trade-critical reasoning; TARS/OpenRouter route non-critical tasks for cost control.
+- **Memory layer**: LanceDB RAG retrieves prior failures and lessons before trade and code decisions.
+- **Execution layer**: Orchestrator + trade gateway enforce SPY-only, sizing, entry/exit, and stop-loss policies before orders hit Alpaca.
+- **Risk layer**: Hard gates (position limits, drawdown controls, pre-trade smoke tests, mandatory checklists) block unsafe actions.
+- **Reliability layer**: Ralph Mode and CI workflows continuously test, repair, and document the system.
+
+Full architecture: **[Tech Stack](/trading/tech-stack/)**.
+
+## How This Reaches North Star (By Nov 14, 2029)
+
+North Star in `.claude/CLAUDE.md`: grow from **$100K to $600K**, then operate at **$6,000/month after-tax** by **November 14, 2029**.
+
+### Phase 1: Validation (Now -> 2026-05-31)
+- Complete 90-day paper validation with the current SPY iron condor rules.
+- Required gate to move forward: stable risk behavior + passing North Star gate logic.
+
+### Phase 2: Controlled Live Pilot (2026-06-01 -> 2026-12-31)
+- Transition to live only after Phase 1 gates pass.
+- Keep strict risk caps (5% max position risk, defined exits/stops, no ticker drift).
+- Objective: prove process discipline under live execution constraints.
+
+### Phase 3: Controlled Scaling (2027-01-01 -> 2028-12-31)
+- Scale only when rolling performance/risk gates remain green.
+- Continue closed learning loop: trade outcome -> RAG lesson -> policy update -> retest -> redeploy.
+- Objective: increase capital efficiency without increasing rule violations.
+
+### Phase 4: Income Conversion (2029-01-01 -> 2029-11-14)
+- Operate at target capital and convert risk-adjusted option premium into monthly cashflow.
+- Maintain CI/risk reliability as a hard precondition to protect compounding.
+- Target outcome date: **November 14, 2029**.
 
 ---
 
 ## Where We Are Today
 
 <!-- AUTO_STATUS_START -->
-_Last Sync: 2026-02-16 11:15 UTC (source: `data/system_state.json`)_
+_Last Sync: 2026-02-16 14:48 UTC (source: `data/system_state.json`)_
 
 | What | Status |
 | ---- | ------ |
 | Account Equity | $101,441.56 |
 | Daily P/L | +$0.00 |
-| Win Rate | 37.5% (32 trades; target 80.0%) |
+| Win Rate | 100.0% (1 trades; target 80.0%) |
 | Paper Phase | Day 14/90 |
-| North Star Gate | ACTIVE (OFF_TRACK_WIN_RATE) |
+| North Star Gate | ACTIVE (VALIDATING) |
 | Open Positions | 1 structure(s), 4 option leg(s) |
 | Unrealized P/L | +$2.00 |
 

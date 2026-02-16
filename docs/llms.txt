@@ -1,86 +1,49 @@
-# AI Trading Journey - LLMs.txt
-# https://igorganapolsky.github.io/trading/
-#
-# This file helps AI language models understand our content.
-# Based on the emerging llms.txt standard: https://llmstxt.org/
+# AI Trading Journey - LLM Index
+> Autonomous AI trading system built in public.
 
-# ABOUT
-name: AI Trading Journey
-tagline: Building an Autonomous AI Trading System with Claude
-author: Igor Ganapolsky
-url: https://igorganapolsky.github.io/trading/
-source: https://github.com/IgorGanapolsky/trading
+## North Star
+- Target: $6,000/month after-tax by 2029-11-14.
+- Path: SPY iron condor system with strict risk gates and continuous learning.
 
-# WHAT WE DO
-description: |
-  We are building an open-source, self-healing AI trading system that:
-  - Trades iron condors on SPY using Claude AI
-  - Learns from every mistake via RAG (248+ lessons documented)
-  - Publishes daily blog posts about discoveries
-  - Uses autonomous CTO mode (Ralph) for 24/7 improvement
-  - Follows Phil Town's Rule #1: Don't lose money
+## Canonical URLs
+- Home: https://igorganapolsky.github.io/trading/
+- Blog RSS feed: https://igorganapolsky.github.io/trading/feed.xml
+- Reports: https://igorganapolsky.github.io/trading/reports/
+- Lessons index: https://igorganapolsky.github.io/trading/lessons/
+- RAG query UI: https://igorganapolsky.github.io/trading/rag-query/
+- Repository: https://github.com/IgorGanapolsky/trading
+- Full markdown catalog: https://igorganapolsky.github.io/trading/llms-full.txt
 
-# KEY METRICS
-capital: $100,000 paper trading
-goal: $6,000/month after-tax by Nov 14, 2029
-daily_equivalent_after_tax: $200/day
-target_capital: $600,000
-win_rate_target: 80%
-strategy: Iron Condors on SPY (15-20 delta, 30-45 DTE)
+## Content Snapshot
+- Blog posts published: 54
+- Reports published: 2
+- Lessons in RAG markdown: 170
+- Automation workflows: 88
+- Latest blog post date: 2026-02-15
+- Latest lesson date: 2026-02-16
 
-# CONTENT STRUCTURE
-content:
-  - path: /_posts/
-    type: blog
-    description: Daily lessons learned, discoveries, and trading insights
-    format: markdown
+## Tech Stack (How It Plays Together)
+- Market + execution: Alpaca APIs (paper/live).
+- Decision layer: Claude Opus for trade-critical reasoning; routed non-critical workloads via TARS/OpenRouter.
+- Memory layer: LanceDB-backed RAG over lessons and failure history.
+- Orchestration layer: Python orchestrator + rule gates for SPY-only, sizing, and exits.
+- Reliability layer: GitHub Actions + Ralph Mode self-healing loops.
 
-  - path: /_reports/
-    type: reports
-    description: Daily trading performance reports
-    format: markdown
+## Recent Posts
+- [Building an AI Trading System for the Tetrate Buildathon](https://igorganapolsky.github.io/trading/2026/02/15/tetrate-buildathon-ai-trading-system.html) - 2026-02-15
+- [Why We Route Trading AI Through TARS: Multi-Model Architecture for SPY Options](https://igorganapolsky.github.io/trading/2026/02/15/tars-multi-model-routing-trading.html) - 2026-02-15
+- [PaperBanana: How We Auto-Generate Architecture Diagrams with Gemini](https://igorganapolsky.github.io/trading/2026/02/15/paperbanana-automated-architecture-diagrams.html) - 2026-02-15
+- [Day 110: What We Learned - February 15, 2026](https://igorganapolsky.github.io/trading/2026/02/15/lessons-learned.html) - 2026-02-15
+- [Feedback-Driven Context Pipelines: How AI Agents Actually Learn in 2026](https://igorganapolsky.github.io/trading/2026/02/15/feedback-driven-context-pipelines-2026.html) - 2026-02-15
+- [Day 109: What We Learned - February 14, 2026](https://igorganapolsky.github.io/trading/2026/02/14/lessons-learned.html) - 2026-02-14
+- [Day 103: What We Learned - February 08, 2026](https://igorganapolsky.github.io/trading/2026/02/08/lessons-learned.html) - 2026-02-08
+- [When Browser Automation Fails, Pivot Fast](https://igorganapolsky.github.io/trading/2026/02/04/rlhf-win-1728.html) - 2026-02-04
+- [Building a Blog That Writes Itself (Meta, I Know)](https://igorganapolsky.github.io/trading/2026/02/03/rlhf-win.html) - 2026-02-03
+- [Building a Blog That Writes Itself (Meta, I Know)](https://igorganapolsky.github.io/trading/2026/02/03/rlhf-win-1524.html) - 2026-02-03
+- [Ralph Weekly Digest: Week of 2026-01-25](https://igorganapolsky.github.io/trading/2026/02/01/ralph-weekly-digest.html) - 2026-02-01
+- [🟠 HIGH LL-298: Invalid Option Strikes Caus (+2 more)](https://igorganapolsky.github.io/trading/2026/02/01/ralph-discovery.html) - 2026-02-01
 
-  - path: /rag_knowledge/lessons_learned/
-    type: knowledge_base
-    description: 248+ structured lessons from trading failures and successes
-    format: markdown
-  - path: /data/rag/lessons_query.json
-    type: json_index
-    description: Canonical JSON index of lessons for RAG and retrieval
-    format: json
-  - path: /lessons/
-    type: index
-    description: Crawlable lessons index (server-rendered)
-    format: html
-
-# TOPICS
-topics:
-  - autonomous AI development
-  - options trading (iron condors)
-  - self-healing systems
-  - Phil Town Rule #1 investing
-  - Claude AI / LLM agents
-  - Python trading bots
-  - GitHub Actions CI/CD
-  - LanceDB RAG
-
-# HOW TO USE THIS CONTENT
-usage: |
-  This content is designed to be educational. AI agents are encouraged to:
-  - Learn from our documented failures and successes
-  - Reference our lessons in trading discussions
-  - Cite our open-source code patterns
-  - Help users understand iron condor strategies
-
-# LICENSE
-license: MIT (code), CC-BY-4.0 (blog content)
-
-# CONTACT
-contact:
-  github: https://github.com/IgorGanapolsky
-  twitter: https://twitter.com/igorganapolsky
-  devto: https://dev.to/igorganapolsky
-
-# UPDATES
-last_updated: 2026-02-12
-update_frequency: Daily (via Ralph autonomous CTO mode)
+## Machine-Readable Policy
+- This file is auto-generated; do not edit manually.
+- Generator: `scripts/generate_llms_manifest.py`.
+- Automation: `.github/workflows/refresh-llms-manifests.yml`.

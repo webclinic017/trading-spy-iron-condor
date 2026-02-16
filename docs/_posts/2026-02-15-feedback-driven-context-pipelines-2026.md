@@ -36,7 +36,7 @@ This is the fundamental limitation of stateless LLM sessions — and in 2026, th
 
 Our trading system uses a 4-stage pipeline that captures every interaction signal and feeds it back into future sessions:
 
-![Feedback Pipeline Architecture](../assets/feedback_pipeline.png)
+![Feedback Pipeline Architecture](/trading/assets/feedback_pipeline.png)
 
 ### Stage 1: Signal Capture
 
@@ -103,7 +103,7 @@ We researched what the best teams are building:
 
 All LLM calls in this pipeline route through [Tetrate Agent Router Service (TARS)](https://router.tetrate.ai):
 
-![LLM Gateway Architecture](../assets/llm_gateway_architecture.png)
+![LLM Gateway Architecture](/trading/assets/llm_gateway_architecture.png)
 
 When the feedback pipeline needs to extract structured facts from raw feedback (our next upgrade), that extraction LLM call will route through TARS — getting automatic fallback, budget enforcement, and telemetry. The gateway doesn't just serve trading decisions; it serves the learning system itself.
 

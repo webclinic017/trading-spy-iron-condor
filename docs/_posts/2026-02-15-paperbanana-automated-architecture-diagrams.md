@@ -50,21 +50,21 @@ The critic is the key differentiator. It reviews the generated image against the
 Three diagrams, all from plain text `.txt` files, generated in parallel in under 5 minutes total:
 
 ### 1. LLM Gateway Architecture
-![LLM Gateway](../assets/llm_gateway_architecture.png)
+![LLM Gateway](/trading/assets/llm_gateway_architecture.png)
 
 **Input**: A text description of our TARS -> OpenRouter -> Anthropic fallback chain with the BATS budget-aware model selector.
 
 **Critic feedback after iteration 1**: "Arrows from Task Complexity diamond should connect to corresponding models in both TARS and OpenRouter layers." Auto-refined in iteration 2.
 
 ### 2. Feedback-Driven Context Pipeline
-![Feedback Pipeline](../assets/feedback_pipeline.png)
+![Feedback Pipeline](/trading/assets/feedback_pipeline.png)
 
 **Input**: Description of our Thompson Sampling + LanceDB + MemAlign feedback loop.
 
 **Critic verdict after iteration 1**: "No issues found. Image is publication-ready." Done in 1 iteration.
 
 ### 3. Trading Pipeline
-![Trading Pipeline](../assets/trading_pipeline.png)
+![Trading Pipeline](/trading/assets/trading_pipeline.png)
 
 **Input**: 6-stage iron condor execution pipeline with safety gates.
 

@@ -7,27 +7,77 @@
     "paper_phase_days_required": 90,
     "decision_thresholds": {
       "reassess_below": 75,
-      "marginal_range": [75, 80],
+      "marginal_range": [
+        75,
+        80
+      ],
       "profitable_above": 80,
       "min_trades_for_decision": 30
     },
-    "notes": "CLEANED Jan 27, 2026 - Removed pre-Jan-22 garbage (SOFI trades, stock DCA). Fresh start per $30K account reset."
+    "notes": "CLEANED Jan 27, 2026 - Removed pre-Jan-22 garbage (SOFI trades, stock DCA). Fresh start per $30K account reset.",
+    "last_sync": "2026-02-16T14:48:19.109876+00:00",
+    "sync_source": "sync_closed_positions.py"
   },
   "stats": {
-    "total_trades": 0,
-    "closed_trades": 0,
+    "total_trades": 1,
+    "closed_trades": 1,
     "open_trades": 0,
-    "wins": 0,
+    "wins": 1,
     "losses": 0,
     "breakeven": 0,
-    "win_rate_pct": null,
-    "avg_win": null,
+    "win_rate_pct": 100.0,
+    "avg_win": 41.0,
     "avg_loss": null,
     "profit_factor": null,
-    "total_pnl": 0.0,
+    "total_pnl": 41.0,
+    "total_realized_pnl": 41.0,
     "paper_phase_start": "2026-01-22",
-    "paper_phase_days": 5,
-    "last_updated": "2026-01-27T18:40:00Z"
+    "paper_phase_days": 25,
+    "last_updated": "2026-02-16T14:48:19.109869+00:00"
   },
-  "trades": []
+  "trades": [
+    {
+      "id": "IC_SPY_2026_02_20_P655_660_C720_725_20260122174841_20260206184836",
+      "symbol": "SPY",
+      "type": "option",
+      "strategy": "iron_condor",
+      "status": "closed",
+      "entry_date": "2026-01-22",
+      "exit_date": "2026-02-06",
+      "entry_time": "2026-01-22T17:48:41.448722+00:00",
+      "exit_time": "2026-02-06T18:48:36.298501+00:00",
+      "entry_credit": 81.0,
+      "exit_debit": 40.0,
+      "realized_pnl": 41.0,
+      "outcome": "win",
+      "signature": "SPY_2026-02-20_P655-660_C720-725",
+      "legs": {
+        "underlying": "SPY",
+        "expiry": "2026-02-20",
+        "put_strikes": [
+          655.0,
+          660.0
+        ],
+        "call_strikes": [
+          720.0,
+          725.0
+        ]
+      },
+      "source": "alpaca_leg_cluster->alpaca_leg_cluster",
+      "order_ids": {
+        "entry": [
+          "130b8632-7e3c-4679-bd60-8625f745248f",
+          "355a94b8-6972-46a1-ae7a-8fce87bbc682",
+          "dac555e2-ce3d-4411-8845-34d1e1b2ede0",
+          "40432d54-df5c-433b-bf80-34688c729582"
+        ],
+        "exit": [
+          "1d3416ad-f32b-4057-9ed3-2604641b3f5c",
+          "2f1425ea-4623-4429-bcaa-b444745c08b5",
+          "4fb2f9f4-1508-4032-b887-6054abd2208b",
+          "c8d42c17-0a38-4bce-a14e-916a8a3dc038"
+        ]
+      }
+    }
+  ]
 }

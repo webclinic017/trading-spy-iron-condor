@@ -138,6 +138,9 @@ This repo is optimized for AI agent collaboration:
 - Mandatory rules: `.claude/rules/MANDATORY_RULES.md`
 - RAG knowledge base: `rag_knowledge/`
 - RLHF feedback: `.claude/memory/feedback/`
+- LLM manifest (summary): `https://igorganapolsky.github.io/trading/llms.txt`
+- LLM manifest (full catalog): `https://igorganapolsky.github.io/trading/llms-full.txt`
+- Auto-refresh workflow: `.github/workflows/refresh-llms-manifests.yml`
 
 ---
 

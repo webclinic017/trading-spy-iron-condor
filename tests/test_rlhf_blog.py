@@ -55,6 +55,9 @@ class TestRLHFBlogPublisher:
         )
         assert result.returncode == 0, f"Blog script failed: {result.stderr}"
         assert "Title:" in result.stdout or "DRY RUN" in result.stdout, "Blog post not generated"
+        # No hardcoded boilerplate in output
+        assert "Why This Matters" not in result.stdout
+        assert "$600K" not in result.stdout
 
     def test_blog_script_handles_negative_signal(self):
         """Ensure blog script handles negative signals."""
@@ -76,6 +79,14 @@ class TestRLHFBlogPublisher:
         )
         assert result.returncode == 0, f"Blog script failed on negative: {result.stderr}"
         assert "lesson" in result.stdout.lower(), "Negative post should mention lesson"
+
+    def test_different_contexts_produce_different_titles(self):
+        """Different contexts should produce different titles."""
+        from scripts.publish_rlhf_blog import generate_engaging_title
+
+        title1 = generate_engaging_title("positive", "CI pipeline passed all tests")
+        title2 = generate_engaging_title("positive", "Iron condor trade executed successfully")
+        assert title1 != title2
 
     def test_blog_posts_directory_exists(self):
         """Ensure blog posts directory exists."""

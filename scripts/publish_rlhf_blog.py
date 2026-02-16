@@ -31,6 +31,7 @@ from src.content.blog_seo import (
 
 ET = ZoneInfo("America/New_York")
 REPO_URL = "https://github.com/IgorGanapolsky/trading"
+DIAGRAM_BASE_URL = "https://igorganapolsky.github.io/trading/assets"
 
 
 def get_rlhf_stats() -> dict:
@@ -85,9 +86,8 @@ def generate_engaging_content(
     model: dict,
     equity: float,
 ) -> str:
-    """Generate engaging blog content with real stories and technical depth."""
+    """Generate engaging blog content from actual context, not hardcoded stories."""
 
-    ctx_lower = context.lower()
     positive = stats.get("positive", 0)
     negative = stats.get("negative", 0)
     total = stats.get("total", 0)
@@ -98,243 +98,13 @@ def generate_engaging_content(
     commits = get_recent_commits()
     recent_work = commits[0] if commits else "system improvements"
 
-    # Build engaging story based on context
+    # Build story from ACTUAL context, not keyword-matched templates
     if signal == "positive":
-        if "test" in ctx_lower or "ci" in ctx_lower:
-            story = f"""Just wrapped up {recent_work.lower()} and the CI pipeline went green. All 1300+ tests passing.
-
-That might sound boring, but here's why it matters: every test that passes is a guard rail preventing me from breaking prod. And in a trading system, "breaking prod" means losing real money.
-
-**The Test That Saved Me $5K**
-
-Last month I modified the position sizing logic without updating tests. Deployed to paper trading. The logic had a bug - it was calculating risk as a percentage of *available cash* instead of *total equity*. Would have oversized my first trade by 3x.
-
-The test caught it. $5K saved. That's why every thumbs up on CI passing matters."""
-
-            technical = """The test structure:
-
-```python
-def test_position_sizing_uses_equity_not_cash():
-    account = {{"equity": 100000, "cash": 50000}}
-    size = calculate_position_size(account, risk_pct=0.05)
-    # Should be 5% of equity ($5K), not cash ($2.5K)
-    assert size == 5000, f"Expected $5K, got ${size}"
-```
-
-Simple. Catches the bug. Saves money."""
-
-        elif "rlhf" in ctx_lower or "blog" in ctx_lower or "publish" in ctx_lower:
-            story = """I just rewrote the RLHF blog publisher. Again.
-
-The old version was 600 lines of verbose explanations. Generic. Bot slop. The kind of content you skim and forget.
-
-**What Changed**
-
-1. **Mermaid diagrams** - Show the flow visually
-2. **Real stories** - What actually happened, not abstractions
-3. **Technical depth** - Code snippets, architecture decisions
-4. **Personal voice** - First person, not corporate speak
-
-The new version is ~200 lines. Every post is unique based on context. This post you're reading right now was auto-generated from my feedback signal - but it tells the actual story of rewriting itself. Meta."""
-
-            technical = """The architecture:
-
-```python
-def generate_engaging_content(signal, context):
-    # Parse context for keywords
-    if "test" in context:
-        return tell_test_story()
-    elif "rlhf" in context:
-        return tell_rlhf_story()  # This function right here
-    # ... dynamic story generation
-```
-
-Every feedback signal creates a unique post. Not templates. Stories."""
-
-        elif "iron condor" in ctx_lower or "trade" in ctx_lower:
-            story = """Just placed an iron condor on SPY. 15-delta wings, 45 DTE, $5-wide spreads.
-
-**The Setup**
-- Sold $480 put / bought $475 put (15-delta)
-- Sold $560 call / bought $565 call (15-delta)
-- Collected $150 premium
-- Max risk: $350 per contract
-
-**Why This Works**
-
-Iron condors profit if SPY stays within range. With 15-delta strikes, probability of profit is ~86%. Math:
-- 15-delta put = 85% chance SPY stays above $480
-- 15-delta call = 85% chance SPY stays below $560
-- Combined = ~73% both sides win (correlation matters)
-
-The system approved this because:
-1. Risk ≤5% of account ($350 < $5K limit)
-2. Stop-loss at 200% of credit ($300 max loss)
-3. Iron condor (not undefined risk)
-4. CEO approved (me, manually)"""
-
-            technical = """The code that validates this:
-
-```python
-def validate_iron_condor(trade):
-    checks = {
-        "is_spy": trade.ticker == "SPY",
-        "risk_under_5pct": trade.max_risk < equity * 0.05,
-        "defined_risk": trade.is_iron_condor(),
-        "delta_range": 0.15 <= abs(trade.delta) <= 0.20,
-        "dte_range": 30 <= trade.dte <= 45,
-    }
-    return all(checks.values())
-```
-
-All green. Trade approved."""
-
-        else:
-            story = f"""Something worked. In software development, that's worth noting.
-
-Context: {context}
-
-**Why Small Wins Matter**
-
-I'm building an AI trading system to reach $6K/month passive income by 2029. That's my 50th birthday. Financial independence.
-
-Every thumbs up is a step toward that goal. Not because the code is perfect, but because the *process* is working:
-1. Ship feature
-2. Get feedback
-3. System learns
-4. Repeat
-
-After {total} feedback signals, the system's {win_rate:.0f}% success rate. That compounds."""
-
-            technical = f"""The Thompson Sampling model:
-
-```python
-alpha = {alpha}  # Successes + prior
-beta = {beta}   # Failures + prior
-
-def sample_success_probability():
-    return np.random.beta(alpha, beta)
-
-# This models uncertainty
-# More feedback → tighter distribution → better decisions
-```
-
-{total} signals captured. Learning curve improving."""
-
-    else:  # negative feedback
-        if "wrong" in ctx_lower or "incorrect" in ctx_lower:
-            story = f"""I screwed up. Context: {context}
-
-**What Went Wrong**
-
-Classic mistake: I claimed something was done without verifying. Wrote the code, assumed it worked, moved on.
-
-It didn't work.
-
-**The Fix**
-
-Added a verification step to my workflow:
-
-```bash
-# Before claiming done:
-pytest tests/test_feature.py -v
-git status
-python scripts/verify.py
-```
-
-If tests fail, it's not done. Period.
-
-This mistake is now in my RAG index. Next time I try to skip verification, the system will remind me:
-
-> ⚠️ Relevant lesson: LL-{total}: Verify before claiming done"""
-
-            technical = """The RAG query that prevents this:
-
-```python
-# Before responding, query past mistakes
-lessons = query_rag("verification", "claiming done")
-
-# If similar mistake found, inject reminder
-if lessons:
-    context += f"\\n\\nREMINDER: {lessons[0].text}"
-```
-
-This negative feedback updates α={alpha}, β={beta+1}. Model gets smarter."""
-
-        elif "slow" in ctx_lower or "time" in ctx_lower:
-            story = f"""Got called out for being too slow. Fair.
-
-Context: {context}
-
-**The Problem**
-
-I was running tasks sequentially when they could run in parallel. Classic optimization miss.
-
-**The Fix**
-
-```python
-# Before (sequential)
-result1 = task1()
-result2 = task2()
-result3 = task3()
-# Time: T1 + T2 + T3
-
-# After (parallel)
-results = await asyncio.gather(
-    task1(), task2(), task3()
-)
-# Time: max(T1, T2, T3)
-```
-
-3x speedup in practice. Lesson learned: Look for parallelization opportunities first."""
-
-            technical = """The broader pattern:
-
-```python
-# Always ask: Can this run in parallel?
-independent_tasks = find_independent(all_tasks)
-if len(independent_tasks) > 1:
-    run_parallel(independent_tasks)
-else:
-    run_sequential(all_tasks)
-```
-
-This mistake now flags in pre-commit hooks."""
-
-        else:
-            story = f"""Mistake made: {context}
-
-**What I Learned**
-
-Negative feedback is more valuable than positive. Positive says "keep doing this." Negative says "here's specifically what to fix."
-
-This signal increased my failure count (β) in the Thompson Sampling model. That's good. It makes the model more honest about uncertainty.
-
-**The Process**
-
-1. Mistake happens
-2. Feedback captured (this post)
-3. Lesson indexed in RAG
-4. Model updated (β += 1)
-5. Next session: Reminder injected
-
-Compounding works both ways. {negative} mistakes captured means {negative} lessons preventing future errors."""
-
-            technical = """The correction injection:
-
-```python
-if feedback == "negative":
-    # Extract correction from user message
-    correction = extract_correction(user_message)
-
-    # Inject into current context immediately
-    context += f"\\n\\nCORRECTION: {correction}"
-
-    # Also save to RAG for future sessions
-    rag.add(correction, type="lesson")
-```
-
-Real-time learning, not just logged-and-forgotten."""
+        story = _build_positive_story(context, recent_work, total, win_rate)
+        technical = _build_technical_section(commits, model)
+    else:
+        story = _build_negative_story(context, recent_work, negative)
+        technical = _build_correction_section(context, model, alpha, beta)
 
     # Build the post
     diagram_section = generate_diagram_section(context)
@@ -344,23 +114,11 @@ Real-time learning, not just logged-and-forgotten."""
     date_str = now.strftime("%Y-%m-%d")
 
     description = truncate_meta_description(
-        f"{title} - RLHF update from our autonomous AI trading system. Context: {context}",
+        f"{title} — RLHF update from our AI trading system. {context[:80]}",
         max_chars=160,
     )
-    questions = [
-        {
-            "question": "What triggered this RLHF update?",
-            "answer": truncate_meta_description(context, max_chars=200),
-        },
-        {
-            "question": "How does RLHF change the system?",
-            "answer": "Feedback updates the Thompson Sampling model and stores lessons in RAG so future sessions can avoid repeating mistakes.",
-        },
-        {
-            "question": "What is the current model success rate?",
-            "answer": f"{win_rate:.1f}% after {total} feedback signals.",
-        },
-    ]
+
+    questions = _generate_contextual_faq(signal, context, win_rate, total)
 
     frontmatter = render_frontmatter(
         {
@@ -380,99 +138,156 @@ Real-time learning, not just logged-and-forgotten."""
         frontmatter
         + f"""{story}
 
-## The Architecture
+## Architecture
 
 {diagram_section}
 
-**Current state**: {positive}👍 / {negative}👎 = {win_rate:.0f}% success rate after {total} signals.
+**Current state**: {positive} positive / {negative} negative = {win_rate:.0f}% success rate after {total} signals.
 
-## The Technical Details
+## Technical Details
 
 {technical}
 
-## Why This Matters
-
-I'm building toward $600K in capital → $6K/month passive income → financial independence by my 50th birthday (November 14, 2029).
-
-Current progress: ${equity:,.0f} / $600K = {(equity / 600000) * 100:.1f}% complete.
-
-Every thumbs up/down makes the system smarter. After {total} feedback signals, it knows what works and what doesn't. That knowledge compounds.
-
 ---
 
-**Building in public**. Every mistake is a lesson. Every success is reinforced.
+**Building in public.** {total} feedback signals and counting.
 
 [Source Code]({REPO_URL}) | [Live Dashboard](https://igorganapolsky.github.io/trading/)
-
-## FAQ
-
-### What triggered this RLHF update?
-
-{truncate_meta_description(context, max_chars=240)}
-
-### How does RLHF change the system?
-
-Feedback updates the Thompson Sampling model and stores lessons in RAG so future sessions can avoid repeating mistakes.
-
-### What is the current model success rate?
-
-{win_rate:.1f}% after {total} feedback signals.
 """
     )
 
 
+def _build_positive_story(context: str, recent_work: str, total: int, win_rate: float) -> str:
+    """Build a positive feedback story from actual context."""
+    return f"""Something worked: {recent_work.lower()}.
+
+**What happened:** {context}
+
+After {total} feedback signals, the system's success rate sits at {win_rate:.0f}%. Each positive signal reinforces what's working."""
+
+
+def _build_negative_story(context: str, recent_work: str, negative: int) -> str:
+    """Build a negative feedback story from actual context."""
+    return f"""Mistake made while working on {recent_work.lower()}.
+
+**What went wrong:** {context}
+
+This is negative signal #{negative}. It gets indexed in RAG so the system sees it before making similar decisions in the future."""
+
+
+def _build_technical_section(commits: list[str], model: dict) -> str:
+    """Build technical section from real commits and model state."""
+    alpha = model.get("alpha", 1)
+    beta = model.get("beta", 1)
+
+    commit_list = "\n".join(f"- `{c}`" for c in commits[:5]) if commits else "- No recent commits"
+
+    return f"""Recent commits:
+
+{commit_list}
+
+Thompson Sampling state: alpha={alpha}, beta={beta} (Beta-Bernoulli, 30-day decay)."""
+
+
+def _build_correction_section(context: str, model: dict, alpha: int, beta: int) -> str:
+    """Build correction section for negative feedback."""
+    return f"""This negative feedback updates the Thompson Sampling model: alpha={alpha}, beta={beta + 1}.
+
+The correction is stored in RAG. Next time a similar situation arises, the system will see this lesson before acting.
+
+Context: {truncate_meta_description(context, max_chars=200)}"""
+
+
+def _generate_contextual_faq(signal: str, context: str, win_rate: float, total: int) -> list[dict]:
+    """Generate FAQ questions specific to this post's content."""
+    ctx_lower = context.lower()
+
+    faqs = [
+        {
+            "question": "What triggered this update?",
+            "answer": truncate_meta_description(context, max_chars=200),
+        },
+    ]
+
+    if "test" in ctx_lower or "ci" in ctx_lower:
+        faqs.append(
+            {
+                "question": "How many tests does the system have?",
+                "answer": "The CI pipeline runs 1300+ tests on every push, covering trading logic, risk management, and data integrity.",
+            }
+        )
+    elif "trade" in ctx_lower or "iron condor" in ctx_lower:
+        faqs.append(
+            {
+                "question": "What trading strategy is being used?",
+                "answer": "SPY iron condors with 15-delta wings, 30-45 DTE, $5-wide spreads. Exit at 50% profit or 7 DTE.",
+            }
+        )
+    else:
+        faqs.append(
+            {
+                "question": "How does the feedback system work?",
+                "answer": f"Thompson Sampling with Beta-Bernoulli model. {total} signals captured, {win_rate:.0f}% success rate.",
+            }
+        )
+
+    faqs.append(
+        {
+            "question": "Is this using real money?",
+            "answer": "No. All trades are on Alpaca paper trading accounts. No real capital at risk.",
+        }
+    )
+
+    return faqs
+
+
 def generate_engaging_title(signal: str, context: str) -> str:
-    """Generate engaging, SEO-friendly titles with keywords."""
-    ctx = context.lower()
+    """Generate a title from actual context, not keyword templates."""
+    ctx_clean = context.strip()
+
+    # Truncate at word boundary for title
+    if len(ctx_clean) > 60:
+        ctx_clean = ctx_clean[:60].rsplit(" ", 1)[0]
 
     if signal == "positive":
-        if "test" in ctx or "ci" in ctx:
-            return "How Automated Testing Saved Me $5K in Trading Losses"
-        elif "rlhf" in ctx or "blog" in ctx:
-            return "Building AI That Learns: RLHF Blog Automation Guide"
-        elif "iron condor" in ctx or "trade" in ctx:
-            return "Iron Condor Strategy: 15-Delta SPY Options Explained"
-        elif "automation" in ctx:
-            return "AI Trading Automation: Lessons from Building in Public"
-        else:
-            return "AI Trading System Win: Compounding Small Improvements"
+        return f"Win: {ctx_clean}"
     else:
-        if "wrong" in ctx or "incorrect" in ctx:
-            return "Trading Bot Mistake: Why Verification Matters"
-        elif "slow" in ctx or "performance" in ctx:
-            return "Python Performance Fix: Sequential to Parallel Execution"
-        elif "verify" in ctx:
-            return "Debugging Trading Systems: The Verification I Skipped"
-        elif "bot slop" in ctx:
-            return "Fixing Bot Slop: Making AI Content Human-Readable"
-        else:
-            return (
-                f"Trading System Lesson #{get_rlhf_stats().get('total', 0)}: Learning from Failure"
-            )
+        return f"Lesson: {ctx_clean}"
 
 
 def select_paperbanana_diagram(context: str) -> tuple[str, str]:
-    """Select the most relevant PaperBanana diagram for the blog post.
-
-    Returns (image_path, caption) tuple.
-    """
+    """Select the most relevant PaperBanana diagram for the blog post."""
     ctx = context.lower()
-    base = "https://igorganapolsky.github.io/trading/assets"
 
-    if any(k in ctx for k in ("rlhf", "feedback", "blog", "publish", "thompson", "learn")):
+    if any(k in ctx for k in ("iron condor", "trade", "position", "strike", "delta")):
         return (
-            f"{base}/feedback_pipeline.png",
-            "Feedback-Driven Context Pipeline (generated by PaperBanana)",
+            f"{DIAGRAM_BASE_URL}/iron_condor_payoff.png",
+            "Iron Condor Payoff: profit zone, breakevens, and probability (PaperBanana)",
+        )
+    if any(k in ctx for k in ("thompson", "feedback", "rlhf", "sampling")):
+        return (
+            f"{DIAGRAM_BASE_URL}/thompson_sampling.png",
+            "Thompson Sampling: how the system learns from feedback (PaperBanana)",
+        )
+    if any(k in ctx for k in ("theta", "decay", "dte", "expiration", "exit")):
+        return (
+            f"{DIAGRAM_BASE_URL}/theta_decay_curve.png",
+            "Theta Decay: why we exit at 7 DTE (PaperBanana)",
+        )
+    if any(k in ctx for k in ("rag", "lesson", "knowledge", "retrieval", "memory")):
+        return (
+            f"{DIAGRAM_BASE_URL}/rag_retrieval_flow.png",
+            "RAG Retrieval: how past lessons inform decisions (PaperBanana)",
         )
     if any(k in ctx for k in ("model", "llm", "tars", "gateway", "route", "openrouter")):
         return (
-            f"{base}/llm_gateway_architecture.png",
-            "LLM Gateway Architecture (generated by PaperBanana)",
+            f"{DIAGRAM_BASE_URL}/llm_gateway_architecture.png",
+            "LLM Gateway Architecture (PaperBanana)",
         )
-    # Default: trading pipeline
+    # Default: feedback pipeline
     return (
-        f"{base}/trading_pipeline.png",
-        "SPY Iron Condor Execution Pipeline (generated by PaperBanana)",
+        f"{DIAGRAM_BASE_URL}/feedback_pipeline.png",
+        "Feedback-Driven Context Pipeline (PaperBanana)",
     )
 
 
@@ -497,7 +312,7 @@ def generate_post(signal: str, intensity: float, context: str) -> dict:
         "date": datetime.now(ET).strftime("%Y-%m-%d"),
         "tags": [signal, "rlhf", "aitrading", "buildinginpublic"],
         "signal": signal,
-        "summary": f"{title} - Building an AI trading system that learns from every decision.",
+        "summary": f"{title} — Building an AI trading system that learns from every decision.",
     }
 
 

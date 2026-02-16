@@ -10,6 +10,7 @@ CEO Directive: "Why are lessons so mechanical and boring?? No human will read th
 
 from __future__ import annotations
 
+import hashlib
 import os
 import re
 import sys
@@ -33,6 +34,8 @@ except ImportError:
 # Paths
 RAG_LESSONS_DIR = Path(__file__).parent.parent / "rag_knowledge" / "lessons_learned"
 BLOG_POSTS_DIR = Path(__file__).parent.parent / "docs" / "_posts"
+
+DIAGRAM_BASE_URL = "https://igorganapolsky.github.io/trading/assets"
 
 
 def parse_lesson_file(filepath: Path) -> dict | None:
@@ -85,26 +88,96 @@ def parse_lesson_file(filepath: Path) -> dict | None:
         return None
 
 
-def get_engaging_intro(day_num: int, day_of_week: str, lessons: list[dict]) -> str:
-    """Generate an engaging intro based on the day's lessons."""
-    critical = sum(1 for lesson in lessons if lesson["severity"] == "CRITICAL")
+def _truncate_at_sentence(text: str, max_chars: int = 250) -> str:
+    """Truncate text at the nearest sentence boundary before max_chars."""
+    if len(text) <= max_chars:
+        return text
 
-    if critical >= 2:
-        return "Today was a wake-up call. Two critical issues surfaced that could have derailed our entire trading operation. Here's what went wrong and how we're fixing it."
-    elif critical == 1:
-        return "Every mistake is a lesson in disguise. Today we uncovered a critical flaw in our system - the kind that separates amateur traders from professionals who survive long-term."
+    truncated = text[:max_chars]
+
+    # Find last sentence-ending punctuation followed by a space or end of string
+    sentence_end = -1
+    for match in re.finditer(r"[.!?](?:\s|$)", truncated):
+        sentence_end = match.end()
+
+    if sentence_end > 50:
+        return truncated[:sentence_end].strip()
+
+    # Fallback: word boundary
+    word_end = truncated.rfind(" ")
+    if word_end > 50:
+        return truncated[:word_end].strip() + "..."
+
+    return truncated.strip() + "..."
+
+
+def get_engaging_intro(day_num: int, day_of_week: str, lessons: list[dict]) -> str:
+    """Generate a unique intro using lesson-specific details."""
+    critical = sum(1 for lesson in lessons if lesson["severity"] == "CRITICAL")
+    high = sum(1 for lesson in lessons if lesson["severity"] == "HIGH")
+
+    # Find the top lesson title for specificity
+    top_lesson = None
+    for lesson in lessons:
+        if lesson["severity"] == "CRITICAL":
+            top_lesson = get_human_readable_title(lesson)
+            break
+    if not top_lesson:
+        for lesson in lessons:
+            if lesson["severity"] == "HIGH":
+                top_lesson = get_human_readable_title(lesson)
+                break
+
+    # Deterministic selection via hash (idempotent per day)
+    seed = int(
+        hashlib.md5(f"{day_num}-{len(lessons)}-{critical}".encode()).hexdigest()[:8],
+        16,
+    )
+
+    critical_intros = [
+        f"{critical} critical issues hit today. The worst: {top_lesson}. Here's the full breakdown.",
+        f"Not a quiet day. {critical} critical failures exposed gaps — {top_lesson} being the most urgent.",
+        f"The system flagged {critical} critical problems. {top_lesson} demanded an immediate fix.",
+        f"Today tested our resilience. {critical} critical issues, {len(lessons)} total lessons. {top_lesson} was the headline.",
+        f"We caught {critical} critical bugs before they could cost real money. Leading the list: {top_lesson}.",
+    ]
+
+    weekend_intros = [
+        f"Weekend systems check. {len(lessons)} items reviewed while markets rest.",
+        f"No trading today, but {len(lessons)} lessons from the week needed documenting.",
+        f"Markets closed. We used the time to process {len(lessons)} lessons from recent sessions.",
+        f"Weekend review: {len(lessons)} lessons sorted, {critical + high} flagged as high-priority.",
+    ]
+
+    friday_intros = [
+        f"Week in review. {len(lessons)} lessons captured, {critical} critical.",
+        f"Friday wrap. Before Monday's open, here are the {len(lessons)} things we learned.",
+        f"End of week. {len(lessons)} lessons, {high} high-priority discoveries.",
+        f"Closing the week with {len(lessons)} documented lessons. {critical + high} need attention.",
+    ]
+
+    default_intros = [
+        f"{len(lessons)} lessons from today's session. {critical} critical, {high} high priority.",
+        f"Productive session. {len(lessons)} insights captured from the trading system.",
+        f"The system logged {len(lessons)} lessons today. Here's what stood out.",
+        f"Steady progress. {len(lessons)} new entries in the knowledge base, {critical + high} worth highlighting.",
+        f"Today's haul: {len(lessons)} lessons. The interesting ones are below.",
+    ]
+
+    if critical >= 1 and top_lesson:
+        pool = critical_intros
+    elif day_of_week in ("Saturday", "Sunday"):
+        pool = weekend_intros
     elif day_of_week == "Friday":
-        return "End of another trading week. Time to reflect on what worked, what didn't, and what needs to change before Monday's opening bell."
-    elif day_of_week in ["Saturday", "Sunday"]:
-        return "Markets are closed, but the learning never stops. While other traders take the weekend off, we're refining our edge."
-    elif len(lessons) > 10:
-        return f"An intense day of discovery. {len(lessons)} lessons emerged from our autonomous trading system - each one a stepping stone toward consistent profitability."
+        pool = friday_intros
     else:
-        return "Another day in the 90-day journey to build a profitable AI trading system. Here's what we learned today."
+        pool = default_intros
+
+    return pool[seed % len(pool)]
 
 
 def extract_key_insight(lesson: dict) -> str:
-    """Extract the key insight from a lesson in a readable way."""
+    """Extract the key insight from a lesson, ending at a sentence boundary."""
     content = lesson["content"]
 
     # Try to find "What Happened" or similar sections
@@ -112,18 +185,18 @@ def extract_key_insight(lesson: dict) -> str:
         r"(?:What Happened|Problem|Issue|Bug)[:\s]*\n+([^\n#]+)", content, re.IGNORECASE
     )
     if what_happened:
-        return what_happened.group(1).strip()[:200]
+        return _truncate_at_sentence(what_happened.group(1).strip())
 
     # Try to find the first meaningful paragraph after the title
     paragraphs = re.split(r"\n\n+", content)
     for p in paragraphs[1:4]:  # Skip title, check next 3 paragraphs
         clean = p.strip()
         if len(clean) > 50 and not clean.startswith("#") and not clean.startswith("**"):
-            return clean[:200]
+            return _truncate_at_sentence(clean)
 
-    # Fallback to first 200 chars without markdown
+    # Fallback to first 250 chars without markdown
     clean = re.sub(r"[#*`\[\]]", "", content)
-    return clean[:200].strip()
+    return _truncate_at_sentence(clean.strip())
 
 
 def get_lesson_takeaway(lesson: dict) -> str:
@@ -132,56 +205,21 @@ def get_lesson_takeaway(lesson: dict) -> str:
 
     # Look for fix/solution/action sections
     fix_match = re.search(
-        r"(?:Fix|Solution|Action|Resolution|Takeaway)[:\s]*\n+([^\n#]+)",
+        r"(?:Fix|Solution|Action|Resolution|Takeaway|Prevention)[:\s]*\n+([^\n#]+)",
         content,
         re.IGNORECASE,
     )
     if fix_match:
-        return fix_match.group(1).strip()[:150]
+        result = fix_match.group(1).strip()
+        if result:
+            return _truncate_at_sentence(result, max_chars=150)
 
     # Look for bullet points that might be actions
     bullets = re.findall(r"[-*]\s+([A-Z][^.\n]+\.)", content)
     if bullets:
-        return bullets[0][:150]
+        return _truncate_at_sentence(bullets[0], max_chars=150)
 
     return ""
-
-
-def generate_tech_stack_section() -> str:
-    """Generate tech stack section with architecture diagram for blog post."""
-    return """
-## Tech Stack Behind the Lessons
-
-Every lesson we learn is captured, analyzed, and stored by our AI infrastructure:
-
-<div class="mermaid">
-flowchart LR
-    subgraph Learning["Learning Pipeline"]
-        ERROR["Error/Insight<br/>Detected"] --> CLAUDE["Claude Opus<br/>(Analysis)"]
-        CLAUDE --> RAG["LanceDB RAG<br/>(Storage)"]
-        RAG --> BLOG["GitHub Pages<br/>(Publishing)"]
-        BLOG --> DEVTO["Dev.to<br/>(Distribution)"]
-    end
-</div>
-
-### How We Learn Autonomously
-
-| Component | Role in Learning |
-|-----------|------------------|
-| **Claude Opus 4.5** | Analyzes errors, extracts insights, determines severity |
-| **LanceDB RAG** | Stores lessons with 768D embeddings for semantic search |
-| **Gemini 2.0 Flash** | Retrieves relevant past lessons before new trades |
-| **OpenRouter (DeepSeek)** | Cost-effective sentiment analysis and research |
-
-### Why This Matters
-
-1. **No Lesson Lost**: Every insight persists in our RAG corpus
-2. **Contextual Recall**: Before each trade, we query similar past situations
-3. **Continuous Improvement**: 200+ lessons shape every decision
-4. **Transparent Journey**: All learnings published publicly
-
-*[Full Tech Stack Documentation](/trading/tech-stack/)*
-"""
 
 
 def get_human_readable_title(lesson: dict) -> str:
@@ -220,8 +258,34 @@ def get_human_readable_title(lesson: dict) -> str:
     return title.strip() or "Untitled Lesson"
 
 
+def select_diagram_for_lessons(lessons: list[dict]) -> tuple[str, str]:
+    """Select a relevant PaperBanana diagram based on lesson categories/content."""
+    all_content = " ".join(lesson.get("content", "").lower() for lesson in lessons)
+
+    if "iron condor" in all_content or "strike" in all_content or "delta" in all_content:
+        return (
+            f"{DIAGRAM_BASE_URL}/iron_condor_payoff.png",
+            "Iron Condor Payoff: defined risk on both sides (PaperBanana)",
+        )
+    if "theta" in all_content or "expir" in all_content:
+        return (
+            f"{DIAGRAM_BASE_URL}/theta_decay_curve.png",
+            "Theta Decay: why timing matters for exits (PaperBanana)",
+        )
+    if "rag" in all_content or "knowledge" in all_content or "retriev" in all_content:
+        return (
+            f"{DIAGRAM_BASE_URL}/rag_retrieval_flow.png",
+            "How RAG prevents repeated mistakes (PaperBanana)",
+        )
+    # Default: Thompson sampling (always relevant for learning posts)
+    return (
+        f"{DIAGRAM_BASE_URL}/thompson_sampling.png",
+        "Thompson Sampling: how the system learns from feedback (PaperBanana)",
+    )
+
+
 def generate_daily_summary_post(date_str: str, lessons: list[dict]) -> str:
-    """Generate an engaging, human-readable daily blog post from lessons."""
+    """Generate a human-readable daily blog post from lessons."""
     date_obj = datetime.strptime(date_str, "%Y-%m-%d")
     formatted_date = date_obj.strftime("%B %d, %Y")
     day_of_week = date_obj.strftime("%A")
@@ -229,7 +293,16 @@ def generate_daily_summary_post(date_str: str, lessons: list[dict]) -> str:
     # Calculate day number (from Oct 29, 2025)
     start_date = datetime(2025, 10, 29)
     day_num = (date_obj - start_date).days + 1
-    days_remaining = max(0, 90 - day_num)
+
+    # Dynamic phase label
+    if day_num <= 90:
+        phase_label = f"Day {day_num} of 90"
+        phase_note = f"**{90 - day_num} days remaining** in the 90-day validation phase."
+    else:
+        phase_label = f"Day {day_num}"
+        phase_note = (
+            f"**{phase_label}** — past the initial validation phase, now in continuous operation."
+        )
 
     # Count by severity
     critical = sum(1 for item in lessons if item["severity"] == "CRITICAL")
@@ -242,11 +315,10 @@ def generate_daily_summary_post(date_str: str, lessons: list[dict]) -> str:
     # Build the story of today's lessons
     lessons_md = ""
 
-    # Critical lessons first - these are the headlines
+    # Critical lessons first
     critical_lessons = [lesson for lesson in lessons if lesson["severity"] == "CRITICAL"]
     if critical_lessons:
         lessons_md += "\n## The Hard Lessons\n\n"
-        lessons_md += "*These are the moments that test us. Critical issues that demanded immediate attention.*\n\n"
         for lesson in critical_lessons:
             title = get_human_readable_title(lesson)
             insight = extract_key_insight(lesson)
@@ -257,14 +329,11 @@ def generate_daily_summary_post(date_str: str, lessons: list[dict]) -> str:
             if takeaway:
                 lessons_md += f"**Key takeaway:** {takeaway}\n\n"
 
-    # High priority lessons - important but not fires
+    # High priority lessons
     high_lessons = [lesson for lesson in lessons if lesson["severity"] == "HIGH"]
     if high_lessons:
         lessons_md += "\n## Important Discoveries\n\n"
-        lessons_md += (
-            "*Not emergencies, but insights that will shape how we trade going forward.*\n\n"
-        )
-        for lesson in high_lessons[:3]:  # Limit to top 3
+        for lesson in high_lessons[:3]:
             title = get_human_readable_title(lesson)
             insight = extract_key_insight(lesson)
 
@@ -275,14 +344,17 @@ def generate_daily_summary_post(date_str: str, lessons: list[dict]) -> str:
     other_lessons = [lesson for lesson in lessons if lesson["severity"] in ["MEDIUM", "LOW"]]
     if other_lessons:
         lessons_md += "\n## Quick Wins & Refinements\n\n"
-        for lesson in other_lessons[:4]:  # Limit to top 4
+        for lesson in other_lessons[:4]:
             title = get_human_readable_title(lesson)
-            lessons_md += f"- **{title}** - {extract_key_insight(lesson)[:100]}...\n"
+            lessons_md += f"- **{title}** — {_truncate_at_sentence(extract_key_insight(lesson), max_chars=120)}\n"
         lessons_md += "\n"
+
+    # Select a relevant diagram
+    img_url, caption = select_diagram_for_lessons(lessons)
 
     questions = [
         {
-            "question": f"What did we learn on Day {day_num}?",
+            "question": f"What did we learn on {phase_label}?",
             "answer": f"{len(lessons)} lessons captured ({critical} critical, {high} high). {description}",
         },
         {
@@ -298,7 +370,7 @@ def generate_daily_summary_post(date_str: str, lessons: list[dict]) -> str:
     frontmatter = render_frontmatter(
         {
             "layout": "post",
-            "title": f"Day {day_num}: What We Learned - {formatted_date}",
+            "title": f"{phase_label}: What We Learned — {formatted_date}",
             "description": description,
             "date": date_str,
             "last_modified_at": date_str,
@@ -312,12 +384,11 @@ def generate_daily_summary_post(date_str: str, lessons: list[dict]) -> str:
         questions=questions,
     )
 
-    # Build the post
     post = (
         frontmatter
-        + f"""# Day {day_num} of 90 | {day_of_week}, {formatted_date}
+        + f"""# {phase_label} | {day_of_week}, {formatted_date}
 
-**{days_remaining} days remaining** in our journey to build a profitable AI trading system.
+{phase_note}
 
 {intro}
 
@@ -334,39 +405,12 @@ def generate_daily_summary_post(date_str: str, lessons: list[dict]) -> str:
 | High Priority | {high} |
 | Improvements | {len(other_lessons)} |
 
----
-{generate_tech_stack_section()}
----
-
-## The Journey So Far
-
-We're building an autonomous AI trading system that learns from every mistake. This isn't about getting rich quick - it's about building a system that can consistently generate income through disciplined options trading.
-
-**Our approach:**
-- Paper trade for 90 days to validate the strategy
-- Document every lesson, every failure, every win
-- Use AI (Claude) as CTO to automate and improve
-- Follow Phil Town's Rule #1: Don't lose money
-
-Want to follow along? Check out the [full project on GitHub](https://github.com/IgorGanapolsky/trading).
+![{caption}]({img_url})
+*{caption}*
 
 ---
 
-## FAQ
-
-### What did we learn today?
-
-{len(lessons)} lessons captured ({critical} critical, {high} high). {description}
-
-### How do you keep these lessons from getting lost?
-
-We index every lesson into a RAG corpus and query it before new trades and major engineering changes.
-
-### Where is the canonical version of this post?
-
-This post's canonical URL is {canonical_url_for_post(date_str, "lessons-learned")}.
-
-*Day {day_num}/90 complete. {days_remaining} to go.*
+*{phase_label} complete.* [Source on GitHub](https://github.com/IgorGanapolsky/trading) | [Live Dashboard](https://igorganapolsky.github.io/trading/)
 """
     )
     return post
@@ -391,13 +435,18 @@ def post_lessons_to_devto(date_str: str, lessons: list[dict]) -> str | None:
     start_date = datetime(2025, 10, 29)
     day_num = (date_obj - start_date).days + 1
 
+    # Dynamic phase label for Dev.to too
+    if day_num <= 90:
+        phase_label = f"Day {day_num}/90"
+    else:
+        phase_label = f"Day {day_num}"
+
     # Count severities
     critical = sum(1 for item in lessons if item["severity"] == "CRITICAL")
     high = sum(1 for item in lessons if item["severity"] == "HIGH")
 
-    # Build body
     intro = get_engaging_intro(day_num, day_of_week, lessons)
-    body = f"""## Day {day_num}/90 - {day_of_week}, {formatted_date}
+    body = f"""## {phase_label} — {day_of_week}, {formatted_date}
 
 {intro}
 
@@ -412,30 +461,13 @@ def post_lessons_to_devto(date_str: str, lessons: list[dict]) -> str | None:
 
     body += """---
 
-## Tech Stack Behind the Scenes
-
-Our AI trading system uses:
-- **Claude Opus 4.5** - Primary reasoning engine for trade decisions
-- **OpenRouter** - Cost-optimized LLM gateway (DeepSeek, Mistral, Kimi)
-- **LanceDB RAG** - Cloud semantic search with 768D embeddings
-- **Gemini 2.0 Flash** - Retrieval-augmented generation
-- **MCP Protocol** - Standardized tool integration layer
-
-Every lesson is stored in our RAG corpus, enabling the system to learn from past mistakes and improve continuously.
-
-*[Full Tech Stack Documentation](https://igorganapolsky.github.io/trading/tech-stack/)*
-
----
-
-*Auto-generated from our AI Trading System's RAG knowledge base.*
-
-Follow our journey: [AI Trading Journey on GitHub](https://github.com/IgorGanapolsky/trading)
+*Follow our journey: [AI Trading System on GitHub](https://github.com/IgorGanapolsky/trading) | [Blog](https://igorganapolsky.github.io/trading/)*
 """
 
     headers = {"api-key": api_key, "Content-Type": "application/json"}
     payload = {
         "article": {
-            "title": f"AI Trading: Day {day_num} - {len(lessons)} Lessons Learned ({formatted_date})",
+            "title": f"AI Trading: {phase_label} — {len(lessons)} Lessons ({formatted_date})",
             "body_markdown": body,
             "published": True,
             "series": "AI Trading Journey",
