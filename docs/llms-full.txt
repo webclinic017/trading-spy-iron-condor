@@ -17,7 +17,7 @@
 - Workflows configured: 88
 - Blog posts indexed: 54
 - Reports indexed: 2
-- Lessons indexed: 176
+- Lessons indexed: 170
 
 ## Blog Posts (Newest First)
 - [Building an AI Trading System for the Tetrate Buildathon](https://igorganapolsky.github.io/trading/2026/02/15/tetrate-buildathon-ai-trading-system.html) - 2026-02-15
@@ -80,12 +80,7 @@
 - [Google Doc Sync Setup](https://igorganapolsky.github.io/trading/reports/google-doc-sync-setup/) - undated
 
 ## Lessons (Source Markdown)
-- [Portfolio sync failed - blind trading risk](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/auto_sync_failed_feb16_2.md) - 2026-02-16
-- [Portfolio sync failed - blind trading risk](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/auto_sync_failed_feb16.md) - 2026-02-16
 - [LL-353: PR Merge Requires CI-Lint + Content-Lint Alignment](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/LL-353_PR_Merge_CI_Hygiene_Feb16.md) - 2026-02-16
-- [Portfolio sync failed - blind trading risk](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/auto_sync_failed_feb15_3.md) - 2026-02-15
-- [Portfolio sync failed - blind trading risk](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/auto_sync_failed_feb15_2.md) - 2026-02-15
-- [Portfolio sync failed - blind trading risk](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/auto_sync_failed_feb15.md) - 2026-02-15
 - [LL: Skipped Prevention Step in Compound Engineering](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_skipped_prevention_step_feb06.md) - 2026-02-06
 - [Trade Pattern Analysis - Unsupervised ML Insights](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ml_clustering_20260204.md) - 2026-02-04
 - [LL-325: CTO Violated Phil Town Rule #1 - Closed Positions Without Permission](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_325_cto_violated_rule1_closed_positions_feb04.md) - 2026-02-04
@@ -149,7 +144,6 @@
 - [LL-148: Missing Test Files Blocking ALL Trading](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_148_missing_test_files_blocking_trading_jan13.md) - 2026-01-13
 - [LL-144: Stale Order Threshold Must Be 4 Hours, Not 24](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_144_stale_order_threshold_fix_jan12.md) - 2026-01-12
 - [LL-135: Comprehensive Investment Strategy Review - January 12, 2026](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_135_investment_strategy_comprehensive_review_jan12.md) - 2026-01-12
-- [Lesson Learned: API Key Environment Variable Mismatch](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_134_api_key_mismatch_fixed_jan12.md) - 2026-01-12
 - [LL-131: NEVER Tell CEO to Run CI - Do It Yourself](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_131_never_tell_ceo_to_run_ci_jan12.md) - 2026-01-12
 - [Win Rate Diagnosis: 37.5% vs 80%+ Target (Feb 8, 2026)](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/win_rate_diagnosis_feb08.md) - undated
 - [SPX Tax Advantage Over SPY (Feb 8, 2026)](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/spx_tax_advantage_feb08.md) - undated
@@ -200,6 +194,12 @@
 - [LL-211: $100K Trade History Analysis Workflow](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_211_100k_history_analysis_workflow_jan15.md) - undated
 - [LL-210: Missing OptionsPosition Class Broke CI Tests](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_210_options_position_import_fix_jan14.md) - undated
 - [LL-206: Why $5K Account Failed - Complete Execution Failure Analysis](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_206_execution_failure_analysis_jan15.md) - undated
+- [LL-205: January 14, 2026 Loss Root Cause Analysis](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_205_jan14_loss_root_cause_analysis.md) - undated
+- [LL-203: $100K Paper Account - What Actually Worked](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_203_100k_account_analysis_jan14.md) - undated
+- [LL-202: SOFI Earnings Risk - Emergency Close](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_202_sofi_earnings_risk_jan14.md) - undated
+- [LL-201: Resource Evaluation: Systems Thinking Audiobook](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_201_systems_thinking_audiobook_evaluation_jan14.md) - undated
+- [LL-198: Git Workflows Video Evaluation](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_198_git_workflows_evaluation_jan13.md) - undated
+- [Critical Math Reality Check - Credit Spread Risk/Reward](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_197_math_reality_check_jan13.md) - undated
 
 ## Notes
 - Lesson links point to source markdown in GitHub.
