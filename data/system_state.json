@@ -1144,7 +1144,7 @@
     "reason": "Insufficient recent weekly evidence; keep conservative sizing.",
     "positive_weeks_streak": 0,
     "evidence_source": "trade_history_ic_only",
-    "updated_at": "2026-02-16T14:48:46.078676+00:00"
+    "updated_at": "2026-02-16T15:07:48.343361+00:00"
   },
   "north_star_contributions": {
     "enabled": true,
@@ -1169,7 +1169,7 @@
     "estimated_live_contribution_this_month": 0.5,
     "contribution_estimate_confidence": "medium",
     "inference_note": "Live account has no open positions; live equity change is treated as estimated contribution.",
-    "updated_at": "2026-02-16T14:48:46.078727+00:00"
+    "updated_at": "2026-02-16T15:07:48.343411+00:00"
   },
   "ic_position_management": {
     "last_run": "2026-02-16T14:48:19.924843",
