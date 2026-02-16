@@ -1,15 +1,10 @@
 {
-  "last_updated": "2026-02-16T14:16:04.239110+00:00",
+  "last_updated": "2026-02-16T14:23:05.956444+00:00",
   "sync_health": {
-    "last_successful_sync": "2026-02-16T14:16:04.239110+00:00",
+    "last_successful_sync": "2026-02-16T14:23:05.956444+00:00",
     "sync_source": "sync_alpaca_state.py",
-    "sync_count_today": 2,
+    "sync_count_today": 3,
     "history": [
-      {
-        "timestamp": "2026-02-13T16:28:12.932719+00:00",
-        "equity": 101443.56,
-        "success": true
-      },
       {
         "timestamp": "2026-02-13T16:48:15.690323+00:00",
         "equity": 101449.56,
@@ -124,9 +119,14 @@
         "timestamp": "2026-02-16T14:16:04.239110+00:00",
         "equity": 101441.56,
         "success": true
+      },
+      {
+        "timestamp": "2026-02-16T14:23:05.956444+00:00",
+        "equity": 101441.56,
+        "success": true
       }
     ],
-    "last_attempt": "2026-02-16T14:16:04.239110+00:00"
+    "last_attempt": "2026-02-16T14:23:05.956444+00:00"
   },
   "portfolio": {
     "equity": 101441.56,
@@ -964,12 +964,12 @@
     "buying_power": 201227.12
   },
   "meta": {
-    "last_updated": "2026-02-16T14:16:04.239110+00:00",
+    "last_updated": "2026-02-16T14:23:05.956444+00:00",
     "trade_sync": "alpaca_api",
     "sync_frequency_minutes": 5,
-    "last_sync_attempt": "2026-02-16T14:16:04.239110+00:00",
+    "last_sync_attempt": "2026-02-16T14:23:05.956444+00:00",
     "alpaca_keys_present": true,
-    "last_sync": "2026-02-16T14:16:04.108526",
+    "last_sync": "2026-02-16T14:23:05.674191",
     "sync_mode": "paper+live"
   },
   "paper_trading": {
@@ -1032,11 +1032,11 @@
     "starting_balance": 20.0,
     "total_pl": 147.48,
     "total_pl_pct": 737.4,
-    "synced_at": "2026-02-16T14:16:04.237177"
+    "synced_at": "2026-02-16T14:23:05.954755"
   },
   "strategy_milestones": {
     "enabled": true,
-    "generated_at": "2026-02-16T14:16:04.243767Z",
+    "generated_at": "2026-02-16T14:23:05.962533Z",
     "primary_family": "options_income",
     "rolling_window": 50,
     "paused_families": [
@@ -1048,20 +1048,20 @@
       "options_income": {
         "status": "validation",
         "paused": false,
-        "reason": "options_income validation mode (0/8 closed trades).",
+        "reason": "options_income validation mode (1/8 closed trades).",
         "thresholds": {
           "min_win_rate_pct": 60.0,
           "min_expectancy": 0.0,
           "min_samples": 8
         },
         "metrics": {
-          "samples": 0,
-          "wins": 0,
+          "samples": 1,
+          "wins": 1,
           "losses": 0,
-          "total_pnl": 0,
-          "win_rate_pct": null,
-          "expectancy": null,
-          "evidence_source": "none"
+          "total_pnl": 41.0,
+          "win_rate_pct": 100.0,
+          "expectancy": 41.0,
+          "evidence_source": "trades.json"
         }
       },
       "equity_momentum": {
@@ -1124,13 +1124,13 @@
     }
   },
   "north_star": {
-    "probability_score": 13.5,
-    "probability_label": "critical",
+    "probability_score": 36.4,
+    "probability_label": "low",
     "required_cagr": 0.6079,
-    "estimated_cagr_from_expectancy": 0.0,
+    "estimated_cagr_from_expectancy": 0.0073,
     "target_capital": 600000.0,
     "target_date": "2029-11-14",
-    "updated_at": "2026-02-16T14:16:04.243767Z"
+    "updated_at": "2026-02-16T14:23:05.962533Z"
   },
   "north_star_weekly_gate": {
     "enabled": true,
@@ -1144,7 +1144,7 @@
     "reason": "Insufficient recent weekly evidence; keep conservative sizing.",
     "positive_weeks_streak": 0,
     "evidence_source": "trade_history_ic_only",
-    "updated_at": "2026-02-16T14:16:04.435067+00:00"
+    "updated_at": "2026-02-16T14:23:06.166371+00:00"
   },
   "north_star_contributions": {
     "enabled": true,
@@ -1169,10 +1169,10 @@
     "estimated_live_contribution_this_month": 0.5,
     "contribution_estimate_confidence": "medium",
     "inference_note": "Live account has no open positions; live equity change is treated as estimated contribution.",
-    "updated_at": "2026-02-16T14:16:04.435115+00:00"
+    "updated_at": "2026-02-16T14:23:06.166424+00:00"
   },
   "ic_position_management": {
-    "last_run": "2026-02-15T15:07:24.976293",
+    "last_run": "2026-02-16T14:23:07.020498",
     "iron_condors_evaluated": 1,
     "exits_triggered": 0,
     "exits_executed": 0
