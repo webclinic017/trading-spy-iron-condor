@@ -208,13 +208,13 @@ def main() -> int:
   <div class="wrap">
     <section class="hero">
       <h1>Judge Demo Evidence Hub</h1>
-      <p>This page translates complex AI routing + learning systems into clear proof.
+      <p>This page translates complex AI product behavior into clear proof.
       Audience mode: simple enough for non-technical viewers, concrete enough for technical judges.</p>
     </section>
 
     <section class="grid">
       <article class="card span4"><div class="k">Checklist Progress</div><div class="v">{done}/{total}</div></article>
-      <article class="card span4"><div class="k">Loop Cycle / Profile</div><div class="v">{loop_cycle} / {loop_profile}</div></article>
+      <article class="card span4"><div class="k">System Status</div><div class="v">{loop_cycle} / {loop_profile}</div></article>
       <article class="card span4"><div class="k">Smoke Latency / Cost</div><div class="v">{latency} ms / ${est_cost}</div></article>
 
       <article class="card span6">
@@ -229,12 +229,12 @@ def main() -> int:
       </article>
 
       <article class="card span6">
-        <div class="k">Proof Flow</div>
+        <div class="k">Product Proof Flow</div>
         <div class="flow" style="margin-top:10px">
-          <div class="node">1. Generate Task</div><div class="arr">-></div><div class="node">2. Build + Test</div><div class="arr">-></div><div class="node">3. Tetrate Evidence</div>
+          <div class="node">1. Collect Signals</div><div class="arr">-></div><div class="node">2. Generate Decision</div><div class="arr">-></div><div class="node">3. Validate Output</div>
         </div>
         <div class="flow" style="margin-top:10px">
-          <div class="node">4. KPI + Scorecard</div><div class="arr">-></div><div class="node">5. RAG Learn</div><div class="arr">-></div><div class="node">6. Next Layer</div>
+          <div class="node">4. KPI + Scorecard</div><div class="arr">-></div><div class="node">5. Update Knowledge</div><div class="arr">-></div><div class="node">6. Improve Quality</div>
         </div>
       </article>
 

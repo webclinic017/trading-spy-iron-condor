@@ -7,7 +7,7 @@ hero_image: "/assets/img/agent-loop-diagram.png"
 
 # Hackathon System Explainer
 
-Last Updated (UTC): 2026-02-16T12:47:20Z
+Last Updated (UTC): 2026-02-16T13:18:27Z
 
 ## Current Runtime Snapshot
 - Latest cycle: `n/a`
@@ -32,11 +32,11 @@ Last Updated (UTC): 2026-02-16T12:47:20Z
 5. It repeats until no high-value tasks remain.
 
 ## How It Works (Technical)
-1. `scripts/continuous_devloop.sh` runs loop cycles.
-2. `scripts/layered_tdd_loop.sh` handles layered TDD analyze/execute.
-3. `scripts/tars_autopilot.sh` creates Tetrate evidence artifacts.
-4. `scripts/devloop_commit_and_report.sh` snapshots progress and checks PR.
-5. `scripts/rag_refresh_and_report.sh` refreshes retrieval memory.
+1. Signal collection and model routing produce candidate decisions.
+2. Reliability checks validate output structure and failure handling.
+3. KPI and readiness artifacts quantify latency, cost, and quality.
+4. Knowledge updates improve future retrieval and decision context.
+5. Governance checks keep delivery quality consistently high.
 
 ## System Flow Diagram
 ```mermaid
