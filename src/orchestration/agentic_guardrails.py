@@ -467,7 +467,7 @@ def create_core_module_contracts() -> list[Path]:
             description="Enforces risk limits and position sizing rules",
             responsibilities=[
                 "Calculate max position size (5% rule)",
-                "Enforce stop-loss at 200% of credit",
+                "Enforce stop-loss at 100% of credit",
                 "Block trades in unfavorable regimes",
                 "Track daily/weekly risk exposure",
             ],

@@ -368,7 +368,7 @@ class TradingSwarm:
             unhealthy_positions = []
             for pos in positions:
                 pnl_pct = pos.get("pnl_pct", 0)
-                # Flag positions at stop-loss level (200% of credit)
+                # Flag positions at stop-loss level (100% of credit)
                 if pnl_pct <= -100:  # Lost more than credit received
                     unhealthy_positions.append(pos)
 

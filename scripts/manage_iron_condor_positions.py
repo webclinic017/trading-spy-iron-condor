@@ -158,7 +158,7 @@ def check_exit_conditions(ic: dict) -> tuple[bool, str, str]:
     if dte <= IC_EXIT_CONFIG["exit_dte"]:
         return True, "DTE_EXIT", f"{dte} DTE (threshold: {IC_EXIT_CONFIG['exit_dte']})"
 
-    # Check 50% profit target
+    # Check 75% profit target (positive EV)
     if pl_pct >= IC_EXIT_CONFIG["profit_target_pct"]:
         return (
             True,
@@ -166,7 +166,7 @@ def check_exit_conditions(ic: dict) -> tuple[bool, str, str]:
             f"{pl_pct * 100:.1f}% profit (target: {IC_EXIT_CONFIG['profit_target_pct'] * 100:.0f}%)",
         )
 
-    # Check 200% stop-loss
+    # Check 100% stop-loss (cut losers fast)
     if pl_pct <= -IC_EXIT_CONFIG["stop_loss_pct"]:
         return (
             True,

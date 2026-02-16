@@ -400,7 +400,7 @@ Closing iron condors at 50% of maximum profit historically improves risk-adjuste
         sections.append(
             {
                 "heading": "How to implement this in your trading?",
-                "content": "1. Start with paper trading to validate the parameters\n2. Track your actual win rate over 30+ trades\n3. Adjust based on your risk tolerance\n4. Use position sizing rules (max 5% per trade)\n5. Set stop-losses at 200% of credit received",
+                "content": "1. Start with paper trading to validate the parameters\n2. Track your actual win rate over 30+ trades\n3. Adjust based on your risk tolerance\n4. Use position sizing rules (max 5% per trade)\n5. Set stop-losses at 100% of credit received (cut losers fast for positive EV)",
             }
         )
 

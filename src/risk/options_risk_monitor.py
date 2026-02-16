@@ -129,7 +129,7 @@ class OptionsRiskMonitor:
             if loss_ratio >= 1.0:
                 status = "critical"
                 message = (
-                    f"STOP-LOSS TRIGGERED: Loss ${current_loss:.2f} >= 2x credit ${max_loss:.2f}"
+                    f"STOP-LOSS TRIGGERED: Loss ${current_loss:.2f} >= {self.stop_loss_multiplier}x credit ${max_loss:.2f}"
                 )
             elif loss_ratio >= 0.75:
                 status = "warning"
@@ -157,7 +157,7 @@ class OptionsRiskMonitor:
         return {
             "status": "ok",
             "symbol": symbol,
-            "message": "Position type not monitored for 2x stop-loss",
+            "message": "Position type not monitored for stop-loss",
             "current_risk": 0.0,
             "max_allowed": self.max_loss_percent,
         }
@@ -176,9 +176,9 @@ class OptionsRiskMonitor:
     def should_close_position(self, symbol: str) -> tuple[bool, str]:
         """Determine if position should be closed for risk.
 
-        Implements CLAUDE.md 2x credit stop-loss rule:
-        - For credit spreads: Close when loss reaches 2x credit received
-        - Example: $60 credit -> close when loss = $120 (spread value = $180)
+        Implements credit stop-loss rule:
+        - For credit spreads: Close when loss reaches stop_loss_multiplier * credit
+        - Default 1.0x: $60 credit -> close when loss = $60 (spread value = $120)
 
         Returns:
             tuple[bool, str]: (should_close, reason)
@@ -205,40 +205,42 @@ class OptionsRiskMonitor:
             return False, f"Position type '{position_type}' not subject to exit rules"
 
         # ============================================================
-        # JAN 2026: 50% PROFIT EXIT (CHECK FIRST - TAKE PROFITS EARLY)
+        # PROFIT EXIT (75% target for positive EV)
         # ============================================================
         # For credit spread: profit = entry_price - current_price (credit received - cost to close)
         current_profit = entry_price - current_price
-        profit_target = credit * self.profit_target_pct  # 50% of credit received
+        profit_target = credit * self.profit_target_pct
 
         if current_profit >= profit_target:
+            pct_label = f"{self.profit_target_pct:.0%}"
             logger.info(
-                f"🎯 50% PROFIT TARGET HIT for {symbol}: "
+                f"🎯 {pct_label} PROFIT TARGET HIT for {symbol}: "
                 f"Profit ${current_profit:.2f} >= target ${profit_target:.2f}"
             )
             return True, (
-                f"50% profit target reached: "
+                f"{pct_label} profit target reached: "
                 f"Profit ${current_profit:.2f} >= target ${profit_target:.2f} "
                 f"(entry=${entry_price:.2f}, current=${current_price:.2f}, close for profit!)"
             )
 
         # ============================================================
-        # STOP-LOSS CHECK (2x credit rule)
+        # STOP-LOSS CHECK (1x credit for positive EV)
         # ============================================================
         # For credit spread: loss = current_price - entry_price (cost to close - credit received)
         current_loss = current_price - entry_price
 
-        # Calculate max allowed loss (2x credit)
+        # Calculate max allowed loss
         max_loss = credit * self.stop_loss_multiplier
+        mult_label = f"{self.stop_loss_multiplier}x"
 
         # Check if stop-loss should trigger
         if current_loss >= max_loss:
             logger.warning(
                 f"STOP-LOSS TRIGGERED for {symbol}: "
-                f"Loss ${current_loss:.2f} >= 2x credit ${max_loss:.2f}"
+                f"Loss ${current_loss:.2f} >= {mult_label} credit ${max_loss:.2f}"
             )
             return True, (
-                f"2x credit stop-loss triggered: "
+                f"{mult_label} credit stop-loss triggered: "
                 f"Loss ${current_loss:.2f} >= max ${max_loss:.2f} "
                 f"(entry=${entry_price:.2f}, current=${current_price:.2f})"
             )

@@ -305,13 +305,13 @@ class ActionableTaskEngine:
         # Task 6: Set stop-loss
         task6 = ActionableTask(
             task_id=f"{base_id}_stoploss",
-            title=f"Set stop-loss at 200% credit for {ticker}",
-            description="MANDATORY: Define exit at 200% of credit received",
+            title=f"Set stop-loss at 100% credit for {ticker}",
+            description="MANDATORY: Define exit at 100% of credit received (positive EV)",
             category=TaskCategory.RISK_CHECK,
             owner=TaskOwner.CTO,
             deadline=deadline,
             blocked_by=[task5.task_id],
-            context={"ticker": ticker, "stop_loss_pct": 200},
+            context={"ticker": ticker, "stop_loss_pct": 100},
             success_criteria=[
                 {
                     "description": "Stop-loss order placed or alert set",
@@ -362,7 +362,7 @@ class ActionableTaskEngine:
         task1 = ActionableTask(
             task_id=f"{base_id}_verify",
             title=f"Verify exit conditions for {ticker}",
-            description=f"Exit reason: {exit_reason}. Check: 50% profit OR 7 DTE OR 200% stop-loss",
+            description=f"Exit reason: {exit_reason}. Check: 75% profit OR 7 DTE OR 100% stop-loss",
             category=TaskCategory.VERIFICATION,
             owner=TaskOwner.CTO,
             deadline=deadline,

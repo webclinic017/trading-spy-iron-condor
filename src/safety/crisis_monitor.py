@@ -121,9 +121,9 @@ def check_crisis_conditions(
             )
         )
 
-    # Condition 3: Iron condor stop-loss breach (200% of credit per CLAUDE.md)
+    # Condition 3: Iron condor stop-loss breach (100% of credit — positive EV)
     # For short options, cost_basis represents credit received.
-    # Loss exceeding 2x credit = stop-loss breach.
+    # Loss exceeding 1x credit = stop-loss breach.
     for pos in positions:
         cost_basis = float(pos.get("cost_basis", 0))
         unrealized_pl = float(pos.get("unrealized_pl", 0))
