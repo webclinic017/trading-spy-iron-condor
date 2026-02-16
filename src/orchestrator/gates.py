@@ -1248,14 +1248,18 @@ class Gate3Sentiment:
                 sentiment_score -= dampening
                 logger.info(
                     "Gate 3 (%s): Sentiment dampened by %.2f (bear debate, conf=%.2f)",
-                    ticker, dampening, ctx.debate_outcome.confidence,
+                    ticker,
+                    dampening,
+                    ctx.debate_outcome.confidence,
                 )
             elif ctx.debate_outcome.winner == "BULL" and ctx.debate_outcome.confidence > 0.5:
                 boost = 0.1 * ctx.debate_outcome.confidence
                 sentiment_score += boost
                 logger.info(
                     "Gate 3 (%s): Sentiment boosted by %.2f (bull debate, conf=%.2f)",
-                    ticker, boost, ctx.debate_outcome.confidence,
+                    ticker,
+                    boost,
+                    ctx.debate_outcome.confidence,
                 )
 
         if ctx.momentum_strength < 0.3 and sentiment_score > 0:
@@ -1263,7 +1267,8 @@ class Gate3Sentiment:
             sentiment_score *= 0.8
             logger.info(
                 "Gate 3 (%s): Sentiment reduced 20%% (weak momentum=%.2f)",
-                ticker, ctx.momentum_strength,
+                ticker,
+                ctx.momentum_strength,
             )
 
         ctx.sentiment_score = sentiment_score
@@ -1468,7 +1473,9 @@ class Gate4Risk:
 
         logger.info(
             "Gate 4 (%s): PASSED (size=$%.2f, pipeline_confidence=%.2f)",
-            ticker, order_size, ctx.pipeline_confidence,
+            ticker,
+            order_size,
+            ctx.pipeline_confidence,
         )
         self.telemetry.gate_pass(
             "risk",
@@ -1484,7 +1491,9 @@ class Gate4Risk:
             gate_name="risk",
             status=GateStatus.PASS,
             ticker=ticker,
-            confidence=ctx.pipeline_confidence if ctx.pipeline_confidence > 0 else ctx.rl_decision.get("confidence", 0.0),
+            confidence=ctx.pipeline_confidence
+            if ctx.pipeline_confidence > 0
+            else ctx.rl_decision.get("confidence", 0.0),
             data={"order_size": order_size, "pipeline_confidence": ctx.pipeline_confidence},
         )
 
