@@ -5,6 +5,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
 INTERVAL_SECONDS="${INTERVAL_SECONDS:-900}"
+NO_SLEEP="${NO_SLEEP:-0}" # 1 = run cycles back-to-back with no pause
 FULL_EVERY="${FULL_EVERY:-6}"
 MAX_CYCLES="${MAX_CYCLES:-0}" # 0 = infinite
 RUN_TARS="${RUN_TARS:-0}" # 1 enables TARS full run each cycle
@@ -106,6 +107,7 @@ Commands:
 
 Environment:
   INTERVAL_SECONDS  Sleep between cycles (default: 900)
+  NO_SLEEP          1 to run cycles continuously with no sleep (default: 0)
   FULL_EVERY        Every N cycles run PROFILE=full (default: 6)
   MAX_CYCLES        Max cycles then exit, 0=infinite (default: 0)
   RUN_TARS          1 to run TARS full each cycle (default: 0)
@@ -142,8 +144,12 @@ main() {
           break
         fi
         cycle=$((cycle + 1))
-        log "sleeping ${INTERVAL_SECONDS}s"
-        sleep "$INTERVAL_SECONDS"
+        if [[ "$NO_SLEEP" == "1" ]]; then
+          log "no-sleep mode enabled; starting next cycle immediately"
+        else
+          log "sleeping ${INTERVAL_SECONDS}s"
+          sleep "$INTERVAL_SECONDS"
+        fi
       done
       ;;
     *)

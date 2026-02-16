@@ -10,6 +10,7 @@ ERR_LOG="$LOG_DIR/launchd.err.log"
 ENV_FILE="${ENV_FILE:-$REPO_ROOT/.env.devloop}"
 RUN_TARS_VALUE="${RUN_TARS:-0}"
 RUN_RAG_VALUE="${RUN_RAG:-0}"
+NO_SLEEP_VALUE="${NO_SLEEP:-0}"
 INTERVAL_SECONDS_VALUE="${INTERVAL_SECONDS:-300}"
 FULL_EVERY_VALUE="${FULL_EVERY:-6}"
 
@@ -46,6 +47,8 @@ install_agent() {
     <string>$RUN_TARS_VALUE</string>
     <key>RUN_RAG</key>
     <string>$RUN_RAG_VALUE</string>
+    <key>NO_SLEEP</key>
+    <string>$NO_SLEEP_VALUE</string>
     <key>PATH</key>
     <string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
   </dict>
@@ -98,6 +101,7 @@ Usage: $0 <install|uninstall|status|restart>
 Env overrides for install/restart:
   RUN_TARS=1           Enable TARS run each cycle
   RUN_RAG=1            Enable RAG refresh on full-profile cycles
+  NO_SLEEP=1           Run cycles back-to-back (no pause)
   INTERVAL_SECONDS=60  Loop interval
   FULL_EVERY=3         Run full profile every N cycles
   ENV_FILE=.env.devloop Env file sourced before loop startup
