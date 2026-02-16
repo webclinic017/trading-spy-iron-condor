@@ -157,9 +157,7 @@ def generate_engaging_content(
     )
 
 
-def _build_positive_story(
-    context: str, recent_work: str, total: int, win_rate: float
-) -> str:
+def _build_positive_story(context: str, recent_work: str, total: int, win_rate: float) -> str:
     """Build a positive feedback story from actual context."""
     return f"""Something worked: {recent_work.lower()}.
 
@@ -182,9 +180,7 @@ def _build_technical_section(commits: list[str], model: dict) -> str:
     alpha = model.get("alpha", 1)
     beta = model.get("beta", 1)
 
-    commit_list = (
-        "\n".join(f"- `{c}`" for c in commits[:5]) if commits else "- No recent commits"
-    )
+    commit_list = "\n".join(f"- `{c}`" for c in commits[:5]) if commits else "- No recent commits"
 
     return f"""Recent commits:
 
@@ -193,9 +189,7 @@ def _build_technical_section(commits: list[str], model: dict) -> str:
 Thompson Sampling state: alpha={alpha}, beta={beta} (Beta-Bernoulli, 30-day decay)."""
 
 
-def _build_correction_section(
-    context: str, model: dict, alpha: int, beta: int
-) -> str:
+def _build_correction_section(context: str, model: dict, alpha: int, beta: int) -> str:
     """Build correction section for negative feedback."""
     return f"""This negative feedback updates the Thompson Sampling model: alpha={alpha}, beta={beta + 1}.
 
@@ -204,9 +198,7 @@ The correction is stored in RAG. Next time a similar situation arises, the syste
 Context: {truncate_meta_description(context, max_chars=200)}"""
 
 
-def _generate_contextual_faq(
-    signal: str, context: str, win_rate: float, total: int
-) -> list[dict]:
+def _generate_contextual_faq(signal: str, context: str, win_rate: float, total: int) -> list[dict]:
     """Generate FAQ questions specific to this post's content."""
     ctx_lower = context.lower()
 

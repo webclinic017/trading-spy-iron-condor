@@ -300,7 +300,9 @@ def generate_daily_summary_post(date_str: str, lessons: list[dict]) -> str:
         phase_note = f"**{90 - day_num} days remaining** in the 90-day validation phase."
     else:
         phase_label = f"Day {day_num}"
-        phase_note = f"**{phase_label}** — past the initial validation phase, now in continuous operation."
+        phase_note = (
+            f"**{phase_label}** — past the initial validation phase, now in continuous operation."
+        )
 
     # Count by severity
     critical = sum(1 for item in lessons if item["severity"] == "CRITICAL")
