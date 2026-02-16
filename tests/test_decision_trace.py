@@ -9,7 +9,6 @@ from pathlib import Path
 from types import ModuleType
 from unittest.mock import MagicMock, patch
 
-import pytest
 
 # ---------------------------------------------------------------------------
 # Mock heavy module-level imports that iron_condor_trader.py performs at load
