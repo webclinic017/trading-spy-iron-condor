@@ -79,6 +79,15 @@ def main() -> int:
     now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     lines: list[str] = []
+    lines.append("---")
+    lines.append('title: "Hackathon System Explainer"')
+    lines.append(
+        'description: "How the layered TDD loop, Tetrate gateway checks, and RAG learning system work together."'
+    )
+    lines.append('summary: "Simple-to-technical walkthrough of the continuous build-test-learn engine."')
+    lines.append('hero_image: "/assets/img/agent-loop-diagram.png"')
+    lines.append("---")
+    lines.append("")
     lines.append("# Hackathon System Explainer")
     lines.append("")
     lines.append(f"Last Updated (UTC): {now_utc}")

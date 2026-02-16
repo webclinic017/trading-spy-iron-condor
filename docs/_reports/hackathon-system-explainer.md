@@ -1,6 +1,13 @@
+---
+title: "Hackathon System Explainer"
+description: "How the layered TDD loop, Tetrate gateway checks, and RAG learning system work together."
+summary: "Simple-to-technical walkthrough of the continuous build-test-learn engine."
+hero_image: "/assets/img/agent-loop-diagram.png"
+---
+
 # Hackathon System Explainer
 
-Last Updated (UTC): 2026-02-16T04:24:33Z
+Last Updated (UTC): 2026-02-16T04:35:05Z
 
 ## Current Runtime Snapshot
 - Latest cycle: `n/a`
