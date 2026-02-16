@@ -52,8 +52,9 @@ run_cycle() {
   fi
 
   python3 scripts/generate_profit_readiness_scorecard.py --repo-root . --artifact-dir artifacts/devloop --out artifacts/devloop/profit_readiness_scorecard.md >>"$LOG_FILE" 2>&1 || true
+  python3 scripts/generate_kpi_priority.py --scorecard artifacts/devloop/profit_readiness_scorecard.md --state artifacts/devloop/kpi_priority_state.json --out-md artifacts/devloop/kpi_priority_report.md --out-json artifacts/devloop/kpi_priority.json --stall-window 6 >>"$LOG_FILE" 2>&1 || true
   local expand_output
-  expand_output="$(python3 scripts/expand_layers.py --tasks artifacts/devloop/tasks.md --scorecard artifacts/devloop/profit_readiness_scorecard.md --manual-file manual_layer1_tasks.md --mirror-manual-file config/manual_layer1_tasks.md --out artifacts/devloop/layer_expansion_report.md 2>&1 || true)"
+  expand_output="$(python3 scripts/expand_layers.py --tasks artifacts/devloop/tasks.md --scorecard artifacts/devloop/profit_readiness_scorecard.md --manual-file manual_layer1_tasks.md --mirror-manual-file config/manual_layer1_tasks.md --out artifacts/devloop/layer_expansion_report.md --priority-json artifacts/devloop/kpi_priority.json 2>&1 || true)"
   printf "%s\n" "$expand_output" >>"$LOG_FILE"
   if printf "%s\n" "$expand_output" | grep -q "promoted_count=[1-9]"; then
     log "cycle=$cycle promotions detected; refreshing analyze"
