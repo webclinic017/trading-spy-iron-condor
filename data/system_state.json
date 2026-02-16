@@ -1,45 +1,10 @@
 {
-  "last_updated": "2026-02-16T15:12:35.310362+00:00",
+  "last_updated": "2026-02-16T17:13:14.640092+00:00",
   "sync_health": {
-    "last_successful_sync": "2026-02-16T15:12:35.310362+00:00",
+    "last_successful_sync": "2026-02-16T17:13:14.640092+00:00",
     "sync_source": "sync_alpaca_state.py",
-    "sync_count_today": 7,
+    "sync_count_today": 14,
     "history": [
-      {
-        "timestamp": "2026-02-13T17:57:56.955963+00:00",
-        "equity": 101455.56,
-        "success": true
-      },
-      {
-        "timestamp": "2026-02-13T18:09:27.935369+00:00",
-        "equity": 101453.56,
-        "success": true
-      },
-      {
-        "timestamp": "2026-02-13T18:16:49.504570+00:00",
-        "equity": 101461.56,
-        "success": true
-      },
-      {
-        "timestamp": "2026-02-13T18:44:45.602935+00:00",
-        "equity": 101457.56,
-        "success": true
-      },
-      {
-        "timestamp": "2026-02-13T19:07:33.814948+00:00",
-        "equity": 101457.56,
-        "success": true
-      },
-      {
-        "timestamp": "2026-02-13T19:15:12.409886+00:00",
-        "equity": 101457.56,
-        "success": true
-      },
-      {
-        "timestamp": "2026-02-13T19:30:14.120476+00:00",
-        "equity": 101455.56,
-        "success": true
-      },
       {
         "timestamp": "2026-02-13T19:48:55.044189+00:00",
         "equity": 101451.56,
@@ -124,9 +89,44 @@
         "timestamp": "2026-02-16T15:12:35.310362+00:00",
         "equity": 101441.56,
         "success": true
+      },
+      {
+        "timestamp": "2026-02-16T15:28:16.612519+00:00",
+        "equity": 101441.56,
+        "success": true
+      },
+      {
+        "timestamp": "2026-02-16T15:47:20.003567+00:00",
+        "equity": 101441.56,
+        "success": true
+      },
+      {
+        "timestamp": "2026-02-16T16:10:08.896695+00:00",
+        "equity": 101441.56,
+        "success": true
+      },
+      {
+        "timestamp": "2026-02-16T16:11:00.288022+00:00",
+        "equity": 101441.56,
+        "success": true
+      },
+      {
+        "timestamp": "2026-02-16T16:26:23.045804+00:00",
+        "equity": 101441.56,
+        "success": true
+      },
+      {
+        "timestamp": "2026-02-16T16:45:25.933231+00:00",
+        "equity": 101441.56,
+        "success": true
+      },
+      {
+        "timestamp": "2026-02-16T17:13:14.640092+00:00",
+        "equity": 101441.56,
+        "success": true
       }
     ],
-    "last_attempt": "2026-02-16T15:12:35.310362+00:00"
+    "last_attempt": "2026-02-16T17:13:14.640092+00:00"
   },
   "portfolio": {
     "equity": 101441.56,
@@ -955,7 +955,9 @@
     "weekly_gate_mode": "validation",
     "weekly_gate_recommended_max_position_pct": 0.015,
     "weekly_cadence_kpi_passed": false,
-    "weekly_scaling_sample_gate_passed": false
+    "weekly_scaling_sample_gate_passed": false,
+    "weekly_ai_credit_stress_status": "unknown",
+    "weekly_ai_credit_stress_score": 0.0
   },
   "account": {
     "current_equity": 101441.56,
@@ -966,12 +968,12 @@
     "buying_power": 201227.12
   },
   "meta": {
-    "last_updated": "2026-02-16T15:12:35.310362+00:00",
+    "last_updated": "2026-02-16T17:13:14.640092+00:00",
     "trade_sync": "alpaca_api",
     "sync_frequency_minutes": 5,
-    "last_sync_attempt": "2026-02-16T15:12:35.310362+00:00",
+    "last_sync_attempt": "2026-02-16T17:13:14.640092+00:00",
     "alpaca_keys_present": true,
-    "last_sync": "2026-02-16T15:12:34.961952",
+    "last_sync": "2026-02-16T17:13:14.219921",
     "sync_mode": "paper+live"
   },
   "paper_trading": {
@@ -1034,11 +1036,11 @@
     "starting_balance": 20.0,
     "total_pl": 147.48,
     "total_pl_pct": 737.4,
-    "synced_at": "2026-02-16T15:12:35.308302"
+    "synced_at": "2026-02-16T17:13:14.638362"
   },
   "strategy_milestones": {
     "enabled": true,
-    "generated_at": "2026-02-16T15:12:35.314835Z",
+    "generated_at": "2026-02-16T17:13:14.644584Z",
     "primary_family": "options_income",
     "rolling_window": 50,
     "paused_families": [
@@ -1132,7 +1134,7 @@
     "estimated_cagr_from_expectancy": 0.0073,
     "target_capital": 600000.0,
     "target_date": "2029-11-14",
-    "updated_at": "2026-02-16T15:12:35.314835Z"
+    "updated_at": "2026-02-16T17:13:14.644584Z"
   },
   "north_star_weekly_gate": {
     "enabled": true,
@@ -1159,6 +1161,15 @@
       "summary": "Cadence KPI miss: one or more weekly minimums not met."
     },
     "scale_blocked_by_cadence": true,
+    "ai_credit_stress": {
+      "status": "unknown",
+      "signal_status": "unknown",
+      "severity_score": 0.0,
+      "signal_date": null,
+      "source": "fred_public",
+      "detail": "No credit spread data available."
+    },
+    "scale_blocked_by_ai_credit_stress": false,
     "scaling_sample_gate": {
       "enabled": true,
       "min_closed_trades_for_scaling": 30,
@@ -1195,15 +1206,23 @@
           "avg_volume_ratio": null,
           "low_liquidity_events": 0,
           "threshold_min_volume_ratio": 0.2
+        },
+        "ai_credit_stress": {
+          "status": "unknown",
+          "signal_status": "unknown",
+          "severity_score": 0.0,
+          "signal_date": null,
+          "source": "fred_public",
+          "detail": "No credit spread data available."
         }
       },
       "blocked_categories": [],
       "gate_block_counts": {},
       "top_rejection_reasons": [],
       "summary": "Closed trades exist in lookback window; no-trade root cause not currently active.",
-      "updated_at": "2026-02-16T16:01:16.609071+00:00"
+      "updated_at": "2026-02-16T17:13:15.353798+00:00"
     },
-    "updated_at": "2026-02-16T16:01:16.609415+00:00"
+    "updated_at": "2026-02-16T17:13:15.353983+00:00"
   },
   "north_star_contributions": {
     "enabled": true,
@@ -1228,20 +1247,44 @@
     "estimated_live_contribution_this_month": 0.5,
     "contribution_estimate_confidence": "medium",
     "inference_note": "Live account has no open positions; live equity change is treated as estimated contribution.",
-    "updated_at": "2026-02-16T16:01:16.609452+00:00"
+    "updated_at": "2026-02-16T17:13:15.354048+00:00"
   },
   "ic_position_management": {
-    "last_run": "2026-02-16T15:11:56.913065",
+    "last_run": "2026-02-16T16:45:26.837078",
     "iron_condors_evaluated": 1,
     "exits_triggered": 0,
     "exits_executed": 0
   },
-  "trailing_stops": {
-    "last_set": "2026-02-16T11:53:15.509112",
-    "stops_active": 1,
-    "positions_skipped": 0,
-    "value_protected": 500.0,
-    "default_trail_pct": 0.1,
-    "options_trail_pct": 0.2
+  "market_signals": {
+    "ai_credit_stress": {
+      "signal": "ai_credit_stress",
+      "status": "unknown",
+      "severity_score": 0.0,
+      "blocked": false,
+      "watch": false,
+      "reasons": [
+        "No credit spread data available."
+      ],
+      "latest_data_date": null,
+      "stale_days": null,
+      "metrics": {
+        "high_yield_oas": {
+          "series_id": "BAMLH0A0HYM2",
+          "latest_value": null,
+          "latest_date": null,
+          "lookback_change": null,
+          "point_count": 0
+        },
+        "baa_minus_10y": {
+          "series_id": "BAA10Y",
+          "latest_value": null,
+          "latest_date": null,
+          "lookback_change": null,
+          "point_count": 0
+        }
+      },
+      "source": "fred_public",
+      "updated_at": "2026-02-16T17:13:15.290308+00:00"
+    }
   }
 }

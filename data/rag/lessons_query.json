@@ -66,17 +66,6 @@
     "file": "rag_knowledge/lessons_learned/tars_20260216_env_status_762891847f419fd7.md"
   },
   {
-    "id": "tars_20260216_env_status_9a1acdaf7e198c62",
-    "title": "TARS Artifact Ingest: env_status.txt",
-    "date": "2026-02-16",
-    "category": "lessons_learned",
-    "severity": "",
-    "summary": "--- title: \"TARS Artifact Ingest - env_status.txt\" description: \"Normalized TARS artifact ingested for RAG retrieval.\" date: 2026-02-16T16:57:22Z severity: INFO source: tars_artifact_ingest --- - Ingested At (UTC): `2026-02-16T16:57:22Z` - Source File: `artifacts/tars/env_status.txt` - Content Hash: `9a1acdaf7e198c62` ## Normalized Content ``` timestamp_utc=2026-02-16T16:56:03Z repo_root=/Users/jo",
-    "tags": [],
-    "content": "---\ntitle: \"TARS Artifact Ingest - env_status.txt\"\ndescription: \"Normalized TARS artifact ingested for RAG retrieval.\"\ndate: 2026-02-16T16:57:22Z\nseverity: INFO\nsource: tars_artifact_ingest\n---\n\n# TARS Artifact Ingest: env_status.txt\n\n- Ingested At (UTC): `2026-02-16T16:57:22Z`\n- Source File: `artifacts/tars/env_status.txt`\n- Content Hash: `9a1acdaf7e198c62`\n\n## Normalized Content\n```\ntimestamp_utc=2026-02-16T16:56:03Z\nrepo_root=/Users/joeyrahme/GitHubWorkspace/trading\nLLM_GATEWAY_BASE_URL=https://api.router.tetrate.ai/v1\nLLM_GATEWAY_API_KEY=unset\nTETRATE_API_KEY=set(sk-f...0Q==,len=108)\nOPENAI_MODEL=gpt-4o-mini\n```",
-    "file": "rag_knowledge/lessons_learned/tars_20260216_env_status_9a1acdaf7e198c62.md"
-  },
-  {
     "id": "tars_20260216_env_status_a171ea9ab495de38",
     "title": "TARS Artifact Ingest: env_status.txt",
     "date": "2026-02-16",
@@ -209,17 +198,6 @@
     "file": "rag_knowledge/lessons_learned/tars_20260216_smoke_metrics_d4ca4431a8be2842.md"
   },
   {
-    "id": "tars_20260216_smoke_metrics_dc58839e4831c6e5",
-    "title": "TARS Artifact Ingest: smoke_metrics.txt",
-    "date": "2026-02-16",
-    "category": "lessons_learned",
-    "severity": "",
-    "summary": "--- title: \"TARS Artifact Ingest - smoke_metrics.txt\" description: \"Normalized TARS artifact ingested for RAG retrieval.\" date: 2026-02-16T16:57:22Z severity: INFO source: tars_artifact_ingest --- - Ingested At (UTC): `2026-02-16T16:57:22Z` - Source File: `artifacts/tars/smoke_metrics.txt` - Content Hash: `dc58839e4831c6e5` ## Normalized Content ``` timestamp_utc=2026-02-16T16:56:04Z latency_ms=10",
-    "tags": [],
-    "content": "---\ntitle: \"TARS Artifact Ingest - smoke_metrics.txt\"\ndescription: \"Normalized TARS artifact ingested for RAG retrieval.\"\ndate: 2026-02-16T16:57:22Z\nseverity: INFO\nsource: tars_artifact_ingest\n---\n\n# TARS Artifact Ingest: smoke_metrics.txt\n\n- Ingested At (UTC): `2026-02-16T16:57:22Z`\n- Source File: `artifacts/tars/smoke_metrics.txt`\n- Content Hash: `dc58839e4831c6e5`\n\n## Normalized Content\n```\ntimestamp_utc=2026-02-16T16:56:04Z\nlatency_ms=1081\nprompt_tokens=30\ncompletion_tokens=20\ntotal_tokens=50\nestimated_total_cost_usd=0.00004500\n```",
-    "file": "rag_knowledge/lessons_learned/tars_20260216_smoke_metrics_dc58839e4831c6e5.md"
-  },
-  {
     "id": "tars_20260216_smoke_metrics_f8bc755de9e6afa4",
     "title": "TARS Artifact Ingest: smoke_metrics.txt",
     "date": "2026-02-16",
@@ -240,17 +218,6 @@
     "tags": [],
     "content": "---\ntitle: \"TARS Artifact Ingest - smoke_response.json\"\ndescription: \"Normalized TARS artifact ingested for RAG retrieval.\"\ndate: 2026-02-16T16:12:24Z\nseverity: INFO\nsource: tars_artifact_ingest\n---\n\n# TARS Artifact Ingest: smoke_response.json\n\n- Ingested At (UTC): `2026-02-16T16:12:24Z`\n- Source File: `artifacts/tars/smoke_response.json`\n- Content Hash: `0030866964c9986a`\n\n## Normalized Content\n```\n{\n  \"choices\": [\n    {\n      \"finish_reason\": \"stop\",\n      \"index\": 0,\n      \"logprobs\": null,\n      \"message\": {\n        \"annotations\": [],\n        \"content\": \"```json\\n{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"router_check\\\": true\\n}\\n```\",\n        \"refusal\": null,\n        \"role\": \"assistant\"\n      }\n    }\n  ],\n  \"created\": 1771258237,\n  \"id\": \"chatcmpl-D9vTBCw3eFPGHUuHzsDc5uKctskz7\",\n  \"model\": \"gpt-4o-mini-2024-07-18\",\n  \"object\": \"chat.completion\",\n  \"service_tier\": \"default\",\n  \"system_fingerprint\": \"fp_f4ae844694\",\n  \"usage\": {\n    \"completion_tokens\": 20,\n    \"completion_tokens_details\": {\n      \"accepted_prediction_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"reasoning_tokens\": 0,\n      \"rejected_prediction_tokens\": 0\n    },\n    \"prompt_tokens\": 30,\n    \"prompt_tokens_details\": {\n      \"audio_tokens\": 0,\n      \"cached_tokens\": 0\n    },\n    \"total_tokens\": 50\n  }\n}\n```",
     "file": "rag_knowledge/lessons_learned/tars_20260216_smoke_response_0030866964c9986a.md"
-  },
-  {
-    "id": "tars_20260216_smoke_response_2c008e94625ea4e4",
-    "title": "TARS Artifact Ingest: smoke_response.json",
-    "date": "2026-02-16",
-    "category": "lessons_learned",
-    "severity": "",
-    "summary": "--- title: \"TARS Artifact Ingest - smoke_response.json\" description: \"Normalized TARS artifact ingested for RAG retrieval.\" date: 2026-02-16T16:57:22Z severity: INFO source: tars_artifact_ingest --- - Ingested At (UTC): `2026-02-16T16:57:22Z` - Source File: `artifacts/tars/smoke_response.json` - Content Hash: `2c008e94625ea4e4` ## Normalized Content ``` { \"choices\": [ { \"finish_reason\": \"stop\", \"i",
-    "tags": [],
-    "content": "---\ntitle: \"TARS Artifact Ingest - smoke_response.json\"\ndescription: \"Normalized TARS artifact ingested for RAG retrieval.\"\ndate: 2026-02-16T16:57:22Z\nseverity: INFO\nsource: tars_artifact_ingest\n---\n\n# TARS Artifact Ingest: smoke_response.json\n\n- Ingested At (UTC): `2026-02-16T16:57:22Z`\n- Source File: `artifacts/tars/smoke_response.json`\n- Content Hash: `2c008e94625ea4e4`\n\n## Normalized Content\n```\n{\n  \"choices\": [\n    {\n      \"finish_reason\": \"stop\",\n      \"index\": 0,\n      \"logprobs\": null,\n      \"message\": {\n        \"annotations\": [],\n        \"content\": \"```json\\n{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"router_check\\\": true\\n}\\n```\",\n        \"refusal\": null,\n        \"role\": \"assistant\"\n      }\n    }\n  ],\n  \"created\": 1771260964,\n  \"id\": \"chatcmpl-D9wBAqP8kf0yDwP41ooeGtnkHTNVP\",\n  \"model\": \"gpt-4o-mini-2024-07-18\",\n  \"object\": \"chat.completion\",\n  \"service_tier\": \"default\",\n  \"system_fingerprint\": \"fp_f4ae844694\",\n  \"usage\": {\n    \"completion_tokens\": 20,\n    \"completion_tokens_details\": {\n      \"accepted_prediction_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"reasoning_tokens\": 0,\n      \"rejected_prediction_tokens\": 0\n    },\n    \"prompt_tokens\": 30,\n    \"prompt_tokens_details\": {\n      \"audio_tokens\": 0,\n      \"cached_tokens\": 0\n    },\n    \"total_tokens\": 50\n  }\n}\n```",
-    "file": "rag_knowledge/lessons_learned/tars_20260216_smoke_response_2c008e94625ea4e4.md"
   },
   {
     "id": "tars_20260216_smoke_response_51df20322182b6aa",
