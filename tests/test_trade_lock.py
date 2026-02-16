@@ -14,9 +14,7 @@ import pytest
 try:
     import src.safety.trade_lock as _lock_mod
 
-    _LOCK_AVAILABLE = hasattr(_lock_mod, "LOCK_FILE") and hasattr(
-        _lock_mod, "acquire_trade_lock"
-    )
+    _LOCK_AVAILABLE = hasattr(_lock_mod, "LOCK_FILE") and hasattr(_lock_mod, "acquire_trade_lock")
 except (ImportError, AttributeError):
     _LOCK_AVAILABLE = False
 
