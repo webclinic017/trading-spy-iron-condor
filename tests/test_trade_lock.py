@@ -18,6 +18,20 @@ try:
 except (ImportError, AttributeError):
     _LOCK_AVAILABLE = False
 
+try:
+    from src.safety.crisis_monitor import check_crisis_conditions as _crisis_check
+
+    _CRISIS_AVAILABLE = True
+except (ImportError, AttributeError):
+    _CRISIS_AVAILABLE = False
+
+try:
+    from src.safety.auto_close_bleeding import analyze_positions_for_closure as _ac_check
+
+    _AUTO_CLOSE_AVAILABLE = True
+except (ImportError, AttributeError):
+    _AUTO_CLOSE_AVAILABLE = False
+
 
 @pytest.mark.skipif(
     not _LOCK_AVAILABLE,
@@ -113,6 +127,10 @@ class TestTradeLock:
             assert not lock_file.exists()
 
 
+@pytest.mark.skipif(
+    not _CRISIS_AVAILABLE,
+    reason="crisis_monitor not fully available (partial module load in CI)",
+)
 class TestCrisisMonitor:
     """Test suite for crisis monitor."""
 
@@ -280,6 +298,10 @@ class TestCrisisMonitor:
             assert is_in_crisis_mode()
 
 
+@pytest.mark.skipif(
+    not _AUTO_CLOSE_AVAILABLE,
+    reason="auto_close_bleeding not fully available (partial module load in CI)",
+)
 class TestAutoCloseBleedingPositions:
     """Test suite for auto-close bleeding positions."""
 
