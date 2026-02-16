@@ -69,4 +69,3 @@ source: tars_artifact_ingest
     assert lessons[0]["id"] == "tars_20260216_smoke_metrics_deadbeef"
     assert lessons[0]["severity"] == "INFO"
     assert lessons[0]["date"] == "2026-02-16T16:27:33Z"
-

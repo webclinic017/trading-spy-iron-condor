@@ -112,7 +112,9 @@ def _parse_date(text: str, frontmatter_date: str = "") -> tuple[str, datetime | 
     return "", None
 
 
-def _is_noise_artifact_lesson(path: Path, title: str, frontmatter: dict[str, str], text: str) -> bool:
+def _is_noise_artifact_lesson(
+    path: Path, title: str, frontmatter: dict[str, str], text: str
+) -> bool:
     source = (frontmatter.get("source") or "").lower()
     stem = path.stem.lower()
     title_norm = title.lower()
@@ -149,7 +151,9 @@ def build_index() -> list[dict]:
             item_id = rel_path.with_suffix("").as_posix()
 
         title = frontmatter.get("title") or _extract_title(text, item_id)
-        if not include_artifact_ingest and _is_noise_artifact_lesson(path, title, frontmatter, text):
+        if not include_artifact_ingest and _is_noise_artifact_lesson(
+            path, title, frontmatter, text
+        ):
             continue
 
         date_raw, date_obj = _parse_date(text, frontmatter.get("date", ""))
