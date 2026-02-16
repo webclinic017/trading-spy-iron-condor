@@ -10,6 +10,7 @@ MAX_CYCLES="${MAX_CYCLES:-0}" # 0 = infinite
 RUN_TARS="${RUN_TARS:-0}" # 1 enables TARS full run each cycle
 STOP_FILE="${STOP_FILE:-$REPO_ROOT/artifacts/devloop/STOP}"
 LOG_FILE="${LOG_FILE:-$REPO_ROOT/artifacts/devloop/continuous.log}"
+TARS_AUTOPILOT_SCRIPT="${TARS_AUTOPILOT_SCRIPT:-$REPO_ROOT/scripts/tars_autopilot.sh}"
 
 mkdir -p "$REPO_ROOT/artifacts/devloop"
 touch "$LOG_FILE"
@@ -43,7 +44,7 @@ run_cycle() {
   if [[ "$RUN_TARS" == "1" ]]; then
     if [[ -n "${LLM_GATEWAY_BASE_URL:-}" ]] && [[ -n "${LLM_GATEWAY_API_KEY:-}${TETRATE_API_KEY:-}" ]]; then
       log "cycle=$cycle tars full start"
-      /Users/joeyrahme/.codex/skills/tars-hackathon-autopilot/scripts/tars_autopilot.sh full >>"$LOG_FILE" 2>&1 || true
+      "$TARS_AUTOPILOT_SCRIPT" full >>"$LOG_FILE" 2>&1 || true
       log "cycle=$cycle tars full done"
     else
       log "cycle=$cycle tars skipped (gateway env missing)"
@@ -52,6 +53,7 @@ run_cycle() {
 
   python3 scripts/generate_profit_readiness_scorecard.py --repo-root . --artifact-dir artifacts/devloop --out artifacts/devloop/profit_readiness_scorecard.md >>"$LOG_FILE" 2>&1 || true
   python3 scripts/generate_kpi_page.py --repo-root . --out artifacts/devloop/kpi_page.md >>"$LOG_FILE" 2>&1 || true
+  python3 scripts/generate_next_copilot_prompt.py --repo-root . --out artifacts/devloop/next_copilot_prompt.md >>"$LOG_FILE" 2>&1 || true
 }
 
 usage() {
@@ -67,6 +69,7 @@ Environment:
   FULL_EVERY        Every N cycles run PROFILE=full (default: 6)
   MAX_CYCLES        Max cycles then exit, 0=infinite (default: 0)
   RUN_TARS          1 to run TARS full each cycle (default: 0)
+  TARS_AUTOPILOT_SCRIPT Path to tars autopilot script (default: scripts/tars_autopilot.sh)
   STOP_FILE         Stop marker file path
   LOG_FILE          Log file path
 EOF
@@ -105,4 +108,3 @@ main() {
 }
 
 main "$@"
-

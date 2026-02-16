@@ -9,6 +9,7 @@ Follow these rules for all code changes in this repository.
 1. Start with a backlog pass:
    - `./scripts/layered_tdd_loop.sh analyze`
    - Use `artifacts/devloop/tasks.md` as the canonical task board.
+   - Use `manual_layer1_tasks.md` for persistent Layer 1 business-priority tasks.
 2. Pick one Layer 1 item only (smallest possible fix).
 3. Implement minimal code changes.
 4. Re-run checks:
@@ -24,6 +25,7 @@ Follow these rules for all code changes in this repository.
 - Do not start Layer 2/3 work until Layer 1 is fully checked.
 
 If checks are already green, propose the next highest-impact improvement from `artifacts/devloop/tasks.md`.
+If Layer 1 is empty there, pick one unchecked item from `manual_layer1_tasks.md`.
 
 ## Change Scope
 
@@ -47,6 +49,7 @@ If tools are missing, use local venv (`.venv-devloop`) and document exactly what
 - Gateway env vars:
   - `LLM_GATEWAY_BASE_URL`
   - `LLM_GATEWAY_API_KEY` (or `TETRATE_API_KEY`)
+- Local demo script: `./scripts/tars_autopilot.sh full`
 - Never hardcode provider keys or base URLs in source.
 
 ## Secrets and Safety
