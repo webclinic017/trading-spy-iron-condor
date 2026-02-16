@@ -16,8 +16,8 @@
 ## Operational Metrics
 - Workflows configured: 88
 - Blog posts indexed: 54
-- Reports indexed: 2
-- Lessons indexed: 171
+- Reports indexed: 3
+- Lessons indexed: 170
 
 ## Blog Posts (Newest First)
 - [Building an AI Trading System for the Tetrate Buildathon](https://igorganapolsky.github.io/trading/2026/02/15/tetrate-buildathon-ai-trading-system.html) - 2026-02-15
@@ -76,6 +76,7 @@
 - [The Silent 74 Days: How Our Trading System Reported Success While Doing Nothing](https://igorganapolsky.github.io/trading/2026/01/07/the-silent-74-days.html) - 2026-01-07
 
 ## Reports
+- [Daily Dashboard Snapshot - 2026-02-16](https://igorganapolsky.github.io/trading/reports/2026-02-16-dashboard-snapshot/) - 2026-02-16
 - [Hackathon System Explainer](https://igorganapolsky.github.io/trading/reports/hackathon-system-explainer/) - undated
 - [Google Doc Sync Setup](https://igorganapolsky.github.io/trading/reports/google-doc-sync-setup/) - undated
 
