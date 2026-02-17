@@ -1,4 +1,7 @@
-from scripts.capture_trading_screenshots import TradingScreenshotCapture, resolve_account_credentials
+from scripts.capture_trading_screenshots import (
+    TradingScreenshotCapture,
+    resolve_account_credentials,
+)
 
 
 def test_resolve_paper_credentials_prefers_paper_specific_keys() -> None:

@@ -89,7 +89,9 @@ def _snapshot_html(manifest: dict) -> str:
     paper_url = paper.get("url", "/trading/assets/snapshots/alpaca_paper_latest.png")
     live_url = live.get("url", "/trading/assets/snapshots/alpaca_live_latest.png")
     progress_url = progress.get("url", "/trading/assets/snapshots/progress_latest.png")
-    paper_diagram = paper.get("diagram_url", "/trading/assets/snapshots/paperbanana_paper_latest.svg")
+    paper_diagram = paper.get(
+        "diagram_url", "/trading/assets/snapshots/paperbanana_paper_latest.svg"
+    )
     live_diagram = live.get("diagram_url", "/trading/assets/snapshots/paperbanana_live_latest.svg")
     paper_explainer = paper.get(
         "technical_explainer",

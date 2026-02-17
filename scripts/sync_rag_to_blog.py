@@ -62,7 +62,9 @@ def _alpaca_snapshot_section_for_post() -> str:
         return ""
 
     paper_url = paper.get("url", "/trading/assets/snapshots/alpaca_paper_latest.png")
-    paper_diagram = paper.get("diagram_url", "/trading/assets/snapshots/paperbanana_paper_latest.svg")
+    paper_diagram = paper.get(
+        "diagram_url", "/trading/assets/snapshots/paperbanana_paper_latest.svg"
+    )
     live_url = live.get("url", "/trading/assets/snapshots/alpaca_live_latest.png")
     live_diagram = live.get("diagram_url", "/trading/assets/snapshots/paperbanana_live_latest.svg")
     paper_time = paper.get("captured_at_utc", "pending")
