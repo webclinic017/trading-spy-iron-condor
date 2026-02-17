@@ -500,9 +500,9 @@ jobs:
           echo "🔍 Validating tier2_watchlist.json..."
 
           if [ ! -f "data/tier2_watchlist.json" ]; then
-            echo "❌ ERROR: tier2_watchlist.json not found!"
+            echo "::warning::tier2_watchlist.json not found - continuing (tier2 watchlist is optional for SPY iron condor)."
             echo "watchlist_valid=false" >> $GITHUB_OUTPUT
-            exit 1
+            exit 0
           fi
 
           # Validate JSON format
