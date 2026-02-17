@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# ruff: noqa: S608
 from __future__ import annotations
 
 import argparse
@@ -82,52 +83,18 @@ def _snapshot_html(manifest: dict) -> str:
     latest = manifest.get("latest", {}) if isinstance(manifest, dict) else {}
     if not isinstance(latest, dict):
         latest = {}
-    paper = latest.get("alpaca_paper", {}) if isinstance(latest.get("alpaca_paper"), dict) else {}
-    live = latest.get("alpaca_live", {}) if isinstance(latest.get("alpaca_live"), dict) else {}
     progress = latest.get("progress", {}) if isinstance(latest.get("progress"), dict) else {}
-
-    paper_url = paper.get("url", "/trading/assets/snapshots/alpaca_paper_latest.png")
-    live_url = live.get("url", "/trading/assets/snapshots/alpaca_live_latest.png")
-    progress_url = progress.get("url", "/trading/assets/snapshots/progress_latest.png")
-    paper_diagram = paper.get(
-        "diagram_url", "/trading/assets/snapshots/paperbanana_paper_latest.svg"
-    )
-    live_diagram = live.get("diagram_url", "/trading/assets/snapshots/paperbanana_live_latest.svg")
-    paper_explainer = paper.get(
-        "technical_explainer",
-        "Paper account technical explainer is pending next autonomous capture.",
-    )
-    live_explainer = live.get(
-        "technical_explainer",
-        "Brokerage account technical explainer is pending next autonomous capture.",
-    )
-
-    paper_time = paper.get("captured_at_utc", "unknown")
-    live_time = live.get("captured_at_utc", "unknown")
     progress_time = progress.get("captured_at_utc", "unknown")
 
+    # Keep this focused for judges: one compact screenshot with Tetrate gateway evidence.
+    tetrate_snapshot_url = "/trading/assets/snapshots/judge_tetrate_metrics_latest.png"
+    dashboard_url = "/trading/lessons/ops-status.html"
+
     return f"""
-      <article class="card span6">
-        <div class="k">Alpaca Paper Snapshot</div>
-        <div class="pair">
-          <a href="{paper_url}"><img class="snap" src="{paper_url}" alt="Alpaca paper account snapshot"></a>
-          <a href="{paper_diagram}"><img class="snap" src="{paper_diagram}" alt="PaperBanana paper account technical diagram"></a>
-        </div>
-        <div class="k">Captured: {paper_time}</div>
-        <p class="note">{paper_explainer}</p>
-      </article>
-      <article class="card span6">
-        <div class="k">Alpaca Brokerage Snapshot</div>
-        <div class="pair">
-          <a href="{live_url}"><img class="snap" src="{live_url}" alt="Alpaca brokerage account snapshot"></a>
-          <a href="{live_diagram}"><img class="snap" src="{live_diagram}" alt="PaperBanana brokerage technical diagram"></a>
-        </div>
-        <div class="k">Captured: {live_time}</div>
-        <p class="note">{live_explainer}</p>
-      </article>
       <article class="card span12">
-        <div class="k">Progress Dashboard Snapshot</div>
-        <a href="{progress_url}"><img class="snap" src="{progress_url}" alt="Progress dashboard snapshot"></a>
+        <div class="k">Most Important Screenshot (Tetrate Evidence)</div>
+        <a href="{dashboard_url}">Open full evidence page</a>
+        <a href="{dashboard_url}"><img class="snap" src="{tetrate_snapshot_url}" alt="Tetrate metrics and evidence pipeline snapshot"></a>
         <div class="k">Captured: {progress_time}</div>
       </article>
     """
@@ -204,7 +171,8 @@ def main() -> int:
     )
     snapshot_section = _snapshot_html(snapshot_manifest)
 
-    html = f"""<!doctype html>
+    html = (  # noqa: S608 - static HTML template, not SQL
+        f"""<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -370,12 +338,22 @@ def main() -> int:
       </article>
 
       <article class="card span6">
-        <div class="k">Product Proof Flow</div>
-        <div class="flow" style="margin-top:10px">
-          <div class="node">1. Collect Signals</div><div class="arr">-></div><div class="node">2. Generate Decision</div><div class="arr">-></div><div class="node">3. Validate Output</div>
-        </div>
-        <div class="flow" style="margin-top:10px">
-          <div class="node">4. KPI + Scorecard</div><div class="arr">-></div><div class="node">5. Update Knowledge</div><div class="arr">-></div><div class="node">6. Improve Quality</div>
+        <div class="k">How Tetrate Is Used (Concrete Flow)</div>
+        <table class="table" style="margin-top:10px">
+          <tr><td>1. Input Assembly</td><td>System builds prompt context from market/account state and risk envelope.</td></tr>
+          <tr><td>2. Tetrate Route</td><td>Call is sent through Tetrate Agent Router Service (TARS) to select model/provider path.</td></tr>
+          <tr><td>3. Decision Output</td><td>Router response is parsed into structured trade intent/analysis payload.</td></tr>
+          <tr><td>4. Safety Gate</td><td>Ticker whitelist + position/risk constraints are enforced before execution.</td></tr>
+          <tr><td>5. Telemetry</td><td>Latency + cost are recorded from smoke checks for quality/cost tracking.</td></tr>
+          <tr><td>6. Judge Evidence</td><td>Artifacts are published so judges can verify behavior from raw files.</td></tr>
+        </table>
+        <div class="note">
+          Verify now:
+          <a href="{repo_blob}/artifacts/tars/smoke_metrics.txt">smoke_metrics.txt</a>,
+          <a href="{repo_blob}/artifacts/tars/smoke_response.json">smoke_response.json</a>,
+          <a href="{repo_blob}/artifacts/tars/resilience_report.txt">resilience_report.txt</a>,
+          <a href="/trading/lessons/ops-status.html">ops-status</a>,
+          <a href="https://router.tetrate.ai">router.tetrate.ai</a>.
         </div>
       </article>
 
@@ -420,6 +398,7 @@ def main() -> int:
 </body>
 </html>
 """
+    )
 
     out.write_text(html, encoding="utf-8")
     print(f"ok: judge demo page generated -> {out}")

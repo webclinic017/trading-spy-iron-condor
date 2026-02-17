@@ -164,12 +164,22 @@
       </article>
 
       <article class="card span6">
-        <div class="k">Product Proof Flow</div>
-        <div class="flow" style="margin-top:10px">
-          <div class="node">1. Collect Signals</div><div class="arr">-></div><div class="node">2. Generate Decision</div><div class="arr">-></div><div class="node">3. Validate Output</div>
-        </div>
-        <div class="flow" style="margin-top:10px">
-          <div class="node">4. KPI + Scorecard</div><div class="arr">-></div><div class="node">5. Update Knowledge</div><div class="arr">-></div><div class="node">6. Improve Quality</div>
+        <div class="k">How Tetrate Is Used (Concrete Flow)</div>
+        <table class="table" style="margin-top:10px">
+          <tr><td>1. Input Assembly</td><td>System builds prompt context from market/account state and risk envelope.</td></tr>
+          <tr><td>2. Tetrate Route</td><td>Call is sent through Tetrate Agent Router Service (TARS) to select model/provider path.</td></tr>
+          <tr><td>3. Decision Output</td><td>Router response is parsed into structured trade intent/analysis payload.</td></tr>
+          <tr><td>4. Safety Gate</td><td>Ticker whitelist + position/risk constraints are enforced before execution.</td></tr>
+          <tr><td>5. Telemetry</td><td>Latency + cost are recorded from smoke checks for quality/cost tracking.</td></tr>
+          <tr><td>6. Judge Evidence</td><td>Artifacts are published so judges can verify behavior from raw files.</td></tr>
+        </table>
+        <div class="note">
+          Verify now:
+          <a href="https://github.com/IgorGanapolsky/trading/blob/main/artifacts/tars/smoke_metrics.txt">smoke_metrics.txt</a>,
+          <a href="https://github.com/IgorGanapolsky/trading/blob/main/artifacts/tars/smoke_response.json">smoke_response.json</a>,
+          <a href="https://github.com/IgorGanapolsky/trading/blob/main/artifacts/tars/resilience_report.txt">resilience_report.txt</a>,
+          <a href="/trading/lessons/ops-status.html">ops-status</a>,
+          <a href="https://router.tetrate.ai">router.tetrate.ai</a>.
         </div>
       </article>
 
@@ -215,27 +225,10 @@
         </ul>
       </article>
 
-      <article class="card span6">
-        <div class="k">Alpaca Paper Snapshot</div>
-        <div class="pair">
-          <a href="/trading/assets/snapshots/alpaca_paper_latest.png"><img class="snap" src="/trading/assets/snapshots/alpaca_paper_latest.png" alt="Alpaca paper account snapshot"></a>
-          <a href="/trading/assets/snapshots/paperbanana_paper_latest.svg"><img class="snap" src="/trading/assets/snapshots/paperbanana_paper_latest.svg" alt="PaperBanana paper account technical diagram"></a>
-        </div>
-        <div class="k">Captured: 2026-02-17T16:34:38Z</div>
-        <p class="note">Paper Account: net liquidation value $101,500.32; daily P/L +0.00 (+0.0 bps) indicating a flat premium-decay session; cumulative P/L +1,500.32 (+1.50%); low capital deployment at 0.7% utilization with cash $101,804.32; open position proxy 4; win-rate estimate 100.0% (n=1); North Star gate MEDIUM.</p>
-      </article>
-      <article class="card span6">
-        <div class="k">Alpaca Brokerage Snapshot</div>
-        <div class="pair">
-          <a href="/trading/assets/snapshots/alpaca_live_latest.png"><img class="snap" src="/trading/assets/snapshots/alpaca_live_latest.png" alt="Alpaca brokerage account snapshot"></a>
-          <a href="/trading/assets/snapshots/paperbanana_live_latest.svg"><img class="snap" src="/trading/assets/snapshots/paperbanana_live_latest.svg" alt="PaperBanana brokerage technical diagram"></a>
-        </div>
-        <div class="k">Captured: 2026-02-17T16:34:38Z</div>
-        <p class="note">Brokerage Account: net liquidation value $207.39; daily P/L +0.00 (+0.0 bps) indicating a flat premium-decay session; cumulative P/L +187.39 (+936.95%); high capital deployment at 90.4% utilization with cash $40.00; open position proxy 0; win-rate estimate 0.0% (n=0); North Star gate MEDIUM.</p>
-      </article>
       <article class="card span12">
-        <div class="k">Progress Dashboard Snapshot</div>
-        <a href="/trading/assets/snapshots/progress_latest.png"><img class="snap" src="/trading/assets/snapshots/progress_latest.png" alt="Progress dashboard snapshot"></a>
+        <div class="k">Most Important Screenshot (Tetrate Evidence)</div>
+        <a href="/trading/lessons/ops-status.html">Open full evidence page</a>
+        <a href="/trading/lessons/ops-status.html"><img class="snap" src="/trading/assets/snapshots/judge_tetrate_metrics_latest.png" alt="Tetrate metrics and evidence pipeline snapshot"></a>
         <div class="k">Captured: 2026-02-17T16:34:38Z</div>
       </article>
     
