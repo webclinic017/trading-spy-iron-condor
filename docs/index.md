@@ -6,7 +6,11 @@ list_title: " "
 
 This is the unfiltered story of building an autonomous AI trading system—every bug, every breakthrough, every lesson learned.
 
-**The goal:** An accessible automated iron condor system anyone can enter with as little as $200.
+**North Star:** $6K/month after-tax financial independence. Original milestone: Nov 2029. Operating policy: reach it as fast as safely possible.
+
+**Strategy Profile:** SPY iron condor system with 15-20 delta short strikes, $10-wide wings, and up to 5 concurrent positions.
+
+**Capital Deployment Policy:** Paper account is the primary validation engine ($100K Alpaca paper). Brokerage account is traded opportunistically only when the same RAG + risk gates pass.
 
 **The method:** A full autonomous stack where each layer has a strict role:
 
