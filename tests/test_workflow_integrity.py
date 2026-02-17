@@ -102,6 +102,9 @@ KNOWN_EXTERNAL_OUTPUTS = {
     ("deployment", "page_url"),
     # actions/cache sets cache-hit output
     ("cached-poetry-dependencies", "cache-hit"),
+    # Python Path.write_text() in capture-trading-screenshots.yml precheck step
+    ("precheck", "capture_needed"),
+    ("precheck", "reason"),
 }
 
 
