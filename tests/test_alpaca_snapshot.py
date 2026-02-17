@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib.util
 from unittest.mock import patch
 
 import pytest
@@ -48,6 +49,10 @@ def mock_brokerage_data():
     }
 
 
+@pytest.mark.skipif(
+    not importlib.util.find_spec("matplotlib"),
+    reason="matplotlib not installed",
+)
 class TestGenerateChart:
     def test_generates_png(self, tmp_path, mock_paper_data):
         """Test chart generation produces a PNG file."""
