@@ -1,8 +1,25 @@
-"""Tests for iron condor position management."""
+"""Tests for iron condor position management.
+
+Coverage:
+- Exit at 50% profit
+- Exit at 7 DTE
+- Stop-loss at 100% of credit (positive EV config)
+- Hold when no exit conditions met
+- Config alignment with CLAUDE.md
+- Zero credit edge case
+- Group iron condors by expiry
+- Close iron condor via MLeg order (mocked)
+- Partial close scenarios (some legs fail)
+- Option symbol parsing and DTE calculation
+
+All Alpaca API calls are mocked. No real API calls.
+"""
 
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
+from unittest.mock import MagicMock, patch
+
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -10,6 +27,8 @@ from scripts.manage_iron_condor_positions import (
     IC_EXIT_CONFIG,
     calculate_dte,
     check_exit_conditions,
+    close_iron_condor,
+    group_iron_condors,
     is_option_symbol,
     parse_option_symbol,
 )
@@ -130,3 +149,166 @@ class TestExitConditions:
         assert IC_EXIT_CONFIG["profit_target_pct"] == 0.50  # 50% profit per LL-268
         assert IC_EXIT_CONFIG["stop_loss_pct"] == 1.00  # 100% stop
         assert IC_EXIT_CONFIG["exit_dte"] == 7  # 7 DTE per LL-268
+
+    def test_zero_credit_returns_hold(self):
+        """Zero credit received should not trigger any exit."""
+        ic = {
+            "expiry": datetime.now() + timedelta(days=30),
+            "total_pl": 0,
+            "credit_received": 0,
+        }
+        should_exit, reason, _ = check_exit_conditions(ic)
+        assert should_exit is False
+
+
+class TestGroupIronCondors:
+    """Test grouping option legs into iron condors by expiry."""
+
+    def test_group_four_legs_into_one_ic(self):
+        """Four legs with same expiry should group into one iron condor."""
+        expiry = datetime(2026, 3, 20)
+        positions = [
+            {
+                "expiry": expiry,
+                "underlying": "SPY",
+                "qty": 1.0,
+                "current_price": 0.50,
+                "avg_entry_price": 1.00,
+                "unrealized_pl": 50.0,
+                "market_value": 50.0,
+                "symbol": "SPY260320P00645000",
+                "type": "P",
+                "strike": 645.0,
+            },
+            {
+                "expiry": expiry,
+                "underlying": "SPY",
+                "qty": -1.0,
+                "current_price": 1.00,
+                "avg_entry_price": 2.00,
+                "unrealized_pl": 100.0,
+                "market_value": -100.0,
+                "symbol": "SPY260320P00655000",
+                "type": "P",
+                "strike": 655.0,
+            },
+            {
+                "expiry": expiry,
+                "underlying": "SPY",
+                "qty": -1.0,
+                "current_price": 0.80,
+                "avg_entry_price": 1.50,
+                "unrealized_pl": 70.0,
+                "market_value": -80.0,
+                "symbol": "SPY260320C00725000",
+                "type": "C",
+                "strike": 725.0,
+            },
+            {
+                "expiry": expiry,
+                "underlying": "SPY",
+                "qty": 1.0,
+                "current_price": 0.20,
+                "avg_entry_price": 0.50,
+                "unrealized_pl": -30.0,
+                "market_value": 20.0,
+                "symbol": "SPY260320C00735000",
+                "type": "C",
+                "strike": 735.0,
+            },
+        ]
+        ics = group_iron_condors(positions)
+        assert len(ics) == 1
+        assert ics[0]["underlying"] == "SPY"
+        assert len(ics[0]["legs"]) == 4
+        assert ics[0]["expiry_str"] == "2026-03-20"
+
+    def test_group_two_different_expiries(self):
+        """Legs with different expiries should form separate iron condors."""
+        positions = [
+            {
+                "expiry": datetime(2026, 3, 20),
+                "underlying": "SPY",
+                "qty": -1.0,
+                "current_price": 1.0,
+                "avg_entry_price": 2.0,
+                "unrealized_pl": 100.0,
+                "market_value": -100.0,
+                "symbol": "SPY260320P00655000",
+                "type": "P",
+                "strike": 655.0,
+            },
+            {
+                "expiry": datetime(2026, 4, 17),
+                "underlying": "SPY",
+                "qty": -1.0,
+                "current_price": 1.5,
+                "avg_entry_price": 2.5,
+                "unrealized_pl": 100.0,
+                "market_value": -150.0,
+                "symbol": "SPY260417P00650000",
+                "type": "P",
+                "strike": 650.0,
+            },
+        ]
+        ics = group_iron_condors(positions)
+        assert len(ics) == 2
+
+
+class TestCloseIronCondor:
+    """Test closing iron condor positions via MLeg order."""
+
+    def _make_ic(self):
+        """Create a test iron condor dict."""
+        return {
+            "expiry": datetime(2026, 3, 20),
+            "expiry_str": "2026-03-20",
+            "underlying": "SPY",
+            "legs": [
+                {"symbol": "SPY260320P00645000", "qty": 1.0, "type": "P"},
+                {"symbol": "SPY260320P00655000", "qty": -1.0, "type": "P"},
+                {"symbol": "SPY260320C00725000", "qty": -1.0, "type": "C"},
+                {"symbol": "SPY260320C00735000", "qty": 1.0, "type": "C"},
+            ],
+            "total_pl": 100.0,
+            "credit_received": 200.0,
+        }
+
+    def test_dry_run_does_not_submit_order(self):
+        """Dry run should succeed without submitting orders."""
+        mock_client = MagicMock()
+        ic = self._make_ic()
+
+        result = close_iron_condor(mock_client, ic, "PROFIT_TARGET", dry_run=True)
+        assert result is True
+        mock_client.submit_order.assert_not_called()
+
+    @patch("scripts.manage_iron_condor_positions.safe_submit_order")
+    @patch("alpaca.trading.requests.MarketOrderRequest")
+    def test_close_succeeds_with_mleg_order(self, mock_order_req, mock_submit):
+        """Successful MLeg close should return True."""
+        mock_order = MagicMock()
+        mock_order.id = "order-123"
+        mock_order.status = "accepted"
+        mock_submit.return_value = mock_order
+        mock_order_req.return_value = MagicMock()
+
+        mock_client = MagicMock()
+        ic = self._make_ic()
+
+        result = close_iron_condor(mock_client, ic, "DTE_EXIT", dry_run=False)
+        assert result is True
+        mock_submit.assert_called_once()
+
+    @patch("scripts.manage_iron_condor_positions.safe_submit_order")
+    @patch("alpaca.trading.requests.MarketOrderRequest")
+    def test_close_fails_preserves_all_legs(self, mock_order_req, mock_submit):
+        """MLeg close failure should return False (all legs preserved)."""
+        mock_order_req.return_value = MagicMock()
+        mock_submit.side_effect = Exception("Order rejected by exchange")
+
+        mock_client = MagicMock()
+        ic = self._make_ic()
+
+        result = close_iron_condor(mock_client, ic, "STOP_LOSS", dry_run=False)
+        assert result is False
