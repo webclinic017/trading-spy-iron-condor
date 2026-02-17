@@ -6,7 +6,6 @@
 - LLM full: https://igorganapolsky.github.io/trading/llms-full.txt
 - Sitemap: https://igorganapolsky.github.io/trading/sitemap.xml
 - RSS: https://igorganapolsky.github.io/trading/feed.xml
-- Judge demo evidence: https://igorganapolsky.github.io/trading/lessons/judge-demo.html
 
 ## Repository Discoverability
 - Repo root: https://github.com/IgorGanapolsky/trading
@@ -15,9 +14,9 @@
 - Scripts: https://github.com/IgorGanapolsky/trading/tree/main/scripts
 
 ## Operational Metrics
-- Workflows configured: 88
+- Workflows configured: 89
 - Blog posts indexed: 54
-- Reports indexed: 3
+- Reports indexed: 4
 - Lessons indexed: 168
 
 ## Blog Posts (Newest First)
@@ -77,6 +76,7 @@
 - [The Silent 74 Days: How Our Trading System Reported Success While Doing Nothing](https://igorganapolsky.github.io/trading/2026/01/07/the-silent-74-days.html) - 2026-01-07
 
 ## Reports
+- [Daily Dashboard Snapshot - 2026-02-17](https://igorganapolsky.github.io/trading/reports/2026-02-17-dashboard-snapshot/) - 2026-02-17
 - [Daily Dashboard Snapshot - 2026-02-16](https://igorganapolsky.github.io/trading/reports/2026-02-16-dashboard-snapshot/) - 2026-02-16
 - [Hackathon System Explainer](https://igorganapolsky.github.io/trading/reports/hackathon-system-explainer/) - undated
 - [Google Doc Sync Setup](https://igorganapolsky.github.io/trading/reports/google-doc-sync-setup/) - undated

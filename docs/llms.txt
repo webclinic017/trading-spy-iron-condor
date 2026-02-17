@@ -2,8 +2,8 @@
 > Autonomous AI trading system built in public.
 
 ## North Star
-- Target: $500/month after-tax on $25K+ capital by 2029-11-14.
-- Path: Liquid ETF iron condor system (SPY/SPX/XSP/QQQ/IWM) with strict risk gates and continuous learning.
+- Target: $6,000/month after-tax by 2029-11-14.
+- Path: SPY iron condor system with strict risk gates and continuous learning.
 
 ## Canonical URLs
 - Home: https://igorganapolsky.github.io/trading/
@@ -11,15 +11,14 @@
 - Reports: https://igorganapolsky.github.io/trading/reports/
 - Lessons index: https://igorganapolsky.github.io/trading/lessons/
 - RAG query UI: https://igorganapolsky.github.io/trading/rag-query/
-- Judge demo evidence: https://igorganapolsky.github.io/trading/lessons/judge-demo.html
 - Repository: https://github.com/IgorGanapolsky/trading
 - Full markdown catalog: https://igorganapolsky.github.io/trading/llms-full.txt
 
 ## Content Snapshot
 - Blog posts published: 54
-- Reports published: 3
+- Reports published: 4
 - Lessons in RAG markdown: 168
-- Automation workflows: 88
+- Automation workflows: 89
 - Latest blog post date: 2026-02-15
 - Latest lesson date: 2026-02-16
 
