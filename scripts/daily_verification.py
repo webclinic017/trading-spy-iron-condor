@@ -238,7 +238,9 @@ def print_report(report: DailyReport):
 
     # Trade status - the most important thing
     if report.traded_today:
-        print(f"\n✅ ACTIVITY TODAY: {report.structures_today} structure(s), {report.fills_today} fill(s)")
+        print(
+            f"\n✅ ACTIVITY TODAY: {report.structures_today} structure(s), {report.fills_today} fill(s)"
+        )
     else:
         print("\n❌ NO TRADES TODAY")
         if report.orders_today > 0:

@@ -222,7 +222,9 @@ def _load_intraday_metrics() -> dict[str, float | int | str]:
                 except Exception:
                     orders_today = 0
                 try:
-                    structures_today = int(trades.get("structures_today", structures_today) or structures_today)
+                    structures_today = int(
+                        trades.get("structures_today", structures_today) or structures_today
+                    )
                 except Exception:
                     structures_today = structures_today
 
@@ -259,7 +261,10 @@ def _enforce_intraday_guardrails(
             f"Daily loss limit exceeded: {daily_pnl:+.2f} < -{MAX_DAILY_LOSS_PCT:.0%} of equity",
         )
     if structures_today >= MAX_DAILY_STRUCTURES:
-        return False, f"Max structures guardrail hit: {structures_today}/{MAX_DAILY_STRUCTURES} today"
+        return (
+            False,
+            f"Max structures guardrail hit: {structures_today}/{MAX_DAILY_STRUCTURES} today",
+        )
     if fills_today >= MAX_DAILY_FILLS:
         return False, f"Max fills guardrail hit: {fills_today}/{MAX_DAILY_FILLS} today"
 
