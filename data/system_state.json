@@ -1000,7 +1000,7 @@
     "buying_power": 66651.8
   },
   "meta": {
-    "last_updated": "2026-02-17T19:05:38.203348+00:00",
+    "last_updated": "2026-02-17T19:09:46.502070Z",
     "trade_sync": "alpaca_api",
     "sync_frequency_minutes": 5,
     "last_sync_attempt": "2026-02-17T19:05:38.203348+00:00",
@@ -1322,7 +1322,7 @@
     "updated_at": "2026-02-17T19:06:09.970342+00:00"
   },
   "ic_position_management": {
-    "last_run": "2026-02-17T19:05:39.249581",
+    "last_run": "2026-02-17T19:09:41.242785",
     "iron_condors_evaluated": 2,
     "exits_triggered": 0,
     "exits_executed": 0
@@ -1519,5 +1519,25 @@
       "warnings": 0,
       "noncritical_failed": 2
     }
+  },
+  "stop_verification": {
+    "last_check": "2026-02-17T19:09:33.638128",
+    "status": "MISSING_STOPS",
+    "verified_count": 0,
+    "missing_count": 1
+  },
+  "options": {
+    "last_theta_harvest": "2026-02-17T19:09:46.501850Z",
+    "harvest_source": "daily-trading-workflow",
+    "execution_date": "2026-02-17",
+    "selection_method": "adaptive",
+    "target_tickers": [
+      "SPY",
+      "IWM"
+    ],
+    "strategy_note": "Uses credit spreads when buying power < 000, CSPs otherwise",
+    "tickers_scanned": 0,
+    "orders_submitted_today": 0,
+    "tickers_with_orders": []
   }
 }
