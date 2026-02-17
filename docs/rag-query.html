@@ -976,6 +976,7 @@ layout: null
       let currentResults = [];
       let latestSystemState = null;
       let latestSnapshotManifest = null;
+      let latestVerificationReports = null;
       const LESSONS_URL = "{{ '/data/rag/lessons_query.json' | relative_url }}";
       const LESSONS_FALLBACK_URL =
         "https://raw.githubusercontent.com/IgorGanapolsky/trading/main/data/rag/lessons_query.json";
@@ -987,6 +988,10 @@ layout: null
       const SNAPSHOT_MANIFEST_URL = "{{ '/data/alpaca_snapshots.json' | relative_url }}";
       const SNAPSHOT_MANIFEST_FALLBACK_URL =
         "https://raw.githubusercontent.com/IgorGanapolsky/trading/main/docs/data/alpaca_snapshots.json";
+      const VERIFICATION_REPORTS_URL =
+        "{{ '/data/verification_reports.json' | relative_url }}";
+      const VERIFICATION_REPORTS_FALLBACK_URL =
+        "https://raw.githubusercontent.com/IgorGanapolsky/trading/main/data/verification_reports.json";
       const GITHUB_RAW_URL =
         "https://raw.githubusercontent.com/IgorGanapolsky/trading/main/data/system_state.json";
       const ALLOWED_RAG_HOSTS = new Set([
@@ -1141,6 +1146,26 @@ layout: null
           }
         }
         throw new Error("snapshot manifest fetch failed");
+      }
+
+      async function fetchVerificationReports(forceReload = false) {
+        if (!forceReload && latestVerificationReports) return latestVerificationReports;
+        const sources = [VERIFICATION_REPORTS_URL, VERIFICATION_REPORTS_FALLBACK_URL];
+        for (const source of sources) {
+          try {
+            const res = await fetch(source, { cache: "no-store" });
+            if (!res.ok) continue;
+            const data = await res.json();
+            if (Array.isArray(data)) {
+              latestVerificationReports = data;
+              return data;
+            }
+          } catch {
+            // try next source
+          }
+        }
+        latestVerificationReports = null;
+        return null;
       }
 
       function updateLessonsStats() {
@@ -1574,7 +1599,7 @@ Tags: ${lesson.tags.join(", ")}`;
         );
       }
 
-      function buildAccountEvidenceHtml(state, snapshotManifest) {
+      function buildAccountEvidenceHtml(state, snapshotManifest, verificationReports) {
         const paper = state.paper_account || {};
         const live = state.live_account || {};
         const portfolio = state.portfolio || {};
@@ -1612,6 +1637,47 @@ Tags: ${lesson.tags.join(", ")}`;
             paperSnapshot.source_daily_change_value,
             extractExplainerDailyPL(paperSnapshot.technical_explainer),
           ) ?? 0;
+
+        const resolveReportDate = () => {
+          const fallback = new Date().toISOString().slice(0, 10);
+          const meta = state.meta || {};
+          const last = meta.last_updated || state.last_updated || "";
+          if (typeof last === "string" && last.length >= 10) {
+            const candidate = last.slice(0, 10);
+            if (/^\\d{4}-\\d{2}-\\d{2}$/.test(candidate)) return candidate;
+          }
+          return fallback;
+        };
+
+        const todayKey = resolveReportDate();
+        const reports = Array.isArray(verificationReports) ? verificationReports : [];
+        const todaysReport =
+          reports.find((r) => r && typeof r === "object" && r.date === todayKey) ||
+          (reports.length ? reports[reports.length - 1] : null);
+        const paperFills =
+          todaysReport && typeof todaysReport.fills === "number"
+            ? todaysReport.fills
+            : null;
+        const paperOrders =
+          todaysReport && typeof todaysReport.orders === "number"
+            ? todaysReport.orders
+            : null;
+        const paperDailyPnlFromReport =
+          todaysReport && typeof todaysReport.daily_pnl === "number"
+            ? todaysReport.daily_pnl
+            : null;
+        const paperTradedFromReport =
+          todaysReport && typeof todaysReport.traded === "boolean"
+            ? todaysReport.traded
+            : null;
+
+        // Prefer verification report daily_pnl when system_state daily_change is missing/flat.
+        const resolvedPaperTodayPL =
+          Math.abs(Number(paperTodayPL) || 0) < 0.01 &&
+          paperDailyPnlFromReport != null &&
+          Math.abs(paperDailyPnlFromReport) >= 0.01
+            ? paperDailyPnlFromReport
+            : paperTodayPL;
 
         const brokerageEquity =
           firstFiniteNumber(
@@ -1668,7 +1734,22 @@ Tags: ${lesson.tags.join(", ")}`;
             <div class="account-card">
               <h4>Paper Account (Primary)</h4>
               <div class="account-metric">${formatCurrency(paperEquity)}</div>
-              <div class="account-submetric">Today: ${formatSignedCurrency(paperTodayPL)}</div>
+              <div class="account-submetric">Today: ${formatSignedCurrency(resolvedPaperTodayPL)}</div>
+              ${
+                paperFills != null || paperOrders != null
+                  ? `<div class="account-submetric">Trades today (paper): ${escapeHtml(
+                      String(paperFills ?? 0),
+                    )} fills${
+                      paperOrders != null
+                        ? ` (${escapeHtml(String(paperOrders))} orders)`
+                        : ""
+                    }${
+                      paperTradedFromReport === false && (paperOrders || 0) > 0
+                        ? " (submitted but not filled)"
+                        : ""
+                    }</div>`
+                  : ""
+              }
               <div class="account-submetric">Total P/L: ${formatSignedCurrency(paperPL)} (${formatSignedPercent(paperPLPct)})</div>
             </div>
             <div class="account-card">
@@ -1715,12 +1796,13 @@ Tags: ${lesson.tags.join(", ")}`;
       async function buildLocalChatResponse(message) {
         if (isAccountEvidenceQuery(message)) {
           try {
-            const [state, snapshotManifest] = await Promise.all([
+            const [state, snapshotManifest, verificationReports] = await Promise.all([
               fetchSystemState(true),
               fetchSnapshotManifest(true).catch(() => null),
+              fetchVerificationReports(true).catch(() => null),
             ]);
             return {
-              html: buildAccountEvidenceHtml(state, snapshotManifest),
+              html: buildAccountEvidenceHtml(state, snapshotManifest, verificationReports),
               plain:
                 "Provided today's paper and brokerage P/L with screenshot evidence and why-summary.",
             };
