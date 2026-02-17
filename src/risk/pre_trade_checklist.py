@@ -1,7 +1,7 @@
 """Pre-trade checklist enforcement per CLAUDE.md.
 
 This module enforces the MANDATORY Pre-Trade Checklist from CLAUDE.md:
-1. Is ticker SPY? (SPY ONLY per CLAUDE.md Jan 19, 2026)
+1. Is ticker in whitelist? (Liquid ETFs per CLAUDE.md)
 2. Is position size <=5% of account ($248)?
 3. Is it a SPREAD (not naked put)?
 4. Checked earnings calendar? (No blackout violations)
@@ -19,7 +19,7 @@ from datetime import datetime
 try:
     from src.core.trading_constants import ALLOWED_TICKERS as _CENTRAL_ALLOWED_TICKERS
 except ImportError:
-    _CENTRAL_ALLOWED_TICKERS = {"SPY"}  # Fallback - SPY ONLY per CLAUDE.md Jan 19
+    _CENTRAL_ALLOWED_TICKERS = {"SPY", "SPX", "XSP", "QQQ", "IWM"}
 
 
 class PreTradeChecklist:
@@ -29,7 +29,7 @@ class PreTradeChecklist:
     to protect capital and enforce disciplined trading.
 
     Attributes:
-        ALLOWED_TICKERS: Set of approved underlying tickers (SPY ONLY per CLAUDE.md Jan 19).
+        ALLOWED_TICKERS: Set of approved underlying tickers (liquid ETFs per CLAUDE.md).
         MAX_POSITION_PCT: Maximum position size as percentage of account (5%).
         MIN_DTE: Minimum days to expiration (30).
         MAX_DTE: Maximum days to expiration (45).
@@ -96,7 +96,7 @@ class PreTradeChecklist:
         # 1. Ticker check
         underlying = self._extract_underlying(symbol)
         if underlying not in self.ALLOWED_TICKERS:
-            failures.append(f"Ticker {underlying} not allowed (SPY ONLY per CLAUDE.md)")
+            failures.append(f"Ticker {underlying} not allowed (liquid ETFs only per CLAUDE.md)")
 
         # 2. Position size check
         if max_loss > self.max_risk:
@@ -187,7 +187,7 @@ class PreTradeChecklist:
             "ticker_allowed": {
                 "passed": underlying in self.ALLOWED_TICKERS,
                 "value": underlying,
-                "requirement": "SPY ONLY per CLAUDE.md",
+                "requirement": "Liquid ETFs only per CLAUDE.md",
             },
             "position_size": {
                 "passed": max_loss <= self.max_risk,

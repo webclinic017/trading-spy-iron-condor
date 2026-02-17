@@ -239,7 +239,7 @@ RECOMMENDATION: [EXECUTE/DELAY/CANCEL]"""
         if qty <= 0:
             raise ValueError("qty must be positive when submitting option orders.")
 
-        # MANDATORY: Ticker whitelist check (SPY ONLY)
+        # MANDATORY: Ticker whitelist check (liquid ETFs only)
         from src.safety.mandatory_trade_gate import validate_ticker
 
         ticker_valid, ticker_error = validate_ticker(option_symbol)
@@ -339,7 +339,7 @@ RECOMMENDATION: [EXECUTE/DELAY/CANCEL]"""
         Returns:
             Execution result
         """
-        # MANDATORY: Ticker whitelist check (SPY ONLY)
+        # MANDATORY: Ticker whitelist check (liquid ETFs only)
         from src.safety.mandatory_trade_gate import validate_ticker
 
         ticker_valid, ticker_error = validate_ticker(symbol)

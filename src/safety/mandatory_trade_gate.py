@@ -5,7 +5,7 @@ compliance with risk rules, RAG lessons, and position limits.
 
 ENFORCEMENT (Jan 2026): This is the FINAL checkpoint before execution.
 No trade bypasses this gate. It enforces:
-- Ticker whitelist (SPY ONLY per CLAUDE.md Jan 19, 2026)
+- Ticker whitelist (liquid ETFs per CLAUDE.md)
 - Position size limits (max 5% of portfolio per position per CLAUDE.md)
 - Daily loss limits (max 5% of portfolio per day)
 - RAG lesson blocking (CRITICAL lessons block trades)
@@ -31,7 +31,7 @@ FEEDBACK_MODEL_PATH = Path(__file__).parent.parent.parent / "models" / "ml" / "f
 
 # ============================================================
 # TICKER WHITELIST - CRITICAL ENFORCEMENT (Jan 15, 2026)
-# Per CLAUDE.md: "CREDIT SPREADS on SPY ONLY"
+# Per CLAUDE.md: Liquid ETFs only (SPY, SPX, XSP, QQQ, IWM)
 # This prevents trades like SOFI that violated strategy
 # UPDATED Jan 19: Import from central config (single source of truth)
 # ============================================================
@@ -39,7 +39,7 @@ try:
     from src.core.trading_constants import ALLOWED_TICKERS
 except ImportError:
     # Fallback if constants unavailable (shouldn't happen in production)
-    ALLOWED_TICKERS = {"SPY"}  # SPY ONLY per CLAUDE.md Jan 19, 2026
+    ALLOWED_TICKERS = {"SPY", "SPX", "XSP", "QQQ", "IWM"}
 TICKER_WHITELIST_ENABLED = True  # Toggle for paper testing
 
 
@@ -47,7 +47,7 @@ def validate_ticker(symbol: str) -> tuple[bool, str]:
     """
     Validate ticker is in allowed whitelist.
 
-    Only allow SPY and IWM trades per CLAUDE.md strategy.
+    Only allow liquid ETF trades per CLAUDE.md strategy.
     Handles both stock symbols and OCC option symbols.
 
     Args:
@@ -63,7 +63,7 @@ def validate_ticker(symbol: str) -> tuple[bool, str]:
     underlying = _extract_underlying(symbol)
 
     if underlying not in ALLOWED_TICKERS:
-        return False, f"{underlying} not allowed. SPY/SPX/XSP ONLY per CLAUDE.md."
+        return False, f"{underlying} not allowed. Liquid ETFs only per CLAUDE.md."
     return True, ""
 
 

@@ -78,7 +78,7 @@ class RejectionReason(Enum):
     )
     EARNINGS_BLACKOUT = "Ticker is in earnings blackout period - avoid new positions"
     POSITION_SIZE_TOO_LARGE = "Position max loss exceeds 5% of portfolio"
-    TICKER_NOT_ALLOWED = "Ticker not in whitelist - SPY ONLY per CLAUDE.md Jan 19, 2026"
+    TICKER_NOT_ALLOWED = "Ticker not in whitelist - liquid ETFs only per CLAUDE.md"
     FORBIDDEN_STRATEGY = "Strategy is forbidden - naked positions not allowed"
     PRE_TRADE_CHECKLIST_FAILED = "Pre-trade checklist failed - CLAUDE.md rules violated"
     DTE_OUT_OF_RANGE = "DTE must be 30-45 days per CLAUDE.md"
@@ -196,8 +196,8 @@ class TradeGateway:
 
     # ============================================================
     # TICKER WHITELIST - CRITICAL ENFORCEMENT (Jan 19, 2026)
-    # Per CLAUDE.md: "SPY ONLY - best liquidity, tightest spreads"
-    # This prevents trades like SOFI/IWM that violated strategy
+    # Per CLAUDE.md: Liquid ETFs only (SPY, SPX, XSP, QQQ, IWM)
+    # This prevents trades on non-whitelisted symbols
     # UPDATED Jan 19: Import from central config (single source of truth)
     # ============================================================
     try:
@@ -205,7 +205,7 @@ class TradeGateway:
 
         ALLOWED_TICKERS = _CENTRAL_TICKERS
     except ImportError:
-        ALLOWED_TICKERS = {"SPY"}  # Fallback - SPY ONLY per CLAUDE.md Jan 19
+        ALLOWED_TICKERS = {"SPY", "SPX", "XSP", "QQQ", "IWM"}
     TICKER_WHITELIST_ENABLED = True  # Toggle for paper testing
 
     # FORBIDDEN strategies - will be rejected outright

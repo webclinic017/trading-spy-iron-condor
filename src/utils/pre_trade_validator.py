@@ -7,7 +7,7 @@ Purpose: Enforce Phil Town Rule #1 - Don't Lose Money
 
 This validator MUST be called before any trade. It:
 1. Queries RAG for relevant lessons
-2. Validates against SPY-ONLY mandate
+2. Validates against ticker whitelist
 3. Checks position balance requirements
 4. Verifies risk limits
 
@@ -61,12 +61,12 @@ class PreTradeValidator:
         """
         errors = []
 
-        # Check 1: SPY-ONLY mandate (from CLAUDE.md, LL-203, LL-247)
+        # Check 1: Ticker whitelist (from CLAUDE.md, LL-203, LL-247)
         base_symbol = symbol.split("2")[0] if "2" in symbol else symbol  # Extract base from options
         if base_symbol not in ALLOWED_TICKERS:
             errors.append(
-                f"BLOCKED: {symbol} violates SPY-ONLY mandate. "
-                f"LL-247 documents SOFI disaster. LL-203 shows SPY works."
+                f"BLOCKED: {symbol} not in allowed tickers. "
+                f"Only liquid ETFs (SPY/SPX/XSP/QQQ/IWM) allowed."
             )
 
         # Check 2: Position size limit (from CLAUDE.md)

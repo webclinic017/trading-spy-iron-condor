@@ -7,7 +7,7 @@ Implements complete options strategy execution with comprehensive risk managemen
 3. Credit Spreads - Directional premium plays with defined risk
 
 Safety Features:
-- Ticker whitelist (SPY only per CLAUDE.md) - Jan 15, 2026
+- Ticker whitelist (liquid ETFs per CLAUDE.md) - Jan 15, 2026
 - Max 2% portfolio risk per trade
 - Min $0.30 premium per contract
 - IV Rank > 30 for premium selling
@@ -35,14 +35,14 @@ logger = logging.getLogger(__name__)
 
 # ============================================================
 # TICKER WHITELIST - CRITICAL ENFORCEMENT (Jan 15, 2026)
-# Per CLAUDE.md: "CREDIT SPREADS on SPY ONLY"
+# Per CLAUDE.md: Liquid ETFs only
 # This prevents trades like SOFI that violated strategy
 # UPDATED Jan 19: Import from central config (single source of truth)
 # ============================================================
 try:
     from src.core.trading_constants import ALLOWED_TICKERS
 except ImportError:
-    ALLOWED_TICKERS = {"SPY"}  # Fallback
+    ALLOWED_TICKERS = {"SPY", "SPX", "XSP", "QQQ", "IWM"}  # Fallback
 TICKER_WHITELIST_ENABLED = True  # Toggle for paper testing
 
 
@@ -84,7 +84,7 @@ def validate_ticker_for_options(underlying: str) -> tuple[bool, str]:
     """
     Validate ticker is in allowed whitelist for options trading.
 
-    Only allow SPY and IWM trades per CLAUDE.md strategy.
+    Only allow liquid ETF trades per CLAUDE.md strategy.
 
     Args:
         underlying: Underlying ticker symbol
@@ -99,7 +99,7 @@ def validate_ticker_for_options(underlying: str) -> tuple[bool, str]:
     if underlying not in ALLOWED_TICKERS:
         return (
             False,
-            f"{underlying} not allowed. Strategy permits SPY only per CLAUDE.md.",
+            f"{underlying} not allowed. Liquid ETFs only (SPY/SPX/XSP/QQQ/IWM) per CLAUDE.md.",
         )
     return True, ""
 
@@ -881,7 +881,7 @@ class OptionsExecutor:
             Dict with 'approved' bool and 'reason' string
         """
         # 0. TICKER WHITELIST CHECK (Jan 15, 2026)
-        # Per CLAUDE.md: "CREDIT SPREADS on SPY ONLY"
+        # Per CLAUDE.md: Liquid ETFs only
         ticker_valid, ticker_error = validate_ticker_for_options(strategy.underlying)
         if not ticker_valid:
             logger.warning(f"🚫 TICKER BLOCKED: {ticker_error}")

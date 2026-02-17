@@ -327,8 +327,8 @@ class SelfHealer:
 
                 # Check for non-SPY positions
                 underlying = symbol[:3] if len(symbol) > 3 else symbol
-                if underlying not in ["SPY"]:
-                    violations.append(f"{symbol} not SPY (CLAUDE.md: SPY ONLY)")
+                if underlying not in {"SPY", "SPX", "XSP", "QQQ", "IWM"}:
+                    violations.append(f"{symbol} not in allowed tickers (CLAUDE.md: liquid ETFs only)")
 
             if violations:
                 return HealthCheck(
