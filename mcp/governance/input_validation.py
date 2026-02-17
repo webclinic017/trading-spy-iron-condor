@@ -15,12 +15,12 @@ from pydantic import BaseModel, Field, field_validator
 # Allowlist of tradeable symbols - UPDATED Jan 19, 2026 (LL-244)
 # Per CLAUDE.md: SPY/SPX/XSP for index options
 # SPY = equity option, SPX/XSP = index options with Section 1256 tax treatment
-ALLOWED_SYMBOLS = frozenset({"SPY", "SPX", "XSP"})  # SPY/SPX/XSP per CLAUDE.md Feb 8, 2026
+ALLOWED_SYMBOLS = frozenset({"SPY", "SPX", "XSP", "QQQ", "IWM"})  # liquid ETFs per CLAUDE.md
 
 # Maximum values to prevent resource exhaustion
 MAX_LOOKBACK_DAYS = 365
-MAX_ORDER_AMOUNT_USD = 248.0  # 5% of $4,959 account (from CLAUDE.md)
-MAX_POSITION_RISK = 248.0
+MAX_ORDER_AMOUNT_USD = 5000.0  # 5% of $100K account
+MAX_POSITION_RISK = 5000.0
 
 
 T = TypeVar("T", bound=BaseModel)

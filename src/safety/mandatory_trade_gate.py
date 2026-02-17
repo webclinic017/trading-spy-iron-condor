@@ -420,7 +420,7 @@ def validate_trade_mandatory(
 
     # =========================================================================
     # CHECK 0: TICKER WHITELIST (Jan 15, 2026 - per CLAUDE.md)
-    # Per CLAUDE.md: "CREDIT SPREADS on SPY ONLY"
+    # Per CLAUDE.md: Liquid ETFs only (SPY, SPX, XSP, QQQ, IWM)
     # This is the FIRST check - reject non-allowed tickers immediately
     # =========================================================================
     ticker_valid, ticker_error = validate_ticker(symbol)

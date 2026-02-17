@@ -206,13 +206,13 @@ class TargetSymbols:
     CRITICAL UPDATE Jan 19, 2026 (Iron Condor Strategy):
     - 100K account succeeded with SPY focus (+$16,661)
     - 5K account failed with SOFI (individual stock risk)
-    - IRON CONDORS on SPY ONLY - defined risk on BOTH sides
-    - NO individual stocks, NO IWM until proven in paper trading
+    - IRON CONDORS on liquid ETFs only - defined risk on BOTH sides
+    - NO individual stocks
     """
 
-    # Primary targets - SPY ONLY per CLAUDE.md strategy
+    # Primary targets - liquid ETFs per CLAUDE.md strategy
     # Iron condor collateral = spread width x 2 (~$1000 for $5-wide wings)
-    CSP_WATCHLIST = ["SPY"]  # SPY ONLY - best liquidity, tightest spreads
+    CSP_WATCHLIST = ["SPY", "QQQ", "IWM"]  # Liquid ETFs - best liquidity, tightest spreads
 
     # Max strike for credit spreads (SPY ~$590, IWM ~$220)
     # This is informational - actual strike from 30-delta put

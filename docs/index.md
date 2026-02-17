@@ -43,6 +43,23 @@ This section is auto-updated from `data/system_state.json` by `scripts/update_do
 
 ---
 
+## Alpaca Account Snapshots (Auto)
+
+Latest snapshots are refreshed by automation and published to GitHub Pages.
+
+### Paper ($100K) Snapshot
+![Alpaca Paper Snapshot](/trading/assets/snapshots/alpaca_paper_latest.png)
+
+### Brokerage (Live) Snapshot
+![Alpaca Brokerage Snapshot](/trading/assets/snapshots/alpaca_live_latest.png)
+
+### Progress Dashboard Snapshot
+![Progress Dashboard Snapshot](/trading/assets/snapshots/progress_latest.png)
+
+Manifest: [`/trading/data/alpaca_snapshots.json`](/trading/data/alpaca_snapshots.json)
+
+---
+
 ## Featured Posts
 
 - **[The Silent 74 Days](/trading/2026/01/07/the-silent-74-days/)** — How we built a system that did nothing for 74 days

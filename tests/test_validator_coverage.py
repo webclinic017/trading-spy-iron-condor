@@ -33,7 +33,7 @@ class TestValidateTicker:
     def test_non_spy_blocked(self):
         valid, error = validate_ticker("AAPL")
         assert valid is False
-        assert "SPY/SPX/XSP ONLY" in error
+        assert "Liquid ETFs only" in error
 
     def test_spy_option_allowed(self):
         valid, error = validate_ticker("SPY260220P00660000")

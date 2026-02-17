@@ -2,8 +2,8 @@
 > Autonomous AI trading system built in public.
 
 ## North Star
-- Target: $6,000/month after-tax by 2029-11-14.
-- Path: SPY iron condor system with strict risk gates and continuous learning.
+- Target: $500/month after-tax on $25K+ capital by 2029-11-14.
+- Path: Liquid ETF iron condor system (SPY/SPX/XSP/QQQ/IWM) with strict risk gates and continuous learning.
 
 ## Canonical URLs
 - Home: https://igorganapolsky.github.io/trading/

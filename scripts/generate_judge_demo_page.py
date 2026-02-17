@@ -78,6 +78,40 @@ def status_chip(status: str) -> str:
     return '<span class="chip unknown">UNKNOWN</span>'
 
 
+def _snapshot_html(manifest: dict) -> str:
+    latest = manifest.get("latest", {}) if isinstance(manifest, dict) else {}
+
+    paper = latest.get("alpaca_paper", {}) if isinstance(latest.get("alpaca_paper"), dict) else {}
+    live = latest.get("alpaca_live", {}) if isinstance(latest.get("alpaca_live"), dict) else {}
+    progress = latest.get("progress", {}) if isinstance(latest.get("progress"), dict) else {}
+
+    paper_url = paper.get("url", "/trading/assets/snapshots/alpaca_paper_latest.png")
+    live_url = live.get("url", "/trading/assets/snapshots/alpaca_live_latest.png")
+    progress_url = progress.get("url", "/trading/assets/snapshots/progress_latest.png")
+
+    paper_time = paper.get("captured_at_utc", "unknown")
+    live_time = live.get("captured_at_utc", "unknown")
+    progress_time = progress.get("captured_at_utc", "unknown")
+
+    return f"""
+      <article class="card span6">
+        <div class="k">Alpaca Paper Snapshot</div>
+        <a href="{paper_url}"><img class="snap" src="{paper_url}" alt="Alpaca paper account snapshot"></a>
+        <div class="k">Captured: {paper_time}</div>
+      </article>
+      <article class="card span6">
+        <div class="k">Alpaca Brokerage Snapshot</div>
+        <a href="{live_url}"><img class="snap" src="{live_url}" alt="Alpaca brokerage account snapshot"></a>
+        <div class="k">Captured: {live_time}</div>
+      </article>
+      <article class="card span12">
+        <div class="k">Progress Dashboard Snapshot</div>
+        <a href="{progress_url}"><img class="snap" src="{progress_url}" alt="Progress dashboard snapshot"></a>
+        <div class="k">Captured: {progress_time}</div>
+      </article>
+    """
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Generate polished judge demo page from artifacts."
@@ -97,6 +131,7 @@ def main() -> int:
     exec_daily = read_json(repo_root / "artifacts/tars/execution_quality_daily.json")
     loop_status = parse_kv(repo_root / "artifacts/devloop/status.txt")
     system_state = read_json(repo_root / "data/system_state.json")
+    snapshot_manifest = read_json(repo_root / "docs/data/alpaca_snapshots.json")
 
     done, total = checklist_progress(checklist)
     metrics = parse_scorecard_metrics(scorecard)
@@ -146,6 +181,7 @@ def main() -> int:
         )
         or '<tr><td colspan="3">No scorecard metrics found yet.</td></tr>'
     )
+    snapshot_section = _snapshot_html(snapshot_manifest)
 
     html = f"""<!doctype html>
 <html lang="en">
@@ -256,6 +292,13 @@ def main() -> int:
     .arr {{ text-align: center; color: var(--accent); font-weight: 800; }}
     .links a {{ color: #9ed0ff; text-decoration: none; }}
     .links li {{ margin: 6px 0; color: var(--muted); }}
+    .snap {{
+      width: 100%;
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      display: block;
+    }}
     @media (max-width: 920px) {{
       .span4, .span6, .span8 {{ grid-column: span 12; }}
       .flow {{ grid-template-columns: 1fr; }}
@@ -337,6 +380,7 @@ def main() -> int:
           <li><a href="{repo_blob}/docs/_reports/hackathon-system-explainer.md">system explainer</a></li>
         </ul>
       </article>
+{snapshot_section}
     </section>
   </div>
 </body>

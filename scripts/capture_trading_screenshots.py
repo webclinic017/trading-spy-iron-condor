@@ -26,10 +26,14 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import json
 import os
+import shutil
 import sys
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
+from typing import Mapping
+from typing import Any
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
@@ -38,12 +42,57 @@ sys.path.insert(0, str(project_root))
 try:
     from playwright.async_api import async_playwright
 except ImportError:
-    print("❌ Playwright not installed. Run: pip install playwright && playwright install chromium")
-    sys.exit(1)
+    async_playwright = None
+
+
+def resolve_account_credentials(
+    account_type: str,
+    env: Mapping[str, str],
+) -> tuple[str, str]:
+    """Resolve account credentials from supported env var aliases."""
+    if account_type == "paper":
+        key_candidates = [
+            "ALPACA_PAPER_TRADING_API_KEY",
+            "ALPACA_PAPER_TRADING_5K_API_KEY",
+            "ALPACA_API_KEY",
+        ]
+        secret_candidates = [
+            "ALPACA_PAPER_TRADING_API_SECRET",
+            "ALPACA_PAPER_TRADING_5K_API_SECRET",
+            "ALPACA_SECRET_KEY",
+        ]
+    else:
+        key_candidates = [
+            "ALPACA_BROKERAGE_TRADING_API_KEY",
+            "ALPACA_LIVE_TRADING_API_KEY",
+            "ALPACA_API_KEY",
+        ]
+        secret_candidates = [
+            "ALPACA_BROKERAGE_TRADING_API_SECRET",
+            "ALPACA_LIVE_TRADING_API_SECRET",
+            "ALPACA_SECRET_KEY",
+        ]
+
+    key = next((str(env.get(k, "")).strip() for k in key_candidates if str(env.get(k, "")).strip()), "")
+    secret = next(
+        (str(env.get(k, "")).strip() for k in secret_candidates if str(env.get(k, "")).strip()),
+        "",
+    )
+    return key, secret
+
+
+def _ensure_playwright_installed() -> None:
+    if async_playwright is None:
+        raise RuntimeError(
+            "Playwright not installed. Run: pip install playwright && playwright install chromium"
+        )
 
 
 class TradingScreenshotCapture:
     """Capture screenshots of trading dashboards."""
+
+    MANIFEST_PATH = project_root / "docs" / "data" / "alpaca_snapshots.json"
+    PAGES_SNAPSHOT_DIR = project_root / "docs" / "assets" / "snapshots"
 
     def __init__(self, output_dir: Path = None):
         """Initialize screenshot capture.
@@ -58,10 +107,100 @@ class TradingScreenshotCapture:
         (self.output_dir / "alpaca").mkdir(exist_ok=True)
         (self.output_dir / "dashboard").mkdir(exist_ok=True)
         (self.output_dir / "daily").mkdir(exist_ok=True)
+        self.PAGES_SNAPSHOT_DIR.mkdir(parents=True, exist_ok=True)
+        self.MANIFEST_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-        # Get credentials from environment
-        self.alpaca_key = os.environ.get("ALPACA_PAPER_TRADING_5K_API_KEY", "")
-        self.alpaca_secret = os.environ.get("ALPACA_PAPER_TRADING_5K_API_SECRET", "")
+        # Resolve credentials from all supported environment variable names.
+        self.paper_key, self.paper_secret = resolve_account_credentials("paper", os.environ)
+        self.live_key, self.live_secret = resolve_account_credentials("live", os.environ)
+
+    @staticmethod
+    def _get_base_url(account_type: str) -> str:
+        return "https://paper-api.alpaca.markets" if account_type == "paper" else "https://api.alpaca.markets"
+
+    @staticmethod
+    def _manifest_snapshot_url(filename: str) -> str:
+        return f"/trading/assets/snapshots/{filename}"
+
+    @staticmethod
+    def _read_manifest(path: Path) -> dict[str, Any]:
+        if not path.exists():
+            return {}
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            return data if isinstance(data, dict) else {}
+        except Exception:
+            return {}
+
+    def _publish_snapshot(self, key: str, source_path: Path, captured_at_utc: str) -> dict[str, str]:
+        timestamp = datetime.strptime(captured_at_utc, "%Y-%m-%dT%H:%M:%SZ").strftime("%Y%m%d_%H%M%S")
+        versioned_name = f"{key}_{timestamp}.png"
+        latest_name = f"{key}_latest.png"
+        versioned_path = self.PAGES_SNAPSHOT_DIR / versioned_name
+        latest_path = self.PAGES_SNAPSHOT_DIR / latest_name
+        shutil.copy2(source_path, versioned_path)
+        shutil.copy2(source_path, latest_path)
+        return {
+            "file": latest_name,
+            "versioned_file": versioned_name,
+            "url": self._manifest_snapshot_url(latest_name),
+            "versioned_url": self._manifest_snapshot_url(versioned_name),
+            "captured_at_utc": captured_at_utc,
+        }
+
+    def publish_to_pages(self, screenshots: dict[str, Path | None]) -> Path:
+        captured_at_utc = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+        manifest = self._read_manifest(self.MANIFEST_PATH)
+        latest: dict[str, Any] = manifest.get("latest", {}) if isinstance(manifest.get("latest"), dict) else {}
+        history: list[dict[str, Any]] = (
+            manifest.get("history", []) if isinstance(manifest.get("history"), list) else []
+        )
+
+        published_entries: dict[str, dict[str, str]] = {}
+        for key, path in screenshots.items():
+            if path is None:
+                continue
+            published_entries[key] = self._publish_snapshot(key, path, captured_at_utc)
+
+        if not published_entries:
+            return self.MANIFEST_PATH
+
+        latest.update(published_entries)
+
+        state_path = project_root / "data" / "system_state.json"
+        state = {}
+        if state_path.exists():
+            try:
+                state = json.loads(state_path.read_text(encoding="utf-8"))
+            except Exception:
+                state = {}
+        paper = state.get("paper_account", {}) if isinstance(state, dict) else {}
+        live = state.get("live_account", {}) if isinstance(state, dict) else {}
+        state_summary = {
+            "paper_trade_count": int(state.get("trades_loaded", 0) or 0),
+            "paper_equity": float(paper.get("current_equity", paper.get("equity", 0.0)) or 0.0),
+            "live_equity": float(live.get("current_equity", live.get("equity", 0.0)) or 0.0),
+            "date_utc": captured_at_utc[:10],
+        }
+
+        history.append(
+            {
+                "captured_at_utc": captured_at_utc,
+                "entries": published_entries,
+                "state": state_summary,
+            }
+        )
+        history = history[-30:]
+
+        new_manifest = {
+            "updated_at_utc": captured_at_utc,
+            "latest": latest,
+            "history": history,
+            "state": state_summary,
+        }
+        self.MANIFEST_PATH.write_text(json.dumps(new_manifest, indent=2), encoding="utf-8")
+        print(f"✅ Published snapshots manifest: {self.MANIFEST_PATH}")
+        return self.MANIFEST_PATH
 
     async def capture_alpaca_dashboard(self, account_type: str = "paper") -> Path | None:
         """
@@ -73,60 +212,49 @@ class TradingScreenshotCapture:
         Returns:
             Path to saved screenshot or None if failed
         """
-        if not self.alpaca_key or not self.alpaca_secret:
+        key = self.paper_key if account_type == "paper" else self.live_key
+        secret = self.paper_secret if account_type == "paper" else self.live_secret
+        if not key or not secret:
             print(f"⚠️  Alpaca credentials not found - skipping {account_type} dashboard")
             return None
 
         print(f"📸 Capturing Alpaca {account_type} dashboard...")
 
         try:
-            async with async_playwright() as p:
-                # Launch browser in headless mode
-                browser = await p.chromium.launch(headless=True)
-                context = await browser.new_context(
-                    viewport={"width": 1920, "height": 1080},
-                    user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-                )
-                page = await context.new_page()
-
-                # Navigate to Alpaca login
-                url = "https://app.alpaca.markets/login"
-                await page.goto(url, wait_until="networkidle", timeout=30000)
-
-                # NOTE: Alpaca uses OAuth login - manual login required first time
-                # For automation, you would need to:
-                # 1. Use Alpaca API to generate dashboard links
-                # 2. OR pre-authenticate and save session cookies
-                # 3. OR use API-based portfolio visualization
-
-                # For now, capture the portfolio summary from API instead
-                print("⚠️  Direct dashboard login requires OAuth - using API-based capture instead")
-
-                # Alternative: Capture public progress dashboard or use Alpaca API visualization
-                await browser.close()
-
-                # Use API to generate a simple HTML dashboard and screenshot that
-                return await self._capture_api_dashboard(account_type)
+            # OAuth UI automation is brittle; generate visual snapshot from authenticated API data.
+            return await self._capture_api_dashboard(
+                account_type=account_type,
+                api_key=key,
+                api_secret=secret,
+                base_url=self._get_base_url(account_type),
+            )
 
         except Exception as e:
             print(f"❌ Failed to capture Alpaca {account_type} dashboard: {e}")
             return None
 
-    async def _capture_api_dashboard(self, account_type: str) -> Path | None:
+    async def _capture_api_dashboard(
+        self,
+        account_type: str,
+        api_key: str,
+        api_secret: str,
+        base_url: str,
+    ) -> Path | None:
         """Generate and capture API-based dashboard visualization."""
-        import json
         import ssl
         import urllib.request
 
+        _ensure_playwright_installed()
+
         try:
             # Query Alpaca API
-            account_url = "https://paper-api.alpaca.markets/v2/account"
-            positions_url = "https://paper-api.alpaca.markets/v2/positions"
+            account_url = f"{base_url}/v2/account"
+            positions_url = f"{base_url}/v2/positions"
 
             headers = {
                 "accept": "application/json",
-                "APCA-API-KEY-ID": self.alpaca_key,
-                "APCA-API-SECRET-KEY": self.alpaca_secret,
+                "APCA-API-KEY-ID": api_key,
+                "APCA-API-SECRET-KEY": api_secret,
             }
 
             # Get account data
@@ -183,7 +311,10 @@ class TradingScreenshotCapture:
         daily_pct = (daily_change / last_equity * 100) if last_equity > 0 else 0
 
         # Calculate total P/L from initial capital
-        initial_capital = 5000 if account_type == "paper" else 100
+        if account_type == "paper":
+            initial_capital = 100000
+        else:
+            initial_capital = last_equity if last_equity > 0 else 200
         total_pl = equity - initial_capital
         total_pl_pct = total_pl / initial_capital * 100
 
@@ -351,6 +482,7 @@ class TradingScreenshotCapture:
     async def capture_progress_dashboard(self) -> Path | None:
         """Capture Progress Dashboard screenshot from GitHub Pages."""
         print("📸 Capturing Progress Dashboard...")
+        _ensure_playwright_installed()
 
         try:
             async with async_playwright() as p:
@@ -386,6 +518,7 @@ class TradingScreenshotCapture:
 
         # Capture Alpaca dashboards
         results["alpaca_paper"] = await self.capture_alpaca_dashboard("paper")
+        results["alpaca_live"] = await self.capture_alpaca_dashboard("live")
 
         # Capture progress dashboard
         results["progress"] = await self.capture_progress_dashboard()
@@ -395,6 +528,7 @@ class TradingScreenshotCapture:
     async def create_daily_summary(self, screenshots: dict[str, Path | None]) -> Path | None:
         """Create a daily summary screenshot combining all dashboards."""
         print("📸 Creating daily summary...")
+        _ensure_playwright_installed()
 
         # Filter out None values
         valid_screenshots = {k: v for k, v in screenshots.items() if v is not None}
@@ -506,6 +640,11 @@ async def main():
         type=Path,
         help="Output directory for screenshots (default: data/screenshots)",
     )
+    parser.add_argument(
+        "--publish-pages",
+        action="store_true",
+        help="Publish latest snapshots + manifest into docs/assets and docs/data",
+    )
     args = parser.parse_args()
 
     capturer = TradingScreenshotCapture(output_dir=args.output_dir)
@@ -517,13 +656,17 @@ async def main():
 
     if args.dashboard == "alpaca" or args.dashboard == "all":
         screenshots["alpaca_paper"] = await capturer.capture_alpaca_dashboard("paper")
+        screenshots["alpaca_live"] = await capturer.capture_alpaca_dashboard("live")
 
     if args.dashboard == "progress" or args.dashboard == "all":
         screenshots["progress"] = await capturer.capture_progress_dashboard()
 
     # Create daily summary if capturing all
     if args.dashboard == "all":
-        await capturer.create_daily_summary(screenshots)
+        screenshots["daily_summary"] = await capturer.create_daily_summary(screenshots)
+
+    if args.publish_pages:
+        capturer.publish_to_pages(screenshots)
 
     # Print summary
     print("\n" + "=" * 60)

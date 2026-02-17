@@ -248,13 +248,12 @@ class RuleOneOptionsStrategy:
     MAX_PREMIUM_PCT = 0.012  # 1.2% of stock price max
     MIN_ANNUALIZED_RETURN = 0.12  # 12% minimum annualized yield
 
-    # Default trading universe - UPDATED Jan 19, 2026 (LL-244 Adversarial Audit)
-    # Per CLAUDE.md Jan 19, 2026: "SPY ONLY - best liquidity, tightest spreads"
-    # NO individual stocks. The $100K success was SPY. The $5K failure was SOFI.
+    # Per CLAUDE.md: Liquid ETFs only - best liquidity, tightest spreads
+    # NO individual stocks. Only liquid ETFs with tight bid-ask spreads.
     DEFAULT_UNIVERSE = [
-        "SPY",  # S&P 500 ETF - ONLY approved ticker per CLAUDE.md
-        # NOTE: IWM removed Jan 19, 2026 per CLAUDE.md strategy update
-        # "The $100K success was SPY. The $5K failure was SOFI. Learn the lesson."
+        "SPY",  # S&P 500 ETF - primary ticker, best liquidity
+        "QQQ",  # Nasdaq-100 ETF - tech-heavy, liquid options
+        "IWM",  # Russell 2000 ETF - small-cap, wider ranges
     ]
 
     def __init__(

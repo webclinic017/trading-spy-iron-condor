@@ -835,7 +835,7 @@ class TradeGateway:
 
         # ============================================================
         # CHECK 0.3: TICKER WHITELIST (Jan 14, 2026 - LL-192)
-        # CLAUDE.md: "CREDIT SPREADS on SPY ONLY"
+        # CLAUDE.md: Liquid ETFs only (SPY, SPX, XSP, QQQ, IWM)
         # This would have prevented the $40.74 SOFI loss
         # ============================================================
         if self.TICKER_WHITELIST_ENABLED:
@@ -844,13 +844,13 @@ class TradeGateway:
                 rejection_reasons.append(RejectionReason.TICKER_NOT_ALLOWED)
                 logger.warning(
                     f"🛑 TICKER BLOCKED: {underlying} not in whitelist {self.ALLOWED_TICKERS}. "
-                    f"Per CLAUDE.md Jan 19: SPY ONLY!"
+                    f"Liquid ETFs only per CLAUDE.md!"
                 )
                 risk_score += 1.0  # Maximum risk - hard block
                 metadata["ticker_whitelist_violation"] = {
                     "ticker": underlying,
                     "allowed": list(self.ALLOWED_TICKERS),
-                    "rule": "CLAUDE.md Jan 19: SPY ONLY - best liquidity, tightest spreads",
+                    "rule": "CLAUDE.md: Liquid ETFs only - best liquidity, tightest spreads",
                 }
 
         # ============================================================

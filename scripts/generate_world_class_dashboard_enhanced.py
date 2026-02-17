@@ -34,6 +34,51 @@ except ImportError:
     TaxOptimizer = None
 
 DATA_DIR = Path("data")
+SNAPSHOT_MANIFEST_PATH = Path("docs/data/alpaca_snapshots.json")
+
+
+def load_alpaca_snapshot_manifest() -> dict:
+    data = load_json_file(SNAPSHOT_MANIFEST_PATH)
+    return data if isinstance(data, dict) else {}
+
+
+def build_alpaca_snapshot_markdown(manifest: dict) -> str:
+    latest = manifest.get("latest", {}) if isinstance(manifest, dict) else {}
+    paper = latest.get("alpaca_paper", {}) if isinstance(latest.get("alpaca_paper"), dict) else {}
+    live = latest.get("alpaca_live", {}) if isinstance(latest.get("alpaca_live"), dict) else {}
+    progress = latest.get("progress", {}) if isinstance(latest.get("progress"), dict) else {}
+
+    paper_url = paper.get("url", "/trading/assets/snapshots/alpaca_paper_latest.png")
+    live_url = live.get("url", "/trading/assets/snapshots/alpaca_live_latest.png")
+    progress_url = progress.get("url", "/trading/assets/snapshots/progress_latest.png")
+
+    paper_time = paper.get("captured_at_utc", "unknown")
+    live_time = live.get("captured_at_utc", "unknown")
+    progress_time = progress.get("captured_at_utc", "unknown")
+
+    return f"""
+---
+
+## 📸 Alpaca Snapshot Evidence (Auto)
+
+### 📝 Paper Account Snapshot
+
+![Alpaca Paper Snapshot]({paper_url})
+
+Captured: `{paper_time}`
+
+### 🔴 Brokerage Account Snapshot
+
+![Alpaca Brokerage Snapshot]({live_url})
+
+Captured: `{live_time}`
+
+### 📊 Progress Dashboard Snapshot
+
+![Progress Dashboard Snapshot]({progress_url})
+
+Captured: `{progress_time}`
+"""
 
 
 def calculate_basic_metrics():
@@ -675,6 +720,8 @@ def generate_world_class_dashboard() -> str:
     else:
         recent_trades_section = "*No trades in the last 14 days*"
 
+    snapshot_section = build_alpaca_snapshot_markdown(load_alpaca_snapshot_manifest())
+
     # Build dashboard
     dashboard = f"""# 📊 World-Class Trading Dashboard
 
@@ -721,6 +768,8 @@ def generate_world_class_dashboard() -> str:
 | **Trades Today** | {basic_metrics.get("today_trade_count", 0)} |
 
 **Funnel Activity**: {order_count} orders, {stop_count} stops
+
+{snapshot_section}
 
 ---
 

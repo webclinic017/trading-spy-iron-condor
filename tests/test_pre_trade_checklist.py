@@ -75,11 +75,10 @@ class TestTickerValidation:
         passed, failures = checklist.validate(symbol="XSP", max_loss=100.0, dte=35, is_spread=True)
         assert passed is True
 
-    def test_iwm_not_allowed(self, checklist):
-        """IWM should fail ticker check - UPDATED Feb 8, 2026: SPY/SPX/XSP per CLAUDE.md."""
+    def test_iwm_allowed(self, checklist):
+        """IWM should pass ticker check - UPDATED Feb 16, 2026: liquid ETFs per CLAUDE.md."""
         passed, failures = checklist.validate(symbol="IWM", max_loss=100.0, dte=35, is_spread=True)
-        assert passed is False
-        assert any("IWM not allowed" in f for f in failures)
+        assert passed is True
 
     def test_spy_lowercase_allowed(self, checklist):
         """Lowercase spy should pass ticker check."""
@@ -146,13 +145,12 @@ class TestOptionsSymbolParsing:
         )
         assert passed is True
 
-    def test_iwm_options_symbol_rejected(self, checklist):
-        """IWM options symbol should fail - UPDATED Feb 8, 2026: SPY/SPX/XSP."""
+    def test_iwm_options_symbol_allowed(self, checklist):
+        """IWM options symbol should pass - UPDATED Feb 16, 2026: liquid ETFs."""
         passed, failures = checklist.validate(
             symbol="IWM260221C00220000", max_loss=100.0, dte=35, is_spread=True
         )
-        assert passed is False
-        assert any("IWM not allowed" in f for f in failures)
+        assert passed is True
 
     def test_aapl_options_symbol_rejected(self, checklist):
         """AAPL options symbol should be rejected."""
@@ -271,11 +269,10 @@ class TestEarningsBlackoutValidation:
         assert passed is True
         assert not any("blackout" in f.lower() for f in failures)
 
-    def test_iwm_fails_ticker_check(self, checklist):
-        """IWM should fail ticker check - UPDATED Feb 8, 2026: SPY/SPX/XSP per CLAUDE.md."""
+    def test_iwm_passes_ticker_check(self, checklist):
+        """IWM should pass ticker check - UPDATED Feb 16, 2026: liquid ETFs per CLAUDE.md."""
         passed, failures = checklist.validate(symbol="IWM", max_loss=100.0, dte=35, is_spread=True)
-        assert passed is False
-        assert any("IWM not allowed" in f for f in failures)
+        assert passed is True
 
     def test_sofi_during_blackout_fails(self, checklist):
         """SOFI during earnings blackout should fail."""
@@ -544,10 +541,8 @@ class TestChecklistStatus:
             symbol="SPY", max_loss=100.0, dte=35, is_spread=True
         )
 
-        # CLAUDE.md strategy update Feb 8, 2026: SPY/SPX/XSP
-        assert any(
-            ticker in status["ticker_allowed"]["requirement"] for ticker in ["SPY", "SPX", "XSP"]
-        )
+        # CLAUDE.md strategy update Feb 16, 2026: liquid ETFs
+        assert "Liquid ETFs" in status["ticker_allowed"]["requirement"]
         assert "5%" in status["position_size"]["requirement"]
         assert "spread" in status["is_spread"]["requirement"].lower()
         assert "30-45" in status["dte_range"]["requirement"]

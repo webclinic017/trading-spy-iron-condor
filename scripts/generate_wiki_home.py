@@ -189,8 +189,8 @@ Welcome to the **AI-Powered Automated Trading System** wiki!
 **👉 [View Live Progress Dashboard →](https://igorganapolsky.github.io/trading/)**
 
 The system tracks progress toward accessible automated trading:
-- North Star goal: **Accessible iron condor system — enter with as little as $200**
-- Current strategy: **Iron Condors on SPY**
+- North Star goal: **Validated iron condor system → consistent $500/month on $25K+ capital**
+- Current strategy: **Iron Condors on liquid ETFs (SPY/QQQ/IWM)**
 - Phil Town Rule #1: **Don't lose money**
 
 ---
@@ -229,14 +229,14 @@ The system tracks progress toward accessible automated trading:
 
 ## 🎯 North Star Goal
 
-**Vision**: Accessible automated iron condor system — enter with as little as $200.
+**Vision**: Validated autonomous iron condor system producing consistent monthly income.
 
 | Phase | Timeline | Target | Status |
 |-------|----------|--------|--------|
 | **Phase 1: Validate** | Now → Jun 2026 | 30 trades, >75% win rate | 🔄 In progress ({p1["closed_trades"]}/{PHASE1_REQUIRED_TRADES}) |
 | **Phase 2: Scale** | Jul → Dec 2026 | 3 concurrent ICs, $500/mo | ⏳ Pending |
 | **Phase 3: Grow** | 2027 | 5 ICs + credit spreads, $1,500/mo | ⏳ Pending |
-| **Phase 4: Open** | 2028 | Open access, $200 minimum entry | ⏳ Pending |
+| **Phase 4: Open** | 2028 | Packaged system for accounts $10K+ | ⏳ Pending |
 
 **Strategy Parameters** (updated Feb 2026 — positive EV):
 - Profit target: **75%** of max profit (let winners run)

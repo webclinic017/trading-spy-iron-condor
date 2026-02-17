@@ -9,7 +9,7 @@ Created: 2025-12-24
 Status: CORE (productized, frozen)
 
 Strategy Overview:
-1. Universe: SPY ONLY per CLAUDE.md Jan 19, 2026 (best liquidity, tightest spreads)
+1. Universe: Liquid ETFs per CLAUDE.md (SPY, QQQ, IWM - best liquidity)
 2. Signals: MACD crossover + RSI confirmation
 3. Timeframe: Daily with hourly confirmation
 4. Risk: 2% position sizing, volatility-adjusted stops
@@ -86,8 +86,8 @@ class CoreStrategy(BaseStrategy):
     """
 
     # Default universe - UPDATED Jan 19, 2026 (LL-244 Adversarial Audit)
-    # CLAUDE.md mandates "SPY ONLY" - best liquidity, tightest spreads
-    DEFAULT_UNIVERSE = ["SPY"]
+    # CLAUDE.md mandates liquid ETFs only - best liquidity, tightest spreads
+    DEFAULT_UNIVERSE = ["SPY", "QQQ", "IWM"]
 
     # Strategy parameters
     MACD_FAST = 12
