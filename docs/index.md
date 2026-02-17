@@ -54,9 +54,9 @@ Latest snapshots are refreshed by automation and published to GitHub Pages.
 | --- | --- |
 | ![Alpaca Paper Snapshot](/trading/assets/snapshots/alpaca_paper_latest.png) | ![PaperBanana Paper Diagram](/trading/assets/snapshots/paperbanana_paper_latest.svg) |
 
-Captured: `2026-02-17T14:25:30Z`
+Captured: `2026-02-17T14:49:43Z`
 
-Technical readout: Paper Account: net liquidation value $101,441.56; daily P/L +0.00 (+0.0 bps) indicating a flat premium-decay session; cumulative P/L +1,441.56 (+1.44%); low capital deployment at 0.8% utilization with cash $101,613.56; open position proxy 4; win-rate estimate 100.0% (n=1); North Star gate MEDIUM.
+Technical readout: Paper Account: net liquidation value $101,433.44; daily P/L +0.00 (+0.0 bps) indicating a flat premium-decay session; cumulative P/L +1,433.44 (+1.43%); low capital deployment at 1.0% utilization with cash $100,447.44; open position proxy 1; win-rate estimate 100.0% (n=1); North Star gate MEDIUM.
 
 ### Brokerage (Live) Snapshot + PaperBanana Financial Diagram
 
@@ -64,14 +64,14 @@ Technical readout: Paper Account: net liquidation value $101,441.56; daily P/L +
 | --- | --- |
 | ![Alpaca Brokerage Snapshot](/trading/assets/snapshots/alpaca_live_latest.png) | ![PaperBanana Brokerage Diagram](/trading/assets/snapshots/paperbanana_live_latest.svg) |
 
-Captured: `2026-02-17T14:25:30Z`
+Captured: `2026-02-17T14:49:43Z`
 
-Technical readout: Brokerage Account: net liquidation value $207.02; daily P/L +0.00 (+0.0 bps) indicating a flat premium-decay session; cumulative P/L +187.02 (+935.10%); high capital deployment at 90.3% utilization with cash $40.00; open position proxy 0; win-rate estimate 0.0% (n=0); North Star gate MEDIUM.
+Technical readout: Brokerage Account: net liquidation value $207.12; daily P/L +0.00 (+0.0 bps) indicating a flat premium-decay session; cumulative P/L +187.12 (+935.60%); high capital deployment at 90.3% utilization with cash $40.00; open position proxy 0; win-rate estimate 0.0% (n=0); North Star gate MEDIUM.
 
 ### Progress Dashboard Snapshot
 ![Progress Dashboard Snapshot](/trading/assets/snapshots/progress_latest.png)
 
-Captured: `2026-02-17T14:25:30Z`
+Captured: `2026-02-17T14:49:43Z`
 
 Manifest: [`/trading/data/alpaca_snapshots.json`](/trading/data/alpaca_snapshots.json)
 <!-- AUTO_SNAPSHOT_END -->
