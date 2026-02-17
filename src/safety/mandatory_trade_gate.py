@@ -724,7 +724,9 @@ def _get_positions_qty_map(client: Any) -> dict[str, float] | None:
     qty_map: dict[str, float] = {}
     try:
         for pos in positions or []:
-            sym = getattr(pos, "symbol", None) or (pos.get("symbol") if isinstance(pos, dict) else None)
+            sym = getattr(pos, "symbol", None) or (
+                pos.get("symbol") if isinstance(pos, dict) else None
+            )
             raw_qty = getattr(pos, "qty", None) or getattr(pos, "quantity", None)
             if raw_qty is None and isinstance(pos, dict):
                 raw_qty = pos.get("qty") or pos.get("quantity")
@@ -855,7 +857,9 @@ def _estimate_opening_max_loss(order_request: Any) -> tuple[float | None, int | 
             opt_type = leg_symbol.upper()[len(match.group(1)) + 6]  # P/C
             strike = int(match.group(3)) / 1000.0
             leg_side = getattr(leg, "side", None)
-            side_key = "BUY" if _side_is_buy(leg_side) else "SELL" if _side_is_sell(leg_side) else None
+            side_key = (
+                "BUY" if _side_is_buy(leg_side) else "SELL" if _side_is_sell(leg_side) else None
+            )
             if side_key is None:
                 continue
             if opt_type == "P":
