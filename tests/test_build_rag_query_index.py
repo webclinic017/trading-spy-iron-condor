@@ -71,9 +71,7 @@ source: tars_artifact_ingest
     assert lessons[0]["date"] == "2026-02-16T16:27:33Z"
 
 
-def test_build_index_parses_bold_date_with_colon_inside_markup(
-    tmp_path: Path, monkeypatch
-) -> None:
+def test_build_index_parses_bold_date_with_colon_inside_markup(tmp_path: Path, monkeypatch) -> None:
     rag_root = tmp_path / "rag_knowledge"
     monkeypatch.setattr(build_rag_query_index, "RAG_ROOT", rag_root)
 
