@@ -10,9 +10,11 @@
 
 Autonomous AI trading system with multi-model routing via [Tetrate Agent Router Service (TARS)](https://router.tetrate.ai), self-healing CI, continuous learning from failures, and a defined-risk SPY iron condor strategy.
 
-> **North Star**: $6K/month after-tax financial independence. Original milestone: Nov 2029. Execution policy: reach it as fast as safely possible.
+> **North Star**: $6K/month after-tax options income, as fast as safely possible (no fixed date).
 >
-> **Account**: Alpaca Paper ($100K) primary + Brokerage opportunistic | **Strategy**: SPY iron condors, 15-20 delta, $10-wide wings, up to 5 concurrent positions
+> **Accounts**: Alpaca Paper ($100K) validates strategy + Alpaca live brokerage opportunistically mirrors qualified setups behind strict risk gates.
+>
+> **Strategy**: SPY-first iron condors (15-20 delta, $10-wide wings, up to 5 concurrent positions). The risk layer uses an index/ETF whitelist that can expand (broker support permitting); current production trading targets SPY options.
 >
 > **Status**: [System State](https://github.com/IgorGanapolsky/trading/blob/main/data/system_state.json) | [Progress Dashboard](https://github.com/IgorGanapolsky/trading/wiki/Progress-Dashboard) | [GitHub Pages](https://igorganapolsky.github.io/trading/) | [Judge Demo Evidence](https://igorganapolsky.github.io/trading/lessons/judge-demo.html) | [RAG Query](https://igorganapolsky.github.io/trading/rag-query/)
 
@@ -85,7 +87,7 @@ Ralph is the self-healing loop that keeps the system operational:
 
 ---
 
-## Strategy: SPY Iron Condors
+## Strategy: SPY-First Iron Condors
 
 ```
 Sell 15-20 delta put spread + 15-20 delta call spread
