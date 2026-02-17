@@ -386,6 +386,12 @@ def main() -> int:
       color: var(--muted);
       line-height: 1.35;
     }}
+    .stat-help {{
+      margin-top: 8px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.35;
+    }}
     .diagram {{
       margin-top: 10px;
       border: 1px solid var(--line);
@@ -422,9 +428,21 @@ def main() -> int:
     </section>
 
     <section class="grid">
-      <article class="card span4"><div class="k">Checklist Progress</div><div class="v">{done}/{total}</div></article>
-      <article class="card span4"><div class="k">System Status</div><div class="v">{loop_cycle} / {loop_profile}</div></article>
-      <article class="card span4"><div class="k">Smoke Latency / Cost</div><div class="v">{latency} ms / ${est_cost}</div></article>
+      <article class="card span4">
+        <div class="k">Checklist Progress</div>
+        <div class="v">{done}/{total}</div>
+        <div class="stat-help">How many required judge-proof sections passed in <a href="{repo_blob}/artifacts/tars/judge_demo_checklist.md">judge_demo_checklist.md</a>. This is structural completeness, not model quality.</div>
+      </article>
+      <article class="card span4">
+        <div class="k">System Status</div>
+        <div class="v">{loop_cycle} / {loop_profile}</div>
+        <div class="stat-help">Current autonomous loop cycle + runtime health profile from smoke, lint, and test gates. <span class="mono">healthy</span> means the latest guardrails are green.</div>
+      </article>
+      <article class="card span4">
+        <div class="k">Smoke Latency / Cost</div>
+        <div class="v">{latency} ms / ${est_cost}</div>
+        <div class="stat-help">Single Tetrate-routed smoke call telemetry from <a href="{repo_blob}/artifacts/tars/smoke_metrics.txt">smoke_metrics.txt</a>: end-to-end response time and estimated token spend per run.</div>
+      </article>
 
       <article class="card span6">
         <div class="k">Execution Quality Daily</div>

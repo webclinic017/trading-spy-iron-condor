@@ -135,6 +135,12 @@
       color: var(--muted);
       line-height: 1.35;
     }
+    .stat-help {
+      margin-top: 8px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.35;
+    }
     .diagram {
       margin-top: 10px;
       border: 1px solid var(--line);
@@ -171,9 +177,21 @@
     </section>
 
     <section class="grid">
-      <article class="card span4"><div class="k">Checklist Progress</div><div class="v">10/10</div></article>
-      <article class="card span4"><div class="k">System Status</div><div class="v">iteration 1 / healthy</div></article>
-      <article class="card span4"><div class="k">Smoke Latency / Cost</div><div class="v">1626 ms / $0.00004500</div></article>
+      <article class="card span4">
+        <div class="k">Checklist Progress</div>
+        <div class="v">10/10</div>
+        <div class="stat-help">How many required judge-proof sections passed in <a href="https://github.com/IgorGanapolsky/trading/blob/main/artifacts/tars/judge_demo_checklist.md">judge_demo_checklist.md</a>. This is structural completeness, not model quality.</div>
+      </article>
+      <article class="card span4">
+        <div class="k">System Status</div>
+        <div class="v">iteration 1 / healthy</div>
+        <div class="stat-help">Current autonomous loop cycle + runtime health profile from smoke, lint, and test gates. <span class="mono">healthy</span> means the latest guardrails are green.</div>
+      </article>
+      <article class="card span4">
+        <div class="k">Smoke Latency / Cost</div>
+        <div class="v">1626 ms / $0.00004500</div>
+        <div class="stat-help">Single Tetrate-routed smoke call telemetry from <a href="https://github.com/IgorGanapolsky/trading/blob/main/artifacts/tars/smoke_metrics.txt">smoke_metrics.txt</a>: end-to-end response time and estimated token spend per run.</div>
+      </article>
 
       <article class="card span6">
         <div class="k">Execution Quality Daily</div>

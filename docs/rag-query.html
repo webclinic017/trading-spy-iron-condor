@@ -941,14 +941,18 @@ layout: null
       let lessonsLoaded = false;
       let currentResults = [];
       let latestSystemState = null;
+      let latestSnapshotManifest = null;
       const LESSONS_URL = "{{ '/data/rag/lessons_query.json' | relative_url }}";
       const LESSONS_FALLBACK_URL =
         "https://raw.githubusercontent.com/IgorGanapolsky/trading/main/data/rag/lessons_query.json";
       const WORKER_URL = "https://trading-rag-chat.iganapolsky.workers.dev";
       const PAPER_PROOF_IMAGE =
-        "/trading/assets/snapshots/alpaca_paper_proof_20260217_1303.png";
+        "/trading/assets/snapshots/alpaca_paper_latest.png";
       const BROKERAGE_PROOF_IMAGE =
-        "/trading/assets/snapshots/alpaca_brokerage_proof_20260217_1303.png";
+        "/trading/assets/snapshots/alpaca_live_latest.png";
+      const SNAPSHOT_MANIFEST_URL = "{{ '/data/alpaca_snapshots.json' | relative_url }}";
+      const SNAPSHOT_MANIFEST_FALLBACK_URL =
+        "https://raw.githubusercontent.com/IgorGanapolsky/trading/main/docs/data/alpaca_snapshots.json";
       const GITHUB_RAW_URL =
         "https://raw.githubusercontent.com/IgorGanapolsky/trading/main/data/system_state.json";
       const ALLOWED_RAG_HOSTS = new Set([
@@ -1031,12 +1035,78 @@ layout: null
         return `${n >= 0 ? "+" : ""}${n.toFixed(digits)}%`;
       }
 
+      function parseCurrencyLike(value) {
+        if (value == null) return null;
+        if (typeof value === "number") return Number.isFinite(value) ? value : null;
+        const cleaned = String(value).replace(/[$,%\s]/g, "").replace(/,/g, "");
+        if (!cleaned) return null;
+        const parsed = Number(cleaned);
+        return Number.isFinite(parsed) ? parsed : null;
+      }
+
+      function firstFiniteNumber(...values) {
+        for (const value of values) {
+          const n = toFiniteNumber(value);
+          if (n != null) return n;
+        }
+        return null;
+      }
+
+      function extractExplainerDailyPL(explainer) {
+        if (!explainer) return null;
+        const match = String(explainer).match(/daily p\/l\s*([+-]?\$?[0-9,]+(?:\.[0-9]+)?)/i);
+        return match ? parseCurrencyLike(match[1]) : null;
+      }
+
+      function extractExplainerEquity(explainer) {
+        if (!explainer) return null;
+        const match = String(explainer).match(
+          /net liquidation value\s*([+-]?\$?[0-9,]+(?:\.[0-9]+)?)/i,
+        );
+        return match ? parseCurrencyLike(match[1]) : null;
+      }
+
+      function extractExplainerTotalPL(explainer) {
+        if (!explainer) return null;
+        const match = String(explainer).match(
+          /cumulative p\/l\s*([+-]?\$?[0-9,]+(?:\.[0-9]+)?)/i,
+        );
+        return match ? parseCurrencyLike(match[1]) : null;
+      }
+
+      function extractExplainerWhy(explainer) {
+        if (!explainer) return "";
+        const match = String(explainer).match(/indicating\s+([^;]+)[;.]?/i);
+        if (!match) return "";
+        const text = match[1].trim();
+        return text.endsWith(".") ? text : `${text}.`;
+      }
+
       async function fetchSystemState(forceReload = false) {
         if (!forceReload && latestSystemState) return latestSystemState;
         const res = await fetch(GITHUB_RAW_URL, { cache: "no-store" });
         if (!res.ok) throw new Error("fetch failed");
         latestSystemState = await res.json();
         return latestSystemState;
+      }
+
+      async function fetchSnapshotManifest(forceReload = false) {
+        if (!forceReload && latestSnapshotManifest) return latestSnapshotManifest;
+        const sources = [SNAPSHOT_MANIFEST_URL, SNAPSHOT_MANIFEST_FALLBACK_URL];
+        for (const source of sources) {
+          try {
+            const res = await fetch(source, { cache: "no-store" });
+            if (!res.ok) continue;
+            const data = await res.json();
+            if (data && typeof data === "object") {
+              latestSnapshotManifest = data;
+              return data;
+            }
+          } catch {
+            // try next source
+          }
+        }
+        throw new Error("snapshot manifest fetch failed");
       }
 
       function updateLessonsStats() {
@@ -1470,38 +1540,91 @@ Tags: ${lesson.tags.join(", ")}`;
         );
       }
 
-      function buildAccountEvidenceHtml(state) {
+      function buildAccountEvidenceHtml(state, snapshotManifest) {
         const paper = state.paper_account || {};
         const live = state.live_account || {};
         const portfolio = state.portfolio || {};
+        const latestSnapshots =
+          snapshotManifest && typeof snapshotManifest === "object"
+            ? snapshotManifest.latest || {}
+            : {};
+        const paperSnapshot = latestSnapshots.alpaca_paper || {};
+        const liveSnapshot = latestSnapshots.alpaca_live || {};
 
         const paperEquity =
-          toFiniteNumber(paper.current_equity) ??
-          toFiniteNumber(portfolio.equity) ??
+          firstFiniteNumber(
+            paper.current_equity,
+            portfolio.equity,
+            paperSnapshot.dashboard_portfolio_value,
+            paperSnapshot.source_account_value,
+            extractExplainerEquity(paperSnapshot.technical_explainer),
+          ) ??
           0;
         const paperStart = toFiniteNumber(paper.starting_balance) ?? 100000;
         const paperPL =
-          toFiniteNumber(paper.total_pl) ?? toFiniteNumber(paperEquity - paperStart) ?? 0;
+          firstFiniteNumber(
+            paper.total_pl,
+            extractExplainerTotalPL(paperSnapshot.technical_explainer),
+            paperEquity - paperStart,
+          ) ?? 0;
         const paperPLPct =
           toFiniteNumber(paper.total_pl_pct) ??
           (paperStart > 0 ? (paperPL / paperStart) * 100 : null);
+        const paperTodayPL =
+          firstFiniteNumber(
+            paper.daily_change,
+            paper.todays_pl,
+            paperSnapshot.dashboard_daily_change_value,
+            paperSnapshot.source_daily_change_value,
+            extractExplainerDailyPL(paperSnapshot.technical_explainer),
+          ) ?? 0;
 
         const brokerageEquity =
-          toFiniteNumber(live.current_equity) ?? toFiniteNumber(live.equity) ?? 0;
+          firstFiniteNumber(
+            live.current_equity,
+            live.equity,
+            liveSnapshot.dashboard_portfolio_value,
+            liveSnapshot.source_account_value,
+            extractExplainerEquity(liveSnapshot.technical_explainer),
+          ) ?? 0;
         const brokerageStart = toFiniteNumber(live.starting_balance);
         const brokeragePL =
-          toFiniteNumber(live.total_pl) ??
-          (brokerageStart != null ? brokerageEquity - brokerageStart : null);
+          firstFiniteNumber(
+            live.total_pl,
+            extractExplainerTotalPL(liveSnapshot.technical_explainer),
+            brokerageStart != null ? brokerageEquity - brokerageStart : null,
+          ) ?? 0;
         const brokeragePLPct =
           toFiniteNumber(live.total_pl_pct) ??
           (brokerageStart && brokerageStart > 0 && brokeragePL != null
             ? (brokeragePL / brokerageStart) * 100
             : null);
+        const brokerageTodayPL =
+          firstFiniteNumber(
+            live.daily_change,
+            live.todays_pl,
+            liveSnapshot.dashboard_daily_change_value,
+            liveSnapshot.source_daily_change_value,
+            extractExplainerDailyPL(liveSnapshot.technical_explainer),
+          ) ?? 0;
 
-        const syncedAt = state.last_updated || live.synced_at || "";
+        const syncedAt =
+          state.last_updated ||
+          live.synced_at ||
+          paperSnapshot.captured_at_utc ||
+          liveSnapshot.captured_at_utc ||
+          "";
         const syncLine = syncedAt
           ? `<div class="account-submetric">Synced: ${escapeHtml(syncedAt)}</div>`
           : "";
+        const paperWhy = extractExplainerWhy(paperSnapshot.technical_explainer);
+        const liveWhy = extractExplainerWhy(liveSnapshot.technical_explainer);
+        const whyLine =
+          paperWhy || liveWhy
+            ? `<div class="account-submetric"><strong>Why today:</strong> Paper: ${escapeHtml(paperWhy || "No explicit explanation available.")} Brokerage: ${escapeHtml(liveWhy || "No explicit explanation available.")}</div>`
+            : "";
+        const paperProof = paperSnapshot.url || PAPER_PROOF_IMAGE;
+        const brokerageProof = liveSnapshot.url || BROKERAGE_PROOF_IMAGE;
 
         return `
           <div class="account-summary">
@@ -1511,23 +1634,26 @@ Tags: ${lesson.tags.join(", ")}`;
             <div class="account-card">
               <h4>Paper Account (Primary)</h4>
               <div class="account-metric">${formatCurrency(paperEquity)}</div>
-              <div class="account-submetric">P/L: ${formatSignedCurrency(paperPL)} (${formatSignedPercent(paperPLPct)})</div>
+              <div class="account-submetric">Today: ${formatSignedCurrency(paperTodayPL)}</div>
+              <div class="account-submetric">Total P/L: ${formatSignedCurrency(paperPL)} (${formatSignedPercent(paperPLPct)})</div>
             </div>
             <div class="account-card">
               <h4>Brokerage Account (Opportunistic)</h4>
               <div class="account-metric">${formatCurrency(brokerageEquity)}</div>
-              <div class="account-submetric">P/L: ${formatSignedCurrency(brokeragePL)} (${formatSignedPercent(brokeragePLPct)})</div>
+              <div class="account-submetric">Today: ${formatSignedCurrency(brokerageTodayPL)}</div>
+              <div class="account-submetric">Total P/L: ${formatSignedCurrency(brokeragePL)} (${formatSignedPercent(brokeragePLPct)})</div>
             </div>
           </div>
           ${syncLine}
+          ${whyLine}
           <div class="proof-grid">
             <div class="proof-item">
-              <a href="${PAPER_PROOF_IMAGE}" target="_blank" rel="noopener noreferrer">Paper Account Screenshot Evidence</a>
-              <img src="${PAPER_PROOF_IMAGE}" alt="Paper trading account screenshot evidence">
+              <a href="${paperProof}" target="_blank" rel="noopener noreferrer">Paper Account Screenshot Evidence</a>
+              <img src="${paperProof}" alt="Paper trading account screenshot evidence">
             </div>
             <div class="proof-item">
-              <a href="${BROKERAGE_PROOF_IMAGE}" target="_blank" rel="noopener noreferrer">Brokerage Account Screenshot Evidence</a>
-              <img src="${BROKERAGE_PROOF_IMAGE}" alt="Brokerage account screenshot evidence">
+              <a href="${brokerageProof}" target="_blank" rel="noopener noreferrer">Brokerage Account Screenshot Evidence</a>
+              <img src="${brokerageProof}" alt="Brokerage account screenshot evidence">
             </div>
           </div>
         `;
@@ -1555,11 +1681,14 @@ Tags: ${lesson.tags.join(", ")}`;
       async function buildLocalChatResponse(message) {
         if (isAccountEvidenceQuery(message)) {
           try {
-            const state = await fetchSystemState(true);
+            const [state, snapshotManifest] = await Promise.all([
+              fetchSystemState(true),
+              fetchSnapshotManifest(true).catch(() => null),
+            ]);
             return {
-              html: buildAccountEvidenceHtml(state),
+              html: buildAccountEvidenceHtml(state, snapshotManifest),
               plain:
-                "Provided paper and brokerage balances with screenshot evidence.",
+                "Provided today's paper and brokerage P/L with screenshot evidence and why-summary.",
             };
           } catch {
             return {
