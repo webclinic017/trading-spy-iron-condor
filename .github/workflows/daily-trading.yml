@@ -1463,6 +1463,17 @@ jobs:
             echo "state_changed=true" >> $GITHUB_OUTPUT
           fi
 
+      - name: Daily Verification Report
+        # Must run BEFORE commit/API sync so verification_reports.json is published to main.
+        if: always()
+        continue-on-error: true
+        env:
+          ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
+          ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
+        run: |
+          echo "📊 Running daily verification..."
+          python3 scripts/daily_verification.py
+
       - name: Commit trading data updates
         if: steps.check_execution.outputs.skip != 'true' && steps.execute_trading.conclusion == 'success'
         continue-on-error: true # Non-fatal - trading already succeeded
@@ -1761,16 +1772,6 @@ jobs:
         run: |
           echo "🏥 Running post-execution health check..."
           python3 scripts/health_monitor.py || echo "⚠️  Health check detected issues (see health-alert workflow)"
-
-      - name: Daily Verification Report
-        if: always()
-        continue-on-error: true
-        env:
-          ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
-          ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
-        run: |
-          echo "📊 Running daily verification..."
-          python3 scripts/daily_verification.py
 
       # Phil Town Rule #1: DON'T LOSE MONEY
       # Set trailing stops immediately after any trading activity
