@@ -107,6 +107,13 @@
     .arr { text-align: center; color: var(--accent); font-weight: 800; }
     .links a { color: #9ed0ff; text-decoration: none; }
     .links li { margin: 6px 0; color: var(--muted); }
+    .snap {
+      width: 100%;
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      display: block;
+    }
     @media (max-width: 920px) {
       .span4, .span6, .span8 { grid-column: span 12; }
       .flow { grid-template-columns: 1fr; }
@@ -127,255 +134,17 @@
       </div>
     </section>
 
-
-    <!-- ===== TETRATE AGENT ROUTER TOKEN USAGE ===== -->
-    <section class="grid" style="margin-top:14px">
-      <article class="card span12" style="border-color:#3d7ac0">
-        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px">
-          <div class="k" style="font-size:0.95rem; letter-spacing:0.5px">🔀 Tetrate Agent Router — Token Usage</div>
-          <span style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#1a3a5c,#2d5a8e);border:1px solid #3d7ac0;border-radius:8px;padding:4px 12px;font-size:0.82rem;font-weight:700;color:#8ecfff"><span style="width:8px;height:8px;border-radius:50%;background:var(--pass)"></span> TARS Integrated</span>
-        </div>
-        <p style="margin:6px 0 0;font-size:0.85rem;color:var(--muted)">All LLM calls route through TARS for unified model selection, cost-optimized routing, and centralized billing.</p>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px">
-          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;text-align:center">
-            <div style="font-size:1.3rem;font-weight:700;color:var(--accent)">50</div><div style="font-size:0.78rem;color:var(--muted);margin-top:4px">Total Tokens</div>
-          </div>
-          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;text-align:center">
-            <div style="font-size:1.3rem;font-weight:700;color:var(--accent)">$0.000045</div><div style="font-size:0.78rem;color:var(--muted);margin-top:4px">Total Cost</div>
-          </div>
-          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;text-align:center">
-            <div style="font-size:1rem;font-weight:700;color:var(--accent)">gpt-4o-mini</div><div style="font-size:0.78rem;color:var(--muted);margin-top:4px">Model Routed</div>
-          </div>
-          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;text-align:center">
-            <div style="font-size:1.3rem;font-weight:700;color:var(--pass)">✓</div><div style="font-size:0.78rem;color:var(--muted);margin-top:4px">Smoke Test</div>
-          </div>
-        </div>
-      </article>
-
-      <article class="card span6" style="border-color:#3d7ac0">
-        <div class="k">TARS Routing Pipeline</div>
-        <div style="margin-top:8px;font-size:0.85rem">
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><span style="background:var(--accent);color:#000;font-weight:800;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;flex-shrink:0">1</span> Trading system submits task (e.g., <em>pre_trade_research</em>)</div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><span style="background:var(--accent);color:#000;font-weight:800;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;flex-shrink:0">2</span> <strong>ModelSelector</strong> maps task → complexity → model ID</div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><span style="background:var(--accent);color:#000;font-weight:800;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;flex-shrink:0">3</span> <code style="color:#8ecfff">to_tars_model_id()</code> translates to TARS provider string</div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><span style="background:var(--accent);color:#000;font-weight:800;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;flex-shrink:0">4</span> TARS routes to optimal provider (DeepInfra, OpenAI, etc.)</div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0"><span style="background:var(--accent);color:#000;font-weight:800;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;flex-shrink:0">5</span> On failure → automatic fallback to OpenRouter (resilience)</div>
-        </div>
-      </article>
-
-      <article class="card span6" style="border-color:#3d7ac0">
-        <div class="k">Model Routing Map (via TARS)</div>
-        <table class="table" style="margin-top:8px">
-          <tr><td>SIMPLE</td><td><code style="color:#8ecfff">DeepSeek V3.1</code></td><td style="color:var(--pass)">$0.30/M</td></tr>
-          <tr><td>MEDIUM</td><td><code style="color:#8ecfff">Mistral Medium 3</code></td><td style="color:var(--pass)">$0.40/M</td></tr>
-          <tr><td>COMPLEX</td><td><code style="color:#8ecfff">Kimi K2</code></td><td style="color:var(--warn)">$0.39/M</td></tr>
-          <tr><td>REASONING</td><td><code style="color:#8ecfff">DeepSeek-R1</code></td><td style="color:var(--warn)">$0.70/M</td></tr>
-          <tr><td>CRITICAL</td><td><code style="color:#8ecfff">Claude Opus 4.5</code></td><td style="color:var(--accent)">$15/M</td></tr>
-        </table>
-        <p style="margin:6px 0 0;font-size:0.8rem;color:var(--muted)">Budget: <strong style="color:var(--text)">$25/month</strong> (down from $100 with TARS routing)</p>
-      </article>
-    </section>
-
-    <!-- ===== TARS TECHNICAL DEEP-DIVE ===== -->
-    <section class="grid" style="margin-top:14px">
-      <article class="card span12" style="border-color:#3d7ac0">
-        <div class="k" style="font-size:0.95rem; letter-spacing:0.5px">🔬 TARS Technical Deep-Dive</div>
-        <p style="margin:6px 0 0;font-size:0.85rem;color:var(--muted)">Raw evidence from smoke tests, model routing telemetry, and architecture internals.</p>
-      </article>
-
-      <article class="card span6" style="border-color:#3d7ac0">
-        <div class="k">Smoke Test Raw Response</div>
-        <table class="table" style="margin-top:8px">
-          <tr><td>Response ID</td><td><code style="color:#8ecfff;font-size:0.78rem">chatcmpl-D9wEQoleLlGC22K3sGc2RSdKhIuGr</code></td></tr>
-          <tr><td>Wire Model</td><td><code style="color:#8ecfff">gpt-4o-mini-2024-07-18</code></td></tr>
-          <tr><td>Prompt Tokens</td><td>30</td></tr>
-          <tr><td>Completion Tokens</td><td>20</td></tr>
-          <tr><td>Total Tokens</td><td>50</td></tr>
-          <tr><td>Cached Tokens</td><td>0</td></tr>
-          <tr><td>Reasoning Tokens</td><td>0</td></tr>
-          <tr><td>Finish Reason</td><td><span class="chip pass">stop</span></td></tr>
-          <tr><td>Service Tier</td><td>default</td></tr>
-          <tr><td>System Fingerprint</td><td><code style="color:#8ecfff;font-size:0.78rem">fp_f4ae844694</code></td></tr>
-          <tr><td>Latency</td><td>1,626 ms</td></tr>
-          <tr><td>Estimated Cost</td><td>$0.00004500</td></tr>
-          <tr><td>Timestamp</td><td>2026-02-16T16:59:27Z</td></tr>
-        </table>
-        <div style="margin-top:8px;padding:8px;background:rgba(0,0,0,0.3);border-radius:8px;font-family:monospace;font-size:0.78rem;color:#8ecfff;white-space:pre">{"status": "success", "router_check": true}</div>
-      </article>
-
-      <article class="card span6" style="border-color:#3d7ac0">
-        <div class="k">TARS Model ID Translation Map</div>
-        <p style="margin:6px 0 10px;font-size:0.8rem;color:var(--muted)"><code style="color:#8ecfff">to_tars_model_id()</code> translates canonical OpenRouter IDs to gateway-specific provider strings at the transport layer.</p>
-        <table class="table">
-          <tr><td style="color:var(--muted);font-size:0.72rem">CANONICAL (OpenRouter)</td><td style="color:var(--muted);font-size:0.72rem">TARS GATEWAY ID</td></tr>
-          <tr><td><code style="color:#8ecfff;font-size:0.78rem">deepseek/deepseek-chat</code></td><td><code style="color:var(--pass);font-size:0.78rem">deepinfra/deepseek-ai/DeepSeek-V3.1</code></td></tr>
-          <tr><td><code style="color:#8ecfff;font-size:0.78rem">deepseek/deepseek-r1</code></td><td><code style="color:var(--pass);font-size:0.78rem">deepinfra/deepseek-ai/DeepSeek-R1-0528</code></td></tr>
-          <tr><td><code style="color:#8ecfff;font-size:0.78rem">moonshotai/kimi-k2-0905</code></td><td><code style="color:var(--pass);font-size:0.78rem">deepinfra/moonshotai/Kimi-K2-Instruct-0905</code></td></tr>
-          <tr><td><code style="color:#8ecfff;font-size:0.78rem">mistralai/mistral-medium-3</code></td><td><code style="color:var(--pass);font-size:0.78rem">mistralai/mistral-medium-3</code></td></tr>
-          <tr><td><code style="color:#8ecfff;font-size:0.78rem">z-ai/glm-5</code></td><td><code style="color:var(--pass);font-size:0.78rem">z-ai/glm-5</code></td></tr>
-        </table>
-        <p style="margin:8px 0 0;font-size:0.78rem;color:var(--muted)">Reverse lookup via <code style="color:#8ecfff">from_tars_model_id()</code> for telemetry normalization.</p>
-      </article>
-
-      <article class="card span6" style="border-color:#3d7ac0">
-        <div class="k">BATS Framework — Budget Enforcement Logic</div>
-        <div style="margin-top:8px;font-size:0.85rem">
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><span style="color:var(--pass);font-weight:700;flex-shrink:0">✓</span> Daily budget: <strong>$0.83/day</strong> ($25/month ÷ 30)</div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><span style="color:var(--pass);font-weight:700;flex-shrink:0">✓</span> <code style="color:#8ecfff">can_afford_model()</code> estimates cost before each call (60/40 input/output split)</div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><span style="color:var(--pass);font-weight:700;flex-shrink:0">✓</span> Over budget → automatic downgrade chain: Opus → Kimi → Mistral → DeepSeek</div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><span style="color:var(--accent);font-weight:700;flex-shrink:0">⚠</span> <strong>CRITICAL tasks NEVER downgraded</strong> — trade execution always uses Opus</div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><span style="color:var(--pass);font-weight:700;flex-shrink:0">✓</span> Daily reset at midnight; monthly reset on 1st</div>
-          <div style="display:flex;align-items:center;gap:8px;padding:5px 0"><span style="color:var(--pass);font-weight:700;flex-shrink:0">✓</span> All selections logged → <code style="color:#8ecfff">selection_log[]</code> (last 1000 entries, audit-ready)</div>
-        </div>
-      </article>
-
-      <article class="card span6" style="border-color:#3d7ac0">
-        <div class="k">Fallback Chain Architecture</div>
-        <div style="margin-top:10px">
-          <div style="display:flex;align-items:stretch;gap:0">
-            <div style="flex:1;background:linear-gradient(135deg,#1a3a5c,#163557);border:1px solid #3d7ac0;border-radius:10px 0 0 10px;padding:10px;text-align:center">
-              <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase">Primary</div>
-              <div style="font-weight:700;font-size:0.85rem;margin-top:4px">TARS Gateway</div>
-              <div style="font-size:0.72rem;color:var(--muted);margin-top:2px">LLM_GATEWAY_BASE_URL</div>
-            </div>
-            <div style="display:flex;align-items:center;color:var(--accent);font-weight:800;font-size:1.1rem;padding:0 4px">→</div>
-            <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);padding:10px;text-align:center">
-              <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase">Model Rotation</div>
-              <div style="font-weight:700;font-size:0.85rem;margin-top:4px">3 Models Tried</div>
-              <div style="font-size:0.72rem;color:var(--muted);margin-top:2px">Kimi → Mistral → DeepSeek-R1</div>
-            </div>
-            <div style="display:flex;align-items:center;color:var(--accent);font-weight:800;font-size:1.1rem;padding:0 4px">→</div>
-            <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:0 10px 10px 0;padding:10px;text-align:center">
-              <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase">Fallback</div>
-              <div style="font-weight:700;font-size:0.85rem;margin-top:4px">OpenRouter Direct</div>
-              <div style="font-size:0.72rem;color:var(--muted);margin-top:2px">OPENROUTER_API_KEY</div>
-            </div>
-          </div>
-          <div style="margin-top:8px;font-size:0.78rem;color:var(--muted)">
-            <strong style="color:var(--text)">Strict mode:</strong> <code style="color:#8ecfff">LLM_GATEWAY_STRICT=true</code> disables OpenRouter fallback (all traffic must go through TARS).
-          </div>
-        </div>
-      </article>
-
-      <article class="card span6" style="border-color:#3d7ac0">
-        <div class="k">Resilience Test — Error Path Validation</div>
-        <table class="table" style="margin-top:8px">
-          <tr><td>Test</td><td>Invalid model: <code style="color:#8ecfff">model-does-not-exist-xyz</code></td></tr>
-          <tr><td>curl Exit Code</td><td><span class="chip pass">0</span> (HTTP layer healthy)</td></tr>
-          <tr><td>Error Field Present</td><td><span class="chip pass">true</span></td></tr>
-          <tr><td>Error Type</td><td><code style="color:var(--warn)">invalid_request_error</code></td></tr>
-          <tr><td>Error Message</td><td style="font-size:0.78rem">The specified model is not enabled for this mode or does not exist</td></tr>
-          <tr><td>Tested At</td><td>2026-02-15T19:23:16Z</td></tr>
-        </table>
-        <p style="margin:8px 0 0;font-size:0.78rem;color:var(--muted)">Proves: gateway returns structured errors (not 500s) for invalid models → safe for retry logic.</p>
-      </article>
-
-      <article class="card span6" style="border-color:#3d7ac0">
-        <div class="k">Task → Complexity → Model Routing</div>
-        <p style="margin:6px 0 8px;font-size:0.78rem;color:var(--muted)">23 task types mapped across 4 complexity levels in <code style="color:#8ecfff">TASK_COMPLEXITY_MAP</code></p>
-        <table class="table">
-          <tr><td style="color:var(--muted);font-size:0.72rem">TASK TYPE</td><td style="color:var(--muted);font-size:0.72rem">COMPLEXITY</td><td style="color:var(--muted);font-size:0.72rem">ROUTED TO</td></tr>
-          <tr><td>sentiment_classification</td><td>SIMPLE</td><td><code style="color:#8ecfff">DeepSeek V3.1</code></td></tr>
-          <tr><td>technical_analysis</td><td>MEDIUM</td><td><code style="color:#8ecfff">Mistral Medium 3</code></td></tr>
-          <tr><td>pre_trade_research</td><td>COMPLEX</td><td><code style="color:#8ecfff">DeepSeek-R1</code></td></tr>
-          <tr><td>options_analysis</td><td>COMPLEX</td><td><code style="color:#8ecfff">Kimi K2</code></td></tr>
-          <tr><td>trade_execution</td><td>CRITICAL</td><td><code style="color:var(--accent)">Claude Opus 4.5</code></td></tr>
-          <tr><td>code_generation</td><td>SIMPLE</td><td><code style="color:#8ecfff">GLM-5</code> (opt-in)</td></tr>
-        </table>
-        <p style="margin:8px 0 0;font-size:0.78rem;color:var(--muted)">Based on: <a href="https://arxiv.org/abs/2511.17006" style="color:#9ed0ff;text-decoration:none">BATS framework (arXiv:2511.17006)</a>, <a href="https://arxiv.org/abs/2412.20138" style="color:#9ed0ff;text-decoration:none">TradingAgents (arXiv:2412.20138)</a></p>
-      </article>
-
-      <article class="card span6" style="border-color:#3d7ac0">
-        <div class="k">Routing Telemetry Schema</div>
-        <p style="margin:6px 0 8px;font-size:0.78rem;color:var(--muted)">Each routing decision emits a structured JSONL entry (opt-in via <code style="color:#8ecfff">MODEL_ROUTING_TELEMETRY=true</code>)</p>
-        <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:10px;font-family:monospace;font-size:0.72rem;color:#8ecfff;line-height:1.6;white-space:pre">{
-  "timestamp":        "2026-02-16T16:59:27Z",
-  "task_type":        "pre_trade_research",
-  "complexity":       "complex",
-  "selected_model":   "deepseek/deepseek-r1",
-  "transport_model":  "deepinfra/deepseek-ai/DeepSeek-R1-0528",
-  "selected_tier":    "deepseek_r1",
-  "selected_provider":"openrouter",
-  "reason":           "COMPLEX_TASK_DEEPSEEK_R1",
-  "daily_spend":      0.00,
-  "daily_budget":     0.83,
-  "gateway_enabled":  true
-}</div>
-        <p style="margin:8px 0 0;font-size:0.78rem;color:var(--muted)">File: <code style="color:#8ecfff">data/telemetry/model_routing.jsonl</code> — full audit trail for cost/compliance review.</p>
-      </article>
-
-      <article class="card span12" style="border-color:#3d7ac0">
-        <div class="k">Cost Comparison: Before vs After TARS Routing</div>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:10px">
-          <div style="background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.25);border-radius:10px;padding:14px">
-            <div style="font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px">Before (Single-Model)</div>
-            <div style="font-size:1.6rem;font-weight:700;color:#ff6b6b;margin-top:4px">$100/mo</div>
-            <div style="font-size:0.82rem;color:var(--muted);margin-top:6px">All tasks → Claude Sonnet ($3/$15 per M tokens)</div>
-            <div style="font-size:0.82rem;color:var(--muted)">No complexity-aware routing</div>
-            <div style="font-size:0.82rem;color:var(--muted)">No budget enforcement</div>
-          </div>
-          <div style="background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.25);border-radius:10px;padding:14px">
-            <div style="font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px">After (TARS + BATS)</div>
-            <div style="font-size:1.6rem;font-weight:700;color:var(--pass);margin-top:4px">$25/mo</div>
-            <div style="font-size:0.82rem;color:var(--muted);margin-top:6px">Task-aware routing: 80% of calls use $0.30–0.70/M models</div>
-            <div style="font-size:0.82rem;color:var(--muted)">Only CRITICAL (trade execution) uses premium models</div>
-            <div style="font-size:0.82rem;color:var(--muted)">Auto-downgrade when budget exceeded</div>
-          </div>
-        </div>
-        <div style="text-align:center;margin-top:10px;font-size:0.92rem;font-weight:700;color:var(--pass)">75% cost reduction with equivalent or better trade quality (Kimi K2 #1 StockBench Sortino: 0.0420)</div>
-      </article>
-    </section>
-
-    <!-- ===== ALPACA PORTFOLIO SNAPSHOTS ===== -->
-    <section class="grid" style="margin-top:14px">
-      <article class="card span12" style="border-color:#ff8f42">
-        <div class="k" style="font-size:0.95rem; letter-spacing:0.5px">📊 Live Portfolio Snapshots</div>
-        <p style="margin:6px 0 0;font-size:0.85rem;color:var(--muted)">Auto-generated daily at market close from Alpaca API. Paper account validates iron condor strategy; brokerage tracks real capital.</p>
-      </article>
-      <article class="card span6" style="border-color:#ff8f42">
-        <div class="k">Paper Trading ($100K)</div>
-        <img src="../assets/snapshots/paper_latest.png" alt="Paper trading portfolio snapshot" style="width:100%;border-radius:8px;margin-top:8px" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-        <p style="display:none;color:var(--muted);font-size:0.82rem;margin-top:8px">Snapshot not yet generated. Run: <code style="color:#8ecfff">python scripts/generate_alpaca_snapshot.py</code></p>
-      </article>
-      <article class="card span6" style="border-color:#ff8f42">
-        <div class="k">Brokerage (Live)</div>
-        <img src="../assets/snapshots/brokerage_latest.png" alt="Brokerage portfolio snapshot" style="width:100%;border-radius:8px;margin-top:8px" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-        <p style="display:none;color:var(--muted);font-size:0.82rem;margin-top:8px">Snapshot not yet generated. Run: <code style="color:#8ecfff">python scripts/generate_alpaca_snapshot.py</code></p>
-      </article>
-    </section>
-
     <section class="grid">
       <article class="card span4"><div class="k">Checklist Progress</div><div class="v">10/10</div></article>
       <article class="card span4"><div class="k">System Status</div><div class="v">iteration 1 / healthy</div></article>
       <article class="card span4"><div class="k">Smoke Latency / Cost</div><div class="v">1626 ms / $0.00004500</div></article>
-      <article class="card span12" style="border-color:var(--pass)">
-        <div class="k">Strategy Scope</div>
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:8px">
-          <div style="background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.3);border-radius:8px;padding:10px;text-align:center">
-            <div style="font-weight:700;color:var(--pass)">SPY</div><div style="font-size:0.72rem;color:var(--muted)">S&P 500</div>
-          </div>
-          <div style="background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.3);border-radius:8px;padding:10px;text-align:center">
-            <div style="font-weight:700;color:var(--pass)">SPX</div><div style="font-size:0.72rem;color:var(--muted)">Index Options</div>
-          </div>
-          <div style="background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.3);border-radius:8px;padding:10px;text-align:center">
-            <div style="font-weight:700;color:var(--pass)">XSP</div><div style="font-size:0.72rem;color:var(--muted)">Mini-SPX</div>
-          </div>
-          <div style="background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.3);border-radius:8px;padding:10px;text-align:center">
-            <div style="font-weight:700;color:var(--pass)">QQQ</div><div style="font-size:0.72rem;color:var(--muted)">Nasdaq-100</div>
-          </div>
-          <div style="background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.3);border-radius:8px;padding:10px;text-align:center">
-            <div style="font-weight:700;color:var(--pass)">IWM</div><div style="font-size:0.72rem;color:var(--muted)">Russell 2000</div>
-          </div>
-        </div>
-        <p style="margin:8px 0 0;font-size:0.8rem;color:var(--muted)">Liquid ETFs only — no individual stocks. Iron condors with 15-20 delta, 30-45 DTE, $5-wide wings.</p>
-      </article>
 
       <article class="card span6">
         <div class="k">Execution Quality Daily</div>
         <table class="table">
           <tr><td>Runs</td><td>1</td></tr>
           <tr><td>Success Rate</td><td>100.0%</td></tr>
-          <tr><td>Actionable Rate</td><td>100.0%</td></tr>
+          <tr><td>Actionable Rate</td><td>0.0%</td></tr>
           <tr><td>P95 Latency</td><td>1626 ms</td></tr>
           <tr><td>Generated</td><td>2026-02-16T16:59:27Z</td></tr>
         </table>
@@ -401,15 +170,15 @@
         <div class="k">How Much Money Made (Paper) + Why</div>
         <table class="table">
           <tr><td>Starting balance</td><td>$100,000.00</td></tr>
-          <tr><td>Current equity</td><td id="current-equity">$101,441.56</td></tr>
-          <tr><td>Net P/L</td><td id="net-pl">$1,441.56 (1.44%)</td></tr>
-          <tr><td>Why (current drivers)</td><td id="why-drivers">Win rate 100.0% over 1 closed trade(s), 1 open</td></tr>
+          <tr><td>Current equity</td><td>$101,441.56</td></tr>
+          <tr><td>Net P/L</td><td>$1,441.56 (1.44%)</td></tr>
+          <tr><td>Why (current drivers)</td><td>Win rate 100.0% over 1 samples, strategy gate status: LOW</td></tr>
         </table>
       </article>
 
       <article class="card span8">
         <div class="k">Readiness Metrics</div>
-        <table class="table"><tr><td>Win Rate</td><td id="win-rate-val">100.00%</td><td><span id="win-rate-chip" class="chip pass">PASS</span></td></tr>
+        <table class="table"><tr><td>Win Rate</td><td>100.00%</td><td><span class="chip pass">PASS</span></td></tr>
 <tr><td>Max Drawdown (sync history)</td><td>0.03%</td><td><span class="chip pass">PASS</span></td></tr>
 <tr><td>Execution Quality (valid trade records)</td><td>97.89%</td><td><span class="chip pass">PASS</span></td></tr>
 <tr><td>Gateway Latency</td><td>897 ms</td><td><span class="chip pass">PASS</span></td></tr>
@@ -421,7 +190,6 @@
       <article class="card span4 links">
         <div class="k">Evidence Files</div>
         <ul>
-          <li><a href="https://igorganapolsky.github.io/trading/lessons/">Lessons Index</a></li>
           <li><a href="https://github.com/IgorGanapolsky/trading/blob/main/artifacts/tars/submission_summary.md">submission_summary.md</a></li>
           <li><a href="https://github.com/IgorGanapolsky/trading/blob/main/artifacts/tars/judge_demo_checklist.md">judge_demo_checklist.md</a></li>
           <li><a href="https://github.com/IgorGanapolsky/trading/blob/main/artifacts/tars/smoke_response.json">smoke_response.json</a></li>
@@ -433,45 +201,24 @@
           <li><a href="https://github.com/IgorGanapolsky/trading/blob/main/docs/_reports/hackathon-system-explainer.md">system explainer</a></li>
         </ul>
       </article>
+
+      <article class="card span6">
+        <div class="k">Alpaca Paper Snapshot</div>
+        <a href="/trading/assets/snapshots/alpaca_paper_latest.png"><img class="snap" src="/trading/assets/snapshots/alpaca_paper_latest.png" alt="Alpaca paper account snapshot"></a>
+        <div class="k">Captured: unknown</div>
+      </article>
+      <article class="card span6">
+        <div class="k">Alpaca Brokerage Snapshot</div>
+        <a href="/trading/assets/snapshots/alpaca_live_latest.png"><img class="snap" src="/trading/assets/snapshots/alpaca_live_latest.png" alt="Alpaca brokerage account snapshot"></a>
+        <div class="k">Captured: unknown</div>
+      </article>
+      <article class="card span12">
+        <div class="k">Progress Dashboard Snapshot</div>
+        <a href="/trading/assets/snapshots/progress_latest.png"><img class="snap" src="/trading/assets/snapshots/progress_latest.png" alt="Progress dashboard snapshot"></a>
+        <div class="k">Captured: unknown</div>
+      </article>
+    
     </section>
   </div>
-
-<script>
-(async function() {
-  const BASE = 'https://raw.githubusercontent.com/IgorGanapolsky/trading/main';
-  async function fetchJSON(path) {
-    try {
-      const r = await fetch(BASE + path + '?t=' + Date.now());
-      return r.ok ? await r.json() : null;
-    } catch(e) { return null; }
-  }
-  const [state, trades] = await Promise.all([
-    fetchJSON('/data/system_state.json'),
-    fetchJSON('/data/trades.json'),
-  ]);
-  const el = (id) => document.getElementById(id);
-  if (state) {
-    const equity = state.portfolio?.equity || state.equity || 101441.56;
-    const starting = 100000;
-    const pl = equity - starting;
-    const pct = ((pl / starting) * 100).toFixed(2);
-    if (el('current-equity')) el('current-equity').textContent = '$' + equity.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-    if (el('net-pl')) el('net-pl').textContent = '$' + pl.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' (' + pct + '%)';
-  }
-  if (trades && trades.stats) {
-    const s = trades.stats;
-    const wr = s.win_rate_pct != null ? s.win_rate_pct : 0;
-    const closed = s.closed_trades || 0;
-    const open = s.open_trades || 0;
-    if (el('why-drivers')) el('why-drivers').textContent = 'Win rate ' + wr.toFixed(1) + '% over ' + closed + ' closed trade(s), ' + open + ' open';
-    if (el('win-rate-val')) el('win-rate-val').textContent = wr.toFixed(1) + '%';
-    if (el('win-rate-chip')) {
-      if (closed < 5) { el('win-rate-chip').className = 'chip unknown'; el('win-rate-chip').textContent = closed + '/30 TRADES'; }
-      else if (wr >= 80) { el('win-rate-chip').className = 'chip pass'; el('win-rate-chip').textContent = 'PASS'; }
-      else { el('win-rate-chip').className = 'chip warn'; el('win-rate-chip').textContent = 'WARN'; }
-    }
-  }
-})();
-</script>
 </body>
 </html>
