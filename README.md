@@ -10,9 +10,9 @@
 
 Autonomous AI trading system with multi-model routing via [Tetrate Agent Router Service (TARS)](https://router.tetrate.ai), self-healing CI, continuous learning from failures, and a defined-risk SPY iron condor strategy.
 
-> **North Star**: $6,000/month after-tax by Nov 14, 2029
+> **North Star**: Validated autonomous iron condor system → consistent $500/month on $25K+ capital
 >
-> **Account**: Alpaca Paper ($100K) | **Strategy**: SPY iron condors, 15-20 delta, 30-45 DTE
+> **Account**: Alpaca Paper ($100K) | **Strategy**: SPY iron condors, 15-20 delta, 30-45 DTE | **Min Capital**: $10K (code-enforced)
 >
 > **Status**: [System State](https://github.com/IgorGanapolsky/trading/blob/main/data/system_state.json) | [Progress Dashboard](https://github.com/IgorGanapolsky/trading/wiki/Progress-Dashboard) | [GitHub Pages](https://igorganapolsky.github.io/trading/) | [Judge Demo Evidence](https://igorganapolsky.github.io/trading/lessons/judge-demo.html) | [RAG Query](https://igorganapolsky.github.io/trading/rag-query/)
 

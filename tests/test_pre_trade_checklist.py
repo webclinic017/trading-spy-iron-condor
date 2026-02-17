@@ -44,9 +44,8 @@ class TestPreTradeChecklistInitialization:
             PreTradeChecklist(account_equity=-1000.0)
 
     def test_constants_match_claude_md(self):
-        """Verify constants match CLAUDE.md specification (Feb 8, 2026 update)."""
-        # UPDATED Feb 8, 2026: SPY/SPX/XSP per CLAUDE.md
-        assert {"SPY", "SPX", "XSP"} == PreTradeChecklist.ALLOWED_TICKERS
+        """Verify constants match trading_constants.py specification."""
+        assert {"SPY", "SPX", "XSP", "QQQ", "IWM"} == PreTradeChecklist.ALLOWED_TICKERS
         assert PreTradeChecklist.MAX_POSITION_PCT == 0.05
         assert PreTradeChecklist.MIN_DTE == 30
         assert PreTradeChecklist.MAX_DTE == 45

@@ -46,7 +46,7 @@ def validate_ticker(ticker: str, context: str = "") -> str:
         error_msg = (
             f"TICKER VIOLATION: '{normalized}' is NOT in whitelist {ALLOWED_TICKERS}. "
             f"Context: {context or 'unknown'}. "
-            f"Per CLAUDE.md: SPY ONLY - NO individual stocks."
+            f"Allowed: liquid ETFs only - no individual stocks."
         )
         logger.error(error_msg)
         raise TickerViolationError(error_msg)

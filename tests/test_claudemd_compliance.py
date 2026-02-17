@@ -139,6 +139,7 @@ class TestClaudeMdCompliance:
                 "SPY",
                 "SPX",
                 "XSP",
+                "QQQ",
                 "IWM",
                 "SPXW",
             ], f"Non-whitelisted ticker in positions: {symbol} (underlying: {underlying})"

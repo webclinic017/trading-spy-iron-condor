@@ -8,9 +8,9 @@ Welcome to the **AI-Powered Automated Trading System** wiki!
 
 **👉 [View Live Progress Dashboard →](https://igorganapolsky.github.io/trading/)**
 
-The system tracks progress toward accessible automated trading:
-- North Star goal: **Accessible iron condor system — enter with as little as $200**
-- Current strategy: **Iron Condors on SPY**
+The system tracks progress toward validated autonomous trading:
+- North Star goal: **Validated iron condor system → consistent $500/month on $25K+ capital**
+- Current strategy: **Iron Condors on SPY** (minimum $10K capital, code-enforced)
 - Phil Town Rule #1: **Don't lose money**
 
 ---
@@ -53,14 +53,19 @@ The system tracks progress toward accessible automated trading:
 
 ## 🎯 North Star Goal
 
-**Vision**: Accessible automated iron condor system — enter with as little as $200.
+**Vision**: Validated autonomous iron condor system producing consistent monthly income.
+
+**Capital requirements** (code-enforced in `src/risk/capital_efficiency.py`):
+- Iron condors: **$10,000 minimum** ($500 collateral per $5-wide spread)
+- PDT-safe trading: **$25,000+** recommended
+- $200 is NOT enough for options — only ETF accumulation is viable below $500
 
 | Phase | Timeline | Target | Status |
 |-------|----------|--------|--------|
-| **Phase 1: Validate** | Now → Jun 2026 | 30 trades, >75% win rate | 🔄 In progress (1/30) |
-| **Phase 2: Scale** | Jul → Dec 2026 | 3 concurrent ICs, $500/mo | ⏳ Pending |
+| **Phase 1: Validate** | Now → Jun 2026 | 30 trades, >75% win rate on $100K paper | 🔄 In progress (1/30) |
+| **Phase 2: Scale** | Jul → Dec 2026 | 3 concurrent ICs, $500/mo on $25K+ | ⏳ Pending |
 | **Phase 3: Grow** | 2027 | 5 ICs + credit spreads, $1,500/mo | ⏳ Pending |
-| **Phase 4: Open** | 2028 | Open access, $200 minimum entry | ⏳ Pending |
+| **Phase 4: Productize** | 2028 | Packaged system for accounts $10K+ | ⏳ Pending |
 
 **Strategy Parameters** (updated Feb 2026 — positive EV):
 - Profit target: **75%** of max profit (let winners run)

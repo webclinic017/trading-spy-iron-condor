@@ -270,7 +270,6 @@ def main() -> int:
       <p>This page translates complex AI product behavior into clear proof.
       Audience mode: simple enough for non-technical viewers, concrete enough for technical judges.</p>
       <div class="nav">
-        <a href="/trading/lessons/ops-status.html">Ops Status</a>
         <a href="/trading/lessons/">Lessons Index</a>
         <a href="https://github.com/IgorGanapolsky/trading/wiki">Project Wiki</a>
         <a href="https://github.com/IgorGanapolsky/trading/wiki/Development-Engine-and-Evidence">Wiki: Dev Evidence</a>
@@ -327,7 +326,6 @@ def main() -> int:
       <article class="card span4 links">
         <div class="k">Evidence Files</div>
         <ul>
-          <li><a href="/trading/lessons/ops-status.html">ops_status.html</a></li>
           <li><a href="{repo_blob}/artifacts/tars/submission_summary.md">submission_summary.md</a></li>
           <li><a href="{repo_blob}/artifacts/tars/judge_demo_checklist.md">judge_demo_checklist.md</a></li>
           <li><a href="{repo_blob}/artifacts/tars/smoke_response.json">smoke_response.json</a></li>

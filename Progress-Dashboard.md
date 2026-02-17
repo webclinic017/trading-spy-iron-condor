@@ -4,7 +4,7 @@
 **Auto-Updated**: Daily via GitHub Actions
 **Dashboard Version**: Enhanced World-Class (v2.0)
 
-**👉 [Judge Demo Evidence →](https://igorganapolsky.github.io/trading/lessons/judge-demo.html)** | [Ops Status](https://igorganapolsky.github.io/trading/lessons/ops-status.html) | [Live Site](https://igorganapolsky.github.io/trading/)
+**👉 [Judge Demo Evidence →](https://igorganapolsky.github.io/trading/lessons/judge-demo.html)** | [Live Site](https://igorganapolsky.github.io/trading/)
 
 ---
 
@@ -32,7 +32,7 @@
 | **Today's P/L** | $+0.00 (+0.00%)  |
 | **Status**      | ✅ Active        |
 
-> _Live account is building capital through $25/day deposits. Target: $200 before first options trade._
+> _Live account is building capital through $25/day deposits. Iron condors require $10,000+ minimum (code-enforced). Currently in accumulation phase._
 
 ### 📝 PAPER Account (R&D)
 
@@ -58,13 +58,13 @@
 
 > **📝 Paper** = R&D simulation (fake money) | **🔴 LIVE** = Real brokerage (real money)
 >
-> ⚠️ **IMPORTANT**: Live account is in accumulation phase ($30/$200 target) - no live trades until sufficient capital. All trades shown above are **paper/simulation** trades for R&D purposes.
+> ⚠️ **IMPORTANT**: Live account is in accumulation phase. Iron condors require **$10,000+ minimum** capital (code-enforced in `src/risk/capital_efficiency.py`). All trades shown above are **paper/simulation** trades for R&D purposes.
 
 ---
 
 ## 🎯 North Star Goal (PERMANENT - CEO MANDATE)
 
-**Target**: **$100/day after-tax profit** - NON-NEGOTIABLE
+**Target**: Validated autonomous iron condor system → **consistent $500/month on $25K+ capital**
 
 | Metric                   | Current          | Target      | Progress |
 | ------------------------ | ---------------- | ----------- | -------- |

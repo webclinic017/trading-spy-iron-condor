@@ -14,15 +14,15 @@ from datetime import date
 # =============================================================================
 # TICKER WHITELIST - SINGLE SOURCE OF TRUTH
 # =============================================================================
-# Per CLAUDE.md: SPY/SPX/XSP for index options
-# SPY = Standard equity ETF option (100% short-term capital gains)
+# Liquid ETFs and index options for defined-risk strategies.
+# SPY = S&P 500 ETF (default, best liquidity)
+# QQQ = Nasdaq-100 ETF (tech-heavy, liquid options)
+# IWM = Russell 2000 ETF (small-cap, wider ranges)
 # SPX/XSP = Index options with Section 1256 tax treatment (60/40 split)
 # This is the ONLY place ticker whitelist should be defined.
 # All modules MUST import from here to avoid maintenance issues.
-# UPDATED Jan 19, 2026 (LL-244): IWM removed per adversarial audit
-# UPDATED Feb 8, 2026: Added SPX and XSP for Section 1256 tax treatment
 # =============================================================================
-ALLOWED_TICKERS: set[str] = {"SPY", "SPX", "XSP"}  # SPY/SPX/XSP per CLAUDE.md Feb 8, 2026
+ALLOWED_TICKERS: set[str] = {"SPY", "SPX", "XSP", "QQQ", "IWM"}
 
 # =============================================================================
 # POSITION LIMITS - Phil Town Rule #1 (SINGLE SOURCE OF TRUTH)
@@ -49,11 +49,11 @@ MAX_DTE: int = 45  # Maximum days to expiration per CLAUDE.md
 # =============================================================================
 # NORTH STAR TARGETS - SINGLE SOURCE OF TRUTH
 # =============================================================================
-# Financial independence target by CEO's 50th birthday.
+# Validated autonomous iron condor system → consistent $500/month on $25K+ capital.
 NORTH_STAR_TARGET_DATE: date = date(2029, 11, 14)
-NORTH_STAR_TARGET_CAPITAL: float = 600_000.0
-NORTH_STAR_MONTHLY_AFTER_TAX: float = 6_000.0
-NORTH_STAR_DAILY_AFTER_TAX: float = 200.0
+NORTH_STAR_TARGET_CAPITAL: float = 25_000.0
+NORTH_STAR_MONTHLY_AFTER_TAX: float = 500.0
+NORTH_STAR_DAILY_AFTER_TAX: float = 16.67
 NORTH_STAR_TARGET_WIN_RATE_PCT: float = 80.0
 NORTH_STAR_PAPER_VALIDATION_DAYS: int = 90
 
