@@ -664,6 +664,37 @@ layout: null
         flex-wrap: wrap;
       }
 
+      .chat-history-hint {
+        margin-top: 10px;
+        font-size: 0.82rem;
+        color: var(--text-secondary);
+      }
+
+      .chat-history-hint .hint-btn {
+        margin-left: 6px;
+        padding: 4px 10px;
+        font-size: 0.82rem;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 999px;
+        color: var(--text-primary);
+        cursor: pointer;
+        max-width: 100%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        vertical-align: middle;
+      }
+
+      .chat-history-hint .hint-btn:hover {
+        background: var(--border-color);
+      }
+
+      .chat-history-hint .hint-meta {
+        color: var(--text-muted);
+        margin-left: 6px;
+      }
+
       .example-chip {
         padding: 6px 12px;
         font-size: 0.8rem;
@@ -773,9 +804,12 @@ layout: null
 	              type="text"
 	              id="chatInput"
 	              placeholder="Ask a question... (e.g., 'When should I close an iron condor?')"
+                list="chatInputSuggestions"
 	            />
+              <datalist id="chatInputSuggestions"></datalist>
 	            <button id="chatSendBtn">Send</button>
 	          </div>
+            <div class="chat-history-hint" id="chatHistoryHint" style="display:none"></div>
 	          <div class="chat-examples">
 	            <span
 	              class="example-chip"
@@ -1713,6 +1747,74 @@ Tags: ${lesson.tags.join(", ")}`;
       // Chat functionality with conversation memory
       let conversationHistory = [];
 
+      const CHAT_HISTORY_STORAGE_KEY = "rag_query_question_history_v1";
+      const CHAT_HISTORY_MAX = 25;
+
+      function readChatQuestionHistory() {
+        try {
+          const raw = localStorage.getItem(CHAT_HISTORY_STORAGE_KEY);
+          const data = raw ? JSON.parse(raw) : [];
+          return Array.isArray(data) ? data.filter((v) => typeof v === "string") : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function writeChatQuestionHistory(items) {
+        try {
+          localStorage.setItem(
+            CHAT_HISTORY_STORAGE_KEY,
+            JSON.stringify(items.slice(0, CHAT_HISTORY_MAX))
+          );
+        } catch {
+          // ignore quota / blocked storage
+        }
+      }
+
+      function recordChatQuestion(question) {
+        const q = String(question || "").trim();
+        if (!q) return;
+        const history = readChatQuestionHistory();
+        const next = [q, ...history.filter((x) => x !== q)];
+        writeChatQuestionHistory(next);
+      }
+
+      function renderChatQuestionSuggestions() {
+        const list = document.getElementById("chatInputSuggestions");
+        const hint = document.getElementById("chatHistoryHint");
+        if (!list) return;
+
+        const history = readChatQuestionHistory();
+        list.innerHTML = "";
+        for (const q of history.slice(0, CHAT_HISTORY_MAX)) {
+          const opt = document.createElement("option");
+          opt.value = q;
+          list.appendChild(opt);
+        }
+
+        if (!hint) return;
+
+        if (history.length) {
+          const last = history[0];
+          hint.style.display = "block";
+          hint.innerHTML = `Last question: <button type="button" class="hint-btn" id="useLastQuestionBtn">${escapeHtml(
+            last.length > 90 ? last.slice(0, 90) + "..." : last
+          )}</button> <span class="hint-meta">(click to insert, or press ↑)</span>`;
+
+          // (Re)bind every render to keep it simple.
+          const btn = document.getElementById("useLastQuestionBtn");
+          btn?.addEventListener("click", () => {
+            const chatInput = document.getElementById("chatInput");
+            if (!chatInput) return;
+            chatInput.value = last;
+            chatInput.focus();
+          });
+        } else {
+          hint.style.display = "none";
+          hint.innerHTML = "";
+        }
+      }
+
       function setupChatListeners() {
         const chatInput = document.getElementById("chatInput");
         const chatSendBtn = document.getElementById("chatSendBtn");
@@ -1725,6 +1827,17 @@ Tags: ${lesson.tags.join(", ")}`;
           }
         });
 
+        // Quick recall: ArrowUp restores last asked question if input is empty.
+        chatInput.addEventListener("keydown", (e) => {
+          if (e.key !== "ArrowUp") return;
+          if (String(chatInput.value || "").trim().length) return;
+          const history = readChatQuestionHistory();
+          if (!history.length) return;
+          e.preventDefault();
+          chatInput.value = history[0];
+          chatInput.setSelectionRange(chatInput.value.length, chatInput.value.length);
+        });
+
         // Example chips
         document.querySelectorAll(".example-chip").forEach((chip) => {
           chip.addEventListener("click", () => {
@@ -1732,6 +1845,8 @@ Tags: ${lesson.tags.join(", ")}`;
             sendChatMessage();
           });
         });
+
+        renderChatQuestionSuggestions();
       }
 
       async function sendChatMessage() {
@@ -1741,6 +1856,9 @@ Tags: ${lesson.tags.join(", ")}`;
         const message = chatInput.value.trim();
 
         if (!message) return;
+
+        recordChatQuestion(message);
+        renderChatQuestionSuggestions();
 
         // Add user message to UI
         chatMessages.innerHTML += `
