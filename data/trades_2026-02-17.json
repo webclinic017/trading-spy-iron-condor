@@ -1,0 +1,98 @@
+[
+  {
+    "timestamp": "2026-02-17T19:09:44.084690",
+    "strategy": "iron_condor",
+    "underlying": "SPY",
+    "symbol": "SPY",
+    "expiry": "2026-03-20",
+    "dte": 30,
+    "legs": {
+      "long_put": 640,
+      "short_put": 650,
+      "short_call": 720,
+      "long_call": 730
+    },
+    "credit": 2.0,
+    "max_profit": 200.0,
+    "max_risk": 800.0,
+    "status": "LIVE_SUBMITTED",
+    "order_ids": [
+      {
+        "order_id": "11194620-51ae-4fb3-92ae-21bd033647cb",
+        "type": "mleg_iron_condor",
+        "legs": [
+          "SPY260320P00640000",
+          "SPY260320P00650000",
+          "SPY260320C00720000",
+          "SPY260320C00730000"
+        ]
+      }
+    ],
+    "decision_trace": {
+      "captured_at": "2026-02-17T19:09:44.084707",
+      "entry_reason": "",
+      "market_context": {
+        "vix": 20.030000686645508,
+        "vix_3day_ma": 20.483333587646484
+      },
+      "signals_checked": [
+        "vix_mean_reversion"
+      ],
+      "strike_selection": {
+        "method": "15_delta_5pct_otm",
+        "short_put": 650,
+        "short_call": 720,
+        "wing_width": 10
+      },
+      "precedent_query": "SPY iron_condor 30DTE"
+    }
+  },
+  {
+    "timestamp": "2026-02-17T19:09:48.327848",
+    "strategy": "iron_condor",
+    "underlying": "SPY",
+    "symbol": "SPY",
+    "expiry": "2026-03-20",
+    "dte": 30,
+    "legs": {
+      "long_put": 640,
+      "short_put": 650,
+      "short_call": 720,
+      "long_call": 730
+    },
+    "credit": 2.0,
+    "max_profit": 200.0,
+    "max_risk": 800.0,
+    "status": "LIVE_SUBMITTED",
+    "order_ids": [
+      {
+        "order_id": "1329147f-ecfe-4957-bc2b-58782b47bdbb",
+        "type": "mleg_iron_condor",
+        "legs": [
+          "SPY260320P00640000",
+          "SPY260320P00650000",
+          "SPY260320C00720000",
+          "SPY260320C00730000"
+        ]
+      }
+    ],
+    "decision_trace": {
+      "captured_at": "2026-02-17T19:09:48.327865",
+      "entry_reason": "",
+      "market_context": {
+        "vix": 20.030000686645508,
+        "vix_3day_ma": 20.483333587646484
+      },
+      "signals_checked": [
+        "vix_mean_reversion"
+      ],
+      "strike_selection": {
+        "method": "15_delta_5pct_otm",
+        "short_put": 650,
+        "short_call": 720,
+        "wing_width": 10
+      },
+      "precedent_query": "SPY iron_condor 30DTE"
+    }
+  }
+]
