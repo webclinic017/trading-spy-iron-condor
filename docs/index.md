@@ -71,7 +71,7 @@ Technical readout: Brokerage Account: net liquidation value $167.48; daily P/L +
 ### Progress Dashboard Snapshot
 ![Progress Dashboard Snapshot](/trading/assets/snapshots/progress_latest.png)
 
-Captured: `pending`
+Captured: `2026-02-17T00:45:25Z`
 
 Manifest: [`/trading/data/alpaca_snapshots.json`](/trading/data/alpaca_snapshots.json)
 <!-- AUTO_SNAPSHOT_END -->

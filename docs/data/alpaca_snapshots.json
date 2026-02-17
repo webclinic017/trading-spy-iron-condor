@@ -1,5 +1,5 @@
 {
-  "updated_at_utc": "2026-02-17T00:38:07Z",
+  "updated_at_utc": "2026-02-17T00:45:25Z",
   "latest": {
     "alpaca_paper": {
       "file": "alpaca_paper_latest.png",
@@ -56,6 +56,13 @@
         "positions_count": 0,
         "north_star_gate": "LOW"
       }
+    },
+    "progress": {
+      "file": "progress_latest.png",
+      "versioned_file": "progress_20260217_004525.png",
+      "url": "/trading/assets/snapshots/progress_latest.png",
+      "versioned_url": "/trading/assets/snapshots/progress_20260217_004525.png",
+      "captured_at_utc": "2026-02-17T00:45:25Z"
     }
   },
   "history": [
@@ -117,6 +124,24 @@
             "positions_count": 0,
             "north_star_gate": "LOW"
           }
+        }
+      },
+      "state": {
+        "paper_trade_count": 95,
+        "paper_equity": 101441.56,
+        "live_equity": 167.48,
+        "date_utc": "2026-02-17"
+      }
+    },
+    {
+      "captured_at_utc": "2026-02-17T00:45:25Z",
+      "entries": {
+        "progress": {
+          "file": "progress_latest.png",
+          "versioned_file": "progress_20260217_004525.png",
+          "url": "/trading/assets/snapshots/progress_latest.png",
+          "versioned_url": "/trading/assets/snapshots/progress_20260217_004525.png",
+          "captured_at_utc": "2026-02-17T00:45:25Z"
         }
       },
       "state": {
