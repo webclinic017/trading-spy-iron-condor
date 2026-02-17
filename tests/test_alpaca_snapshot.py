@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import json
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -27,7 +25,12 @@ def mock_paper_data():
         "starting_capital": 100000.0,
         "position_count": 4,
         "positions": [
-            {"symbol": "SPY260313P00650000", "qty": -2.0, "market_value": -100.0, "unrealized_pl": 50.0},
+            {
+                "symbol": "SPY260313P00650000",
+                "qty": -2.0,
+                "market_value": -100.0,
+                "unrealized_pl": 50.0,
+            },
         ],
     }
 
@@ -113,7 +116,15 @@ class TestConstants:
             CHART_TEXT,
         )
 
-        for color in [CHART_BG, CHART_PANEL, CHART_TEXT, CHART_MUTED, CHART_ACCENT, CHART_PASS, CHART_LINE]:
+        for color in [
+            CHART_BG,
+            CHART_PANEL,
+            CHART_TEXT,
+            CHART_MUTED,
+            CHART_ACCENT,
+            CHART_PASS,
+            CHART_LINE,
+        ]:
             assert color.startswith("#"), f"{color} is not a hex color"
             assert len(color) == 7, f"{color} is not a valid 6-digit hex color"
 

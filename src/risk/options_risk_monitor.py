@@ -128,9 +128,7 @@ class OptionsRiskMonitor:
 
             if loss_ratio >= 1.0:
                 status = "critical"
-                message = (
-                    f"STOP-LOSS TRIGGERED: Loss ${current_loss:.2f} >= {self.stop_loss_multiplier}x credit ${max_loss:.2f}"
-                )
+                message = f"STOP-LOSS TRIGGERED: Loss ${current_loss:.2f} >= {self.stop_loss_multiplier}x credit ${max_loss:.2f}"
             elif loss_ratio >= 0.75:
                 status = "warning"
                 message = (

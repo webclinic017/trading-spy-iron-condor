@@ -125,7 +125,9 @@ def main() -> int:
     err_type = resilience.get("error_type", "none")
     err_msg = resilience.get("error_message", "none")
     resilience_status = (
-        '<span class="chip warn">ERROR</span>' if has_error else '<span class="chip pass">PASS</span>'
+        '<span class="chip warn">ERROR</span>'
+        if has_error
+        else '<span class="chip pass">PASS</span>'
     )
     repo_blob = "https://github.com/IgorGanapolsky/trading/blob/main"
 

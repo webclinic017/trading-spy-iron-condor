@@ -72,7 +72,9 @@ def resolve_account_credentials(
             "ALPACA_SECRET_KEY",
         ]
 
-    key = next((str(env.get(k, "")).strip() for k in key_candidates if str(env.get(k, "")).strip()), "")
+    key = next(
+        (str(env.get(k, "")).strip() for k in key_candidates if str(env.get(k, "")).strip()), ""
+    )
     secret = next(
         (str(env.get(k, "")).strip() for k in secret_candidates if str(env.get(k, "")).strip()),
         "",
@@ -115,7 +117,11 @@ class TradingScreenshotCapture:
 
     @staticmethod
     def _get_base_url(account_type: str) -> str:
-        return "https://paper-api.alpaca.markets" if account_type == "paper" else "https://api.alpaca.markets"
+        return (
+            "https://paper-api.alpaca.markets"
+            if account_type == "paper"
+            else "https://api.alpaca.markets"
+        )
 
     @staticmethod
     def _manifest_snapshot_url(filename: str) -> str:
@@ -131,8 +137,12 @@ class TradingScreenshotCapture:
         except Exception:
             return {}
 
-    def _publish_snapshot(self, key: str, source_path: Path, captured_at_utc: str) -> dict[str, str]:
-        timestamp = datetime.strptime(captured_at_utc, "%Y-%m-%dT%H:%M:%SZ").strftime("%Y%m%d_%H%M%S")
+    def _publish_snapshot(
+        self, key: str, source_path: Path, captured_at_utc: str
+    ) -> dict[str, str]:
+        timestamp = datetime.strptime(captured_at_utc, "%Y-%m-%dT%H:%M:%SZ").strftime(
+            "%Y%m%d_%H%M%S"
+        )
         versioned_name = f"{key}_{timestamp}.png"
         latest_name = f"{key}_latest.png"
         versioned_path = self.PAGES_SNAPSHOT_DIR / versioned_name
@@ -184,10 +194,14 @@ class TradingScreenshotCapture:
         gate = str(north_star.get("probability_label", "unknown")).upper()
         positions_count = int(account.get("positions_count", 0) or 0)
 
-        trend_msg = "Range-bound day; premium decay dominated." if abs(daily_change) < 1.0 else (
-            "Positive convexity day; favorable realized drift."
-            if daily_change > 0
-            else "Adverse drift day; downside variance dominated."
+        trend_msg = (
+            "Range-bound day; premium decay dominated."
+            if abs(daily_change) < 1.0
+            else (
+                "Positive convexity day; favorable realized drift."
+                if daily_change > 0
+                else "Adverse drift day; downside variance dominated."
+            )
         )
 
         return f"""<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
@@ -230,7 +244,9 @@ class TradingScreenshotCapture:
         state: dict[str, Any],
         captured_at_utc: str,
     ) -> dict[str, str]:
-        timestamp = datetime.strptime(captured_at_utc, "%Y-%m-%dT%H:%M:%SZ").strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.strptime(captured_at_utc, "%Y-%m-%dT%H:%M:%SZ").strftime(
+            "%Y%m%d_%H%M%S"
+        )
         short = "paper" if key == "alpaca_paper" else "live"
         versioned_name = f"paperbanana_{short}_{timestamp}.svg"
         latest_name = f"paperbanana_{short}_latest.svg"
@@ -249,7 +265,9 @@ class TradingScreenshotCapture:
     def publish_to_pages(self, screenshots: dict[str, Path | None]) -> Path:
         captured_at_utc = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
         manifest = self._read_manifest(self.MANIFEST_PATH)
-        latest: dict[str, Any] = manifest.get("latest", {}) if isinstance(manifest.get("latest"), dict) else {}
+        latest: dict[str, Any] = (
+            manifest.get("latest", {}) if isinstance(manifest.get("latest"), dict) else {}
+        )
         history: list[dict[str, Any]] = (
             manifest.get("history", []) if isinstance(manifest.get("history"), list) else []
         )

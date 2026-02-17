@@ -45,7 +45,6 @@ def fetch_paper_account() -> dict | None:
     """Fetch paper trading account data via Alpaca API."""
     try:
         from alpaca.trading.client import TradingClient
-
         from src.utils.alpaca_client import get_alpaca_credentials
 
         api_key, secret_key = get_alpaca_credentials()
@@ -83,7 +82,6 @@ def fetch_brokerage_account() -> dict | None:
     """Fetch brokerage (live) account data via Alpaca API."""
     try:
         from alpaca.trading.client import TradingClient
-
         from src.utils.alpaca_client import get_brokerage_credentials
 
         api_key, secret_key = get_brokerage_credentials()
@@ -143,48 +141,82 @@ def generate_chart(account_data: dict, output_path: Path) -> bool:
     # Title
     title_label = "📝 PAPER" if acct_type == "PAPER" else "🔴 BROKERAGE"
     ax.text(
-        0.5, 0.92, title_label, transform=ax.transAxes,
-        fontsize=16, fontweight="bold", color=CHART_TEXT,
-        ha="center", va="top",
+        0.5,
+        0.92,
+        title_label,
+        transform=ax.transAxes,
+        fontsize=16,
+        fontweight="bold",
+        color=CHART_TEXT,
+        ha="center",
+        va="top",
     )
 
     # Equity value
     ax.text(
-        0.5, 0.68, f"${equity:,.2f}", transform=ax.transAxes,
-        fontsize=28, fontweight="bold", color=CHART_ACCENT,
-        ha="center", va="top",
+        0.5,
+        0.68,
+        f"${equity:,.2f}",
+        transform=ax.transAxes,
+        fontsize=28,
+        fontweight="bold",
+        color=CHART_ACCENT,
+        ha="center",
+        va="top",
     )
 
     # Change
     change_color = CHART_PASS if change >= 0 else "#ff6b6b"
     change_sign = "+" if change >= 0 else ""
     ax.text(
-        0.5, 0.44, f"{change_sign}${change:,.2f} ({change_sign}{change_pct:.2f}%)",
-        transform=ax.transAxes, fontsize=14, fontweight="bold",
-        color=change_color, ha="center", va="top",
+        0.5,
+        0.44,
+        f"{change_sign}${change:,.2f} ({change_sign}{change_pct:.2f}%)",
+        transform=ax.transAxes,
+        fontsize=14,
+        fontweight="bold",
+        color=change_color,
+        ha="center",
+        va="top",
     )
 
     # Stats line
     stats_text = f"Positions: {pos_count} | Starting: ${starting:,.0f}"
     ax.text(
-        0.5, 0.22, stats_text, transform=ax.transAxes,
-        fontsize=10, color=CHART_MUTED, ha="center", va="top",
+        0.5,
+        0.22,
+        stats_text,
+        transform=ax.transAxes,
+        fontsize=10,
+        color=CHART_MUTED,
+        ha="center",
+        va="top",
     )
 
     # Timestamp
     et = ZoneInfo("America/New_York")
     now = datetime.now(et)
     ax.text(
-        0.5, 0.06, now.strftime("Updated %Y-%m-%d %H:%M ET"),
-        transform=ax.transAxes, fontsize=8, color=CHART_LINE,
-        ha="center", va="top",
+        0.5,
+        0.06,
+        now.strftime("Updated %Y-%m-%d %H:%M ET"),
+        transform=ax.transAxes,
+        fontsize=8,
+        color=CHART_LINE,
+        ha="center",
+        va="top",
     )
 
     # Border
     border = FancyBboxPatch(
-        (0.02, 0.02), 0.96, 0.96, transform=ax.transAxes,
-        boxstyle="round,pad=0.02", linewidth=1.5,
-        edgecolor=CHART_LINE, facecolor="none",
+        (0.02, 0.02),
+        0.96,
+        0.96,
+        transform=ax.transAxes,
+        boxstyle="round,pad=0.02",
+        linewidth=1.5,
+        edgecolor=CHART_LINE,
+        facecolor="none",
     )
     ax.add_patch(border)
 
@@ -220,6 +252,7 @@ def main():
             # Also save as latest
             latest_paper = SNAPSHOTS_DIR / "paper_latest.png"
             import shutil
+
             shutil.copy2(paper_path, latest_paper)
             logger.info(f"Paper snapshot: ${paper['equity']:,.2f}")
 
@@ -232,6 +265,7 @@ def main():
             manifest["accounts"].append(brokerage)
             latest_brokerage = SNAPSHOTS_DIR / "brokerage_latest.png"
             import shutil
+
             shutil.copy2(brokerage_path, latest_brokerage)
             logger.info(f"Brokerage snapshot: ${brokerage['equity']:,.2f}")
 
@@ -241,9 +275,9 @@ def main():
     logger.info(f"Manifest written: {manifest_path}")
 
     # Summary
-    print(f"\n{'='*50}")
+    print(f"\n{'=' * 50}")
     print("ALPACA PORTFOLIO SNAPSHOT")
-    print(f"{'='*50}")
+    print(f"{'=' * 50}")
     for acct in manifest["accounts"]:
         change = acct["equity"] - acct["starting_capital"]
         print(f"  {acct['account_type'].upper()}: ${acct['equity']:,.2f} ({change:+,.2f})")
