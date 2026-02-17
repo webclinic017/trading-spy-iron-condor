@@ -1,11 +1,11 @@
 """
-Ticker Validator - HARD BLOCK on non-SPY trades.
+Ticker Validator - HARD BLOCK on non-whitelisted trades.
 
 Created: January 20, 2026
-Root cause: SOFI position opened today violating SPY ONLY rule, causing -$150 loss.
+Root cause: SOFI position opened violating whitelist rule, causing -$150 loss.
 
 Per CLAUDE.md:
-- Primary strategy: IRON CONDORS on SPY ONLY
+- Primary strategy: IRON CONDORS on liquid ETFs (SPY/SPX/XSP/QQQ/IWM)
 - NO individual stocks. The $100K success was SPY. The $5K failure was SOFI.
 
 CANONICAL SOURCE: src/core/trading_constants.py

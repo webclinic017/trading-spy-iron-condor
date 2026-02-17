@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+from datetime import UTC, datetime
 from pathlib import Path
 
 METRIC_RE = re.compile(r"^- ([^:]+): (.+) \[([A-Z]+)\] \((.*)\)$")
@@ -53,6 +54,41 @@ def status_chip(status: str) -> str:
     return '<span class="chip unknown">UNKNOWN</span>'
 
 
+def _normalize_metric_rows(
+    metrics: list[tuple[str, str, str, str]],
+    latency_ms: str,
+    cost_usd: str,
+    win_rate: float,
+    sample_size: int,
+) -> str:
+    rows: list[tuple[str, str, str]] = []
+    present: set[str] = set()
+
+    for name, value, status, _note in metrics[:20]:
+        key = name.lower().strip()
+        if key.startswith("gateway latency"):
+            value = f"{latency_ms} ms"
+        elif key.startswith("gateway cost"):
+            value = f"${cost_usd}"
+        elif key.startswith("win rate"):
+            value = f"{win_rate:.2f}% (sample_size={sample_size})"
+        rows.append((name, value, status))
+        present.add(key)
+
+    if "gateway latency" not in present:
+        rows.append(("Gateway Latency", f"{latency_ms} ms", "PASS"))
+    if "gateway cost (smoke call)" not in present:
+        rows.append(("Gateway Cost (smoke call)", f"${cost_usd}", "PASS"))
+    if "win rate" not in present:
+        rows.append(("Win Rate", f"{win_rate:.2f}% (sample_size={sample_size})", "WARN"))
+
+    rendered = "\n".join(
+        f"<tr><td>{name}</td><td>{value}</td><td>{status_chip(status)}</td></tr>"
+        for name, value, status in rows[:16]
+    )
+    return rendered or '<tr><td colspan="3">No metrics available yet.</td></tr>'
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate public ops status page.")
     parser.add_argument("--repo-root", default=".", help="Repository root")
@@ -65,6 +101,7 @@ def main() -> int:
 
     scorecard = root / "artifacts/devloop/profit_readiness_scorecard.md"
     tars_smoke = parse_kv(root / "artifacts/tars/smoke_metrics.txt")
+    resilience = parse_kv(root / "artifacts/tars/resilience_report.txt")
     loop_status = parse_kv(root / "artifacts/devloop/status.txt")
     runtime = read_text(root / "artifacts/devloop/task_runtime_report.md")
     metrics = parse_metrics(scorecard)
@@ -74,18 +111,23 @@ def main() -> int:
     equity = float(paper.get("current_equity", paper.get("equity", 0.0)) or 0.0)
     total_pl = float(paper.get("total_pl", 0.0) or 0.0)
     total_pl_pct = float(paper.get("total_pl_pct", 0.0) or 0.0)
+    paper_win_rate = float(paper.get("win_rate", 0.0) or 0.0)
+    paper_samples = int(paper.get("win_rate_sample_size", 0) or 0)
 
     cycle = loop_status.get("cycle", "n/a")
     profile = loop_status.get("profile", "n/a")
     latency = tars_smoke.get("latency_ms", "n/a")
-    cost = tars_smoke.get("estimated_total_cost_usd", "n/a")
+    cost = tars_smoke.get("estimated_total_cost_usd", "n/a").lstrip("$")
+    metric_rows = _normalize_metric_rows(metrics, latency, cost, paper_win_rate, paper_samples)
+    generated_at = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    metric_rows = "\n".join(
-        f"<tr><td>{name}</td><td>{value}</td><td>{status_chip(status)}</td></tr>"
-        for name, value, status, _note in metrics[:14]
+    has_error = resilience.get("has_error_field", "false").lower() == "true"
+    err_type = resilience.get("error_type", "none")
+    err_msg = resilience.get("error_message", "none")
+    resilience_status = (
+        '<span class="chip warn">ERROR</span>' if has_error else '<span class="chip pass">PASS</span>'
     )
-    if not metric_rows:
-        metric_rows = '<tr><td colspan="3">No metrics available yet.</td></tr>'
+    repo_blob = "https://github.com/IgorGanapolsky/trading/blob/main"
 
     runtime_block = (
         "<pre class='runtime'>"
@@ -100,7 +142,8 @@ def main() -> int:
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Trading Ops Status</title>
+  <title>Ops Diagnostic (Internal)</title>
+  <meta name="robots" content="noindex, nofollow">
   <style>
     :root {{
       --bg: #081625;
@@ -141,8 +184,8 @@ def main() -> int:
 <body>
   <div class="wrap">
     <section class="hero">
-      <h1 class="title">Trading Ops + Evidence Status</h1>
-      <p class="sub">Public progress center: current stats, proof pipeline, and links judges can verify quickly.</p>
+      <h1 class="title">Ops Diagnostic (Internal)</h1>
+      <p class="sub">Internal diagnostic page generated from source artifacts. For judge flow, use <a style="color:#d2eaff" href="/trading/lessons/judge-demo.html">judge-demo.html</a>.</p>
       <div class="nav">
         <a href="/trading/lessons/judge-demo.html">Judge Demo</a>
         <a href="/trading/lessons/">Lessons Index</a>
@@ -155,6 +198,8 @@ def main() -> int:
       <article class="card span3"><div class="k">Gateway Latency</div><div class="v">{latency} ms</div></article>
       <article class="card span3"><div class="k">Gateway Cost</div><div class="v">${cost}</div></article>
       <article class="card span3"><div class="k">Paper P/L</div><div class="v">${total_pl:,.2f} ({total_pl_pct:.2f}%)</div></article>
+      <article class="card span6"><div class="k">Resilience Check</div><div class="v">{resilience_status}</div><div class="k">type={err_type}</div><div class="k">message={err_msg}</div></article>
+      <article class="card span6"><div class="k">Win Rate Context</div><div class="v">{paper_win_rate:.2f}%</div><div class="k">sample_size={paper_samples} (must reach 30 for projection quality)</div><div class="k">Generated: {generated_at}</div></article>
 
       <article class="card span8">
         <div class="k">Readiness Metrics</div>
@@ -165,11 +210,11 @@ def main() -> int:
         <div class="v">${equity:,.2f}</div>
         <div class="k" style="margin-top:8px">Evidence Files</div>
         <table class="table">
-          <tr><td><a href="../../artifacts/tars/smoke_metrics.txt">smoke_metrics.txt</a></td></tr>
-          <tr><td><a href="../../artifacts/tars/smoke_response.json">smoke_response.json</a></td></tr>
-          <tr><td><a href="../../artifacts/tars/resilience_report.txt">resilience_report.txt</a></td></tr>
-          <tr><td><a href="../../artifacts/devloop/profit_readiness_scorecard.md">profit_readiness_scorecard.md</a></td></tr>
-          <tr><td><a href="../../docs/_reports/hackathon-system-explainer.md">system explainer</a></td></tr>
+          <tr><td><a href="{repo_blob}/artifacts/tars/smoke_metrics.txt">smoke_metrics.txt</a></td></tr>
+          <tr><td><a href="{repo_blob}/artifacts/tars/smoke_response.json">smoke_response.json</a></td></tr>
+          <tr><td><a href="{repo_blob}/artifacts/tars/resilience_report.txt">resilience_report.txt</a></td></tr>
+          <tr><td><a href="{repo_blob}/artifacts/devloop/profit_readiness_scorecard.md">profit_readiness_scorecard.md</a></td></tr>
+          <tr><td><a href="{repo_blob}/docs/_reports/hackathon-system-explainer.md">system explainer</a></td></tr>
         </table>
       </article>
 

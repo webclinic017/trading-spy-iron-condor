@@ -1405,7 +1405,7 @@ class TradingOrchestrator:
                 logger.warning(f"Gate 0 (%s): Pre-trade check failed, continuing: {e}", ticker)
 
         # === IRON CONDOR STRATEGY GATE ===
-        # Iron condors are non-directional (SPY only per trading rules).
+        # Iron condors are non-directional (liquid ETFs per trading rules).
         # Momentum gates (MACD, volume surge) are for directional BUY strategies
         # and incorrectly reject 95%+ of tickers for IC entry.
         # Guard: only bypass momentum for SPY when theta automation is enabled,

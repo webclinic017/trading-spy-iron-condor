@@ -115,6 +115,13 @@ jobs:
           # Show preview
           head -50 wiki/Progress-Dashboard.md
 
+      - name: Generate Judge and Ops pages
+        run: |
+          echo "🧪 Generating judge and ops evidence pages..."
+          python3 scripts/generate_judge_demo_page.py --repo-root . --out docs/lessons/judge-demo.html
+          python3 scripts/generate_ops_status_page.py --repo-root . --out docs/lessons/ops-status.html
+          echo "✅ Judge/Ops pages generated"
+
       - name: Generate static dashboard snapshot report
         env:
           PYTHONPATH: ${{ github.workspace }}
@@ -186,7 +193,7 @@ jobs:
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
-          git add data/system_state.json data/north_star_weekly_history.json data/trades.json data/market_signals/ai_credit_stress_signal.json artifacts/devloop/box_workspace_manifest.json artifacts/devloop/ai_discoverability_report.md artifacts/devloop/ai_discoverability_report.json wiki/ docs/index.md docs/_reports/*-dashboard-snapshot.md 2>/dev/null || true
+          git add data/system_state.json data/north_star_weekly_history.json data/trades.json data/market_signals/ai_credit_stress_signal.json artifacts/devloop/box_workspace_manifest.json artifacts/devloop/ai_discoverability_report.md artifacts/devloop/ai_discoverability_report.json wiki/ docs/index.md docs/_reports/*-dashboard-snapshot.md docs/lessons/judge-demo.html docs/lessons/ops-status.html 2>/dev/null || true
           if ! git diff --staged --quiet; then
             git commit -m "chore: Sync dashboard data [auto]"
             if [ -n "${{ secrets.GH_PAT }}" ]; then

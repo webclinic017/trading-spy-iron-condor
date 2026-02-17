@@ -2,14 +2,14 @@
 TICKER WHITELIST - CRITICAL SAFETY GATE
 
 Per CLAUDE.md and Trading System Directive v2.0:
-- Permitted Tickers: SPY ONLY (whitelist enforced)
+- Permitted Tickers: Liquid ETFs only (SPY/SPX/XSP/QQQ/IWM)
 - Red Line: Never trade non-whitelisted tickers
 
 This module MUST be imported by ALL trading scripts before execution.
-Any attempt to trade non-SPY tickers will be BLOCKED.
+Any attempt to trade non-whitelisted tickers will be BLOCKED.
 
 Created: Jan 21, 2026
-Reason: SOFI position violated SPY-only rule, blocked trading for 2 days
+Reason: SOFI position violated whitelist rule, blocked trading for 2 days
 
 CANONICAL SOURCE: src/core/trading_constants.py
 All ticker definitions consolidated there per Jan 28, 2026 cleanup.

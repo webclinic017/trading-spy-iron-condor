@@ -691,7 +691,7 @@ class AlpacaTrader:
 
         symbol = symbol.upper().strip()
 
-        # MANDATORY: Ticker whitelist check (SPY ONLY)
+        # MANDATORY: Ticker whitelist check (liquid ETFs only)
         ticker_valid, ticker_error = validate_ticker(symbol)
         if not ticker_valid:
             raise OrderExecutionError(f"STOP-LOSS BLOCKED: {ticker_error}")
@@ -758,7 +758,7 @@ class AlpacaTrader:
 
         symbol = symbol.upper().strip()
 
-        # MANDATORY: Ticker whitelist check (SPY ONLY)
+        # MANDATORY: Ticker whitelist check (liquid ETFs only)
         ticker_valid, ticker_error = validate_ticker(symbol)
         if not ticker_valid:
             raise OrderExecutionError(f"TAKE-PROFIT BLOCKED: {ticker_error}")

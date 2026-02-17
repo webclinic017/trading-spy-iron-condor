@@ -26,18 +26,29 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 # Approved wonderful companies (Rule #1 compliant or capital-appropriate)
-# Per CLAUDE.md Jan 19, 2026: SPY ONLY - best liquidity, tightest spreads
+# Per CLAUDE.md: Liquid ETFs only - best liquidity, tightest spreads
 # ETFs don't require Big Five analysis - they're index funds
 RULE_ONE_UNIVERSE = {
-    # PRIMARY: SPY ONLY for iron condors (Jan 19, 2026 - per CLAUDE.md)
-    # SPY is EXEMPT from Big Five analysis as it's an index fund
+    # PRIMARY: Liquid ETFs for iron condors (per CLAUDE.md)
+    # ETFs are EXEMPT from Big Five analysis as they're index funds
     "SPY": {
         "name": "S&P 500 ETF",
         "moat": "etf",
         "capital_tier": "any",
         "skip_big_five": True,
     },
-    # NOTE: IWM REMOVED Jan 19, 2026 - SPY ONLY per CLAUDE.md
+    "QQQ": {
+        "name": "Nasdaq-100 ETF",
+        "moat": "etf",
+        "capital_tier": "any",
+        "skip_big_five": True,
+    },
+    "IWM": {
+        "name": "Russell 2000 ETF",
+        "moat": "etf",
+        "capital_tier": "any",
+        "skip_big_five": True,
+    },
     # Secondary credit spread targets (low share price, liquid options)
     "F": {"name": "Ford", "moat": "brand", "capital_tier": "small"},
     "SOFI": {"name": "SoFi Technologies", "moat": "switching", "capital_tier": "small"},
@@ -457,19 +468,19 @@ class RuleOneValidator:
         Additional checks per CLAUDE.md:
         - Spread width enforcement ($5 default)
         - Max collateral per spread ($500)
-        - Primary targets: SPY ONLY (Jan 2026 update)
+        - Primary targets: Liquid ETFs (SPY/QQQ/IWM)
         """
         result = self.validate(symbol)
 
         # Credit spread specific checks
         underlying = self._extract_underlying(symbol)
-        # LL-236: Updated Jan 19, 2026 - SPY ONLY per CLAUDE.md
+        # LL-236: Updated - liquid ETFs per CLAUDE.md
         # Individual stocks (F, SOFI, T) are BLACKLISTED until strategy proven
-        primary_targets = {"SPY"}
+        primary_targets = {"SPY", "SPX", "XSP", "QQQ", "IWM"}
 
         if underlying not in primary_targets:
             result.warnings.append(
-                f"{underlying} is not a primary credit spread target (SPY only per CLAUDE.md)"
+                f"{underlying} is not a primary credit spread target (liquid ETFs only per CLAUDE.md)"
             )
 
         # Collateral check

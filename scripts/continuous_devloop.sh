@@ -110,9 +110,14 @@ run_cycle() {
       "$PYTHON_BIN" scripts/generate_judge_demo_page.py --repo-root . --out docs/lessons/judge-demo.html >>"$LOG_FILE" 2>&1 || true
     ) &
     local pid_demo=$!
+    (
+      "$PYTHON_BIN" scripts/generate_ops_status_page.py --repo-root . --out docs/lessons/ops-status.html >>"$LOG_FILE" 2>&1 || true
+    ) &
+    local pid_ops=$!
   else
     log "cycle=$cycle judge demo render skipped (cadence RENDER_DEMO_EVERY=$RENDER_DEMO_EVERY)"
     local pid_demo=""
+    local pid_ops=""
   fi
 
   (
@@ -124,6 +129,9 @@ run_cycle() {
   wait "$pid_runtime" || true
   if [[ -n "$pid_demo" ]]; then
     wait "$pid_demo" || true
+  fi
+  if [[ -n "$pid_ops" ]]; then
+    wait "$pid_ops" || true
   fi
   wait "$pid_prompt" || true
 

@@ -867,7 +867,7 @@ class OptionsExecutor:
         Validate options strategy against risk limits.
 
         Safety checks:
-        0. Ticker whitelist: SPY only per CLAUDE.md (Jan 15, 2026)
+        0. Ticker whitelist: Liquid ETFs only per CLAUDE.md
         1. Max portfolio risk: 2% per trade
         2. Minimum premium: $0.30 per contract
         3. Position size limits: Max 5 contracts
