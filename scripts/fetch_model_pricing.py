@@ -24,6 +24,11 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
 
+try:
+    import requests
+except ImportError:
+    requests = None  # type: ignore
+
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
@@ -137,7 +142,9 @@ class OpenRouterSource:
             Pricing dict or None on error
         """
         try:
-            import requests
+            if requests is None:
+                logger.warning("requests module not available")
+                return None
 
             # Normalize model name for OpenRouter
             if "/" not in model:
