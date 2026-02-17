@@ -20,6 +20,7 @@ import os
 import re
 import threading
 from dataclasses import dataclass, field
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -659,6 +660,232 @@ def validate_trade_mandatory(
     )
 
 
+_OCC_OPTION_RE = re.compile(r"^([A-Z]{1,6})(\d{6})[PC](\d{8})$")
+
+
+def _parse_occ_expiry(symbol: str) -> date | None:
+    """Parse OCC option symbol expiry into a date (UTC-naive)."""
+    match = _OCC_OPTION_RE.match((symbol or "").upper().strip())
+    if not match:
+        return None
+    yymmdd = match.group(2)
+    try:
+        year = 2000 + int(yymmdd[0:2])
+        month = int(yymmdd[2:4])
+        day = int(yymmdd[4:6])
+        return date(year, month, day)
+    except Exception:
+        return None
+
+
+def _looks_like_option_symbol(symbol: str) -> bool:
+    return bool(_parse_occ_expiry(symbol))
+
+
+def _side_is_buy(side: Any) -> bool:
+    text = str(side).upper()
+    return text.endswith("BUY") or text == "BUY"
+
+
+def _side_is_sell(side: Any) -> bool:
+    text = str(side).upper()
+    return text.endswith("SELL") or text == "SELL"
+
+
+def _get_account_equity_from_client(client: Any) -> float | None:
+    """Best-effort equity read for checklist enforcement."""
+    if not hasattr(client, "get_account"):
+        return None
+    try:
+        acct = client.get_account()
+        # alpaca-py account uses strings; tolerate either.
+        for attr in ("equity", "portfolio_value", "cash"):
+            val = getattr(acct, attr, None)
+            if val is None:
+                continue
+            try:
+                return float(val)
+            except Exception:
+                continue
+    except Exception:
+        return None
+    return None
+
+
+def _get_positions_qty_map(client: Any) -> dict[str, float] | None:
+    """Return symbol->qty mapping for close/open inference."""
+    getter = getattr(client, "get_all_positions", None) or getattr(client, "get_positions", None)
+    if getter is None:
+        return None
+    try:
+        positions = getter()
+    except Exception:
+        return None
+    qty_map: dict[str, float] = {}
+    try:
+        for pos in positions or []:
+            sym = getattr(pos, "symbol", None) or (pos.get("symbol") if isinstance(pos, dict) else None)
+            raw_qty = getattr(pos, "qty", None) or getattr(pos, "quantity", None)
+            if raw_qty is None and isinstance(pos, dict):
+                raw_qty = pos.get("qty") or pos.get("quantity")
+            if not sym:
+                continue
+            try:
+                qty_map[str(sym)] = float(raw_qty or 0.0)
+            except Exception:
+                qty_map[str(sym)] = 0.0
+    except Exception:
+        return None
+    return qty_map
+
+
+def _infer_is_closing_order(client: Any, order_request: Any) -> bool | None:
+    """Infer whether an order reduces existing positions (close/reduce) vs opens/increases.
+
+    Returns:
+        True  -> confidently closing/reducing
+        False -> confidently opening/increasing
+        None  -> cannot infer
+    """
+    qty_map = _get_positions_qty_map(client)
+    if not qty_map:
+        return None
+
+    order_qty = getattr(order_request, "qty", None)
+    try:
+        order_qty_val = int(float(order_qty)) if order_qty is not None else 1
+    except Exception:
+        order_qty_val = 1
+
+    legs = getattr(order_request, "legs", None)
+    if legs:
+        # If any leg has no existing position, this is opening/increasing.
+        reductions: list[bool] = []
+        for leg in legs:
+            leg_symbol = getattr(leg, "symbol", "") or ""
+            leg_side = getattr(leg, "side", None)
+            ratio_qty = getattr(leg, "ratio_qty", None)
+            try:
+                leg_qty = int(float(ratio_qty or 1)) * order_qty_val
+            except Exception:
+                leg_qty = 1 * order_qty_val
+
+            existing = float(qty_map.get(leg_symbol, 0.0))
+            if existing == 0.0:
+                return False
+
+            if _side_is_buy(leg_side):
+                new_qty = existing + leg_qty
+            elif _side_is_sell(leg_side):
+                new_qty = existing - leg_qty
+            else:
+                return None
+
+            reductions.append(abs(new_qty) < abs(existing))
+
+        if reductions and all(reductions):
+            return True
+        if reductions and any(not r for r in reductions):
+            return False
+        return None
+
+    symbol = getattr(order_request, "symbol", None)
+    side = getattr(order_request, "side", None)
+    if not symbol or side is None:
+        return None
+
+    existing = float(qty_map.get(str(symbol), 0.0))
+    if existing == 0.0:
+        return False
+
+    try:
+        qty_val = int(float(getattr(order_request, "qty", 1) or 1))
+    except Exception:
+        qty_val = 1
+
+    if _side_is_buy(side):
+        new_qty = existing + qty_val
+    elif _side_is_sell(side):
+        new_qty = existing - qty_val
+    else:
+        return None
+
+    return abs(new_qty) < abs(existing)
+
+
+def _estimate_opening_max_loss(order_request: Any) -> tuple[float | None, int | None, str | None]:
+    """Estimate max loss + DTE for opening options orders (best-effort)."""
+    legs = getattr(order_request, "legs", None)
+    symbol = getattr(order_request, "symbol", None)
+
+    option_symbols: list[str] = []
+    if legs:
+        for leg in legs:
+            sym = getattr(leg, "symbol", None)
+            if sym:
+                option_symbols.append(str(sym))
+    elif symbol and _looks_like_option_symbol(str(symbol)):
+        option_symbols.append(str(symbol))
+
+    if not option_symbols:
+        return None, None, None
+
+    expiries = [d for d in (_parse_occ_expiry(s) for s in option_symbols) if d is not None]
+    if expiries:
+        expiry = min(expiries)
+        dte = max(0, (expiry - date.today()).days)
+    else:
+        dte = None
+
+    # Compute a conservative max loss from wing width (ignore credit).
+    # For an iron condor: max loss ~= max(put_width, call_width) * 100 * contracts.
+    width = None
+    underlying = None
+    if legs:
+        puts: dict[str, list[float]] = {"BUY": [], "SELL": []}
+        calls: dict[str, list[float]] = {"BUY": [], "SELL": []}
+        for leg in legs:
+            leg_symbol = str(getattr(leg, "symbol", "") or "")
+            if not leg_symbol:
+                continue
+            underlying = _extract_underlying(leg_symbol)
+            match = _OCC_OPTION_RE.match(leg_symbol.upper())
+            if not match:
+                continue
+            opt_type = leg_symbol.upper()[len(match.group(1)) + 6]  # P/C
+            strike = int(match.group(3)) / 1000.0
+            leg_side = getattr(leg, "side", None)
+            side_key = "BUY" if _side_is_buy(leg_side) else "SELL" if _side_is_sell(leg_side) else None
+            if side_key is None:
+                continue
+            if opt_type == "P":
+                puts[side_key].append(strike)
+            elif opt_type == "C":
+                calls[side_key].append(strike)
+
+        put_width = None
+        call_width = None
+        if puts["BUY"] and puts["SELL"]:
+            put_width = abs(max(puts["SELL"]) - min(puts["BUY"]))
+        if calls["BUY"] and calls["SELL"]:
+            call_width = abs(min(calls["SELL"]) - max(calls["BUY"]))
+        widths = [w for w in (put_width, call_width) if isinstance(w, (int, float)) and w and w > 0]
+        if widths:
+            width = max(widths)
+
+    if width is None:
+        # Fallback: defined-risk spread default.
+        width = 5.0
+
+    contracts = getattr(order_request, "qty", None)
+    try:
+        contracts_val = int(float(contracts)) if contracts is not None else 1
+    except Exception:
+        contracts_val = 1
+    max_loss = float(width) * 100.0 * float(max(1, contracts_val))
+    return max_loss, dte, underlying
+
+
 def safe_submit_order(client, order_request):
     """Wrapper that enforces validate_ticker() before ANY order submission.
 
@@ -693,6 +920,53 @@ def safe_submit_order(client, order_request):
         if not ticker_valid:
             logger.warning(f"ORDER BLOCKED: {ticker_error}")
             raise ValueError(f"ORDER BLOCKED: {ticker_error}")
+
+    # Enforce mandatory pre-trade checklist for OPENING options orders only.
+    # Do NOT block closes/reductions (risk management must always be able to exit).
+    try:
+        is_closing = _infer_is_closing_order(client, order_request)
+        if is_closing is False:
+            # Only apply to options-like orders.
+            option_symbols: list[str] = []
+            if legs:
+                option_symbols = [str(getattr(leg, "symbol", "") or "") for leg in legs]
+            elif symbol:
+                option_symbols = [str(symbol)]
+            option_symbols = [s for s in option_symbols if _looks_like_option_symbol(s)]
+
+            if option_symbols:
+                from src.risk.pre_trade_checklist import PreTradeChecklist
+
+                equity = _get_account_equity_from_client(client) or 0.0
+                max_loss, dte, _underlying = _estimate_opening_max_loss(order_request)
+
+                # Infer "spread" (defined risk) for options orders:
+                # opening must include both BUY and SELL legs (e.g., spreads/condors).
+                is_spread = False
+                if legs:
+                    has_buy = any(_side_is_buy(getattr(leg, "side", None)) for leg in legs)
+                    has_sell = any(_side_is_sell(getattr(leg, "side", None)) for leg in legs)
+                    is_spread = bool(has_buy and has_sell)
+
+                stop_loss_defined = is_spread  # defined-risk spreads have built-in max loss
+                checklist = PreTradeChecklist(account_equity=float(equity))
+                passed, failures = checklist.validate(
+                    symbol=option_symbols[0],
+                    max_loss=float(max_loss or 0.0),
+                    dte=int(dte or 0),
+                    is_spread=is_spread,
+                    stop_loss_defined=stop_loss_defined,
+                )
+                if not passed:
+                    msg = "PRE-TRADE CHECKLIST FAILED: " + "; ".join(failures)
+                    logger.warning(msg)
+                    raise ValueError(msg)
+    except ValueError:
+        raise
+    except Exception as exc:
+        # Never block order submission due to enforcement instrumentation failure.
+        # Ticker whitelist still applies above.
+        logger.debug("Pre-trade checklist enforcement skipped: %s", exc)
 
     return client.submit_order(order_request)
 
