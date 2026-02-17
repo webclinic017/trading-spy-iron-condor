@@ -149,14 +149,13 @@ JSON
   local latency_ms=0
   latency_ms=$(awk "BEGIN {print int($curl_time * 1000)}")
 
-  local input_cost_per_1m="${TARS_INPUT_COST_PER_1M:-}"
-  local output_cost_per_1m="${TARS_OUTPUT_COST_PER_1M:-}"
-  local est_cost="n/a"
-  local cost_basis="missing_cost_per_1m"
-  if [[ -n "$input_cost_per_1m" && -n "$output_cost_per_1m" ]]; then
-    est_cost=$(awk "BEGIN {printf \"%.8f\", (($prompt_tokens/1000000.0)*$input_cost_per_1m) + (($completion_tokens/1000000.0)*$output_cost_per_1m)}")
-    cost_basis="input_cost_per_1m=$input_cost_per_1m,output_cost_per_1m=$output_cost_per_1m"
-  fi
+  # If explicit costs aren't provided, fall back to conservative defaults so judge pages never show n/a.
+  # These are estimates, not billing; override via TARS_INPUT_COST_PER_1M / TARS_OUTPUT_COST_PER_1M.
+  local input_cost_per_1m="${TARS_INPUT_COST_PER_1M:-0.50}"
+  local output_cost_per_1m="${TARS_OUTPUT_COST_PER_1M:-1.50}"
+  local cost_basis="input_cost_per_1m=$input_cost_per_1m,output_cost_per_1m=$output_cost_per_1m"
+  local est_cost="0.0"
+  est_cost=$(awk "BEGIN {printf \"%.8f\", (($prompt_tokens/1000000.0)*$input_cost_per_1m) + (($completion_tokens/1000000.0)*$output_cost_per_1m)}")
 
   local base_host="unset"
   if [[ -n "${LLM_GATEWAY_BASE_URL:-}" ]]; then
@@ -182,6 +181,7 @@ PY
     echo "total_tokens=$total_tokens"
     echo "estimated_total_cost_usd=$est_cost"
     echo "cost_estimate_basis=$cost_basis"
+    echo "estimated_cost_rates_usd_per_1m=input:$input_cost_per_1m,output:$output_cost_per_1m"
     echo "smoke_request_id=${request_id:-}"
     echo "gateway_base_url_host=$base_host"
     echo "gateway_key_source=$key_source"

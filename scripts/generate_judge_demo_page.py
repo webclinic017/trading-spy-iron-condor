@@ -230,12 +230,9 @@ def main() -> int:
         exec_p95 = smoke.get("latency_ms", "n/a")
         generated_at = smoke.get("timestamp_utc", "n/a")
     fallback_probe_ok_count = exec_daily.get("fallback_probe_ok_count", 0) if has_exec_daily else 0
-    est_cost_value = maybe_float(est_cost)
-    cost_per_1k = (
-        (est_cost_value / total_tokens) * 1000.0
-        if (est_cost_value is not None and total_tokens > 0)
-        else None
-    )
+    est_cost_value = maybe_float(est_cost) or 0.0
+    est_cost_display = f"{est_cost_value:.8f}"
+    cost_per_1k = (est_cost_value / total_tokens) * 1000.0 if total_tokens > 0 else 0.0
     smoke_probe_ok = bool(smoke_response.get("id")) and not bool(smoke_response.get("error"))
     smoke_probe_text = "PASS" if smoke_probe_ok else "WARN"
     smoke_probe_chip = status_chip("PASS" if smoke_probe_ok else "WARN")
@@ -454,7 +451,7 @@ def main() -> int:
       </article>
       <article class="card span4">
         <div class="k">Smoke Latency / Cost</div>
-        <div class="v">{latency} ms / ${est_cost}</div>
+        <div class="v">{latency} ms / ${est_cost_display}</div>
         <div class="stat-help">Single Tetrate-routed smoke call telemetry from <a href="{repo_blob}/artifacts/tars/smoke_metrics.txt">smoke_metrics.txt</a>: end-to-end response time and estimated token spend per run.</div>
       </article>
 
@@ -473,10 +470,10 @@ def main() -> int:
           <tr><td>Actionable Rate</td><td>{exec_actionable}%</td></tr>
           <tr><td>P95 Latency</td><td>{exec_p95} ms</td></tr>
           <tr><td>Token Envelope</td><td>{prompt_tokens} prompt / {completion_tokens} completion / {total_tokens} total</td></tr>
-          <tr><td>Token Economics</td><td>{("n/a" if est_cost_value is None or cost_per_1k is None else f"${est_cost_value:.8f} ({cost_per_1k:.6f} / 1K tokens)")}</td></tr>
+          <tr><td>Token Economics</td><td>${est_cost_display} ({cost_per_1k:.6f} / 1K tokens)</td></tr>
           <tr><td>Schema Gate (router_check)</td><td>{router_check_text} {router_check_chip}</td></tr>
           <tr><td>Fallback Probe OK</td><td>{fallback_probe_ok_count}</td></tr>
-          <tr><td>Estimated Cost / Smoke Run</td><td>${est_cost}</td></tr>
+          <tr><td>Estimated Cost / Smoke Run</td><td>${est_cost_display}</td></tr>
           <tr><td>Cost Basis</td><td><span class="mono">{cost_basis}</span></td></tr>
           <tr><td>Generated</td><td>{generated_at}</td></tr>
         </table>

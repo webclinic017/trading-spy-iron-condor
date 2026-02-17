@@ -1685,14 +1685,21 @@ Tags: ${lesson.tags.join(", ")}`;
         const todaysReport =
           reports.find((r) => r && typeof r === "object" && r.date === todayKey) ||
           (reports.length ? reports[reports.length - 1] : null);
+        const paperStructures =
+          toFiniteNumber(state?.trades?.structures_today) ??
+          (todaysReport && typeof todaysReport.structures === "number"
+            ? todaysReport.structures
+            : null);
         const paperFills =
-          todaysReport && typeof todaysReport.fills === "number"
+          toFiniteNumber(state?.trades?.fills_today) ??
+          (todaysReport && typeof todaysReport.fills === "number"
             ? todaysReport.fills
-            : null;
+            : null);
         const paperOrders =
-          todaysReport && typeof todaysReport.orders === "number"
+          toFiniteNumber(state?.trades?.orders_today) ??
+          (todaysReport && typeof todaysReport.orders === "number"
             ? todaysReport.orders
-            : null;
+            : null);
         const paperDailyPnlFromReport =
           todaysReport && typeof todaysReport.daily_pnl === "number"
             ? todaysReport.daily_pnl
@@ -1767,10 +1774,12 @@ Tags: ${lesson.tags.join(", ")}`;
               <div class="account-metric">${formatCurrency(paperEquity)}</div>
               <div class="account-submetric">Today: ${formatSignedCurrency(resolvedPaperTodayPL)}</div>
               ${
-                paperFills != null || paperOrders != null
-                  ? `<div class="account-submetric">Trades today (paper): ${escapeHtml(
-                      String(paperFills ?? 0),
-                    )} fills${
+                paperStructures != null || paperFills != null || paperOrders != null
+                  ? `<div class="account-submetric">Today activity (paper): ${
+                      paperStructures != null
+                        ? `${escapeHtml(String(paperStructures))} structure(s)`
+                        : "n/a structures"
+                    }, ${escapeHtml(String(paperFills ?? 0))} fill(s)${
                       paperOrders != null
                         ? ` (${escapeHtml(String(paperOrders))} orders)`
                         : ""
