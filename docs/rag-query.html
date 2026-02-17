@@ -10,7 +10,7 @@ layout: null
     <title>RAG Knowledge Base Query - Trading System</title>
     <meta
       name="description"
-      content="Search and explore the RAG knowledge base containing 300+ lessons learned from AI trading system development"
+      content="Search and explore the RAG knowledge base of lessons learned from AI trading system development"
     />
     <style>
       :root {
@@ -638,8 +638,8 @@ layout: null
     <div class="container">
       <header>
         <h1>RAG Knowledge Base</h1>
-        <p class="subtitle">
-          Search 300+ lessons from building an autonomous AI trading system
+        <p class="subtitle" id="subtitleText">
+          Search lessons from building an autonomous AI trading system
         </p>
         <div class="ai-disclosure">
           AI Disclosure: This interface uses AI to search and summarize internal
@@ -648,16 +648,16 @@ layout: null
         </div>
         <div class="stats-bar">
           <div class="stat">
-            <div class="stat-value" id="totalLessons">177</div>
+            <div class="stat-value" id="totalLessons">--</div>
             <div class="stat-label">Lessons Learned</div>
           </div>
           <div class="stat">
-            <div class="stat-value">90</div>
+            <div class="stat-value" id="daysBuilding">--</div>
             <div class="stat-label">Days Building</div>
           </div>
           <div class="stat">
-            <div class="stat-value">$100K</div>
-            <div class="stat-label">Paper Account</div>
+            <div class="stat-value" id="paperAccountStat">--</div>
+            <div class="stat-label">Paper Equity</div>
           </div>
         </div>
 	      </header>
@@ -865,10 +865,7 @@ layout: null
       let lessons = [];
       let lessonsLoaded = false;
       let currentResults = [];
-      const LESSONS_URL = new URL(
-        "./data/rag/lessons_query.json",
-        window.location.href,
-      ).toString();
+      const LESSONS_URL = "{{ '/data/rag/lessons_query.json' | relative_url }}";
       const LESSONS_FALLBACK_URL =
         "https://raw.githubusercontent.com/IgorGanapolsky/trading/main/data/rag/lessons_query.json";
       const WORKER_URL = "https://trading-rag-chat.iganapolsky.workers.dev";
@@ -912,6 +909,39 @@ layout: null
         window.RAG_WEBHOOK_URL || storedUrl || "",
       );
 
+      function parseDateValue(raw) {
+        if (!raw) return null;
+        const parsed = new Date(raw);
+        if (!Number.isNaN(parsed.getTime())) return parsed;
+        return null;
+      }
+
+      function updateLessonsStats() {
+        const totalEl = document.getElementById("totalLessons");
+        const subtitleEl = document.getElementById("subtitleText");
+        const daysEl = document.getElementById("daysBuilding");
+        const total = lessons.length;
+
+        if (totalEl) totalEl.textContent = total.toLocaleString();
+        if (subtitleEl) {
+          subtitleEl.textContent = `Search ${total.toLocaleString()} lessons from building an autonomous AI trading system`;
+        }
+
+        if (!daysEl) return;
+        const lessonDates = lessons
+          .map((lesson) => parseDateValue(lesson.date))
+          .filter(Boolean)
+          .map((dt) => dt.getTime());
+        if (lessonDates.length === 0) {
+          daysEl.textContent = "--";
+          return;
+        }
+
+        const earliest = Math.min(...lessonDates);
+        const days = Math.max(1, Math.ceil((Date.now() - earliest) / 86400000));
+        daysEl.textContent = days.toLocaleString();
+      }
+
       // Initialize
       document.addEventListener("DOMContentLoaded", () => {
         loadLessons();
@@ -928,7 +958,7 @@ layout: null
             if (Array.isArray(data)) {
               lessons = data.map((lesson) => normalizeLesson(lesson));
               lessonsLoaded = true;
-              document.getElementById("totalLessons").textContent = lessons.length;
+              updateLessonsStats();
               renderRecentLessons();
               return;
             }
@@ -1208,11 +1238,23 @@ Tags: ${lesson.tags.join(", ")}`;
           const port = data.portfolio || {};
           const paper = data.paper_account || {};
           const positions = data.positions || [];
+          const account = data.account || {};
+          const paperTrading = data.paper_trading || {};
+          const equity =
+            Number(port.equity) ||
+            Number(paper.current_equity) ||
+            Number(account.current_equity) ||
+            0;
 
           // Equity
           document.getElementById("portEquity").textContent =
             "$" +
-            (port.equity || 0).toLocaleString(undefined, {
+            equity.toLocaleString(undefined, {
+              maximumFractionDigits: 0,
+            });
+          document.getElementById("paperAccountStat").textContent =
+            "$" +
+            equity.toLocaleString(undefined, {
               maximumFractionDigits: 0,
             });
 
@@ -1225,8 +1267,11 @@ Tags: ${lesson.tags.join(", ")}`;
             "port-stat-value " + (dailyPL >= 0 ? "positive" : "negative");
 
           // Positions count
-          document.getElementById("portPositions").textContent =
-            positions.length;
+          const positionCount =
+            Array.isArray(positions) && positions.length > 0
+              ? positions.length
+              : Number(paper.positions_count) || Number(account.positions_count) || 0;
+          document.getElementById("portPositions").textContent = positionCount;
 
           // Nearest DTE
           const now = new Date();
@@ -1239,9 +1284,34 @@ Tags: ${lesson.tags.join(", ")}`;
             if (dte < minDte) minDte = dte;
           }
           const dteEl = document.getElementById("portDTE");
-          dteEl.textContent = minDte === Infinity ? "--" : minDte + "d";
+          const fallbackDte = Number(paper.nearest_dte);
+          const resolvedDte =
+            minDte === Infinity && Number.isFinite(fallbackDte)
+              ? fallbackDte
+              : minDte;
+          dteEl.textContent = resolvedDte === Infinity ? "--" : resolvedDte + "d";
           if (minDte <= 7 && minDte !== Infinity) {
             dteEl.className = "port-stat-value negative";
+          }
+
+          // Days building - prefer paper trading current_day from system state.
+          const daysBuildingEl = document.getElementById("daysBuilding");
+          const currentDay = Number(paperTrading.current_day);
+          if (daysBuildingEl && Number.isFinite(currentDay) && currentDay > 0) {
+            daysBuildingEl.textContent = currentDay.toLocaleString();
+          } else if (
+            daysBuildingEl &&
+            typeof paperTrading.start_date === "string" &&
+            paperTrading.start_date
+          ) {
+            const startDate = parseDateValue(paperTrading.start_date);
+            if (startDate) {
+              const days = Math.max(
+                1,
+                Math.ceil((Date.now() - startDate.getTime()) / 86400000),
+              );
+              daysBuildingEl.textContent = days.toLocaleString();
+            }
           }
 
           // Win rate
