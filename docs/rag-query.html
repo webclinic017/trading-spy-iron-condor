@@ -1479,7 +1479,10 @@ Tags: ${lesson.tags.join(", ")}`;
       async function loadPortfolioStatus() {
         const bar = document.getElementById("portfolioBar");
         try {
-          const data = await fetchSystemState(true);
+          const [data, verificationReports] = await Promise.all([
+            fetchSystemState(true),
+            fetchVerificationReports(true).catch(() => null),
+          ]);
 
           const port = data.portfolio || {};
           const paper = data.paper_account || {};
@@ -1505,7 +1508,35 @@ Tags: ${lesson.tags.join(", ")}`;
             });
 
           // Daily P&L
-          const dailyPL = paper.daily_change || 0;
+          const resolveReportDate = () => {
+            const fallback = new Date().toISOString().slice(0, 10);
+            const meta = data.meta || {};
+            const last = meta.last_updated || data.last_updated || "";
+            if (typeof last === "string" && last.length >= 10) {
+              const candidate = last.slice(0, 10);
+              if (/^\\d{4}-\\d{2}-\\d{2}$/.test(candidate)) return candidate;
+            }
+            return fallback;
+          };
+
+          const todayKey = resolveReportDate();
+          const reports = Array.isArray(verificationReports)
+            ? verificationReports
+            : [];
+          const todaysReport =
+            reports.find((r) => r && typeof r === "object" && r.date === todayKey) ||
+            (reports.length ? reports[reports.length - 1] : null);
+          const dailyPnlFromReport =
+            todaysReport && typeof todaysReport.daily_pnl === "number"
+              ? todaysReport.daily_pnl
+              : null;
+
+          const dailyPL =
+            Math.abs(Number(paper.daily_change) || 0) < 0.01 &&
+            dailyPnlFromReport != null &&
+            Math.abs(dailyPnlFromReport) >= 0.01
+              ? dailyPnlFromReport
+              : Number(paper.daily_change) || 0;
           const plEl = document.getElementById("portDailyPL");
           plEl.textContent =
             (dailyPL >= 0 ? "+$" : "-$") + Math.abs(dailyPL).toLocaleString();
