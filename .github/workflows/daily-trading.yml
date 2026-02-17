@@ -1463,6 +1463,30 @@ jobs:
             echo "state_changed=true" >> $GITHUB_OUTPUT
           fi
 
+      # FIX Jan 15, 2026: Sync trades FROM Alpaca before dashboard generation
+      # ROOT CAUSE: Dashboard showed 0 trades while RAG Webhook showed 9 trades
+      # because trading scripts don't create local trade files.
+      # SOLUTION: Fetch fills from Alpaca API and create trades_{date}.json
+      #
+      # CRITICAL (Feb 17, 2026): This must run BEFORE commit/API sync, otherwise
+      # system_state.json and trades_{date}.json get published with stale today_trades=0.
+      - name: Sync Trades from Alpaca (Pre-Dashboard)
+        if: always()
+        continue-on-error: true
+        env:
+          ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
+          ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
+        run: |
+          echo "🔄 ========================================"
+          echo "🔄 SYNC TRADES FROM ALPACA (Pre-Dashboard)"
+          echo "🔄 ========================================"
+          echo ""
+          echo "This sync fetches fills from Alpaca and creates local trade files"
+          echo ""
+          python3 scripts/sync_trades_from_alpaca.py || {
+            echo "⚠️ Trade sync from Alpaca failed - dashboard may show stale data"
+          }
+
       - name: Daily Verification Report
         # Must run BEFORE commit/API sync so verification_reports.json is published to main.
         if: always()
@@ -1475,7 +1499,7 @@ jobs:
           python3 scripts/daily_verification.py
 
       - name: Commit trading data updates
-        if: steps.check_execution.outputs.skip != 'true' && steps.execute_trading.conclusion == 'success'
+        if: always()
         continue-on-error: true # Non-fatal - trading already succeeded
         run: |
           echo "💾 Committing trading data updates..."
@@ -1538,7 +1562,7 @@ jobs:
         # SELF-HEALING: If git push fails due to conflicts, use GitHub API directly
         # This is an atomic operation that bypasses git conflicts entirely
         # Added Jan 6, 2026 after repeated push failures during concurrent merges
-        if: steps.check_execution.outputs.skip != 'true' && steps.execute_trading.conclusion == 'success'
+        if: always()
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT || github.token }}
@@ -1631,28 +1655,6 @@ jobs:
             git commit -m "chore: Auto-update GitHub Pages with current portfolio data" || true
             git push || echo "⚠️ Push failed - will retry in next run"
           fi
-
-      # FIX Jan 15, 2026: Sync trades FROM Alpaca before dashboard generation
-      # ROOT CAUSE: Dashboard showed 0 trades while RAG Webhook showed 9 trades
-      # because trading scripts don't create local trade files.
-      # SOLUTION: Fetch fills from Alpaca API and create trades_{date}.json
-      - name: Sync Trades from Alpaca (Pre-Dashboard)
-        if: always()
-        continue-on-error: true
-        env:
-          ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
-          ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
-        run: |
-          echo "🔄 ========================================"
-          echo "🔄 SYNC TRADES FROM ALPACA (Pre-Dashboard)"
-          echo "🔄 ========================================"
-          echo ""
-          echo "FIX Jan 15: Dashboard was showing 0 trades while RAG Webhook showed 9"
-          echo "This sync fetches fills from Alpaca and creates local trade files"
-          echo ""
-          python3 scripts/sync_trades_from_alpaca.py || {
-            echo "⚠️ Trade sync from Alpaca failed - dashboard may show stale data"
-          }
 
       - name: Update Progress Dashboard Wiki
         # FIXED Dec 29, 2025: Always update dashboard, even when trading skipped
