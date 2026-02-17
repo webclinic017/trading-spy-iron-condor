@@ -3,8 +3,8 @@
 Manage Iron Condor Positions - Exit Rules per LL-268/LL-277 Research
 
 Exit conditions for iron condors (NOT stocks):
-1. 50% profit target: Close when P/L >= 50% of credit received
-2. 200% stop-loss: Close when loss >= 2x credit received
+1. 75% profit target (positive EV): Close when P/L >= 75% of credit received
+2. 100% stop-loss (positive EV): Close when loss >= 1x credit received
 3. 7 DTE exit: Close at 7 days to expiration to avoid gamma risk
 
 This script should run on a schedule during market hours to monitor

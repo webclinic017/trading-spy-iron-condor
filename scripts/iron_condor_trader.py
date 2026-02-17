@@ -88,13 +88,13 @@ class IronCondorStrategy:
             "min_dte": 21,
             "max_dte": 45,
             "short_delta": 0.15,  # 15 delta = ~85% POP (research-backed)
-            "wing_width": 5,  # $5 wide spreads per updated CLAUDE.md
+            "wing_width": 10,  # $10 wide spreads per CLAUDE.md
             # EV math: 75% profit / 100% stop → EV = 0.85*0.75 - 0.15*1.0 = +0.49
             # (Old 50%/200% was EV-neutral: 0.85*0.50 - 0.15*2.0 ≈ 0.0)
             "take_profit_pct": 0.75,  # Close at 75% profit
             "stop_loss_pct": 1.0,  # Close at 100% loss
             "exit_dte": 7,  # Exit at 7 DTE per LL-268 research (80%+ win rate)
-            "max_positions": 2,  # Per CLAUDE.md: "2 iron condors at a time" (5% max each = 10% total)
+            "max_positions": 5,  # Per CLAUDE.md: "5 iron condors at a time" (5% max each = 25% total)
             "position_size_pct": 0.05,  # 5% of portfolio per position - CLAUDE.md MANDATE
         }
 
@@ -399,7 +399,7 @@ class IronCondorStrategy:
 
                     # Check iron condor count against max_positions config
                     # 1 iron condor = 4 legs (long put, short put, short call, long call)
-                    max_ic = self.config.get("max_positions", 2)
+                    max_ic = self.config.get("max_positions", 5)
                     max_contracts = max_ic * 4
                     current_ic_count = total_contracts // 4
 

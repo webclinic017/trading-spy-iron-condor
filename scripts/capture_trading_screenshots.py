@@ -32,8 +32,7 @@ import shutil
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Mapping
-from typing import Any
+from typing import Any, Mapping
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
@@ -148,6 +147,105 @@ class TradingScreenshotCapture:
             "captured_at_utc": captured_at_utc,
         }
 
+    @staticmethod
+    def _as_float(value: Any) -> float:
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return 0.0
+
+    def _build_paperbanana_svg(
+        self,
+        account_label: str,
+        account: dict[str, Any],
+        state: dict[str, Any],
+        captured_at_utc: str,
+    ) -> str:
+        equity = self._as_float(account.get("current_equity", account.get("equity")))
+        starting = self._as_float(account.get("starting_balance"))
+        last_equity = self._as_float(account.get("last_equity"))
+        daily_change = self._as_float(account.get("daily_change"))
+        total_pl = self._as_float(account.get("total_pl", equity - starting if starting else 0.0))
+        total_pl_pct = self._as_float(account.get("total_pl_pct", 0.0))
+        buying_power = self._as_float(account.get("buying_power"))
+        cash = self._as_float(account.get("cash"))
+        win_rate = self._as_float(account.get("win_rate"))
+        sample_size = int(account.get("win_rate_sample_size", 0) or 0)
+
+        bp_usage = 0.0
+        if buying_power > 0 and equity > 0:
+            bp_usage = max(0.0, min(100.0, (1.0 - (buying_power / max(equity * 2.0, 1.0))) * 100.0))
+
+        daily_bps = 0.0
+        if last_equity > 0:
+            daily_bps = (daily_change / last_equity) * 10_000.0
+
+        north_star = state.get("north_star", {}) if isinstance(state, dict) else {}
+        gate = str(north_star.get("probability_label", "unknown")).upper()
+        positions_count = int(account.get("positions_count", 0) or 0)
+
+        trend_msg = "Range-bound day; premium decay dominated." if abs(daily_change) < 1.0 else (
+            "Positive convexity day; favorable realized drift."
+            if daily_change > 0
+            else "Adverse drift day; downside variance dominated."
+        )
+
+        return f"""<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0B1F34"/>
+      <stop offset="100%" stop-color="#1E3D5B"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <text x="56" y="76" fill="#F5F9FF" font-size="42" font-family="Avenir Next, Segoe UI, Arial">PaperBanana Diagram • {account_label}</text>
+  <text x="56" y="112" fill="#BFD4EA" font-size="20" font-family="Avenir Next, Segoe UI, Arial">Technical account decomposition from Alpaca sync</text>
+
+  <rect x="52" y="150" width="1176" height="238" rx="18" fill="#102A42" stroke="#2C567E"/>
+  <text x="82" y="198" fill="#F5F9FF" font-size="28" font-family="Avenir Next, Segoe UI, Arial">Net Liquidation Value</text>
+  <text x="82" y="242" fill="#8CE5A9" font-size="44" font-family="Avenir Next, Segoe UI, Arial">${equity:,.2f}</text>
+  <text x="82" y="284" fill="#BFD4EA" font-size="22" font-family="Avenir Next, Segoe UI, Arial">MTD P/L: {total_pl:+,.2f} ({total_pl_pct:+.2f}%)</text>
+  <text x="82" y="322" fill="#BFD4EA" font-size="22" font-family="Avenir Next, Segoe UI, Arial">Daily return: {daily_change:+,.2f} ({daily_bps:+.1f} bps)</text>
+  <text x="82" y="360" fill="#BFD4EA" font-size="22" font-family="Avenir Next, Segoe UI, Arial">Buying power utilization: {bp_usage:.1f}% (cash {cash:,.2f})</text>
+
+  <rect x="52" y="418" width="572" height="238" rx="18" fill="#102A42" stroke="#2C567E"/>
+  <text x="82" y="466" fill="#F5F9FF" font-size="28" font-family="Avenir Next, Segoe UI, Arial">Execution State</text>
+  <text x="82" y="510" fill="#BFD4EA" font-size="22" font-family="Avenir Next, Segoe UI, Arial">Open structures/legs proxy: {positions_count}</text>
+  <text x="82" y="548" fill="#BFD4EA" font-size="22" font-family="Avenir Next, Segoe UI, Arial">Win-rate estimate: {win_rate:.1f}% (n={sample_size})</text>
+  <text x="82" y="586" fill="#BFD4EA" font-size="22" font-family="Avenir Next, Segoe UI, Arial">North Star gate regime: {gate}</text>
+
+  <rect x="656" y="418" width="572" height="238" rx="18" fill="#102A42" stroke="#2C567E"/>
+  <text x="686" y="466" fill="#F5F9FF" font-size="28" font-family="Avenir Next, Segoe UI, Arial">Interpretation</text>
+  <text x="686" y="510" fill="#BFD4EA" font-size="22" font-family="Avenir Next, Segoe UI, Arial">• {trend_msg}</text>
+  <text x="686" y="548" fill="#BFD4EA" font-size="22" font-family="Avenir Next, Segoe UI, Arial">• Positioning remains defined-risk; monitor cadence vs targets.</text>
+  <text x="686" y="586" fill="#BFD4EA" font-size="22" font-family="Avenir Next, Segoe UI, Arial">• Snapshot timestamp: {captured_at_utc}</text>
+</svg>
+"""
+
+    def _publish_paperbanana_diagram(
+        self,
+        key: str,
+        account_label: str,
+        account: dict[str, Any],
+        state: dict[str, Any],
+        captured_at_utc: str,
+    ) -> dict[str, str]:
+        timestamp = datetime.strptime(captured_at_utc, "%Y-%m-%dT%H:%M:%SZ").strftime("%Y%m%d_%H%M%S")
+        short = "paper" if key == "alpaca_paper" else "live"
+        versioned_name = f"paperbanana_{short}_{timestamp}.svg"
+        latest_name = f"paperbanana_{short}_latest.svg"
+        versioned_path = self.PAGES_SNAPSHOT_DIR / versioned_name
+        latest_path = self.PAGES_SNAPSHOT_DIR / latest_name
+        svg = self._build_paperbanana_svg(account_label, account, state, captured_at_utc)
+        versioned_path.write_text(svg, encoding="utf-8")
+        latest_path.write_text(svg, encoding="utf-8")
+        return {
+            "diagram_file": latest_name,
+            "diagram_versioned_file": versioned_name,
+            "diagram_url": self._manifest_snapshot_url(latest_name),
+            "diagram_versioned_url": self._manifest_snapshot_url(versioned_name),
+        }
+
     def publish_to_pages(self, screenshots: dict[str, Path | None]) -> Path:
         captured_at_utc = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
         manifest = self._read_manifest(self.MANIFEST_PATH)
@@ -176,6 +274,27 @@ class TradingScreenshotCapture:
                 state = {}
         paper = state.get("paper_account", {}) if isinstance(state, dict) else {}
         live = state.get("live_account", {}) if isinstance(state, dict) else {}
+
+        if "alpaca_paper" in published_entries:
+            published_entries["alpaca_paper"].update(
+                self._publish_paperbanana_diagram(
+                    key="alpaca_paper",
+                    account_label="Paper Account",
+                    account=paper if isinstance(paper, dict) else {},
+                    state=state if isinstance(state, dict) else {},
+                    captured_at_utc=captured_at_utc,
+                )
+            )
+        if "alpaca_live" in published_entries:
+            published_entries["alpaca_live"].update(
+                self._publish_paperbanana_diagram(
+                    key="alpaca_live",
+                    account_label="Brokerage Account",
+                    account=live if isinstance(live, dict) else {},
+                    state=state if isinstance(state, dict) else {},
+                    captured_at_utc=captured_at_utc,
+                )
+            )
         state_summary = {
             "paper_trade_count": int(state.get("trades_loaded", 0) or 0),
             "paper_equity": float(paper.get("current_equity", paper.get("equity", 0.0)) or 0.0),

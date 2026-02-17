@@ -80,6 +80,13 @@ def status_chip(status: str) -> str:
 
 def _snapshot_html(manifest: dict) -> str:
     latest = manifest.get("latest", {}) if isinstance(manifest, dict) else {}
+    if not latest:
+        return """
+      <article class="card span12">
+        <div class="k">Alpaca Snapshot Evidence</div>
+        <p style="margin-top:10px">No published snapshots yet. The autonomous capture workflow will populate paper, brokerage, and progress snapshots after the next sync/trade cycle.</p>
+      </article>
+    """
 
     paper = latest.get("alpaca_paper", {}) if isinstance(latest.get("alpaca_paper"), dict) else {}
     live = latest.get("alpaca_live", {}) if isinstance(latest.get("alpaca_live"), dict) else {}

@@ -9,8 +9,8 @@ Entry Criteria (per CLAUDE.md):
 - SPY only (best liquidity, tightest spreads)
 - 30-45 DTE
 - Short strikes at 15-20 delta
-- $5-wide wings
-- Max 2 positions at a time
+- $10-wide wings
+- Max 5 positions at a time
 - 5% max risk per position
 
 Usage:
@@ -43,12 +43,12 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 # Constants from CLAUDE.md
-MAX_POSITIONS = 2
+MAX_POSITIONS = 5
 POSITION_SIZE_PCT = 0.05  # 5% max risk per position
 TARGET_DELTA = 0.15  # 15-20 delta range
 MIN_DTE = 30
 MAX_DTE = 45
-WING_WIDTH = 5  # $5 wide spreads
+WING_WIDTH = 10  # $10 wide spreads per CLAUDE.md
 
 IC_TRADE_LOG = Path(__file__).parent.parent / "data" / "ic_trade_log.json"
 
@@ -172,7 +172,7 @@ def estimate_credit(strikes: dict) -> dict:
     """Estimate credit and risk for the iron condor."""
     # Conservative estimate: $1.50-2.50 total credit for SPY IC
     # Using $1.85 as middle estimate
-    estimated_credit = 1.85
+    estimated_credit = 2.00
     max_risk = (WING_WIDTH * 100) - (estimated_credit * 100)
 
     return {

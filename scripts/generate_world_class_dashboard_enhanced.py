@@ -44,6 +44,15 @@ def load_alpaca_snapshot_manifest() -> dict:
 
 def build_alpaca_snapshot_markdown(manifest: dict) -> str:
     latest = manifest.get("latest", {}) if isinstance(manifest, dict) else {}
+    if not latest:
+        return """
+---
+
+## 📸 Alpaca Snapshot Evidence (Auto)
+
+Snapshot capture is enabled but no images are published yet. The next automated sync/trade cycle will publish paper, brokerage, and progress snapshots.
+"""
+
     paper = latest.get("alpaca_paper", {}) if isinstance(latest.get("alpaca_paper"), dict) else {}
     live = latest.get("alpaca_live", {}) if isinstance(latest.get("alpaca_live"), dict) else {}
     progress = latest.get("progress", {}) if isinstance(latest.get("progress"), dict) else {}

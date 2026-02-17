@@ -928,6 +928,7 @@ layout: null
             if (Array.isArray(data)) {
               lessons = data.map((lesson) => normalizeLesson(lesson));
               lessonsLoaded = true;
+              document.getElementById("totalLessons").textContent = lessons.length;
               renderRecentLessons();
               return;
             }

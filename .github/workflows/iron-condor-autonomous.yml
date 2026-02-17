@@ -7,6 +7,8 @@ on:
   schedule:
     # Scan at 9:45 AM ET (14:45 UTC) Mon-Fri
     - cron: "45 14 * * 1-5"
+    # Retry scan at 12:30 PM ET (17:30 UTC) Mon-Fri
+    - cron: "30 17 * * 1-5"
   workflow_dispatch:
     inputs:
       action:
@@ -82,11 +84,11 @@ jobs:
           ic_count = len(spy_options) // 4
 
           print(f"Current IC positions: {ic_count}")
-          print(f"Max allowed: 2")
+          print(f"Max allowed: 5")
 
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f'ic_count={ic_count}\n')
-              f.write(f'can_trade={"true" if ic_count < 2 else "false"}\n')
+              f.write(f'can_trade={"true" if ic_count < 5 else "false"}\n')
           PYTHON
 
       - name: Scan for opportunity
