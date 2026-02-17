@@ -41,6 +41,13 @@ def as_float(value: object, default: float = 0.0) -> float:
         return default
 
 
+def maybe_float(value: object) -> float | None:
+    try:
+        return float(value)  # type: ignore[arg-type]
+    except Exception:
+        return None
+
+
 def parse_smoke_response(smoke_response: dict) -> dict[str, object]:
     model = str(smoke_response.get("model", "unknown"))
     service_tier = str(smoke_response.get("service_tier", "unknown"))
@@ -182,6 +189,9 @@ def main() -> int:
     loop_cycle, loop_profile = derive_loop_status(loop_status)
     latency = smoke.get("latency_ms", "n/a")
     est_cost = smoke.get("estimated_total_cost_usd", "n/a")
+    gateway_host = smoke.get("gateway_base_url_host", "unknown")
+    gateway_key_source = smoke.get("gateway_key_source", "unknown")
+    cost_basis = smoke.get("cost_estimate_basis", "unknown")
     smoke_meta = parse_smoke_response(smoke_response)
     smoke_model = str(smoke_meta["model"])
     smoke_service_tier = str(smoke_meta["service_tier"])
@@ -220,8 +230,12 @@ def main() -> int:
         exec_p95 = smoke.get("latency_ms", "n/a")
         generated_at = smoke.get("timestamp_utc", "n/a")
     fallback_probe_ok_count = exec_daily.get("fallback_probe_ok_count", 0) if has_exec_daily else 0
-    est_cost_value = as_float(est_cost, 0.0)
-    cost_per_1k = (est_cost_value / total_tokens) * 1000.0 if total_tokens > 0 else 0.0
+    est_cost_value = maybe_float(est_cost)
+    cost_per_1k = (
+        (est_cost_value / total_tokens) * 1000.0
+        if (est_cost_value is not None and total_tokens > 0)
+        else None
+    )
     smoke_probe_ok = bool(smoke_response.get("id")) and not bool(smoke_response.get("error"))
     smoke_probe_text = "PASS" if smoke_probe_ok else "WARN"
     smoke_probe_chip = status_chip("PASS" if smoke_probe_ok else "WARN")
@@ -448,6 +462,8 @@ def main() -> int:
         <div class="k">Execution Quality Daily</div>
         <table class="table">
           <tr><td>Gateway Router</td><td>Tetrate TARS</td></tr>
+          <tr><td>Gateway Host</td><td><span class="mono">{gateway_host}</span></td></tr>
+          <tr><td>Gateway Key Source</td><td><span class="mono">{gateway_key_source}</span></td></tr>
           <tr><td>Routed Model</td><td>{smoke_model}</td></tr>
           <tr><td>Service Tier</td><td>{smoke_service_tier}</td></tr>
           <tr><td>Request ID</td><td><span class="mono">{smoke_request_id}</span></td></tr>
@@ -457,10 +473,11 @@ def main() -> int:
           <tr><td>Actionable Rate</td><td>{exec_actionable}%</td></tr>
           <tr><td>P95 Latency</td><td>{exec_p95} ms</td></tr>
           <tr><td>Token Envelope</td><td>{prompt_tokens} prompt / {completion_tokens} completion / {total_tokens} total</td></tr>
-          <tr><td>Token Economics</td><td>${est_cost_value:.8f} ({cost_per_1k:.6f} / 1K tokens)</td></tr>
+          <tr><td>Token Economics</td><td>{("n/a" if est_cost_value is None or cost_per_1k is None else f"${est_cost_value:.8f} ({cost_per_1k:.6f} / 1K tokens)")}</td></tr>
           <tr><td>Schema Gate (router_check)</td><td>{router_check_text} {router_check_chip}</td></tr>
           <tr><td>Fallback Probe OK</td><td>{fallback_probe_ok_count}</td></tr>
           <tr><td>Estimated Cost / Smoke Run</td><td>${est_cost}</td></tr>
+          <tr><td>Cost Basis</td><td><span class="mono">{cost_basis}</span></td></tr>
           <tr><td>Generated</td><td>{generated_at}</td></tr>
         </table>
         <p class="note">Interpretation: this card reports the Tetrate-routed inference path health, not trading profitability. Actionable rate reflects whether responses passed the downstream actionability parser.</p>
@@ -560,7 +577,9 @@ def main() -> int:
           <li><a href="{repo_blob}/artifacts/tars/submission_summary.md">submission_summary.md</a></li>
           <li><a href="{repo_blob}/artifacts/tars/judge_demo_checklist.md">judge_demo_checklist.md</a></li>
           <li><a href="{repo_blob}/artifacts/tars/smoke_response.json">smoke_response.json</a></li>
+          <li><a href="{repo_blob}/artifacts/tars/trade_opinion_smoke.json">trade_opinion_smoke.json</a></li>
           <li><a href="{repo_blob}/artifacts/tars/smoke_metrics.txt">smoke_metrics.txt</a></li>
+          <li><a href="{repo_blob}/artifacts/tars/execution_quality_daily.json">execution_quality_daily.json</a></li>
           <li><a href="{repo_blob}/artifacts/tars/env_status.txt">env_status.txt</a></li>
           <li><a href="{repo_blob}/artifacts/tars/resilience_report.txt">resilience_report.txt</a></li>
           <li><a href="{repo_blob}/artifacts/tars/retrieval_report.txt">retrieval_report.txt</a></li>
