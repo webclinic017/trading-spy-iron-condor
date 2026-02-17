@@ -1,7 +1,7 @@
-from scripts.generate_world_class_dashboard_enhanced import build_alpaca_snapshot_markdown
+from scripts.update_docs_index import build_snapshot_block
 
 
-def test_build_alpaca_snapshot_markdown_includes_manifest_values() -> None:
+def test_build_snapshot_block_uses_manifest_diagrams_and_explainers() -> None:
     manifest = {
         "latest": {
             "alpaca_paper": {
@@ -23,14 +23,13 @@ def test_build_alpaca_snapshot_markdown_includes_manifest_values() -> None:
         }
     }
 
-    text = build_alpaca_snapshot_markdown(manifest)
+    block = build_snapshot_block(manifest)
 
-    assert "Alpaca Snapshot Evidence" in text
-    assert "/trading/assets/snapshots/alpaca_paper_latest.png" in text
-    assert "/trading/assets/snapshots/alpaca_live_latest.png" in text
-    assert "/trading/assets/snapshots/progress_latest.png" in text
-    assert "/trading/assets/snapshots/paperbanana_paper_latest.svg" in text
-    assert "/trading/assets/snapshots/paperbanana_live_latest.svg" in text
-    assert "paper summary" in text
-    assert "live summary" in text
-    assert "2026-02-16T19:10:10Z" in text
+    assert "AUTO_SNAPSHOT_START" in block
+    assert "/trading/assets/snapshots/alpaca_paper_latest.png" in block
+    assert "/trading/assets/snapshots/paperbanana_paper_latest.svg" in block
+    assert "paper summary" in block
+    assert "/trading/assets/snapshots/alpaca_live_latest.png" in block
+    assert "/trading/assets/snapshots/paperbanana_live_latest.svg" in block
+    assert "live summary" in block
+    assert "/trading/assets/snapshots/progress_latest.png" in block

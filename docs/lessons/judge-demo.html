@@ -114,10 +114,23 @@
       border-radius: 10px;
       display: block;
     }
+    .pair {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .note {
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.35;
+    }
     @media (max-width: 920px) {
       .span4, .span6, .span8 { grid-column: span 12; }
       .flow { grid-template-columns: 1fr; }
       .arr { transform: rotate(90deg); }
+      .pair { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -204,13 +217,21 @@
 
       <article class="card span6">
         <div class="k">Alpaca Paper Snapshot</div>
-        <a href="/trading/assets/snapshots/alpaca_paper_latest.png"><img class="snap" src="/trading/assets/snapshots/alpaca_paper_latest.png" alt="Alpaca paper account snapshot"></a>
-        <div class="k">Captured: unknown</div>
+        <div class="pair">
+          <a href="/trading/assets/snapshots/alpaca_paper_latest.png"><img class="snap" src="/trading/assets/snapshots/alpaca_paper_latest.png" alt="Alpaca paper account snapshot"></a>
+          <a href="/trading/assets/snapshots/paperbanana_paper_latest.svg"><img class="snap" src="/trading/assets/snapshots/paperbanana_paper_latest.svg" alt="PaperBanana paper account technical diagram"></a>
+        </div>
+        <div class="k">Captured: 2026-02-17T00:38:07Z</div>
+        <p class="note">Paper Account: net liquidation value $101,441.56; daily P/L +0.00 (+0.0 bps) indicating a flat premium-decay session; cumulative P/L +1,441.56 (+1.44%); low capital deployment at 0.8% utilization with cash $101,613.56; open position proxy 4; win-rate estimate 100.0% (n=1); North Star gate LOW.</p>
       </article>
       <article class="card span6">
         <div class="k">Alpaca Brokerage Snapshot</div>
-        <a href="/trading/assets/snapshots/alpaca_live_latest.png"><img class="snap" src="/trading/assets/snapshots/alpaca_live_latest.png" alt="Alpaca brokerage account snapshot"></a>
-        <div class="k">Captured: unknown</div>
+        <div class="pair">
+          <a href="/trading/assets/snapshots/alpaca_live_latest.png"><img class="snap" src="/trading/assets/snapshots/alpaca_live_latest.png" alt="Alpaca brokerage account snapshot"></a>
+          <a href="/trading/assets/snapshots/paperbanana_live_latest.svg"><img class="snap" src="/trading/assets/snapshots/paperbanana_live_latest.svg" alt="PaperBanana brokerage technical diagram"></a>
+        </div>
+        <div class="k">Captured: 2026-02-17T00:38:07Z</div>
+        <p class="note">Brokerage Account: net liquidation value $167.48; daily P/L +0.00 (+0.0 bps) indicating a flat premium-decay session; cumulative P/L +147.48 (+737.40%); low capital deployment at 0.0% utilization with cash $0.00; open position proxy 0; win-rate estimate 0.0% (n=0); North Star gate LOW.</p>
       </article>
       <article class="card span12">
         <div class="k">Progress Dashboard Snapshot</div>

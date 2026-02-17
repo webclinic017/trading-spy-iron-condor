@@ -116,6 +116,68 @@ REPORTS_DIR = DOCS_DIR / "_reports"
 PERF_FILE = DATA_DIR / "performance_log.json"
 BACKTEST_DIR = DATA_DIR / "backtests"
 SPREAD_PERF_FILE = DATA_DIR / "spread_performance.json"
+SNAPSHOT_MANIFEST_FILE = DOCS_DIR / "data" / "alpaca_snapshots.json"
+
+
+def _load_snapshot_manifest() -> dict:
+    try:
+        if SNAPSHOT_MANIFEST_FILE.exists():
+            with open(SNAPSHOT_MANIFEST_FILE) as f:
+                data = json.load(f)
+                return data if isinstance(data, dict) else {}
+    except (json.JSONDecodeError, OSError):
+        pass
+    return {}
+
+
+def generate_alpaca_visual_evidence_section() -> str:
+    """Add screenshot + PaperBanana financial diagram evidence for both accounts."""
+    manifest = _load_snapshot_manifest()
+    latest = manifest.get("latest", {}) if isinstance(manifest, dict) else {}
+    if not isinstance(latest, dict):
+        latest = {}
+
+    paper = latest.get("alpaca_paper", {}) if isinstance(latest.get("alpaca_paper"), dict) else {}
+    live = latest.get("alpaca_live", {}) if isinstance(latest.get("alpaca_live"), dict) else {}
+
+    paper_url = paper.get("url", "/trading/assets/snapshots/alpaca_paper_latest.png")
+    paper_diagram = paper.get("diagram_url", "/trading/assets/snapshots/paperbanana_paper_latest.svg")
+    live_url = live.get("url", "/trading/assets/snapshots/alpaca_live_latest.png")
+    live_diagram = live.get("diagram_url", "/trading/assets/snapshots/paperbanana_live_latest.svg")
+    paper_time = paper.get("captured_at_utc", "pending")
+    live_time = live.get("captured_at_utc", "pending")
+    paper_explainer = paper.get(
+        "technical_explainer",
+        "Paper account technical explanation pending next autonomous capture.",
+    )
+    live_explainer = live.get(
+        "technical_explainer",
+        "Brokerage account technical explanation pending next autonomous capture.",
+    )
+
+    return f"""
+## Alpaca Snapshot + PaperBanana Technical Narrative
+
+### Paper Account
+
+| Alpaca Snapshot | PaperBanana Financial Diagram |
+| --- | --- |
+| ![Paper Account Snapshot]({paper_url}) | ![Paper Account PaperBanana Diagram]({paper_diagram}) |
+
+Captured: `{paper_time}`
+
+Technical interpretation: {paper_explainer}
+
+### Brokerage Account
+
+| Alpaca Snapshot | PaperBanana Financial Diagram |
+| --- | --- |
+| ![Brokerage Account Snapshot]({live_url}) | ![Brokerage Account PaperBanana Diagram]({live_diagram}) |
+
+Captured: `{live_time}`
+
+Technical interpretation: {live_explainer}
+"""
 
 
 def get_backtest_metrics() -> dict:
@@ -496,6 +558,8 @@ Our current strategy focuses on:
 {generate_backtest_section()}
 ---
 {generate_tech_stack_section()}
+---
+{generate_alpaca_visual_evidence_section()}
 ---
 
 ## Market Context

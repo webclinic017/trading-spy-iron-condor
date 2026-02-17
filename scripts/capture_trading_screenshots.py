@@ -164,13 +164,11 @@ class TradingScreenshotCapture:
         except (TypeError, ValueError):
             return 0.0
 
-    def _build_paperbanana_svg(
+    def _build_account_metrics(
         self,
-        account_label: str,
         account: dict[str, Any],
         state: dict[str, Any],
-        captured_at_utc: str,
-    ) -> str:
+    ) -> dict[str, Any]:
         equity = self._as_float(account.get("current_equity", account.get("equity")))
         starting = self._as_float(account.get("starting_balance"))
         last_equity = self._as_float(account.get("last_equity"))
@@ -181,6 +179,9 @@ class TradingScreenshotCapture:
         cash = self._as_float(account.get("cash"))
         win_rate = self._as_float(account.get("win_rate"))
         sample_size = int(account.get("win_rate_sample_size", 0) or 0)
+        positions_count = int(account.get("positions_count", 0) or 0)
+        north_star = state.get("north_star", {}) if isinstance(state, dict) else {}
+        gate = str(north_star.get("probability_label", "unknown")).upper()
 
         bp_usage = 0.0
         if buying_power > 0 and equity > 0:
@@ -190,9 +191,77 @@ class TradingScreenshotCapture:
         if last_equity > 0:
             daily_bps = (daily_change / last_equity) * 10_000.0
 
-        north_star = state.get("north_star", {}) if isinstance(state, dict) else {}
-        gate = str(north_star.get("probability_label", "unknown")).upper()
-        positions_count = int(account.get("positions_count", 0) or 0)
+        return {
+            "equity": equity,
+            "starting_balance": starting,
+            "last_equity": last_equity,
+            "daily_change": daily_change,
+            "daily_bps": daily_bps,
+            "total_pl": total_pl,
+            "total_pl_pct": total_pl_pct,
+            "buying_power": buying_power,
+            "cash": cash,
+            "buying_power_utilization_pct": bp_usage,
+            "win_rate": win_rate,
+            "win_rate_sample_size": sample_size,
+            "positions_count": positions_count,
+            "north_star_gate": gate,
+        }
+
+    @staticmethod
+    def _build_financial_technical_summary(
+        account_label: str,
+        metrics: dict[str, Any],
+    ) -> str:
+        daily_change = float(metrics.get("daily_change", 0.0) or 0.0)
+        daily_bps = float(metrics.get("daily_bps", 0.0) or 0.0)
+        total_pl = float(metrics.get("total_pl", 0.0) or 0.0)
+        total_pl_pct = float(metrics.get("total_pl_pct", 0.0) or 0.0)
+        equity = float(metrics.get("equity", 0.0) or 0.0)
+        bp_usage = float(metrics.get("buying_power_utilization_pct", 0.0) or 0.0)
+        cash = float(metrics.get("cash", 0.0) or 0.0)
+        gate = str(metrics.get("north_star_gate", "UNKNOWN")).upper()
+        positions_count = int(metrics.get("positions_count", 0) or 0)
+        win_rate = float(metrics.get("win_rate", 0.0) or 0.0)
+        sample_size = int(metrics.get("win_rate_sample_size", 0) or 0)
+
+        day_regime = (
+            "flat premium-decay session"
+            if abs(daily_change) < 1.0
+            else ("positive drift session" if daily_change > 0 else "negative drift session")
+        )
+        deployment = (
+            "low capital deployment"
+            if bp_usage < 10.0
+            else ("moderate capital deployment" if bp_usage < 35.0 else "high capital deployment")
+        )
+
+        return (
+            f"{account_label}: net liquidation value ${equity:,.2f}; "
+            f"daily P/L {daily_change:+,.2f} ({daily_bps:+.1f} bps) indicating a {day_regime}; "
+            f"cumulative P/L {total_pl:+,.2f} ({total_pl_pct:+.2f}%); "
+            f"{deployment} at {bp_usage:.1f}% utilization with cash ${cash:,.2f}; "
+            f"open position proxy {positions_count}; win-rate estimate {win_rate:.1f}% (n={sample_size}); "
+            f"North Star gate {gate}."
+        )
+
+    def _build_paperbanana_svg(
+        self,
+        account_label: str,
+        metrics: dict[str, Any],
+        captured_at_utc: str,
+    ) -> str:
+        equity = self._as_float(metrics.get("equity"))
+        daily_change = self._as_float(metrics.get("daily_change"))
+        daily_bps = self._as_float(metrics.get("daily_bps"))
+        total_pl = self._as_float(metrics.get("total_pl"))
+        total_pl_pct = self._as_float(metrics.get("total_pl_pct"))
+        cash = self._as_float(metrics.get("cash"))
+        win_rate = self._as_float(metrics.get("win_rate"))
+        sample_size = int(metrics.get("win_rate_sample_size", 0) or 0)
+        bp_usage = self._as_float(metrics.get("buying_power_utilization_pct"))
+        positions_count = int(metrics.get("positions_count", 0) or 0)
+        gate = str(metrics.get("north_star_gate", "unknown")).upper()
 
         trend_msg = (
             "Range-bound day; premium decay dominated."
@@ -252,7 +321,9 @@ class TradingScreenshotCapture:
         latest_name = f"paperbanana_{short}_latest.svg"
         versioned_path = self.PAGES_SNAPSHOT_DIR / versioned_name
         latest_path = self.PAGES_SNAPSHOT_DIR / latest_name
-        svg = self._build_paperbanana_svg(account_label, account, state, captured_at_utc)
+        metrics = self._build_account_metrics(account=account, state=state)
+        technical_explainer = self._build_financial_technical_summary(account_label, metrics)
+        svg = self._build_paperbanana_svg(account_label, metrics, captured_at_utc)
         versioned_path.write_text(svg, encoding="utf-8")
         latest_path.write_text(svg, encoding="utf-8")
         return {
@@ -260,6 +331,8 @@ class TradingScreenshotCapture:
             "diagram_versioned_file": versioned_name,
             "diagram_url": self._manifest_snapshot_url(latest_name),
             "diagram_versioned_url": self._manifest_snapshot_url(versioned_name),
+            "technical_explainer": technical_explainer,
+            "metrics": metrics,
         }
 
     def publish_to_pages(self, screenshots: dict[str, Path | None]) -> Path:

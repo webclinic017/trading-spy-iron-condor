@@ -13,9 +13,12 @@ from pathlib import Path
 from typing import Any
 
 SYSTEM_STATE_PATH = Path("data/system_state.json")
+SNAPSHOT_MANIFEST_PATH = Path("docs/data/alpaca_snapshots.json")
 DOCS_INDEX_PATH = Path("docs/index.md")
 STATUS_START = "<!-- AUTO_STATUS_START -->"
 STATUS_END = "<!-- AUTO_STATUS_END -->"
+SNAPSHOT_START = "<!-- AUTO_SNAPSHOT_START -->"
+SNAPSHOT_END = "<!-- AUTO_SNAPSHOT_END -->"
 
 
 def _as_float(value: Any, default: float = 0.0) -> float:
@@ -37,6 +40,17 @@ def _load_state() -> dict[str, Any]:
         return {}
     try:
         with SYSTEM_STATE_PATH.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def _load_snapshot_manifest() -> dict[str, Any]:
+    if not SNAPSHOT_MANIFEST_PATH.exists():
+        return {}
+    try:
+        with SNAPSHOT_MANIFEST_PATH.open("r", encoding="utf-8") as f:
             data = json.load(f)
         return data if isinstance(data, dict) else {}
     except Exception:
@@ -166,11 +180,73 @@ def build_status_block(state: dict[str, Any]) -> str:
     )
 
 
-def replace_marked_block(content: str, new_block: str) -> str:
-    start = content.find(STATUS_START)
-    end = content.find(STATUS_END)
+def build_snapshot_block(manifest: dict[str, Any]) -> str:
+    latest = manifest.get("latest", {}) if isinstance(manifest, dict) else {}
+    if not isinstance(latest, dict):
+        latest = {}
+
+    paper = latest.get("alpaca_paper", {}) if isinstance(latest.get("alpaca_paper"), dict) else {}
+    live = latest.get("alpaca_live", {}) if isinstance(latest.get("alpaca_live"), dict) else {}
+    progress = latest.get("progress", {}) if isinstance(latest.get("progress"), dict) else {}
+
+    paper_url = paper.get("url", "/trading/assets/snapshots/alpaca_paper_latest.png")
+    paper_diagram = paper.get("diagram_url", "/trading/assets/snapshots/paperbanana_paper_latest.svg")
+    live_url = live.get("url", "/trading/assets/snapshots/alpaca_live_latest.png")
+    live_diagram = live.get("diagram_url", "/trading/assets/snapshots/paperbanana_live_latest.svg")
+    progress_url = progress.get("url", "/trading/assets/snapshots/progress_latest.png")
+    paper_time = paper.get("captured_at_utc", "pending")
+    live_time = live.get("captured_at_utc", "pending")
+    progress_time = progress.get("captured_at_utc", "pending")
+    paper_explainer = paper.get(
+        "technical_explainer",
+        "Paper account technical explanation will populate after next autonomous capture.",
+    )
+    live_explainer = live.get(
+        "technical_explainer",
+        "Brokerage account technical explanation will populate after next autonomous capture.",
+    )
+
+    return "\n".join(
+        [
+            SNAPSHOT_START,
+            "Latest snapshots are refreshed by automation and published to GitHub Pages.",
+            "",
+            "### Paper ($100K) Snapshot + PaperBanana Financial Diagram",
+            "",
+            "| Alpaca Snapshot | PaperBanana Diagram |",
+            "| --- | --- |",
+            f"| ![Alpaca Paper Snapshot]({paper_url}) | ![PaperBanana Paper Diagram]({paper_diagram}) |",
+            "",
+            f"Captured: `{paper_time}`",
+            "",
+            f"Technical readout: {paper_explainer}",
+            "",
+            "### Brokerage (Live) Snapshot + PaperBanana Financial Diagram",
+            "",
+            "| Alpaca Snapshot | PaperBanana Diagram |",
+            "| --- | --- |",
+            f"| ![Alpaca Brokerage Snapshot]({live_url}) | ![PaperBanana Brokerage Diagram]({live_diagram}) |",
+            "",
+            f"Captured: `{live_time}`",
+            "",
+            f"Technical readout: {live_explainer}",
+            "",
+            "### Progress Dashboard Snapshot",
+            f"![Progress Dashboard Snapshot]({progress_url})",
+            "",
+            f"Captured: `{progress_time}`",
+            "",
+            "Manifest: [`/trading/data/alpaca_snapshots.json`](/trading/data/alpaca_snapshots.json)",
+            SNAPSHOT_END,
+        ]
+    )
+
+
+def replace_marked_block(content: str, start_marker: str, end_marker: str, new_block: str) -> str:
+    start = content.find(start_marker)
+    end = content.find(end_marker)
     if start != -1 and end != -1 and end > start:
-        end += len(STATUS_END)
+        end += len(end_marker)
         return content[:start] + new_block + content[end:]
     return content
 
@@ -180,9 +256,12 @@ def update_docs_index() -> bool:
         raise FileNotFoundError(f"{DOCS_INDEX_PATH} not found")
 
     state = _load_state()
+    snapshot_manifest = _load_snapshot_manifest()
     original = DOCS_INDEX_PATH.read_text(encoding="utf-8")
-    new_block = build_status_block(state)
-    updated = replace_marked_block(original, new_block)
+    status_block = build_status_block(state)
+    snapshot_block = build_snapshot_block(snapshot_manifest)
+    updated = replace_marked_block(original, STATUS_START, STATUS_END, status_block)
+    updated = replace_marked_block(updated, SNAPSHOT_START, SNAPSHOT_END, snapshot_block)
 
     if updated == original:
         print("No marker block found or no changes made to docs/index.md")

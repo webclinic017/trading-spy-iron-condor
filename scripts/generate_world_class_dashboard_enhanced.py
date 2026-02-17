@@ -60,6 +60,22 @@ Snapshot capture is enabled but no images are published yet. The next automated 
     paper_url = paper.get("url", "/trading/assets/snapshots/alpaca_paper_latest.png")
     live_url = live.get("url", "/trading/assets/snapshots/alpaca_live_latest.png")
     progress_url = progress.get("url", "/trading/assets/snapshots/progress_latest.png")
+    paper_diagram_url = paper.get(
+        "diagram_url",
+        "/trading/assets/snapshots/paperbanana_paper_latest.svg",
+    )
+    live_diagram_url = live.get(
+        "diagram_url",
+        "/trading/assets/snapshots/paperbanana_live_latest.svg",
+    )
+    paper_explainer = paper.get(
+        "technical_explainer",
+        "Paper account technical explanation pending next autonomous capture.",
+    )
+    live_explainer = live.get(
+        "technical_explainer",
+        "Brokerage account technical explanation pending next autonomous capture.",
+    )
 
     paper_time = paper.get("captured_at_utc", "unknown")
     live_time = live.get("captured_at_utc", "unknown")
@@ -72,15 +88,23 @@ Snapshot capture is enabled but no images are published yet. The next automated 
 
 ### 📝 Paper Account Snapshot
 
-![Alpaca Paper Snapshot]({paper_url})
+| Alpaca Snapshot | PaperBanana Financial Diagram |
+| --- | --- |
+| ![Alpaca Paper Snapshot]({paper_url}) | ![Paper Account Financial Diagram]({paper_diagram_url}) |
 
 Captured: `{paper_time}`
 
+Technical readout: {paper_explainer}
+
 ### 🔴 Brokerage Account Snapshot
 
-![Alpaca Brokerage Snapshot]({live_url})
+| Alpaca Snapshot | PaperBanana Financial Diagram |
+| --- | --- |
+| ![Alpaca Brokerage Snapshot]({live_url}) | ![Brokerage Account Financial Diagram]({live_diagram_url}) |
 
 Captured: `{live_time}`
+
+Technical readout: {live_explainer}
 
 ### 📊 Progress Dashboard Snapshot
 

@@ -11,6 +11,7 @@ CEO Directive: "Why are lessons so mechanical and boring?? No human will read th
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import re
 import sys
@@ -34,8 +35,70 @@ except ImportError:
 # Paths
 RAG_LESSONS_DIR = Path(__file__).parent.parent / "rag_knowledge" / "lessons_learned"
 BLOG_POSTS_DIR = Path(__file__).parent.parent / "docs" / "_posts"
+SNAPSHOT_MANIFEST_PATH = Path(__file__).parent.parent / "docs" / "data" / "alpaca_snapshots.json"
 
 DIAGRAM_BASE_URL = "https://igorganapolsky.github.io/trading/assets"
+
+
+def _load_snapshot_manifest() -> dict:
+    if not SNAPSHOT_MANIFEST_PATH.exists():
+        return {}
+    try:
+        data = SNAPSHOT_MANIFEST_PATH.read_text(encoding="utf-8")
+        parsed = json.loads(data)
+        return parsed if isinstance(parsed, dict) else {}
+    except Exception:
+        return {}
+
+
+def _alpaca_snapshot_section_for_post() -> str:
+    manifest = _load_snapshot_manifest()
+    latest = manifest.get("latest", {}) if isinstance(manifest, dict) else {}
+    if not isinstance(latest, dict):
+        latest = {}
+    paper = latest.get("alpaca_paper", {}) if isinstance(latest.get("alpaca_paper"), dict) else {}
+    live = latest.get("alpaca_live", {}) if isinstance(latest.get("alpaca_live"), dict) else {}
+    if not paper and not live:
+        return ""
+
+    paper_url = paper.get("url", "/trading/assets/snapshots/alpaca_paper_latest.png")
+    paper_diagram = paper.get("diagram_url", "/trading/assets/snapshots/paperbanana_paper_latest.svg")
+    live_url = live.get("url", "/trading/assets/snapshots/alpaca_live_latest.png")
+    live_diagram = live.get("diagram_url", "/trading/assets/snapshots/paperbanana_live_latest.svg")
+    paper_time = paper.get("captured_at_utc", "pending")
+    live_time = live.get("captured_at_utc", "pending")
+    paper_explainer = paper.get(
+        "technical_explainer",
+        "Paper account technical explanation pending next autonomous capture.",
+    )
+    live_explainer = live.get(
+        "technical_explainer",
+        "Brokerage account technical explanation pending next autonomous capture.",
+    )
+
+    return f"""
+## Alpaca Snapshot + PaperBanana Technical Narrative
+
+### Paper Account
+| Alpaca Snapshot | PaperBanana Financial Diagram |
+| --- | --- |
+| ![Paper Account Snapshot]({paper_url}) | ![Paper Account PaperBanana Diagram]({paper_diagram}) |
+
+Captured: `{paper_time}`
+
+Technical interpretation: {paper_explainer}
+
+### Brokerage Account
+| Alpaca Snapshot | PaperBanana Financial Diagram |
+| --- | --- |
+| ![Brokerage Account Snapshot]({live_url}) | ![Brokerage Account PaperBanana Diagram]({live_diagram}) |
+
+Captured: `{live_time}`
+
+Technical interpretation: {live_explainer}
+
+---
+"""
 
 
 def parse_lesson_file(filepath: Path) -> dict | None:
@@ -395,6 +458,7 @@ def generate_daily_summary_post(date_str: str, lessons: list[dict]) -> str:
 ---
 {lessons_md}
 ---
+{_alpaca_snapshot_section_for_post()}
 
 ## Today's Numbers
 

@@ -80,14 +80,8 @@ def status_chip(status: str) -> str:
 
 def _snapshot_html(manifest: dict) -> str:
     latest = manifest.get("latest", {}) if isinstance(manifest, dict) else {}
-    if not latest:
-        return """
-      <article class="card span12">
-        <div class="k">Alpaca Snapshot Evidence</div>
-        <p style="margin-top:10px">No published snapshots yet. The autonomous capture workflow will populate paper, brokerage, and progress snapshots after the next sync/trade cycle.</p>
-      </article>
-    """
-
+    if not isinstance(latest, dict):
+        latest = {}
     paper = latest.get("alpaca_paper", {}) if isinstance(latest.get("alpaca_paper"), dict) else {}
     live = latest.get("alpaca_live", {}) if isinstance(latest.get("alpaca_live"), dict) else {}
     progress = latest.get("progress", {}) if isinstance(latest.get("progress"), dict) else {}
@@ -95,6 +89,16 @@ def _snapshot_html(manifest: dict) -> str:
     paper_url = paper.get("url", "/trading/assets/snapshots/alpaca_paper_latest.png")
     live_url = live.get("url", "/trading/assets/snapshots/alpaca_live_latest.png")
     progress_url = progress.get("url", "/trading/assets/snapshots/progress_latest.png")
+    paper_diagram = paper.get("diagram_url", "/trading/assets/snapshots/paperbanana_paper_latest.svg")
+    live_diagram = live.get("diagram_url", "/trading/assets/snapshots/paperbanana_live_latest.svg")
+    paper_explainer = paper.get(
+        "technical_explainer",
+        "Paper account technical explainer is pending next autonomous capture.",
+    )
+    live_explainer = live.get(
+        "technical_explainer",
+        "Brokerage account technical explainer is pending next autonomous capture.",
+    )
 
     paper_time = paper.get("captured_at_utc", "unknown")
     live_time = live.get("captured_at_utc", "unknown")
@@ -103,13 +107,21 @@ def _snapshot_html(manifest: dict) -> str:
     return f"""
       <article class="card span6">
         <div class="k">Alpaca Paper Snapshot</div>
-        <a href="{paper_url}"><img class="snap" src="{paper_url}" alt="Alpaca paper account snapshot"></a>
+        <div class="pair">
+          <a href="{paper_url}"><img class="snap" src="{paper_url}" alt="Alpaca paper account snapshot"></a>
+          <a href="{paper_diagram}"><img class="snap" src="{paper_diagram}" alt="PaperBanana paper account technical diagram"></a>
+        </div>
         <div class="k">Captured: {paper_time}</div>
+        <p class="note">{paper_explainer}</p>
       </article>
       <article class="card span6">
         <div class="k">Alpaca Brokerage Snapshot</div>
-        <a href="{live_url}"><img class="snap" src="{live_url}" alt="Alpaca brokerage account snapshot"></a>
+        <div class="pair">
+          <a href="{live_url}"><img class="snap" src="{live_url}" alt="Alpaca brokerage account snapshot"></a>
+          <a href="{live_diagram}"><img class="snap" src="{live_diagram}" alt="PaperBanana brokerage technical diagram"></a>
+        </div>
         <div class="k">Captured: {live_time}</div>
+        <p class="note">{live_explainer}</p>
       </article>
       <article class="card span12">
         <div class="k">Progress Dashboard Snapshot</div>
@@ -306,10 +318,23 @@ def main() -> int:
       border-radius: 10px;
       display: block;
     }}
+    .pair {{
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }}
+    .note {{
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.35;
+    }}
     @media (max-width: 920px) {{
       .span4, .span6, .span8 {{ grid-column: span 12; }}
       .flow {{ grid-template-columns: 1fr; }}
       .arr {{ transform: rotate(90deg); }}
+      .pair {{ grid-template-columns: 1fr; }}
     }}
   </style>
 </head>
