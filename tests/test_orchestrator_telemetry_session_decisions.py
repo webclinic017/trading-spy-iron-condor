@@ -52,4 +52,3 @@ def test_telemetry_session_decisions_feed_no_trade_diagnostic(tmp_path, monkeypa
     top_reasons = diagnostic.get("top_rejection_reasons", [])
     assert isinstance(top_reasons, list)
     assert any("VIX" in str(item.get("reason", "")) for item in top_reasons)
-
