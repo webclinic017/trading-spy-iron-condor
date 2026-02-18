@@ -6,6 +6,7 @@ day_number: 83
 lessons_count: 14
 critical_count: 10
 excerpt: "Today was a wake-up call. Two critical issues surfaced that could have derailed our entire trading operation. Here's what went wrong and how we're fix..."
+tags: ['lessons-learned', 'daily-journal', 'ai-trading', 'building-in-public']
 ---
 
 # Day 83 of 90 | Monday, January 19, 2026

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "LL-275: The Position Stacking Disaster and How We Fixed It"
+title: "LL-275: Position Stacking Disaster and Fix"
 date: 2026-01-22
 categories: [lessons-learned, trading, safety]
 tags:

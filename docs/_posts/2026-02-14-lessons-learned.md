@@ -6,6 +6,7 @@ day_number: 109
 lessons_count: 68
 critical_count: 8
 excerpt: "Today was a wake-up call. Two critical issues surfaced that could have derailed our entire trading operation. Here's what went wrong and how we're fix..."
+tags: ['lessons-learned', 'daily-journal', 'ai-trading', 'building-in-public']
 ---
 
 # Day 109 of 90 | Saturday, February 14, 2026

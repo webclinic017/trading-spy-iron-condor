@@ -6,6 +6,7 @@ day_number: 88
 lessons_count: 4
 critical_count: 0
 excerpt: "Markets are closed, but the learning never stops. While other traders take the weekend off, we're refining our edge...."
+tags: ['lessons-learned', 'daily-journal', 'ai-trading', 'building-in-public']
 ---
 
 # Day 88 of 90 | Saturday, January 24, 2026

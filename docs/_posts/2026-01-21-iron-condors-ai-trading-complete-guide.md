@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "The Complete Guide: AI-Powered Iron Condor Trading System"
+title: "Complete Guide: AI-Powered Iron Condor Trading"
 date: 2026-01-21
 day_number: 85
 lessons_count: 3

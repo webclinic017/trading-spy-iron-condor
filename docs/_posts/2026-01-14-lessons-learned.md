@@ -6,6 +6,7 @@ day_number: 78
 lessons_count: 12
 critical_count: 1
 excerpt: "Every mistake is a lesson in disguise. Today we uncovered a critical flaw in our system - the kind that separates amateur traders from professionals w..."
+tags: ['lessons-learned', 'daily-journal', 'ai-trading', 'building-in-public']
 ---
 
 # Day 78 of 90 | Wednesday, January 14, 2026

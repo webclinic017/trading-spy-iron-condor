@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Engineering Log: Ralph Proactive Scan Findings (+2 more)"
+title: "Ralph Proactive Scan Findings"
 date: 2026-01-26 23:33:46
 categories: [engineering, lessons-learned, ai-trading]
 tags: [options, trading, issues, dead]

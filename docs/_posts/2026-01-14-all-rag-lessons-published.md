@@ -3,6 +3,7 @@ layout: post
 title: "25 RAG Lessons Published: Everything We Learned"
 date: 2026-01-14
 categories: [lessons, rag, documentation]
+tags: ["rag", "lessons-learned", "rlhf", "documentation", "ai-trading"]
 ---
 
 # 25 RAG Lessons Published: Everything We Learned

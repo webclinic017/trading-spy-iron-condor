@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "From $5K to $100K: My Journey to $6,000/Month Passive Income Through Options Trading"
+title: "$5K to $100K: Journey to $6K/Month via Options"
 date: 2026-02-01
 author: Igor Ganapolsky
 categories: [trading, personal-finance, options, journey]

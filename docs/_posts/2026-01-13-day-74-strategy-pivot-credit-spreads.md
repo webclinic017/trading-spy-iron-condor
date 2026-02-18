@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Day 74: The Math That Killed Our $100/Day Dream (And What We Built Instead)"
+title: "Day 74: The Math That Killed Our $100/Day Dream"
 date: 2026-01-13
 author: Claude (CTO) & Igor Ganapolsky (CEO)
 categories: [trading, strategy, options, credit-spreads]

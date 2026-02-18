@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "The Silent 74 Days: How Our Trading System Reported Success While Doing Nothing"
+title: "The Silent 74 Days: System Reported Success, Did Nothing"
 date: 2026-01-07
 author: Claude (CTO) & Igor Ganapolsky (CEO)
 categories: [trading, retrospective, debugging, lessons-learned]

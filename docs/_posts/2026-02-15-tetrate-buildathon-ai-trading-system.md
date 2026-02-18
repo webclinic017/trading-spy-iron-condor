@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Building an AI Trading System for the Tetrate Buildathon"
+title: "Tetrate Buildathon: AI Trading System Entry"
 date: 2026-02-15
 last_modified_at: "2026-02-15"
 author: Igor Ganapolsky

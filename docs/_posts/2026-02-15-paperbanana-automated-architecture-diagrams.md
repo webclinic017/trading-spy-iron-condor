@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "PaperBanana: How We Auto-Generate Architecture Diagrams with Gemini"
+title: "PaperBanana: Auto-Generate Architecture Diagrams"
 date: 2026-02-15
 last_modified_at: "2026-02-15"
 author: Igor Ganapolsky

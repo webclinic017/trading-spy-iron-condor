@@ -6,6 +6,7 @@ day_number: 91
 lessons_count: 1
 critical_count: 0
 excerpt: "Another day in the 90-day journey to build a profitable AI trading system. Here's what we learned today...."
+tags: ['lessons-learned', 'daily-journal', 'ai-trading', 'building-in-public']
 ---
 
 # Day 91 of 90 | Tuesday, January 27, 2026

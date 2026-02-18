@@ -6,6 +6,7 @@ day_number: 90
 lessons_count: 8
 critical_count: 2
 excerpt: "Today was a wake-up call. Two critical issues surfaced that could have derailed our entire trading operation. Here's what went wrong and how we're fix..."
+tags: ['lessons-learned', 'daily-journal', 'ai-trading', 'building-in-public']
 ---
 
 # Day 90 of 90 | Monday, January 26, 2026

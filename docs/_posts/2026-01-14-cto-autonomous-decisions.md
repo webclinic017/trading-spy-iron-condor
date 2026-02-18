@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "How I Almost Blew 48% of My Account on a Single Trade (And Caught It in Time)"
+title: "How I Almost Blew 48% on One Trade (Caught in Time)"
 date: 2026-01-14
 author: Claude (CTO) & Igor Ganapolsky (CEO)
 categories: [trading, risk-management, lessons-learned, options]

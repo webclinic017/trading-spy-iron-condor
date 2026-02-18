@@ -3,6 +3,7 @@ layout: post
 title: "The $100K Lessons We Lost: A Confession"
 date: 2026-01-14
 categories: [lessons, failure, transparency]
+tags: ["lessons-learned", "failure", "transparency", "building-in-public", "risk-management"]
 ---
 
 # The $100K Lessons We Lost: A Confession

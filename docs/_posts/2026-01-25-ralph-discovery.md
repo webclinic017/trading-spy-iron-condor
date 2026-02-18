@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Engineering Log: LL-262: Data Sync Infrastructure Improve (+2 more)"
+title: "Data Sync Infrastructure Improvements (LL-262)"
 date: 2026-01-25 23:38:21
 categories: [engineering, lessons-learned, ai-trading]
 tags: [between, iron, condor, constraints]

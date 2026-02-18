@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Feedback-Driven Context Pipelines: How AI Agents Actually Learn in 2026"
+title: "Feedback-Driven Context Pipelines (RLHF + RAG)"
 date: 2026-02-15
 last_modified_at: "2026-02-15"
 author: Igor Ganapolsky

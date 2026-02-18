@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "ℹ️ INFO LL-318: Claude Code Async Hooks for (+2 more)"
+title: "Claude Code Async Hooks for FastAPI (LL-318)"
 date: 2026-01-29 23:47:48
 categories: [engineering, lessons-learned, ai-trading]
 tags: [issues, code, security, backup]

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Technical Debt Audit: 5K Lines Deleted, 48 Tests Added"
+title: "Tech Debt Audit: 5K Lines Deleted, 48 Tests Added"
 date: 2026-01-28
 categories: [engineering, maintenance]
 tags:

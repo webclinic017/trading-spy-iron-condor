@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Why We Route Trading AI Through TARS: Multi-Model Architecture for SPY Options"
+title: "TARS: Multi-Model Routing for AI Trading"
 date: 2026-02-15
 last_modified_at: "2026-02-15"
 author: Igor Ganapolsky
