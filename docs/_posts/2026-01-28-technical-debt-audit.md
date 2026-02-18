@@ -1,10 +1,21 @@
 ---
 layout: post
-title: "Tech Debt Audit: 5K Lines Deleted, 48 Tests Added"
+title: 'Tech Debt Audit: 5K Lines Deleted, 48 Tests Added'
 date: 2026-01-28
-categories: [engineering, maintenance]
+categories:
+- engineering
+- maintenance
 tags:
-  [technical-debt, testing, refactoring, ci-cd, self-healing, claude-ai, rlhf]
+- technical-debt
+- testing
+- refactoring
+- ci-cd
+- self-healing
+- claude-ai
+- rlhf
+description: 'Implementing a self-healing CI pipeline requires three actions: (1)
+  achieve 100% test coverage on resilience modules (circuit breaker, retry, self-healer),
+  (2)'
 ---
 
 > **Answer Block:** Implementing a self-healing CI pipeline requires three actions: (1) achieve 100% test coverage on resilience modules (circuit breaker, retry, self-healer), (2) consolidate duplicate definitions to a single canonical source, and (3) use parallel Claude task agents to fix multiple issues simultaneously. Our audit deleted 5,200 lines of dead code and added 48 tests in a single session.

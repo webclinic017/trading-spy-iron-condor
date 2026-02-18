@@ -1,10 +1,19 @@
 ---
 layout: post
-title: "Claude Code Async Hooks for FastAPI (LL-318)"
+title: Claude Code Async Hooks for FastAPI (LL-318)
 date: 2026-01-29 23:47:48
-categories: [engineering, lessons-learned, ai-trading]
-tags: [issues, code, security, backup]
+categories:
+- engineering
+- lessons-learned
+- ai-trading
+tags:
+- issues
+- code
+- security
+- backup
 mermaid: true
+description: Session startup and prompt submission were slow due to many synchronous
+  hooks running sequentially. Each hook blocked Claude's execution until completion.
 ---
 
 **Thursday, January 29, 2026** (Eastern Time)

@@ -1,10 +1,19 @@
 ---
 layout: post
-title: "ℹ️ INFO Ralph Proactive Scan Findings (+2 more)"
+title: "\u2139\uFE0F INFO Ralph Proactive Scan Findings (+2 more)"
 date: 2026-01-30 23:45:59
-categories: [engineering, lessons-learned, ai-trading]
-tags: [success, asymmetric, issues, trading]
+categories:
+- engineering
+- lessons-learned
+- ai-trading
+tags:
+- success
+- asymmetric
+- issues
+- trading
 mermaid: true
+description: 'Date: 2026-01-25 Category: Research / Strategy Optimization Source:
+  arXiv:2501.12397 - "Stochastic Optimal Control of Iron Condor Portfolios"'
 ---
 
 **Friday, January 30, 2026** (Eastern Time)

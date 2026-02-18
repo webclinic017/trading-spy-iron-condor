@@ -1,9 +1,19 @@
 ---
 layout: post
-title: "25 RAG Lessons Published: Everything We Learned"
+title: '25 RAG Lessons Published: Everything We Learned'
 date: 2026-01-14
-categories: [lessons, rag, documentation]
-tags: ["rag", "lessons-learned", "rlhf", "documentation", "ai-trading"]
+categories:
+- lessons
+- rag
+- documentation
+tags:
+- rag
+- lessons-learned
+- rlhf
+- documentation
+- ai-trading
+description: Our RAG (Retrieval-Augmented Generation) system contains 25 lessons learned.
+  Until today, most were never published publicly. Here they all are.
 ---
 
 # 25 RAG Lessons Published: Everything We Learned

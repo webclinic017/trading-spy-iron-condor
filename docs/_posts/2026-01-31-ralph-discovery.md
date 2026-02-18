@@ -1,10 +1,18 @@
 ---
 layout: post
-title: "ℹ️ INFO Ralph Proactive Scan Findings (+2 more)"
+title: "\u2139\uFE0F INFO Ralph Proactive Scan Findings (+2 more)"
 date: 2026-01-31 23:59:21
-categories: [engineering, lessons-learned, ai-trading]
-tags: [issues, dead, security, code]
+categories:
+- engineering
+- lessons-learned
+- ai-trading
+tags:
+- issues
+- dead
+- security
+- code
 mermaid: true
+description: "Building an autonomous AI trading system means things break. Here's how our AI CTO detected, diagnosed, and fixed issues today—autonomously."
 ---
 
 **Saturday, January 31, 2026** (Eastern Time)

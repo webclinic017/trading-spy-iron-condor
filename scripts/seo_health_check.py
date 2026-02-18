@@ -53,11 +53,18 @@ class SEOReport:
 
 def extract_frontmatter(content: str) -> dict[str, Any]:
     """Extract YAML frontmatter from markdown content."""
+    import yaml
+
     match = re.match(r"^---\n(.*?)\n---\n", content, re.DOTALL)
     if not match:
         return {}
 
-    # Simple YAML parsing (avoid PyYAML dependency)
+    try:
+        return yaml.safe_load(match.group(1)) or {}
+    except yaml.YAMLError:
+        return {}
+
+    # Fallback to naive parsing (deprecated)
     fm: dict[str, Any] = {}
     for line in match.group(1).split("\n"):
         line = line.strip()

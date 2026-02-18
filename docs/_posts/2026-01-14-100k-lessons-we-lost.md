@@ -1,9 +1,18 @@
 ---
 layout: post
-title: "The $100K Lessons We Lost: A Confession"
+title: 'The $100K Lessons We Lost: A Confession'
 date: 2026-01-14
-categories: [lessons, failure, transparency]
-tags: ["lessons-learned", "failure", "transparency", "building-in-public", "risk-management"]
+categories:
+- lessons
+- failure
+- transparency
+tags:
+- lessons-learned
+- failure
+- transparency
+- building-in-public
+- risk-management
+description: "We ran a $100K paper trading account for weeks and recorded zero lessons during that period. This is our confession and failure report."
 ---
 
 # The $100K Lessons We Lost: A Confession

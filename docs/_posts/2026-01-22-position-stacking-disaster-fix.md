@@ -1,18 +1,21 @@
 ---
 layout: post
-title: "LL-275: Position Stacking Disaster and Fix"
+title: 'LL-275: Position Stacking Disaster and Fix'
 date: 2026-01-22
-categories: [lessons-learned, trading, safety]
+categories:
+- lessons-learned
+- trading
+- safety
 tags:
-  [
-    bug-fix,
-    risk-management,
-    options,
-    iron-condor,
-    self-healing,
-    ci-pipeline,
-    rlhf,
-  ]
+- bug-fix
+- risk-management
+- options
+- iron-condor
+- self-healing
+- ci-pipeline
+- rlhf
+description: A self-healing CI pipeline must include position stacking prevention
+  at the code level.
 ---
 
 > **Answer Block:** A self-healing CI pipeline must include position stacking prevention at the code level. Our safety gate counted unique symbols instead of total contracts, allowing 8 contracts to accumulate with a -$1,472 unrealized loss. The fix: block buying ANY additional contracts of an existing symbol, plus detection alerts every 15 minutes.

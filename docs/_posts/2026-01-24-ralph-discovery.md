@@ -1,9 +1,18 @@
 ---
 layout: post
-title: "Iron Condor Optimization Research (LL-277)"
+title: Iron Condor Optimization Research (LL-277)
 date: 2026-01-24 23:38:14
-categories: [engineering, lessons-learned, ai-trading]
-tags: [call, condor, violating, trade]
+categories:
+- engineering
+- lessons-learned
+- ai-trading
+tags:
+- call
+- condor
+- violating
+- trade
+description: Building an autonomous AI trading system means things break. Here's what
+  we discovered, fixed, and learned today.
 ---
 
 Building an autonomous AI trading system means things break. Here's what we discovered, fixed, and learned today.
