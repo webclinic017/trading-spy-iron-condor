@@ -66,6 +66,20 @@ def _build_report_content(state: dict, snapshot_date: date) -> str:
     paper = state.get("paper_account", {}) if isinstance(state.get("paper_account"), dict) else {}
     north_star = state.get("north_star", {}) if isinstance(state.get("north_star"), dict) else {}
     risk = state.get("risk", {}) if isinstance(state.get("risk"), dict) else {}
+    weekly_gate = (
+        state.get("north_star_weekly_gate", {})
+        if isinstance(state.get("north_star_weekly_gate"), dict)
+        else {}
+    )
+    no_trade_diagnostic = (
+        weekly_gate.get("no_trade_diagnostic", {})
+        if isinstance(weekly_gate.get("no_trade_diagnostic"), dict)
+        else {}
+    )
+    top_rejection_reasons = no_trade_diagnostic.get("top_rejection_reasons", [])
+    if not isinstance(top_rejection_reasons, list):
+        top_rejection_reasons = []
+    decision_records_observed = no_trade_diagnostic.get("decision_records_observed")
 
     live_equity = _safe_float(live.get("current_equity")) or _safe_float(live.get("equity"))
     live_total_pl = _safe_float(live.get("total_pl"))
@@ -166,6 +180,14 @@ A: North Star probability is {_fmt_pct(probability_score)} ({probability_label})
 **Q: Is execution cadence healthy?**<br>
 A: Weekly cadence KPI is **{cadence_text}** with risk mode **{gate_mode}**.
 
+## No-Trade Diagnostic (Why We Did Not Trade)
+
+- Decision records observed (lookback window): `{decision_records_observed if decision_records_observed is not None else "N/A"}`
+
+### Top Rejection Reasons
+
+{_render_top_rejection_reasons(top_rejection_reasons)}
+
 ## KPI Snapshot
 
 | Metric | Value |
@@ -196,6 +218,26 @@ A: Weekly cadence KPI is **{cadence_text}** with risk mode **{gate_mode}**.
 - Live account sync timestamp: `{live_synced_at}`
 """
     return frontmatter + body
+
+
+def _render_top_rejection_reasons(items: list[dict]) -> str:
+    """Render top rejection reasons for the dashboard snapshot."""
+    if not items:
+        return "- none"
+    lines: list[str] = []
+    for item in items[:5]:
+        if not isinstance(item, dict):
+            continue
+        reason = str(item.get("reason") or "").strip()
+        count = item.get("count")
+        try:
+            count_val = int(count) if count is not None else 0
+        except (TypeError, ValueError):
+            count_val = 0
+        if not reason:
+            continue
+        lines.append(f"- `{count_val}` x {reason}")
+    return "\n".join(lines) if lines else "- none"
 
 
 def generate_snapshot_report(
