@@ -20,8 +20,7 @@ from pathlib import Path
 try:
     import requests
 except ImportError:
-    print("❌ requests not installed: pip install requests", file=sys.stderr)
-    sys.exit(1)
+    requests = None  # type: ignore[assignment]
 
 
 INDEXING_API_ENDPOINT = "https://indexing.googleapis.com/v3/urlNotifications:publish"
@@ -49,6 +48,9 @@ def get_access_token() -> str | None:
     if not info:
         return None
 
+    if requests is None:
+        return None
+
     try:
         from google.auth.transport.requests import Request
         from google.oauth2 import service_account
@@ -69,6 +71,9 @@ def get_access_token() -> str | None:
 
 def submit_url(url: str, access_token: str) -> bool:
     """Submit a single URL to Google Search Console for indexing."""
+    if requests is None:
+        raise RuntimeError("requests not installed")
+
     payload = {"url": url, "type": "URL_UPDATED"}
 
     headers = {
@@ -130,6 +135,10 @@ def main() -> int:
     if not args.urls:
         print("Usage: submit_to_search_console.py <url> [url...]")
         print("       submit_to_search_console.py --batch docs/_posts/*.md")
+        return 1
+
+    if requests is None and not args.dry_run:
+        print("❌ requests not installed: pip install requests", file=sys.stderr)
         return 1
 
     # Check for credentials
