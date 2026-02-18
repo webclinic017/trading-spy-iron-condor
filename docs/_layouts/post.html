@@ -35,7 +35,15 @@ layout: default
     {%- endif -%}
   </header>
 
-  <div class="post-content e-content" itemprop="articleBody">{{ content }}</div>
+  <div class="post-content e-content" itemprop="articleBody">
+    {{ content }}
+
+    <footer class="post-footer">
+      <hr>
+      <p><em>Igor Ganapolsky builds autonomous trading systems that combine AI decision-making with systematic options strategies. Follow the journey from $100K → $600K through <a href="{{ '/topics/iron-condors/' | relative_url }}">iron condors</a> and <a href="{{ '/topics/risk-management/' | relative_url }}">disciplined risk management</a>.</em></p>
+      <p><strong><a href="{{ '/' | relative_url }}">Read more lessons learned →</a></strong></p>
+    </footer>
+  </div>
 
   {%- if site.posts.size > 1 -%}
   <nav class="related-posts">
@@ -135,7 +143,8 @@ layout: default
       "@type": "Person",
       "@id": "https://igorganapolsky.github.io/trading/#person",
       "name": "Igor Ganapolsky",
-      "jobTitle": "Senior Mobile Engineer",
+      "jobTitle": "AI Trading System Developer",
+      "description": "Building autonomous trading systems with iron condor options strategy, targeting $6K/month passive income",
       "url": "https://igorganapolsky.github.io/trading/",
       "sameAs": [
         "https://github.com/IgorGanapolsky",
