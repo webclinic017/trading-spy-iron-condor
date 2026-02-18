@@ -239,12 +239,40 @@ RECOMMENDATION: [EXECUTE/DELAY/CANCEL]"""
         if qty <= 0:
             raise ValueError("qty must be positive when submitting option orders.")
 
+        if order_type not in {"market", "limit"}:
+            raise ValueError("order_type must be 'market' or 'limit'.")
+
+        final_paper = self.paper if paper is None else paper
+
         # MANDATORY: Ticker whitelist check (liquid ETFs only)
         from src.safety.mandatory_trade_gate import validate_ticker
 
         ticker_valid, ticker_error = validate_ticker(option_symbol)
         if not ticker_valid:
             raise ValueError(f"OPTION ORDER BLOCKED: {ticker_error}")
+
+        # In paper/CI environments we prefer a safe simulation over submitting an
+        # invalid limit order when no limit price is provided.
+        if order_type == "limit" and limit_price is None and final_paper:
+            payload_meta = metadata.copy() if metadata else {}
+            payload_meta["option_symbol"] = option_symbol
+            payload_meta["side"] = side
+            payload_meta["order_type"] = order_type
+            payload_meta["limit_price"] = limit_price
+
+            result = {
+                "status": "SIMULATED",
+                "option_symbol": option_symbol,
+                "qty": qty,
+                "side": side,
+                "order_type": order_type,
+                "limit_price": limit_price,
+                "metadata": payload_meta,
+                "paper": final_paper,
+                "note": "limit_price missing for limit order; simulated instead of submitting.",
+            }
+            self.execution_history.append(result)
+            return result
 
         payload_meta = metadata.copy() if metadata else {}
         payload_meta["option_symbol"] = option_symbol
@@ -253,7 +281,6 @@ RECOMMENDATION: [EXECUTE/DELAY/CANCEL]"""
         payload_meta["limit_price"] = limit_price
 
         client = self._get_options_client()
-        final_paper = self.paper if paper is None else paper
         result: dict[str, Any]
 
         if client:

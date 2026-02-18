@@ -27,62 +27,44 @@ except ImportError:
 INDEXING_API_ENDPOINT = "https://indexing.googleapis.com/v3/urlNotifications:publish"
 
 
-def get_access_token() -> str | None:
-    """Get OAuth2 access token from service account credentials."""
+def _load_service_account_info() -> dict | None:
+    """Load service account JSON from env var (JSON string) or a file path."""
     creds_json = os.environ.get("GOOGLE_SEARCH_CONSOLE_KEY")
     if not creds_json:
         return None
 
     try:
-        creds = json.loads(creds_json)
+        return json.loads(creds_json)
     except json.JSONDecodeError:
         # Maybe it's a file path?
         try:
-            creds = json.loads(Path(creds_json).read_text())
+            return json.loads(Path(creds_json).read_text(encoding="utf-8"))
         except Exception:
             return None
 
-    # Use Google OAuth2 token endpoint
-    token_url = "https://oauth2.googleapis.com/token"
-    payload = {
-        "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
-        "assertion": _create_jwt(creds),
-    }
+
+def get_access_token() -> str | None:
+    """Get an OAuth2 access token from service account credentials."""
+    info = _load_service_account_info()
+    if not info:
+        return None
 
     try:
-        resp = requests.post(token_url, data=payload, timeout=30)
-        if resp.status_code == 200:
-            return resp.json().get("access_token")
+        from google.auth.transport.requests import Request
+        from google.oauth2 import service_account
+    except ImportError:
+        # Keep failure mode predictable in minimal environments.
+        return None
+
+    try:
+        creds = service_account.Credentials.from_service_account_info(
+            info,
+            scopes=["https://www.googleapis.com/auth/indexing"],
+        )
+        creds.refresh(Request())
+        return creds.token
     except Exception:
-        pass
-
-    return None
-
-
-def _create_jwt(creds: dict) -> str:
-    """Create JWT for service account authentication."""
-    import base64
-    import time
-
-    header = {"alg": "RS256", "typ": "JWT"}
-    now = int(time.time())
-    claim_set = {
-        "iss": creds["client_email"],
-        "scope": "https://www.googleapis.com/auth/indexing",
-        "aud": "https://oauth2.googleapis.com/token",
-        "exp": now + 3600,
-        "iat": now,
-    }
-
-    # Encode header and claim set
-    header_b64 = base64.urlsafe_b64encode(json.dumps(header).encode()).decode().rstrip("=")
-    claim_b64 = base64.urlsafe_b64encode(json.dumps(claim_set).encode()).decode().rstrip("=")
-
-    message = f"{header_b64}.{claim_b64}"
-
-    # Sign with private key (simplified - production should use cryptography library)
-    # For now, return placeholder - user should use google-auth library in production
-    return f"{message}.signature_placeholder"
+        return None
 
 
 def submit_url(url: str, access_token: str) -> bool:
