@@ -236,6 +236,58 @@ class TestSafeSubmitOrder:
         safe_submit_order(mock_client, mock_request)
         mock_client.submit_order.assert_called_once()
 
+    @patch("src.safety.mandatory_trade_gate.validate_trade_mandatory")
+    @patch("src.safety.milestone_controller.get_milestone_context")
+    @patch("src.safety.north_star_guard.get_guard_context")
+    def test_injects_guard_and_positions_context_for_openings(
+        self, mock_guard, mock_milestone, mock_gate
+    ):
+        """safe_submit_order injects dynamic context when it can infer an opening order."""
+        guard_ctx = {
+            "enabled": True,
+            "mode": "test",
+            "max_position_pct": 0.01,
+            "block_new_positions": False,
+            "block_reason": "",
+        }
+        milestone_ctx = {
+            "enabled": True,
+            "strategy_family": "options_income",
+            "family_status": "active",
+            "pause_buy_for_family": False,
+            "block_reason": "",
+        }
+        mock_guard.return_value = guard_ctx
+        mock_milestone.return_value = milestone_ctx
+        mock_gate.return_value = MagicMock(approved=True, reason="")
+
+        # Use a strict spec so MagicMock doesn't fabricate get_all_positions(),
+        # which would prevent _infer_is_closing_order() from inferring openings.
+        mock_client = MagicMock(spec=["get_positions", "get_account", "submit_order"])
+        # Ensure _infer_is_closing_order can infer "opening":
+        # qty_map must be non-empty, and the order symbol must not exist yet.
+        mock_client.get_positions.return_value = [{"symbol": "QQQ", "qty": "1"}]
+        mock_client.get_account.return_value = MagicMock(equity="10000")
+        mock_client.submit_order.return_value = MagicMock()
+
+        mock_request = MagicMock()
+        mock_request.symbol = "SPY"
+        mock_request.legs = None
+        mock_request.side = "BUY"
+        mock_request.qty = 1
+
+        safe_submit_order(mock_client, mock_request)
+
+        assert mock_gate.call_count == 1
+        call_kwargs = mock_gate.call_args.kwargs
+        assert "context" in call_kwargs
+        ctx = call_kwargs["context"]
+        assert ctx.get("north_star_guard") == guard_ctx
+        assert ctx.get("milestone_controller") == milestone_ctx
+        assert isinstance(ctx.get("positions"), list)
+        assert ctx["positions"]
+        mock_client.submit_order.assert_called_once_with(mock_request)
+
 
 # -------------------------------------------------------------------
 # safe_close_position wrapper

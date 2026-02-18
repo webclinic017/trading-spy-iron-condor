@@ -633,7 +633,8 @@ def validate_trade_mandatory(
             f"north_star_guard: mode={guard_mode} max_position={effective_max_position_pct:.1%}"
         )
 
-        if side == "BUY" and north_star_guard.get("block_new_positions"):
+        # Block *new openings* regardless of BUY/SELL semantics (options entries can be SELL-to-open).
+        if is_opening and north_star_guard.get("block_new_positions"):
             reason = str(
                 north_star_guard.get("block_reason")
                 or "North Star guard blocked new position openings."
@@ -656,7 +657,8 @@ def validate_trade_mandatory(
         family_status = str(milestone_ctx.get("family_status", "unknown"))
         checks_performed.append(f"milestone_controller: family={family} status={family_status}")
 
-        if side == "BUY" and milestone_ctx.get("pause_buy_for_family"):
+        # Block *new openings* regardless of BUY/SELL semantics (options entries can be SELL-to-open).
+        if is_opening and milestone_ctx.get("pause_buy_for_family"):
             reason = str(
                 milestone_ctx.get("block_reason")
                 or f"Milestone controller blocked BUY entries for strategy family '{family}'."
@@ -1086,12 +1088,46 @@ def safe_submit_order(client, order_request):
                 equity = _get_account_equity_from_client(client) or 0.0
                 max_loss, _dte, _underlying = _estimate_opening_max_loss(order_request)
                 est_amount = float(max_loss or 0.0)
+                # Best-effort account context so that direct script submissions
+                # still benefit from the same dynamic guardrails as AlpacaExecutor.
+                account_context: dict[str, Any] = {"equity": float(equity)}
+
+                # Include current positions for stacking + count checks (best-effort).
+                try:
+                    qty_map = _get_positions_qty_map(client) or {}
+                    if qty_map:
+                        account_context["positions"] = [
+                            {"symbol": sym, "qty": qty} for sym, qty in qty_map.items()
+                        ]
+                except Exception:
+                    pass
+
+                # Inject North Star guard context for dynamic risk sizing/blocking.
+                try:
+                    from src.safety.north_star_guard import get_guard_context
+
+                    guard_context = get_guard_context()
+                    if guard_context:
+                        account_context["north_star_guard"] = guard_context
+                except Exception:
+                    pass
+
+                # Inject milestone controller context for family-level auto-pause enforcement.
+                try:
+                    from src.safety.milestone_controller import get_milestone_context
+
+                    milestone_context = get_milestone_context(strategy="order_request")
+                    if milestone_context:
+                        account_context["milestone_controller"] = milestone_context
+                except Exception:
+                    pass
+
                 gate = validate_trade_mandatory(
                     symbol=str(getattr(order_request, "symbol", "") or ""),
                     amount=est_amount if est_amount > 0 else MIN_TRADE_AMOUNT,
                     side=str(getattr(order_request, "side", "BUY")).upper(),
                     strategy="order_request",
-                    context={"equity": float(equity)},
+                    context=account_context,
                 )
                 if not gate.approved:
                     raise ValueError(f"MANDATORY GATE BLOCKED: {gate.reason}")

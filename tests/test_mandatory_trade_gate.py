@@ -163,7 +163,7 @@ class TestValidateTradeMandatory:
         assert "stacking" not in result.reason.lower()
 
     def test_north_star_guard_blocks_new_positions(self):
-        """Test that north_star_guard can block BUY risk-on orders."""
+        """Test that north_star_guard can block new risk-on orders."""
         from src.safety.mandatory_trade_gate import validate_trade_mandatory
 
         result = validate_trade_mandatory(
@@ -173,6 +173,30 @@ class TestValidateTradeMandatory:
             strategy="iron_condor",
             context={
                 "equity": 5000.0,
+                "north_star_guard": {
+                    "enabled": True,
+                    "mode": "capital_preservation",
+                    "max_position_pct": 0.01,
+                    "block_new_positions": True,
+                    "block_reason": "Guard blocked for test",
+                },
+            },
+        )
+        assert result.approved is False
+        assert "guard blocked" in result.reason.lower()
+
+    def test_north_star_guard_blocks_new_positions_on_sell(self):
+        """Test that north_star_guard blocks SELL-to-open style entries too."""
+        from src.safety.mandatory_trade_gate import validate_trade_mandatory
+
+        result = validate_trade_mandatory(
+            symbol="SPY260220P00658000",
+            amount=50.0,
+            side="SELL",
+            strategy="credit_spread",
+            context={
+                "equity": 5000.0,
+                "positions": [{"symbol": "SPY", "qty": "1"}],  # non-empty so is_opening stays True
                 "north_star_guard": {
                     "enabled": True,
                     "mode": "capital_preservation",
