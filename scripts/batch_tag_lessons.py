@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Batch add tags to lessons-learned posts for SEO optimization."""
 
-import os
 import re
 from pathlib import Path
 

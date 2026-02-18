@@ -31,7 +31,6 @@ def update_title(file_path: Path, new_title: str) -> bool:
     pattern = r'^title:\s*["\']?(.+?)["\']?$'
 
     def replace_title(match):
-        old_title = match.group(1).strip('"\'')
         # Preserve quote style if present
         if match.group(0).startswith('title: "'):
             return f'title: "{new_title}"'

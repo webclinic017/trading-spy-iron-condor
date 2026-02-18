@@ -62,8 +62,6 @@ def get_access_token() -> str | None:
 def _create_jwt(creds: dict) -> str:
     """Create JWT for service account authentication."""
     import base64
-    import hashlib
-    import hmac
     import time
 
     header = {"alg": "RS256", "typ": "JWT"}

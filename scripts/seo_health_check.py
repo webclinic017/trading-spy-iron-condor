@@ -75,9 +75,7 @@ def extract_frontmatter(content: str) -> dict[str, Any]:
             key, _, value = line.partition(":")
             value = value.strip()
             # Remove quotes
-            if value.startswith('"') and value.endswith('"'):
-                value = value[1:-1]
-            elif value.startswith("'") and value.endswith("'"):
+            if value.startswith('"') and value.endswith('"') or value.startswith("'") and value.endswith("'"):
                 value = value[1:-1]
             # Parse booleans
             elif value.lower() in ("true", "yes"):
@@ -283,7 +281,6 @@ def audit_blog() -> SEOReport:
 
     errors = sum(1 for i in all_issues if i.severity == "error")
     warnings = sum(1 for i in all_issues if i.severity == "warning")
-    infos = sum(1 for i in all_issues if i.severity == "info")
 
     score = calculate_score(all_issues)
 
@@ -299,7 +296,7 @@ def audit_blog() -> SEOReport:
 def print_report(report: SEOReport) -> None:
     """Print human-readable report."""
     print(f"\n{'='*60}")
-    print(f"SEO Health Report")
+    print("SEO Health Report")
     print(f"{'='*60}\n")
 
     print(f"Score: {report.score}/100")
