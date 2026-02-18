@@ -27,9 +27,19 @@ layout: default
     </p>
 
     {%- if page.tags and page.tags.size > 0 -%}
+    {%- assign topic_pages = site.pages | where_exp: "p", "p.url contains '/topics/'" -%}
+    {%- assign topic_urls = "" | split: "" -%}
+    {%- for p in topic_pages -%}
+      {%- assign topic_urls = topic_urls | push: p.url -%}
+    {%- endfor -%}
     <div class="post-tags" aria-label="Post topics">
       {%- for t in page.tags -%}
-      <a href="{{ '/topics/' | append: t | append: '/' | relative_url }}">{{ t }}</a>
+        {%- assign topic_url = '/topics/' | append: t | append: '/' -%}
+        {%- if topic_urls contains topic_url -%}
+          <a class="tag-pill" href="{{ topic_url | relative_url }}">{{ t }}</a>
+        {%- else -%}
+          <span class="tag-pill tag-pill--nolink">{{ t }}</span>
+        {%- endif -%}
       {%- endfor -%}
     </div>
     {%- endif -%}

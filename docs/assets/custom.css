@@ -10,7 +10,7 @@
   font-size: 0.95rem;
 }
 
-.post-tags a {
+.post-tags .tag-pill {
   display: inline-block;
   margin: 0 0.35rem 0.35rem 0;
   padding: 0.12rem 0.5rem;
@@ -21,9 +21,13 @@
   background: #f6f8fa;
 }
 
-.post-tags a:hover {
+.post-tags a.tag-pill:hover {
   background: #eef1f4;
   text-decoration: none;
+}
+
+.tag-pill--nolink {
+  opacity: 0.85;
 }
 
 .related-posts {
@@ -79,4 +83,3 @@
   font-size: 0.95rem;
   margin-top: 6px;
 }
-
