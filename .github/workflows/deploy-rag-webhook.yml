@@ -41,7 +41,14 @@ jobs:
           project_id: ${{ env.PROJECT_ID }}
 
       - name: Configure Docker auth
-        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+        run: |
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+          # Extra defense-in-depth: ensure docker is logged in even if cred helpers
+          # are not honored in some runner edge cases.
+          gcloud auth print-access-token | docker login \
+            -u oauth2accesstoken \
+            --password-stdin \
+            https://${{ env.REGION }}-docker.pkg.dev
 
       - name: Prepare Dockerfile
         run: |
