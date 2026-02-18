@@ -1,12 +1,29 @@
 ---
 layout: post
-title: "Ralph Weekly Digest: Week of 2026-01-18"
+title: 'Ralph Weekly Digest: Week of 2026-01-18'
 date: 2026-01-25
-categories: [ralph, weekly-digest, ai-trading]
-tags: [ai, trading, automation, self-healing, claude]
+categories:
+- ralph
+- weekly-digest
+- ai-trading
+tags:
+- ai
+- trading
+- automation
+- self-healing
+- claude
+description: This week, Ralph - our AI CTO - has been working around the clock to
+  improve the AI Trading System.
+image: "/assets/snapshots/progress_latest.png"
+
 ---
 
 # Ralph Weekly Digest
+
+
+## Answer Block
+
+> **Answer Block:** This week, Ralph - our AI CTO - has been working around the clock to improve the AI Trading System.
 
 **Week of 2026-01-18 to 2026-01-25**
 

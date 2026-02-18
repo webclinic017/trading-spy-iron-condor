@@ -22,8 +22,15 @@ questions:
     answer: "We store each lesson in a RAG index and retrieve similar past incidents before future trades and engineering changes."
   - question: "Where can I browse the full code and history?"
     answer: "The full repository and daily updates are published publicly on GitHub and GitHub Pages."
+tags: ['lessons-learned', 'daily-journal', 'ai-trading', 'building-in-public']
 ---
+
 # Day 95 of 90 | Saturday, January 31, 2026
+
+
+## Answer Block
+
+> **Answer Block:** 0 days remaining in our journey to build a profitable AI trading system.
 
 **0 days remaining** in our journey to build a profitable AI trading system.
 

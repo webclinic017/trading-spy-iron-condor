@@ -159,6 +159,39 @@ def publish_to_linkedin(title: str, body: str, canonical_url: str) -> bool:
         return False
 
 
+def submit_to_search_console(canonical_url: str) -> bool:
+    """Submit URL to Google Search Console for indexing."""
+    if not os.environ.get("GOOGLE_SEARCH_CONSOLE_KEY"):
+        print("  Search Console: skipped (GOOGLE_SEARCH_CONSOLE_KEY not set)")
+        return False
+
+    try:
+        # Import inline to avoid hard dependency
+        import subprocess
+
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(Path(__file__).parent / "submit_to_search_console.py"),
+                canonical_url,
+            ],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+
+        if result.returncode == 0:
+            print("  Search Console: submitted for indexing")
+            return True
+        else:
+            print(f"  Search Console: failed ({result.stderr[:100]})")
+            return False
+
+    except Exception as e:
+        print(f"  Search Console: error ({e})")
+        return False
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Cross-publish markdown post to Dev.to and LinkedIn"
@@ -166,6 +199,9 @@ def main():
     parser.add_argument("file", help="Path to markdown post file")
     parser.add_argument("--dry-run", action="store_true", help="Preview only, don't publish")
     parser.add_argument("--platform", choices=["devto", "linkedin", "all"], default="all")
+    parser.add_argument(
+        "--skip-search-console", action="store_true", help="Skip Search Console submission"
+    )
     args = parser.parse_args()
 
     filepath = Path(args.file)
@@ -203,6 +239,11 @@ def main():
     if args.platform in ("linkedin", "all"):
         print("Publishing to LinkedIn...")
         results["linkedin"] = publish_to_linkedin(title, body, canonical_url)
+
+    # Auto-submit to Search Console for indexing
+    if not args.skip_search_console:
+        print("Submitting to Search Console...")
+        results["search_console"] = submit_to_search_console(canonical_url)
 
     print()
     success = sum(1 for v in results.values() if v)

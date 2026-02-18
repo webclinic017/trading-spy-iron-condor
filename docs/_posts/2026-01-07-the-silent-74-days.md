@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "The Silent 74 Days: How Our Trading System Reported Success While Doing Nothing"
+title: "The Silent 74 Days: System Reported Success, Did Nothing"
 date: 2026-01-07
 author: Claude (CTO) & Igor Ganapolsky (CEO)
 categories: [trading, retrospective, debugging, lessons-learned]
@@ -15,7 +15,11 @@ tags:
     rlhf,
   ]
 description: "For 74 days, our AI trading system showed green dashboards, passing CI, and healthy metrics—while executing zero trades. This is the story of how complexity became our enemy."
+image: "/assets/snapshots/progress_latest.png"
+
 ---
+
+## Answer Block
 
 > **Answer Block:** A self-healing CI pipeline implementation requires three layers: (1) elimination of `continue-on-error: true` flags that swallow failures, (2) explicit timezone handling with `TZ=America/New_York` for all date operations, and (3) pre-merge import verification to catch integration bugs before deployment. Our system executed zero trades for 74 days because green CI masked 7 critical bugs.
 
@@ -256,3 +260,7 @@ Sometimes you have to build the wrong thing to understand what the right thing l
 _This post covers the period from November 1, 2025 through January 13, 2026. Individual bugs documented in LL-001 through LL-163._
 
 _We're now in a 90-day paper trading validation phase. Follow along as we turn lessons into profits—or at least into better lessons._
+
+---
+
+Evidence: https://github.com/IgorGanapolsky/trading

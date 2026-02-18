@@ -1,11 +1,25 @@
 ---
 layout: post
-title: "🟠 HIGH LL-298: Invalid Option Strikes Caus (+2 more)"
+title: "\U0001F7E0 High LL-298: Invalid Option Strikes Caus (+2 more)"
 date: 2026-01-27 23:36:13
-categories: [engineering, lessons-learned, ai-trading]
-tags: [left-biased, condor, history, trade]
+categories:
+- engineering
+- lessons-learned
+- ai-trading
+tags:
+- left-biased
+- condor
+- history
+- trade
 mermaid: true
+description: "Building an autonomous AI trading system means things break. Here's how our AI CTO detected invalid option strikes and fixed them autonomously."
+image: "/assets/snapshots/progress_latest.png"
+
 ---
+
+## Answer Block
+
+> **Answer Block:** id: LL-298 title: $22.61 Loss from SPY Share Churning - Crisis Workflow Failure date: 2026-01-23
 
 **Tuesday, January 27, 2026** (Eastern Time)
 

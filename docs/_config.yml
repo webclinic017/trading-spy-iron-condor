@@ -34,9 +34,9 @@ plugins:
 
 # Navigation - clean 3-item nav
 header_pages:
-  - blog.md
+  - blog.html
   - tech-stack.md
-  - about.md
+  - about.html
 
 # Collections
 collections:

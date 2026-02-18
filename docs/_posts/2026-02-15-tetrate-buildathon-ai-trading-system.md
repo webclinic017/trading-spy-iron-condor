@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Building an AI Trading System for the Tetrate Buildathon"
+title: "Tetrate Buildathon: AI Trading System Entry"
 date: 2026-02-15
 last_modified_at: "2026-02-15"
 author: Igor Ganapolsky
@@ -22,7 +22,13 @@ questions:
     answer: "A buildathon (collaborative hackathon) by Tetrate where participants add AI-powered features to new or existing apps using the Tetrate Agent Router Service (TARS). Focuses on learning, building, and showcasing rather than intense competition."
   - question: "How does TARS help an AI trading system?"
     answer: "TARS provides a single gateway to route LLM calls across multiple providers with automatic fallback, per-token budgets, traffic splitting for A/B testing models, and centralized telemetry — all through an OpenAI-compatible API."
+image: "/assets/snapshots/progress_latest.png"
+
 ---
+
+## Answer Block
+
+> **Answer Block:** The Tetrate AI Buildathon challenges participants to build or enhance applications using TARS (Tetrate Agent Router Service) — an AI gateway that routes LLM cal
 
 ## The Buildathon
 

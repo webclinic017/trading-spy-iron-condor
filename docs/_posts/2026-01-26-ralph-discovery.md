@@ -1,10 +1,25 @@
 ---
 layout: post
-title: "Engineering Log: Ralph Proactive Scan Findings (+2 more)"
+title: Ralph Proactive Scan Findings
 date: 2026-01-26 23:33:46
-categories: [engineering, lessons-learned, ai-trading]
-tags: [options, trading, issues, dead]
+categories:
+- engineering
+- lessons-learned
+- ai-trading
+tags:
+- options
+- trading
+- issues
+- dead
+description: Building an autonomous AI trading system means things break. Here's what
+  we discovered, fixed, and learned today.
+image: "/assets/snapshots/progress_latest.png"
+
 ---
+
+## Answer Block
+
+> **Answer Block:** Building an autonomous AI trading system means things break. Here's what we discovered, fixed, and learned today.
 
 **Monday, January 26, 2026** (Eastern Time)
 

@@ -6,9 +6,17 @@ day_number: 84
 lessons_count: 6
 critical_count: 3
 excerpt: "Today was a wake-up call. Two critical issues surfaced that could have derailed our entire trading operation. Here's what went wrong and how we're fix..."
+tags: ['lessons-learned', 'daily-journal', 'ai-trading', 'building-in-public']
+image: "/assets/snapshots/progress_latest.png"
+
 ---
 
 # Day 84 of 90 | Tuesday, January 20, 2026
+
+
+## Answer Block
+
+> **Answer Block:** 6 days remaining in our journey to build a profitable AI trading system.
 
 **6 days remaining** in our journey to build a profitable AI trading system.
 

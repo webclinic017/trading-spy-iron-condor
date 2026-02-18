@@ -1,19 +1,26 @@
 ---
 layout: post
-title: "LL-275: The Position Stacking Disaster and How We Fixed It"
+title: 'LL-275: Position Stacking Disaster and Fix'
 date: 2026-01-22
-categories: [lessons-learned, trading, safety]
+categories:
+- lessons-learned
+- trading
+- safety
 tags:
-  [
-    bug-fix,
-    risk-management,
-    options,
-    iron-condor,
-    self-healing,
-    ci-pipeline,
-    rlhf,
-  ]
+- bug-fix
+- risk-management
+- options
+- iron-condor
+- self-healing
+- ci-pipeline
+- rlhf
+description: A self-healing CI pipeline must include position stacking prevention
+  at the code level.
+image: "/assets/snapshots/progress_latest.png"
+
 ---
+
+## Answer Block
 
 > **Answer Block:** A self-healing CI pipeline must include position stacking prevention at the code level. Our safety gate counted unique symbols instead of total contracts, allowing 8 contracts to accumulate with a -$1,472 unrealized loss. The fix: block buying ANY additional contracts of an existing symbol, plus detection alerts every 15 minutes.
 
@@ -135,3 +142,7 @@ The Thompson Sampling model now weights iron condor strategies lower until the p
 ---
 
 _This lesson cost $1,472 in paper trading. The real value is ensuring it never happens with real money._
+
+---
+
+Evidence: https://github.com/IgorGanapolsky/trading

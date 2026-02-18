@@ -25,9 +25,35 @@ layout: default
       </span>
       {%- endif -%}
     </p>
+
+    {%- if page.tags and page.tags.size > 0 -%}
+    {%- assign topic_pages = site.pages | where_exp: "p", "p.url contains '/topics/'" -%}
+    {%- assign topic_urls = "" | split: "" -%}
+    {%- for p in topic_pages -%}
+      {%- assign topic_urls = topic_urls | push: p.url -%}
+    {%- endfor -%}
+    <div class="post-tags" aria-label="Post topics">
+      {%- for t in page.tags -%}
+        {%- assign topic_url = '/topics/' | append: t | append: '/' -%}
+        {%- if topic_urls contains topic_url -%}
+          <a class="tag-pill" href="{{ topic_url | relative_url }}">{{ t }}</a>
+        {%- else -%}
+          <span class="tag-pill tag-pill--nolink">{{ t }}</span>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+    {%- endif -%}
   </header>
 
-  <div class="post-content e-content" itemprop="articleBody">{{ content }}</div>
+  <div class="post-content e-content" itemprop="articleBody">
+    {{ content }}
+
+    <footer class="post-footer">
+      <hr>
+      <p><em>Igor Ganapolsky builds autonomous trading systems that combine AI decision-making with systematic options strategies. Follow the journey from $100K → $600K through <a href="{{ '/topics/iron-condors/' | relative_url }}">iron condors</a> and <a href="{{ '/topics/risk-management/' | relative_url }}">disciplined risk management</a>.</em></p>
+      <p><strong><a href="{{ '/' | relative_url }}">Read more lessons learned →</a></strong></p>
+    </footer>
+  </div>
 
   {%- if site.posts.size > 1 -%}
   <nav class="related-posts">
@@ -46,20 +72,58 @@ layout: default
     <h3>{{ related_label }}</h3>
     <ul>
       {%- assign candidates = items | where_exp: "p", "p.url != page.url" -%}
-      {%- assign related = candidates -%}
+      {%- assign related_posts = "" | split: "" -%}
+      {%- assign related_urls = "" | split: "" -%}
+      {%- assign max_related = 8 -%}
+
+      {%- comment -%}
+        Build a deterministic, tag-driven related list.
+        1) Prefer posts sharing tags with current page (fan-out across tags).
+        2) If still short, fall back to same categories.
+        3) If still short, fill with most recent candidates.
+      {%- endcomment -%}
 
       {%- if page.tags and page.tags.size > 0 -%}
-        {%- assign primary_tag = page.tags[0] -%}
-        {%- assign related = candidates | where_exp: "p", "p.tags contains primary_tag" -%}
+        {%- for t in page.tags -%}
+          {%- assign tagged = candidates | where_exp: "p", "p.tags contains t" -%}
+          {%- for p in tagged -%}
+            {%- unless related_urls contains p.url -%}
+              {%- assign related_posts = related_posts | push: p -%}
+              {%- assign related_urls = related_urls | push: p.url -%}
+            {%- endunless -%}
+            {%- if related_posts.size >= max_related -%}{%- break -%}{%- endif -%}
+          {%- endfor -%}
+          {%- if related_posts.size >= max_related -%}{%- break -%}{%- endif -%}
+        {%- endfor -%}
       {%- endif -%}
 
-      {%- if related.size == 0 -%}
-        {%- assign related = candidates -%}
+      {%- if related_posts.size < max_related and page.categories and page.categories.size > 0 -%}
+        {%- for c in page.categories -%}
+          {%- assign cat = candidates | where_exp: "p", "p.categories contains c" -%}
+          {%- for p in cat -%}
+            {%- unless related_urls contains p.url -%}
+              {%- assign related_posts = related_posts | push: p -%}
+              {%- assign related_urls = related_urls | push: p.url -%}
+            {%- endunless -%}
+            {%- if related_posts.size >= max_related -%}{%- break -%}{%- endif -%}
+          {%- endfor -%}
+          {%- if related_posts.size >= max_related -%}{%- break -%}{%- endif -%}
+        {%- endfor -%}
       {%- endif -%}
 
-      {%- assign related = related | slice: 0, 3 -%}
+      {%- if related_posts.size < max_related -%}
+        {%- for p in candidates -%}
+          {%- unless related_urls contains p.url -%}
+            {%- assign related_posts = related_posts | push: p -%}
+            {%- assign related_urls = related_urls | push: p.url -%}
+          {%- endunless -%}
+          {%- if related_posts.size >= max_related -%}{%- break -%}{%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
 
-      {%- for post in related -%}
+      {%- assign related_posts = related_posts | slice: 0, 6 -%}
+
+      {%- for post in related_posts -%}
       <li>
         <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
         <small>{{ post.date | date: "%Y-%m-%d" }}</small>
@@ -89,7 +153,8 @@ layout: default
       "@type": "Person",
       "@id": "https://igorganapolsky.github.io/trading/#person",
       "name": "Igor Ganapolsky",
-      "jobTitle": "Senior Mobile Engineer",
+      "jobTitle": "AI Trading System Developer",
+      "description": "Building autonomous trading systems with iron condor options strategy, targeting $6K/month passive income",
       "url": "https://igorganapolsky.github.io/trading/",
       "sameAs": [
         "https://github.com/IgorGanapolsky",

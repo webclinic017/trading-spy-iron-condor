@@ -1,0 +1,85 @@
+/* Site-local CSS overrides and additions.
+   Keep minimal to avoid fighting the Minima theme. */
+
+.post-header .post-meta {
+  margin-bottom: 0.75rem;
+}
+
+.post-tags {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.post-tags .tag-pill {
+  display: inline-block;
+  margin: 0 0.35rem 0.35rem 0;
+  padding: 0.12rem 0.5rem;
+  border: 1px solid #d0d7de;
+  border-radius: 999px;
+  text-decoration: none;
+  color: #24292f;
+  background: #f6f8fa;
+}
+
+.post-tags a.tag-pill:hover {
+  background: #eef1f4;
+  text-decoration: none;
+}
+
+.tag-pill--nolink {
+  opacity: 0.85;
+}
+
+.related-posts {
+  border-top: 1px solid #eaecef;
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+}
+
+.related-posts h3 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.related-posts ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.related-posts li {
+  margin: 0.35rem 0;
+}
+
+.related-posts small {
+  color: #57606a;
+  margin-left: 0.5rem;
+}
+
+.topic-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 700px) {
+  .topic-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.topic-card {
+  border: 1px solid #eaecef;
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #ffffff;
+}
+
+.topic-card a {
+  text-decoration: none;
+}
+
+.topic-card .topic-count {
+  color: #57606a;
+  font-size: 0.95rem;
+  margin-top: 6px;
+}

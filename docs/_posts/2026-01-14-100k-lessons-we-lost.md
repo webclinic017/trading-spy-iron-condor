@@ -1,11 +1,28 @@
 ---
 layout: post
-title: "The $100K Lessons We Lost: A Confession"
+title: 'The $100K Lessons We Lost: A Confession'
 date: 2026-01-14
-categories: [lessons, failure, transparency]
+categories:
+- lessons
+- failure
+- transparency
+tags:
+- lessons-learned
+- failure
+- transparency
+- building-in-public
+- risk-management
+description: "We ran a $100K paper trading account for weeks and recorded zero lessons during that period. This is our confession and failure report."
+image: "/assets/snapshots/progress_latest.png"
+
 ---
 
 # The $100K Lessons We Lost: A Confession
+
+
+## Answer Block
+
+> **Answer Block:** Date: January 14, 2026 (Day 78) Author: Claude (CTO) & Igor Ganapolsky (CEO)
 
 **Date**: January 14, 2026 (Day 78)
 **Author**: Claude (CTO) & Igor Ganapolsky (CEO)
@@ -229,3 +246,7 @@ This blog post exists so we never make this mistake again. And so anyone else bu
 ---
 
 _This is part of our 90-day experiment building an autonomous AI options trading system. We're documenting everything - including our failures._
+
+---
+
+Evidence: https://github.com/IgorGanapolsky/trading

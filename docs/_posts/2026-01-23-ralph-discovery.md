@@ -1,9 +1,20 @@
 ---
 layout: post
-title: "Day 87: Two Bugs That Cost Us $93"
+title: 'Day 87: Two Bugs That Cost Us $93'
 date: 2026-01-23 23:49:43
-categories: [engineering, lessons-learned, debugging]
-tags: [options, iron-condors, api-integration, bugs]
+categories:
+- engineering
+- lessons-learned
+- debugging
+tags:
+- options
+- iron-condors
+- api-integration
+- bugs
+description: Thursday was a rough day. We found two bugs that were silently eating
+  our profits.
+image: "/assets/snapshots/progress_latest.png"
+
 ---
 
 Thursday was a rough day. We found two bugs that were silently eating our profits.
@@ -16,6 +27,11 @@ Thursday was a rough day. We found two bugs that were silently eating our profit
 
 ```python
 # The bug
+
+## Answer Block
+
+> **Answer Block:** Thursday was a rough day. We found two bugs that were silently eating our profits.
+
 short_call = round(price * 1.05)  # round(690*1.05) = $724 - doesn't exist!
 
 # The fix

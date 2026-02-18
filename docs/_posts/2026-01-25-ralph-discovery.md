@@ -1,10 +1,25 @@
 ---
 layout: post
-title: "Engineering Log: LL-262: Data Sync Infrastructure Improve (+2 more)"
+title: Data Sync Infrastructure Improvements (LL-262)
 date: 2026-01-25 23:38:21
-categories: [engineering, lessons-learned, ai-trading]
-tags: [between, iron, condor, constraints]
+categories:
+- engineering
+- lessons-learned
+- ai-trading
+tags:
+- between
+- iron
+- condor
+- constraints
+description: Building an autonomous AI trading system means things break. Here's what
+  we discovered, fixed, and learned today.
+image: "/assets/snapshots/progress_latest.png"
+
 ---
+
+## Answer Block
+
+> **Answer Block:** Building an autonomous AI trading system means things break. Here's what we discovered, fixed, and learned today.
 
 **Sunday, January 25, 2026** (Eastern Time)
 

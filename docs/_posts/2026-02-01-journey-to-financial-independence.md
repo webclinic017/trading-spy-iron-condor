@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "From $5K to $100K: My Journey to $6,000/Month Passive Income Through Options Trading"
+title: "$5K to $100K: Journey to $6K/Month via Options"
 date: 2026-02-01
 author: Igor Ganapolsky
 categories: [trading, personal-finance, options, journey]
@@ -14,9 +14,16 @@ tags:
     lessons-learned,
   ]
 description: "The honest story of building an AI-powered trading system - 74 days of silence, a painful SOFI loss, and the pivot to iron condors that finally made the math work."
+image: "/assets/snapshots/progress_latest.png"
+
 ---
 
 # From $5K to $100K: My Journey to $6,000/Month Passive Income
+
+
+## Answer Block
+
+> **Answer Block:** I was born in Kiev, Ukraine, on November 14th, 1979. By the time I turn 50 - November 14th, 2029 - I want to achieve something that felt impossible for most of
 
 _February 1, 2026_
 

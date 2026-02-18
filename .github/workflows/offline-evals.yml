@@ -1,0 +1,49 @@
+name: Offline Evals (Regression Gate)
+
+on:
+  pull_request:
+    paths:
+      - "src/rag/**"
+      - "src/safety/**"
+      - "src/orchestrator/gates.py"
+      - "tests/evals/**"
+      - ".github/workflows/offline-evals.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/rag/**"
+      - "src/safety/**"
+      - "src/orchestrator/gates.py"
+      - "tests/evals/**"
+  workflow_dispatch:
+
+jobs:
+  offline-evals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pytest
+
+      - name: Run offline evals (deterministic)
+        env:
+          # Ensure optional heavy deps cannot cause network access during evals.
+          HF_HUB_OFFLINE: "1"
+          TRANSFORMERS_OFFLINE: "1"
+        run: |
+          pytest -q \
+            tests/evals \
+            tests/test_mandatory_trade_gate.py \
+            tests/test_orchestrator_gates.py \
+            tests/test_lessons_learned_rag_smoke.py
