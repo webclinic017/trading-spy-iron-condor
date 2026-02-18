@@ -430,45 +430,144 @@ class TestTradeQueryFallbackBehavior:
                 {"id": "ll_001", "severity": "INFO", "content": "Test lesson"}
             ]
 
-            with patch("src.agents.rag_webhook.get_current_portfolio_status") as mock_portfolio:
-                mock_portfolio.return_value = {
-                    "live": {
-                        "equity": 100,
-                        "total_pl": 5,
-                        "total_pl_pct": 5.0,
-                        "positions_count": 0,
-                    },
-                    "paper": {
-                        "equity": 100000,
-                        "total_pl": 1000,
-                        "total_pl_pct": 1.0,
-                        "positions_count": 2,
-                        "win_rate": 80.0,
-                    },
-                    "last_trade_date": "2026-01-05",
-                    "trades_today": 0,
-                    "challenge_day": 69,
-                }
+            with patch("src.agents.rag_webhook.query_trades", return_value=[]):
+                with patch("src.agents.rag_webhook.get_current_portfolio_status") as mock_portfolio:
+                    mock_portfolio.return_value = {
+                        "live": {
+                            "equity": 100,
+                            "total_pl": 5,
+                            "total_pl_pct": 5.0,
+                            "positions_count": 0,
+                        },
+                        "paper": {
+                            "equity": 100000,
+                            "total_pl": 1000,
+                            "total_pl_pct": 1.0,
+                            "positions_count": 2,
+                            "win_rate": 80.0,
+                        },
+                        "last_trade_date": "2026-01-05",
+                        "trades_today": 0,
+                        "challenge_day": 69,
+                    }
 
-                from fastapi.testclient import TestClient
+                    from fastapi.testclient import TestClient
 
-                from src.agents.rag_webhook import app
+                    from src.agents.rag_webhook import app
 
-                client = TestClient(app)
+                    client = TestClient(app)
 
-                response = client.post(
-                    "/webhook",
-                    json={"text": "How much money did we make today?"},
-                )
+                    response = client.post(
+                        "/webhook",
+                        json={"text": "How much money did we make today?"},
+                    )
 
-                assert response.status_code == 200
-                data = response.json()
-                text = data["fulfillmentResponse"]["messages"][0]["text"]["text"][0]
+                    assert response.status_code == 200
+                    data = response.json()
+                    text = data["fulfillmentResponse"]["messages"][0]["text"]["text"][0]
 
-                # Should return portfolio/trade data, NOT lessons
-                assert "Portfolio" in text or "Equity" in text or "P/L" in text or "Trade" in text
-                # Should NOT contain lesson references
-                assert "ll_001" not in text
+                    # Should return portfolio/trade data, NOT lessons
+                    assert (
+                        "Portfolio" in text or "Equity" in text or "P/L" in text or "Trade" in text
+                    )
+                    # Should NOT contain lesson references
+                    assert "ll_001" not in text
+
+    def test_direct_pl_query_no_trades_but_daily_change_explains_mark_to_market(self):
+        """No trades can still produce daily P/L due to mark-to-market drift."""
+        from unittest.mock import patch
+
+        with patch("src.agents.rag_webhook.local_rag") as mock_rag:
+            mock_rag.lessons = []
+            mock_rag.query.return_value = []
+
+            with patch("src.agents.rag_webhook.query_trades", return_value=[]):
+                with patch("src.agents.rag_webhook.get_current_portfolio_status") as mock_portfolio:
+                    mock_portfolio.return_value = {
+                        "live": {
+                            "equity": 0,
+                            "total_pl": 0,
+                            "total_pl_pct": 0,
+                            "positions_count": 0,
+                        },
+                        "paper": {
+                            "equity": 4961.24,
+                            "total_pl": -38.76,
+                            "total_pl_pct": -0.7752,
+                            "positions_count": 2,
+                            "daily_change": -38.76,
+                        },
+                        "last_trade_date": "unknown",
+                        "trades_today": 0,
+                        "actual_today": "2026-02-18",
+                        "challenge_day": 1,
+                    }
+
+                    from fastapi.testclient import TestClient
+
+                    from src.agents.rag_webhook import app
+
+                    client = TestClient(app)
+
+                    response = client.post(
+                        "/webhook",
+                        json={"text": "How much money did we make today?"},
+                    )
+
+                    assert response.status_code == 200
+                    data = response.json()
+                    text = data["fulfillmentResponse"]["messages"][0]["text"]["text"][0]
+
+                    assert "No trades executed" in text
+                    assert "mark-to-market" in text
+                    assert "-$38.76" in text
+
+    def test_compound_pl_query_no_trades_includes_mark_to_market_and_analysis(self):
+        """Compound P/L+why queries should show mark-to-market even when trades_today==0."""
+        from unittest.mock import patch
+
+        with patch("src.agents.rag_webhook.query_rag_hybrid", return_value=([], "keyword")):
+            with patch("src.agents.rag_webhook.query_trades", return_value=[]):
+                with patch("src.agents.rag_webhook.get_current_portfolio_status") as mock_portfolio:
+                    mock_portfolio.return_value = {
+                        "live": {
+                            "equity": 0,
+                            "total_pl": 0,
+                            "total_pl_pct": 0,
+                            "positions_count": 0,
+                        },
+                        "paper": {
+                            "equity": 5012.34,
+                            "total_pl": 12.34,
+                            "total_pl_pct": 0.2468,
+                            "positions_count": 1,
+                            "daily_change": 12.34,
+                        },
+                        "last_trade_date": "unknown",
+                        "trades_today": 0,
+                        "actual_today": "2026-02-18",
+                        "challenge_day": 1,
+                    }
+
+                    from fastapi.testclient import TestClient
+
+                    from src.agents.rag_webhook import app
+
+                    client = TestClient(app)
+
+                    response = client.post(
+                        "/webhook",
+                        json={"text": "How much money did we make today and why?"},
+                    )
+
+                    assert response.status_code == 200
+                    data = response.json()
+                    text = data["fulfillmentResponse"]["messages"][0]["text"]["text"][0]
+
+                    assert "No trades executed" in text
+                    assert "mark-to-market" in text
+                    assert "+$12.34" in text
+                    assert "Common reasons" in text
 
     def test_trade_query_unavailable_portfolio_returns_clear_message(self):
         """Verify P/L queries return trade history or portfolio status, not raw lessons."""

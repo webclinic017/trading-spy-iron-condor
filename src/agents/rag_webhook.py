@@ -162,6 +162,37 @@ def format_rag_response(results: list, query: str, source: str) -> str:
     return "\n".join(response_parts)
 
 
+def _coerce_float(value: object, default: float = 0.0) -> float:
+    try:
+        return float(value)  # type: ignore[arg-type]
+    except Exception:
+        return default
+
+
+def _format_signed_dollars(amount: float) -> str:
+    if amount > 0:
+        return f"+${amount:,.2f}"
+    if amount < 0:
+        return f"-${abs(amount):,.2f}"
+    return "$0.00"
+
+
+def _format_no_trade_today_pl(paper: dict, actual_today: str) -> str:
+    """Format a 'no trades today' P/L line that still explains mark-to-market drift."""
+    daily_change = _coerce_float(paper.get("daily_change", 0.0))
+    positions_count = int(paper.get("positions_count", 0) or 0)
+
+    if abs(daily_change) < 0.005:
+        return f"**Today ({actual_today}):** No trades executed; mark-to-market is flat so far"
+
+    drift_label = "mark-to-market" if positions_count > 0 else "equity drift"
+    positions_hint = f" across {positions_count} open position(s)" if positions_count > 0 else ""
+    return (
+        f"**Today ({actual_today}):** No trades executed; "
+        f"{drift_label} {_format_signed_dollars(daily_change)}{positions_hint}"
+    )
+
+
 @app.post("/rag-search")
 async def rag_search(request: Request):
     """Lightweight RAG search endpoint for UI/worker use."""
@@ -1492,23 +1523,20 @@ async def webhook(
             if portfolio:
                 paper = portfolio.get("paper", {})
                 trades_today = portfolio.get("trades_today", 0)
-                daily_change = paper.get("daily_change", 0)
-                total_pl = paper.get("total_pl", 0)
                 actual_today = portfolio.get("actual_today", "today")
 
                 if trades_today > 0:
+                    daily_change = _coerce_float(paper.get("daily_change", 0))
                     if daily_change > 0:
                         pl_response = (
                             f"**Today's P/L:** +${daily_change:,.2f} from {trades_today} trade(s)"
                         )
                     elif daily_change < 0:
-                        pl_response = (
-                            f"**Today's P/L:** ${daily_change:,.2f} from {trades_today} trade(s)"
-                        )
+                        pl_response = f"**Today's P/L:** -${abs(daily_change):,.2f} from {trades_today} trade(s)"
                     else:
                         pl_response = f"**Today's P/L:** Flat from {trades_today} trade(s)"
                 else:
-                    pl_response = f"**Today ({actual_today}):** No trades executed yet"
+                    pl_response = _format_no_trade_today_pl(paper, actual_today)
             else:
                 pl_response = "**P/L Status:** Unable to retrieve portfolio data"
 
@@ -1639,7 +1667,7 @@ async def webhook(
                         elif daily_change < 0:
                             response_text = (
                                 f"You executed {trades_today} trade(s) today. "
-                                f"**Today's loss: ${daily_change:,.2f}** "
+                                f"**Today's loss: -${abs(daily_change):,.2f}** "
                                 f"(Overall P/L: ${total_pl:,.2f})"
                             )
                         else:
@@ -1649,11 +1677,21 @@ async def webhook(
                             )
                     else:
                         # No trades today
-                        paper_pl = paper.get("total_pl", 0)
-                        pct = paper.get("total_pl_pct", 0)
+                        paper_pl = _coerce_float(paper.get("total_pl", 0))
+                        pct = _coerce_float(paper.get("total_pl_pct", 0))
+                        daily_change = _coerce_float(paper.get("daily_change", 0))
+                        positions_count = int(paper.get("positions_count", 0) or 0)
+
+                        drift_label = "mark-to-market" if positions_count > 0 else "equity drift"
+                        drift_line = (
+                            f"Today's {drift_label}: **{_format_signed_dollars(daily_change)}** "
+                            f"(no trades)."
+                            if abs(daily_change) >= 0.005
+                            else "Today's mark-to-market: **$0.00** (no trades)."
+                        )
                         response_text = (
-                            f"No money made **today** ({actual_today}) - "
-                            f"no trades yet.\n\n"
+                            f"No trades executed **today** ({actual_today}).\n\n"
+                            f"{drift_line}\n\n"
                             f"Overall paper P/L: **${paper_pl:,.2f}** ({pct:.2f}%)"
                         )
                     logger.info("Returning conversational P/L response")
