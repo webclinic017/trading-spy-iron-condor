@@ -14,52 +14,52 @@
 - Scripts: https://github.com/IgorGanapolsky/trading/tree/main/scripts
 
 ## Operational Metrics
-- Workflows configured: 89
+- Workflows configured: 83
 - Blog posts indexed: 55
 - Reports indexed: 5
 - Lessons indexed: 168
 
 ## Blog Posts (Newest First)
 - [North Star Operating Strategy: Fast, Gated, Coherent](https://igorganapolsky.github.io/trading/2026/02/17/north-star-operating-strategy.html) - 2026-02-17
-- [Building an AI Trading System for the Tetrate Buildathon](https://igorganapolsky.github.io/trading/2026/02/15/tetrate-buildathon-ai-trading-system.html) - 2026-02-15
-- [Why We Route Trading AI Through TARS: Multi-Model Architecture for SPY Options](https://igorganapolsky.github.io/trading/2026/02/15/tars-multi-model-routing-trading.html) - 2026-02-15
-- [PaperBanana: How We Auto-Generate Architecture Diagrams with Gemini](https://igorganapolsky.github.io/trading/2026/02/15/paperbanana-automated-architecture-diagrams.html) - 2026-02-15
+- [Tetrate Buildathon: AI Trading System Entry](https://igorganapolsky.github.io/trading/2026/02/15/tetrate-buildathon-ai-trading-system.html) - 2026-02-15
+- [Tars: Multi-Model Routing for AI Trading](https://igorganapolsky.github.io/trading/2026/02/15/tars-multi-model-routing-trading.html) - 2026-02-15
+- [PaperBanana: Auto-Generate Architecture Diagrams](https://igorganapolsky.github.io/trading/2026/02/15/paperbanana-automated-architecture-diagrams.html) - 2026-02-15
 - [Day 110: What We Learned - February 15, 2026](https://igorganapolsky.github.io/trading/2026/02/15/lessons-learned.html) - 2026-02-15
-- [Feedback-Driven Context Pipelines: How AI Agents Actually Learn in 2026](https://igorganapolsky.github.io/trading/2026/02/15/feedback-driven-context-pipelines-2026.html) - 2026-02-15
+- [Feedback-Driven Context Pipelines (Rlhf + RAG)](https://igorganapolsky.github.io/trading/2026/02/15/feedback-driven-context-pipelines-2026.html) - 2026-02-15
 - [Day 109: What We Learned - February 14, 2026](https://igorganapolsky.github.io/trading/2026/02/14/lessons-learned.html) - 2026-02-14
 - [Day 103: What We Learned - February 08, 2026](https://igorganapolsky.github.io/trading/2026/02/08/lessons-learned.html) - 2026-02-08
 - [When Browser Automation Fails, Pivot Fast](https://igorganapolsky.github.io/trading/2026/02/04/rlhf-win-1728.html) - 2026-02-04
 - [Building a Blog That Writes Itself (Meta, I Know)](https://igorganapolsky.github.io/trading/2026/02/03/rlhf-win.html) - 2026-02-03
 - [Building a Blog That Writes Itself (Meta, I Know)](https://igorganapolsky.github.io/trading/2026/02/03/rlhf-win-1524.html) - 2026-02-03
 - [Ralph Weekly Digest: Week of 2026-01-25](https://igorganapolsky.github.io/trading/2026/02/01/ralph-weekly-digest.html) - 2026-02-01
-- [🟠 HIGH LL-298: Invalid Option Strikes Caus (+2 more)](https://igorganapolsky.github.io/trading/2026/02/01/ralph-discovery.html) - 2026-02-01
+- [\U0001F7E0 High LL-298: Invalid Option Strikes Caus (+2 more)](https://igorganapolsky.github.io/trading/2026/02/01/ralph-discovery.html) - 2026-02-01
 - [Day 96: What We Learned - February 01, 2026](https://igorganapolsky.github.io/trading/2026/02/01/lessons-learned.html) - 2026-02-01
-- [From $5K to $100K: My Journey to $6,000/Month Passive Income Through Options Trading](https://igorganapolsky.github.io/trading/2026/02/01/journey-to-financial-independence.html) - 2026-02-01
-- [ℹ️ INFO Ralph Proactive Scan Findings (+2 more)](https://igorganapolsky.github.io/trading/2026/01/31/ralph-discovery.html) - 2026-01-31
+- [$5K to $100K: Journey to $6K/Month via Options](https://igorganapolsky.github.io/trading/2026/02/01/journey-to-financial-independence.html) - 2026-02-01
+- [\u2139\uFE0F Info Ralph Proactive Scan Findings (+2 more)](https://igorganapolsky.github.io/trading/2026/01/31/ralph-discovery.html) - 2026-01-31
 - [Day 95: What We Learned - January 31, 2026](https://igorganapolsky.github.io/trading/2026/01/31/lessons-learned.html) - 2026-01-31
-- [ℹ️ INFO Ralph Proactive Scan Findings (+2 more)](https://igorganapolsky.github.io/trading/2026/01/30/ralph-discovery.html) - 2026-01-30
+- [\u2139\uFE0F Info Ralph Proactive Scan Findings (+2 more)](https://igorganapolsky.github.io/trading/2026/01/30/ralph-discovery.html) - 2026-01-30
 - [Day 94: What We Learned - January 30, 2026](https://igorganapolsky.github.io/trading/2026/01/30/lessons-learned.html) - 2026-01-30
-- [ℹ️ INFO LL-318: Claude Code Async Hooks for (+2 more)](https://igorganapolsky.github.io/trading/2026/01/29/ralph-discovery.html) - 2026-01-29
+- [Claude Code Async Hooks for FastAPI (LL-318)](https://igorganapolsky.github.io/trading/2026/01/29/ralph-discovery.html) - 2026-01-29
 - [Day 93: What We Learned - January 29, 2026](https://igorganapolsky.github.io/trading/2026/01/29/lessons-learned.html) - 2026-01-29
-- [Technical Debt Audit: 5K Lines Deleted, 48 Tests Added](https://igorganapolsky.github.io/trading/2026/01/28/technical-debt-audit.html) - 2026-01-28
-- [🟠 HIGH LL-298: Invalid Option Strikes Caus (+2 more)](https://igorganapolsky.github.io/trading/2026/01/28/ralph-discovery.html) - 2026-01-28
+- [Tech Debt Audit: 5K Lines Deleted, 48 Tests Added](https://igorganapolsky.github.io/trading/2026/01/28/technical-debt-audit.html) - 2026-01-28
+- [\U0001F7E0 High LL-298: Invalid Option Strikes Caus (+2 more)](https://igorganapolsky.github.io/trading/2026/01/28/ralph-discovery.html) - 2026-01-28
 - [Day 92: What We Learned - January 28, 2026](https://igorganapolsky.github.io/trading/2026/01/28/lessons-learned.html) - 2026-01-28
-- [🟠 HIGH LL-298: Invalid Option Strikes Caus (+2 more)](https://igorganapolsky.github.io/trading/2026/01/27/ralph-discovery.html) - 2026-01-27
+- [\U0001F7E0 High LL-298: Invalid Option Strikes Caus (+2 more)](https://igorganapolsky.github.io/trading/2026/01/27/ralph-discovery.html) - 2026-01-27
 - [Day 91: What We Learned - January 27, 2026](https://igorganapolsky.github.io/trading/2026/01/27/lessons-learned.html) - 2026-01-27
-- [Engineering Log: Ralph Proactive Scan Findings (+2 more)](https://igorganapolsky.github.io/trading/2026/01/26/ralph-discovery.html) - 2026-01-26
+- [Ralph Proactive Scan Findings](https://igorganapolsky.github.io/trading/2026/01/26/ralph-discovery.html) - 2026-01-26
 - [Day 90: What We Learned - January 26, 2026](https://igorganapolsky.github.io/trading/2026/01/26/lessons-learned.html) - 2026-01-26
 - [Ralph Weekly Digest: Week of 2026-01-18](https://igorganapolsky.github.io/trading/2026/01/25/ralph-weekly-digest.html) - 2026-01-25
-- [Engineering Log: LL-262: Data Sync Infrastructure Improve (+2 more)](https://igorganapolsky.github.io/trading/2026/01/25/ralph-discovery.html) - 2026-01-25
+- [Data Sync Infrastructure Improvements (LL-262)](https://igorganapolsky.github.io/trading/2026/01/25/ralph-discovery.html) - 2026-01-25
 - [Day 89: What We Learned - January 25, 2026](https://igorganapolsky.github.io/trading/2026/01/25/lessons-learned.html) - 2026-01-25
-- [Engineering Log: LL-277: Iron Condor Optimization Researc (+2 more)](https://igorganapolsky.github.io/trading/2026/01/24/ralph-discovery.html) - 2026-01-24
+- [Iron Condor Optimization Research (LL-277)](https://igorganapolsky.github.io/trading/2026/01/24/ralph-discovery.html) - 2026-01-24
 - [Day 88: What We Learned - January 24, 2026](https://igorganapolsky.github.io/trading/2026/01/24/lessons-learned.html) - 2026-01-24
 - [Day 87: Two Bugs That Cost Us $93](https://igorganapolsky.github.io/trading/2026/01/23/ralph-discovery.html) - 2026-01-23
 - [Day 87: What We Learned - January 23, 2026](https://igorganapolsky.github.io/trading/2026/01/23/lessons-learned.html) - 2026-01-23
 - [Day 86: The Trust Crisis and Fresh Start](https://igorganapolsky.github.io/trading/2026/01/22/ralph-discovery.html) - 2026-01-22
-- [LL-275: The Position Stacking Disaster and How We Fixed It](https://igorganapolsky.github.io/trading/2026/01/22/position-stacking-disaster-fix.html) - 2026-01-22
+- [LL-275: Position Stacking Disaster and Fix](https://igorganapolsky.github.io/trading/2026/01/22/position-stacking-disaster-fix.html) - 2026-01-22
 - [Day 86: What We Learned - January 22, 2026](https://igorganapolsky.github.io/trading/2026/01/22/lessons-learned.html) - 2026-01-22
 - [Day 85: What We Learned - January 21, 2026](https://igorganapolsky.github.io/trading/2026/01/21/lessons-learned.html) - 2026-01-21
-- [The Complete Guide: AI-Powered Iron Condor Trading System](https://igorganapolsky.github.io/trading/2026/01/21/iron-condors-ai-trading-complete-guide.html) - 2026-01-21
+- [Complete Guide: AI-Powered Iron Condor Trading](https://igorganapolsky.github.io/trading/2026/01/21/iron-condors-ai-trading-complete-guide.html) - 2026-01-21
 - [Day 84: What We Learned - January 20, 2026](https://igorganapolsky.github.io/trading/2026/01/20/lessons-learned.html) - 2026-01-20
 - [Day 83: What We Learned - January 19, 2026](https://igorganapolsky.github.io/trading/2026/01/19/lessons-learned.html) - 2026-01-19
 - [Day 82: What We Learned - January 18, 2026](https://igorganapolsky.github.io/trading/2026/01/18/lessons-learned.html) - 2026-01-18
@@ -68,13 +68,13 @@
 - [Day 79: What We Learned - January 15, 2026](https://igorganapolsky.github.io/trading/2026/01/15/lessons-learned.html) - 2026-01-15
 - [Day 78: What We Learned - January 14, 2026](https://igorganapolsky.github.io/trading/2026/01/14/lessons-learned.html) - 2026-01-14
 - [Day 79: The $40.74 Lesson - Why Rules Exist](https://igorganapolsky.github.io/trading/2026/01/14/lesson-learned-sofi-loss.html) - 2026-01-14
-- [How I Almost Blew 48% of My Account on a Single Trade (And Caught It in Time)](https://igorganapolsky.github.io/trading/2026/01/14/cto-autonomous-decisions.html) - 2026-01-14
+- [How I Almost Blew 48% on One Trade (Caught in Time)](https://igorganapolsky.github.io/trading/2026/01/14/cto-autonomous-decisions.html) - 2026-01-14
 - [25 RAG Lessons Published: Everything We Learned](https://igorganapolsky.github.io/trading/2026/01/14/all-rag-lessons-published.html) - 2026-01-14
 - [The $100K Lessons We Lost: A Confession](https://igorganapolsky.github.io/trading/2026/01/14/100k-lessons-we-lost.html) - 2026-01-14
 - [Day 77: What We Learned - January 13, 2026](https://igorganapolsky.github.io/trading/2026/01/13/lessons-learned.html) - 2026-01-13
-- [Day 74: The Math That Killed Our $100/Day Dream (And What We Built Instead)](https://igorganapolsky.github.io/trading/2026/01/13/day-74-strategy-pivot-credit-spreads.html) - 2026-01-13
+- [Day 74: The Math That Killed Our $100/Day Dream](https://igorganapolsky.github.io/trading/2026/01/13/day-74-strategy-pivot-credit-spreads.html) - 2026-01-13
 - [Day 76: What We Learned - January 12, 2026](https://igorganapolsky.github.io/trading/2026/01/12/lessons-learned.html) - 2026-01-12
-- [The Silent 74 Days: How Our Trading System Reported Success While Doing Nothing](https://igorganapolsky.github.io/trading/2026/01/07/the-silent-74-days.html) - 2026-01-07
+- [The Silent 74 Days: System Reported Success, Did Nothing](https://igorganapolsky.github.io/trading/2026/01/07/the-silent-74-days.html) - 2026-01-07
 
 ## Reports
 - [Social Positioning Copy (Canonical)](https://igorganapolsky.github.io/trading/reports/2026-02-17-social-positioning-copy/) - 2026-02-17

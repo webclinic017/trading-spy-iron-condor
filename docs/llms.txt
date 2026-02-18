@@ -18,7 +18,7 @@
 - Blog posts published: 55
 - Reports published: 5
 - Lessons in RAG markdown: 168
-- Automation workflows: 89
+- Automation workflows: 83
 - Latest blog post date: 2026-02-17
 - Latest lesson date: 2026-02-16
 
@@ -31,11 +31,11 @@
 
 ## Recent Posts
 - [North Star Operating Strategy: Fast, Gated, Coherent](https://igorganapolsky.github.io/trading/2026/02/17/north-star-operating-strategy.html) - 2026-02-17
-- [Building an AI Trading System for the Tetrate Buildathon](https://igorganapolsky.github.io/trading/2026/02/15/tetrate-buildathon-ai-trading-system.html) - 2026-02-15
-- [Why We Route Trading AI Through TARS: Multi-Model Architecture for SPY Options](https://igorganapolsky.github.io/trading/2026/02/15/tars-multi-model-routing-trading.html) - 2026-02-15
-- [PaperBanana: How We Auto-Generate Architecture Diagrams with Gemini](https://igorganapolsky.github.io/trading/2026/02/15/paperbanana-automated-architecture-diagrams.html) - 2026-02-15
+- [Tetrate Buildathon: AI Trading System Entry](https://igorganapolsky.github.io/trading/2026/02/15/tetrate-buildathon-ai-trading-system.html) - 2026-02-15
+- [Tars: Multi-Model Routing for AI Trading](https://igorganapolsky.github.io/trading/2026/02/15/tars-multi-model-routing-trading.html) - 2026-02-15
+- [PaperBanana: Auto-Generate Architecture Diagrams](https://igorganapolsky.github.io/trading/2026/02/15/paperbanana-automated-architecture-diagrams.html) - 2026-02-15
 - [Day 110: What We Learned - February 15, 2026](https://igorganapolsky.github.io/trading/2026/02/15/lessons-learned.html) - 2026-02-15
-- [Feedback-Driven Context Pipelines: How AI Agents Actually Learn in 2026](https://igorganapolsky.github.io/trading/2026/02/15/feedback-driven-context-pipelines-2026.html) - 2026-02-15
+- [Feedback-Driven Context Pipelines (Rlhf + RAG)](https://igorganapolsky.github.io/trading/2026/02/15/feedback-driven-context-pipelines-2026.html) - 2026-02-15
 - [Day 109: What We Learned - February 14, 2026](https://igorganapolsky.github.io/trading/2026/02/14/lessons-learned.html) - 2026-02-14
 - [Day 103: What We Learned - February 08, 2026](https://igorganapolsky.github.io/trading/2026/02/08/lessons-learned.html) - 2026-02-08
 - [When Browser Automation Fails, Pivot Fast](https://igorganapolsky.github.io/trading/2026/02/04/rlhf-win-1728.html) - 2026-02-04
