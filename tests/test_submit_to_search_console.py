@@ -48,7 +48,10 @@ def test_get_access_token_uses_google_auth(submitter, monkeypatch):
         json.dumps({"type": "service_account", "client_email": "z@example.com"}),
     )
 
-    import google.oauth2.service_account as sa
+    sa = pytest.importorskip(
+        "google.oauth2.service_account",
+        reason="google-auth not installed in minimal CI gate environment",
+    )
 
     class DummyCreds:
         token = "dummy-token"
@@ -57,7 +60,7 @@ def test_get_access_token_uses_google_auth(submitter, monkeypatch):
             return None
 
     monkeypatch.setattr(
-        sa.Credentials,
+        sa.Credentials,  # type: ignore[attr-defined]
         "from_service_account_info",
         staticmethod(lambda _info, scopes=None: DummyCreds()),
     )
