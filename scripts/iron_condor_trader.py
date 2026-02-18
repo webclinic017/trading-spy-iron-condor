@@ -34,6 +34,7 @@ from typing import Optional
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from dotenv import load_dotenv
+from src.orchestrator.telemetry import OrchestratorTelemetry
 from src.rag.lessons_learned_rag import LessonsLearnedRAG
 from src.safety.mandatory_trade_gate import safe_submit_order
 from src.safety.trade_lock import TradeLockTimeout, acquire_trade_lock
@@ -724,172 +725,287 @@ def main():
     # Default to LIVE mode as of Dec 29, 2025 to hit $100/day target
     live_mode = args.live or (not args.dry_run)
 
+    telemetry = OrchestratorTelemetry()
+    ticker = (args.symbol or "SPY").upper()
+    telemetry.start_ticker_decision(ticker)
+    session_profile = {
+        "session_type": "iron_condor_trader",
+        # We don't require market calendar calls; keep field for downstream consumers.
+        "is_market_day": None,
+    }
+
     logger.info("IRON CONDOR TRADER - STARTING")
     logger.info(f"Mode: {'LIVE' if live_mode else 'SIMULATED'}")
     logger.info(f"Symbol: {args.symbol}")
 
-    # CHECK TRADING HALT FILE FIRST
-    halt_file = Path("data/trading_halt.txt")
-    if halt_file.exists():
-        logger.warning("=" * 60)
-        logger.warning("TRADING HALTED - Manual halt in effect")
-        logger.warning("=" * 60)
-        with open(halt_file) as f:
-            logger.warning(f.read())
-        logger.warning("Remove data/trading_halt.txt to resume trading")
-        logger.warning("=" * 60)
-        return {"success": False, "reason": "Trading halted - manual halt in effect"}
-
-    # LL-297 FIX (Jan 23, 2026): Daily trade limit to prevent churning
-    # ROOT CAUSE: 21 trades in one day caused $11.29 loss from bid/ask spreads
-    # SOLUTION: Only 1 iron condor entry per day (4 legs max)
-    # NOTE: trades_{date}.json can include Alpaca fill-sync entries (strategy=alpaca_sync).
-    # We count *structures* (strategy-level iron condor entries) instead of raw rows.
     try:
-        from src.core.trading_constants import MAX_DAILY_STRUCTURES as MAX_STRUCTURES_PER_DAY
-    except Exception:
-        MAX_STRUCTURES_PER_DAY = 1
-    trades_file = Path(f"data/trades_{datetime.now().strftime('%Y-%m-%d')}.json")
-    if trades_file.exists():
-        try:
-            with open(trades_file) as f:
-                today_trades = json.load(f)
-            if not isinstance(today_trades, list):
-                today_trades = []
-            structures_today = len(
-                [
-                    t
-                    for t in today_trades
-                    if isinstance(t, dict)
-                    and t.get("strategy") == "iron_condor"
-                    and (t.get("order_ids") or isinstance(t.get("legs"), dict))
-                ]
+        # CHECK TRADING HALT FILE FIRST
+        halt_file = Path("data/trading_halt.txt")
+        if halt_file.exists():
+            logger.warning("=" * 60)
+            logger.warning("TRADING HALTED - Manual halt in effect")
+            logger.warning("=" * 60)
+            with open(halt_file) as f:
+                logger.warning(f.read())
+            logger.warning("Remove data/trading_halt.txt to resume trading")
+            logger.warning("=" * 60)
+            telemetry.update_ticker_decision(
+                ticker,
+                gate=0,
+                status="REJECT",
+                rejection_reason="Trading halted - manual halt in effect",
+                indicators={"halt_file": str(halt_file)},
             )
-            if structures_today >= MAX_STRUCTURES_PER_DAY:
-                logger.warning("=" * 60)
-                logger.warning("DAILY TRADE LIMIT REACHED - BLOCKING NEW TRADES")
-                logger.warning("=" * 60)
-                logger.warning(
-                    f"Structures today: {structures_today} (max: {MAX_STRUCTURES_PER_DAY})"
-                )
-                logger.warning("Reason: Prevent churning and bid/ask spread losses")
-                logger.warning("=" * 60)
-                return {
-                    "success": False,
-                    "reason": f"Daily structure limit reached: {structures_today}/{MAX_STRUCTURES_PER_DAY}",
-                }
-        except Exception as e:
-            logger.warning(f"Could not check daily trades: {e}")
+            return {"success": False, "reason": "Trading halted - manual halt in effect"}
 
-    # HARD BLOCK: Validate ticker before proceeding (Jan 20 2026 - SOFI crisis)
-    from src.utils.ticker_validator import validate_ticker
-
-    strategy = IronCondorStrategy()
-    # Override symbol from command line if provided (Jan 21, 2026 fix)
-    # ROOT CAUSE: Workflow called with --symbol SPY but argparse rejected it
-    # This blocked trading for 8+ days with silent "unrecognized arguments" error
-    if args.symbol:
-        strategy.config["underlying"] = args.symbol.upper()
-    validate_ticker(strategy.config["underlying"], context="iron_condor_trader")
-
-    # Check entry conditions (unless --force bypasses VIX checks)
-    if args.force:
-        logger.warning("=" * 60)
-        logger.warning("🚨 FORCE MODE ENABLED - CEO DIRECTIVE")
-        logger.warning("=" * 60)
-        logger.warning("Bypassing VIX entry conditions per CEO directive")
-        logger.warning("Position check and RAG safety checks still active")
-        logger.warning("=" * 60)
-        should_enter = True
-        reason = "FORCED - CEO directive bypassing VIX checks"
-    else:
-        should_enter, reason = strategy.check_entry_conditions()
-        logger.info(f"Entry conditions: {should_enter} ({reason})")
-
-    if not should_enter:
-        logger.info("Skipping trade - conditions not met")
-        return {"success": False, "reason": reason}
-
-    # LLM PRE-TRADE RESEARCH AGENT (Feb 2026)
-    # DeepSeek-R1 analyzes market conditions and advises on IC entry.
-    # Advisory only — hard risk limits are never overridden.
-    try:
-        from src.llm.trade_opinion import get_trade_opinion
-        from src.ml.trade_confidence import get_trade_confidence_model
-
-        # Gather context for the research agent
-        tc_model = get_trade_confidence_model()
-        thompson_stats = tc_model.get_trade_confidence(
-            strategy="iron_condor",
-            ticker=args.symbol,
-            regime=None,
-        )
-
-        # Get recent RAG lessons
-        rag_lessons = []
         try:
-            rag = LessonsLearnedRAG()
-            results = rag.search("iron condor loss failure", top_k=3)
-            for lesson, _score in results:
-                rag_lessons.append(lesson.snippet[:200])
-        except Exception:
-            pass
+            # LL-297 FIX (Jan 23, 2026): Daily trade limit to prevent churning
+            # ROOT CAUSE: 21 trades in one day caused $11.29 loss from bid/ask spreads
+            # SOLUTION: Only 1 iron condor entry per day (4 legs max)
+            # NOTE: trades_{date}.json can include Alpaca fill-sync entries (strategy=alpaca_sync).
+            # We count *structures* (strategy-level iron condor entries) instead of raw rows.
+            try:
+                from src.core.trading_constants import (
+                    MAX_DAILY_STRUCTURES as MAX_STRUCTURES_PER_DAY,
+                )
+            except Exception:
+                MAX_STRUCTURES_PER_DAY = 1
+            trades_file = Path(f"data/trades_{datetime.now().strftime('%Y-%m-%d')}.json")
+            if trades_file.exists():
+                try:
+                    with open(trades_file) as f:
+                        today_trades = json.load(f)
+                    if not isinstance(today_trades, list):
+                        today_trades = []
+                    structures_today = len(
+                        [
+                            t
+                            for t in today_trades
+                            if isinstance(t, dict)
+                            and t.get("strategy") == "iron_condor"
+                            and (t.get("order_ids") or isinstance(t.get("legs"), dict))
+                        ]
+                    )
+                    if structures_today >= MAX_STRUCTURES_PER_DAY:
+                        logger.warning("=" * 60)
+                        logger.warning("DAILY TRADE LIMIT REACHED - BLOCKING NEW TRADES")
+                        logger.warning("=" * 60)
+                        logger.warning(
+                            f"Structures today: {structures_today} (max: {MAX_STRUCTURES_PER_DAY})"
+                        )
+                        logger.warning("Reason: Prevent churning and bid/ask spread losses")
+                        logger.warning("=" * 60)
+                        telemetry.update_ticker_decision(
+                            ticker,
+                            gate=1,
+                            status="REJECT",
+                            rejection_reason=(
+                                f"Daily structure limit reached: {structures_today}/{MAX_STRUCTURES_PER_DAY}"
+                            ),
+                            indicators={
+                                "structures_today": structures_today,
+                                "max_structures_per_day": MAX_STRUCTURES_PER_DAY,
+                            },
+                        )
+                        return {
+                            "success": False,
+                            "reason": f"Daily structure limit reached: {structures_today}/{MAX_STRUCTURES_PER_DAY}",
+                        }
+                except Exception as e:
+                    logger.warning(f"Could not check daily trades: {e}")
+        except Exception as e:
+            logger.warning(f"Daily trade limit guard failed: {e}")
 
-        opinion = get_trade_opinion(
-            vix_current=None,  # VIX already checked above
-            thompson_stats=thompson_stats,
-            regime=None,
-            recent_lessons=rag_lessons,
+        # HARD BLOCK: Validate ticker before proceeding (Jan 20 2026 - SOFI crisis)
+        from src.utils.ticker_validator import validate_ticker
+
+        strategy = IronCondorStrategy()
+        # Override symbol from command line if provided (Jan 21, 2026 fix)
+        # ROOT CAUSE: Workflow called with --symbol SPY but argparse rejected it
+        # This blocked trading for 8+ days with silent "unrecognized arguments" error
+        if args.symbol:
+            strategy.config["underlying"] = args.symbol.upper()
+        validate_ticker(strategy.config["underlying"], context="iron_condor_trader")
+
+        # Check entry conditions (unless --force bypasses VIX checks)
+        if args.force:
+            logger.warning("=" * 60)
+            logger.warning("🚨 FORCE MODE ENABLED - CEO DIRECTIVE")
+            logger.warning("=" * 60)
+            logger.warning("Bypassing VIX entry conditions per CEO directive")
+            logger.warning("Position check and RAG safety checks still active")
+            logger.warning("=" * 60)
+            should_enter = True
+            reason = "FORCED - CEO directive bypassing VIX checks"
+            telemetry.update_ticker_decision(
+                ticker,
+                gate=1,
+                status="PASS",
+                indicators={"forced": True, "entry_reason": reason},
+            )
+        else:
+            should_enter, reason = strategy.check_entry_conditions()
+            logger.info(f"Entry conditions: {should_enter} ({reason})")
+            if should_enter:
+                telemetry.update_ticker_decision(
+                    ticker,
+                    gate=1,
+                    status="PASS",
+                    indicators={"entry_reason": reason},
+                )
+            else:
+                telemetry.update_ticker_decision(
+                    ticker,
+                    gate=1,
+                    status="REJECT",
+                    rejection_reason=reason,
+                    indicators={"entry_reason": reason},
+                )
+                logger.info("Skipping trade - conditions not met")
+                return {"success": False, "reason": reason}
+
+        try:
+            # LLM PRE-TRADE RESEARCH AGENT (Feb 2026)
+            # DeepSeek-R1 analyzes market conditions and advises on IC entry.
+            # Advisory only — hard risk limits are never overridden.
+            try:
+                from src.llm.trade_opinion import get_trade_opinion
+                from src.ml.trade_confidence import get_trade_confidence_model
+
+                # Gather context for the research agent
+                tc_model = get_trade_confidence_model()
+                thompson_stats = tc_model.get_trade_confidence(
+                    strategy="iron_condor",
+                    ticker=args.symbol,
+                    regime=None,
+                )
+
+                # Get recent RAG lessons
+                rag_lessons = []
+                try:
+                    rag = LessonsLearnedRAG()
+                    results = rag.search("iron condor loss failure", top_k=3)
+                    for lesson, _score in results:
+                        rag_lessons.append(lesson.snippet[:200])
+                except Exception:
+                    pass
+
+                opinion = get_trade_opinion(
+                    vix_current=None,  # VIX already checked above
+                    thompson_stats=thompson_stats,
+                    regime=None,
+                    recent_lessons=rag_lessons,
+                )
+
+                if opinion is not None:
+                    logger.info("=" * 60)
+                    logger.info("LLM PRE-TRADE OPINION (DeepSeek-R1)")
+                    logger.info("=" * 60)
+                    logger.info(f"Should trade: {opinion.should_trade}")
+                    logger.info(f"Confidence: {opinion.confidence:.2f}")
+                    logger.info(f"Regime: {opinion.regime}")
+                    logger.info(f"Suggested delta: {opinion.suggested_short_delta}")
+                    logger.info(f"Suggested DTE: {opinion.suggested_dte}")
+                    logger.info(f"Reasoning: {opinion.reasoning}")
+                    if opinion.risk_flags:
+                        logger.warning(f"Risk flags: {opinion.risk_flags}")
+                    logger.info("=" * 60)
+
+                    telemetry.update_ticker_decision(
+                        ticker,
+                        gate=2,
+                        status="PASS" if opinion.should_trade else "PASS",
+                        indicators={
+                            "llm_should_trade": bool(opinion.should_trade),
+                            "llm_confidence": float(opinion.confidence),
+                            "llm_regime": str(opinion.regime),
+                        },
+                    )
+
+                    # Block trade if R1 says NO with high confidence
+                    if not opinion.should_trade and opinion.confidence >= 0.7:
+                        logger.warning(
+                            f"BLOCKED by LLM research agent: {opinion.reasoning} "
+                            f"(confidence: {opinion.confidence:.0%})"
+                        )
+                        telemetry.update_ticker_decision(
+                            ticker,
+                            gate=2,
+                            status="REJECT",
+                            rejection_reason=f"LLM advisory: {opinion.reasoning}",
+                            indicators={
+                                "llm_should_trade": bool(opinion.should_trade),
+                                "llm_confidence": float(opinion.confidence),
+                            },
+                        )
+                        return {
+                            "success": False,
+                            "reason": f"LLM advisory: {opinion.reasoning}",
+                            "opinion": opinion.model_dump(),
+                        }
+                else:
+                    logger.info(
+                        "LLM pre-trade opinion: unavailable (proceeding with existing logic)"
+                    )
+            except Exception as e:
+                logger.warning(
+                    f"LLM pre-trade research failed: {e} (proceeding with existing logic)"
+                )
+        except Exception as e:
+            logger.warning(f"Pre-trade enrichment failed: {e}")
+
+        # Find trade
+        ic = strategy.find_trade()
+        if not ic:
+            logger.error("Failed to find suitable iron condor")
+            telemetry.update_ticker_decision(
+                ticker,
+                gate=3,
+                status="REJECT",
+                rejection_reason="no_trade_found",
+            )
+            return {"success": False, "reason": "no_trade_found"}
+
+        # Execute - LIVE by default now!
+        # LL-290 FIX: Acquire trade lock to prevent race conditions
+        # Multiple workflow runs could pass position check simultaneously without lock
+        try:
+            with acquire_trade_lock(timeout=10):
+                trade = strategy.execute(ic, live=live_mode)
+        except TradeLockTimeout:
+            logger.warning("⚠️ Could not acquire trade lock - another trade may be in progress")
+            telemetry.update_ticker_decision(
+                ticker,
+                gate=4,
+                status="REJECT",
+                rejection_reason="trade_lock_timeout",
+            )
+            return {"success": False, "reason": "trade_lock_timeout"}
+
+        telemetry.update_ticker_decision(
+            ticker,
+            gate=9,
+            status="EXECUTED",
+            order_details={
+                "strategy": "iron_condor",
+                "symbol": ticker,
+                "live": bool(live_mode),
+                "expiry": getattr(ic, "expiry", None),
+                "dte": getattr(ic, "dte", None),
+                "short_put": getattr(ic, "short_put", None),
+                "long_put": getattr(ic, "long_put", None),
+                "short_call": getattr(ic, "short_call", None),
+                "long_call": getattr(ic, "long_call", None),
+            },
         )
 
-        if opinion is not None:
-            logger.info("=" * 60)
-            logger.info("LLM PRE-TRADE OPINION (DeepSeek-R1)")
-            logger.info("=" * 60)
-            logger.info(f"Should trade: {opinion.should_trade}")
-            logger.info(f"Confidence: {opinion.confidence:.2f}")
-            logger.info(f"Regime: {opinion.regime}")
-            logger.info(f"Suggested delta: {opinion.suggested_short_delta}")
-            logger.info(f"Suggested DTE: {opinion.suggested_dte}")
-            logger.info(f"Reasoning: {opinion.reasoning}")
-            if opinion.risk_flags:
-                logger.warning(f"Risk flags: {opinion.risk_flags}")
-            logger.info("=" * 60)
-
-            # Block trade if R1 says NO with high confidence
-            if not opinion.should_trade and opinion.confidence >= 0.7:
-                logger.warning(
-                    f"BLOCKED by LLM research agent: {opinion.reasoning} "
-                    f"(confidence: {opinion.confidence:.0%})"
-                )
-                return {
-                    "success": False,
-                    "reason": f"LLM advisory: {opinion.reasoning}",
-                    "opinion": opinion.model_dump(),
-                }
-        else:
-            logger.info("LLM pre-trade opinion: unavailable (proceeding with existing logic)")
-    except Exception as e:
-        logger.warning(f"LLM pre-trade research failed: {e} (proceeding with existing logic)")
-
-    # Find trade
-    ic = strategy.find_trade()
-    if not ic:
-        logger.error("Failed to find suitable iron condor")
-        return {"success": False, "reason": "no_trade_found"}
-
-    # Execute - LIVE by default now!
-    # LL-290 FIX: Acquire trade lock to prevent race conditions
-    # Multiple workflow runs could pass position check simultaneously without lock
-    try:
-        with acquire_trade_lock(timeout=10):
-            trade = strategy.execute(ic, live=live_mode)
-    except TradeLockTimeout:
-        logger.warning("⚠️ Could not acquire trade lock - another trade may be in progress")
-        return {"success": False, "reason": "trade_lock_timeout"}
-
-    logger.info("IRON CONDOR TRADER - COMPLETE")
-    return {"success": True, "trade": trade}
+        logger.info("IRON CONDOR TRADER - COMPLETE")
+        return {"success": True, "trade": trade}
+    finally:
+        # Always persist a session_decisions artifact so North Star cadence/no-trade diagnostics
+        # can explain why we did or did not trade.
+        telemetry.save_session_decisions(session_profile)
+        telemetry.print_session_summary()
 
 
 if __name__ == "__main__":
