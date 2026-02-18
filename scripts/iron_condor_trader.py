@@ -34,11 +34,11 @@ from typing import Optional
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from dotenv import load_dotenv
+from src.orchestrator.telemetry import OrchestratorTelemetry
 from src.rag.lessons_learned_rag import LessonsLearnedRAG
 from src.safety.mandatory_trade_gate import safe_submit_order
 from src.safety.trade_lock import TradeLockTimeout, acquire_trade_lock
 from src.utils.error_monitoring import init_sentry
-from src.orchestrator.telemetry import OrchestratorTelemetry
 
 try:
     load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env", override=False)
@@ -765,7 +765,9 @@ def main():
             # NOTE: trades_{date}.json can include Alpaca fill-sync entries (strategy=alpaca_sync).
             # We count *structures* (strategy-level iron condor entries) instead of raw rows.
             try:
-                from src.core.trading_constants import MAX_DAILY_STRUCTURES as MAX_STRUCTURES_PER_DAY
+                from src.core.trading_constants import (
+                    MAX_DAILY_STRUCTURES as MAX_STRUCTURES_PER_DAY,
+                )
             except Exception:
                 MAX_STRUCTURES_PER_DAY = 1
             trades_file = Path(f"data/trades_{datetime.now().strftime('%Y-%m-%d')}.json")
@@ -942,9 +944,13 @@ def main():
                             "opinion": opinion.model_dump(),
                         }
                 else:
-                    logger.info("LLM pre-trade opinion: unavailable (proceeding with existing logic)")
+                    logger.info(
+                        "LLM pre-trade opinion: unavailable (proceeding with existing logic)"
+                    )
             except Exception as e:
-                logger.warning(f"LLM pre-trade research failed: {e} (proceeding with existing logic)")
+                logger.warning(
+                    f"LLM pre-trade research failed: {e} (proceeding with existing logic)"
+                )
         except Exception as e:
             logger.warning(f"Pre-trade enrichment failed: {e}")
 
