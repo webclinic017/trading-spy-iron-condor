@@ -40,41 +40,19 @@ jobs:
         with:
           project_id: ${{ env.PROJECT_ID }}
 
-      - name: Configure Docker auth
-        run: |
-          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
-          # Extra defense-in-depth: ensure docker is logged in even if cred helpers
-          # are not honored in some runner edge cases.
-          gcloud auth print-access-token | docker login \
-            -u oauth2accesstoken \
-            --password-stdin \
-            https://${{ env.REGION }}-docker.pkg.dev
-
       - name: Prepare Dockerfile
         run: |
           cp Dockerfile.webhook Dockerfile
-          # Add timestamp to force Docker cache invalidation
+          # Add timestamp to force Cloud Build cache invalidation.
           echo "# Build timestamp: $(date -u +%Y%m%d%H%M%S)" >> Dockerfile
           echo "=== Final Dockerfile ==="
           cat Dockerfile
 
-      - name: Build Docker image locally
-        run: |
-          IMAGE=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }}
-          echo "Building image: $IMAGE"
-          docker build --no-cache -t $IMAGE -f Dockerfile .
-
-      - name: Push to Artifact Registry
-        run: |
-          IMAGE=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }}
-          docker push $IMAGE
-
       - name: Deploy to Cloud Run
         run: |
-          IMAGE=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }}
           # FIX Jan 15, 2026: Add Alpaca credentials for real-time P/L queries
           gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --image $IMAGE \
+            --source . \
             --region ${{ env.REGION }} \
             --platform managed \
             --allow-unauthenticated \
