@@ -7,9 +7,16 @@ lessons_count: 3
 critical_count: 0
 excerpt: "Markets are closed, but the learning never stops. While other traders take the weekend off, we're refining our edge...."
 tags: ['lessons-learned', 'daily-journal', 'ai-trading', 'building-in-public']
+image: "/assets/snapshots/progress_latest.png"
+
 ---
 
 # Day 82 of 90 | Sunday, January 18, 2026
+
+
+## Answer Block
+
+> **Answer Block:** 8 days remaining in our journey to build a profitable AI trading system.
 
 **8 days remaining** in our journey to build a profitable AI trading system.
 

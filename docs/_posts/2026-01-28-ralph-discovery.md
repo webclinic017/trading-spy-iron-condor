@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "\U0001F7E0 HIGH LL-298: Invalid Option Strikes Caus (+2 more)"
+title: "\U0001F7E0 High LL-298: Invalid Option Strikes Caus (+2 more)"
 date: 2026-01-28 23:46:50
 categories:
 - engineering
@@ -14,7 +14,13 @@ tags:
 mermaid: true
 description: 'Date: 2026-01-25 Category: Research / Strategy Optimization Source:
   arXiv:2501.12397 - "Stochastic Optimal Control of Iron Condor Portfolios"'
+image: "/assets/snapshots/progress_latest.png"
+
 ---
+
+## Answer Block
+
+> **Answer Block:** Date: 2026-01-25 Category: Research / Strategy Optimization Source: arXiv:2501.12397 - "Stochastic Optimal Control of Iron Condor Portfolios"
 
 **Wednesday, January 28, 2026** (Eastern Time)
 

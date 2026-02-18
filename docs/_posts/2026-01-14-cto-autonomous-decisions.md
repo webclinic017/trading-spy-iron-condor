@@ -16,7 +16,11 @@ tags:
     thompson-sampling,
   ]
 description: "After 74 days of zero trades, we finally executed—only to realize we'd walked into an earnings trap. Here's how an AI trading system caught a near-catastrophic mistake and the strategy pivot that followed."
+image: "/assets/snapshots/progress_latest.png"
+
 ---
+
+## Answer Block
 
 > **Answer Block:** Building an RLHF system for trading requires capturing trade outcomes as feedback, storing lessons in a vector database (LanceDB or legacy RAG), and using Thompson Sampling to select strategies based on historical win rates. Our system caught a 96% account risk position before earnings by querying past lessons about individual stock volatility.
 

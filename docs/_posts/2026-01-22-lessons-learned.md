@@ -24,7 +24,13 @@ questions:
     answer: "The full repository and daily updates are published publicly on GitHub and GitHub Pages."
 tags: ['lessons-learned', 'daily-journal', 'ai-trading', 'building-in-public']
 ---
+
 # Day 86 of 90 | Thursday, January 22, 2026
+
+
+## Answer Block
+
+> **Answer Block:** 4 days remaining in our journey to build a profitable AI trading system.
 
 **4 days remaining** in our journey to build a profitable AI trading system.
 

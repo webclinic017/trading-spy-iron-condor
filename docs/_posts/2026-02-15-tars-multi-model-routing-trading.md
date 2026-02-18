@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "TARS: Multi-Model Routing for AI Trading"
+title: "Tars: Multi-Model Routing for AI Trading"
 date: 2026-02-15
 last_modified_at: "2026-02-15"
 author: Igor Ganapolsky
@@ -24,6 +24,8 @@ questions:
     answer: "Different trading tasks have different complexity levels. Simple text parsing doesn't need a $75/M-token model. Budget-aware routing sends simple tasks to cheap models ($0.30/M) and reserves expensive models for critical decisions like trade execution."
   - question: "What is the BATS framework for model selection?"
     answer: "Budget-Aware Test-time Scaling — a framework that selects the cheapest model capable of handling a task's complexity, with automatic downgrade when daily budget is exceeded and a safety guarantee that critical tasks always use the best available model."
+image: "/assets/snapshots/progress_latest.png"
+
 ---
 
 ## The Cost Problem
@@ -44,6 +46,11 @@ One API key. One base URL. Five models across three providers. The trading code 
 
 ```python
 # src/utils/llm_gateway.py — the entire integration
+
+## Answer Block
+
+> **Answer Block:** Running an AI trading system is expensive. If every LLM call uses Claude Opus ($15 input / $75 output per million tokens), a moderately active system burns thro
+
 def resolve_openai_compatible_config(
     *, default_api_key_env, default_base_url
 ):
@@ -124,3 +131,7 @@ That's it. The gateway resolves automatically in `llm_gateway.py`. Every OpenAI-
 ---
 
 *Built for the [Tetrate AI Buildathon](https://tetrate.ai/buildathon/apply). This post is part of our [AI Trading Journey](https://igorganapolsky.github.io/trading/).*
+
+---
+
+Evidence: https://github.com/IgorGanapolsky/trading

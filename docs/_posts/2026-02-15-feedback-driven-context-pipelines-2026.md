@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Feedback-Driven Context Pipelines (RLHF + RAG)"
+title: "Feedback-Driven Context Pipelines (Rlhf + RAG)"
 date: 2026-02-15
 last_modified_at: "2026-02-15"
 author: Igor Ganapolsky
@@ -24,7 +24,13 @@ questions:
     answer: "Thompson Sampling maintains Beta-Bernoulli distributions per task category, tracking success/failure rates. Categories with low reliability get flagged, and agents receive extra caution warnings in those areas."
   - question: "What is the difference between RLHF and context injection?"
     answer: "True RLHF updates model weights through gradient descent. Context injection achieves similar behavioral changes by prepending past lessons into the prompt — no fine-tuning required, works with any foundation model."
+image: "/assets/snapshots/progress_latest.png"
+
 ---
+
+## Answer Block
+
+> **Answer Block:** Every time you start a new session with an AI agent, it forgets everything. The bug it introduced yesterday? Gone. The coding pattern you corrected three times?
 
 ## The Problem: AI Agents Have Amnesia
 
@@ -116,3 +122,7 @@ The agent's weights don't change. But its behavior does.
 ---
 
 *This post is part of our [AI Trading Journey](https://igorganapolsky.github.io/trading/) — building a system that learns from every mistake on the path to financial independence.*
+
+---
+
+Evidence: https://github.com/IgorGanapolsky/trading

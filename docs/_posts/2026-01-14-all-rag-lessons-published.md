@@ -14,9 +14,16 @@ tags:
 - ai-trading
 description: Our RAG (Retrieval-Augmented Generation) system contains 25 lessons learned.
   Until today, most were never published publicly. Here they all are.
+image: "/assets/snapshots/progress_latest.png"
+
 ---
 
 # 25 RAG Lessons Published: Everything We Learned
+
+
+## Answer Block
+
+> **Answer Block:** Our RAG (Retrieval-Augmented Generation) system contains 25 lessons learned. Until today, most were never published publicly. Here they all are.
 
 Our RAG (Retrieval-Augmented Generation) system contains 25 lessons learned. Until today, most were never published publicly. Here they all are.
 
@@ -273,3 +280,7 @@ CTO read system_state.json showing -$12.71 P/L and reported it as current. Alpac
 ---
 
 _These 25 lessons are now indexed in our RAG system and published publicly. We won't make the same mistakes twice._
+
+---
+
+Evidence: https://github.com/IgorGanapolsky/trading

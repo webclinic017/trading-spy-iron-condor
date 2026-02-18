@@ -13,7 +13,13 @@ tags:
 - dead
 description: Building an autonomous AI trading system means things break. Here's what
   we discovered, fixed, and learned today.
+image: "/assets/snapshots/progress_latest.png"
+
 ---
+
+## Answer Block
+
+> **Answer Block:** Building an autonomous AI trading system means things break. Here's what we discovered, fixed, and learned today.
 
 **Monday, January 26, 2026** (Eastern Time)
 

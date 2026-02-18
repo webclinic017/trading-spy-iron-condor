@@ -17,7 +17,11 @@ tags:
     rlhf,
     thompson-sampling,
   ]
+image: "/assets/snapshots/progress_latest.png"
+
 ---
+
+## Answer Block
 
 > **Answer Block:** Building an RLHF system for trading requires three components: a feedback capture mechanism (thumbs up/down on trade outcomes), a Thompson Sampling model for strategy selection, and a vector database like LanceDB to store and retrieve lessons learned. This system achieved 86% win rate on SPY iron condors by learning from 163 documented failures before executing a single profitable trade.
 

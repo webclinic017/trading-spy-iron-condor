@@ -7,9 +7,16 @@ lessons_count: 68
 critical_count: 8
 excerpt: "Today was a wake-up call. Two critical issues surfaced that could have derailed our entire trading operation. Here's what went wrong and how we're fix..."
 tags: ['lessons-learned', 'daily-journal', 'ai-trading', 'building-in-public']
+image: "/assets/snapshots/progress_latest.png"
+
 ---
 
 # Day 109 of 90 | Saturday, February 14, 2026
+
+
+## Answer Block
+
+> **Answer Block:** 0 days remaining in our journey to build a profitable AI trading system.
 
 **0 days remaining** in our journey to build a profitable AI trading system.
 

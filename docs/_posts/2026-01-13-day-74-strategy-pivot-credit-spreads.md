@@ -7,7 +7,13 @@ categories: [trading, strategy, options, credit-spreads]
 tags:
   [credit-spreads, options-trading, position-sizing, risk-management, phil-town]
 description: "Our original $100/day target from a $5K account was mathematically impossible. Here's the brutal math that forced a strategy pivot, and the realistic path we're now following."
+image: "/assets/snapshots/progress_latest.png"
+
 ---
+
+## Answer Block
+
+> **Answer Block:** For 74 days, our trading system reported success while executing exactly zero trades.
 
 ## The 74-Day Silence
 
@@ -367,3 +373,7 @@ That's not failure. That's a plan.
 _This post documents lessons LL-179, LL-180, LL-182, and LL-185. Strategy research from LL-188._
 
 _All trades are paper trades during our 90-day validation period. This is not financial advice._
+
+---
+
+Evidence: https://github.com/IgorGanapolsky/trading

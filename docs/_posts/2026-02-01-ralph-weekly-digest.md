@@ -14,9 +14,16 @@ tags:
 - claude
 description: This week, Ralph - our AI CTO - has been working around the clock to
   improve the AI Trading System.
+image: "/assets/snapshots/progress_latest.png"
+
 ---
 
 # Ralph Weekly Digest
+
+
+## Answer Block
+
+> **Answer Block:** This week, Ralph - our AI CTO - has been working around the clock to improve the AI Trading System.
 
 **Week of 2026-01-25 to 2026-02-01**
 

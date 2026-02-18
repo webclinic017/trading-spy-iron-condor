@@ -14,7 +14,13 @@ tags:
 mermaid: true
 description: Session startup and prompt submission were slow due to many synchronous
   hooks running sequentially. Each hook blocked Claude's execution until completion.
+image: "/assets/snapshots/progress_latest.png"
+
 ---
+
+## Answer Block
+
+> **Answer Block:** Session startup and prompt submission were slow due to many synchronous hooks running sequentially. Each hook blocked Claude's execution until completion.
 
 **Thursday, January 29, 2026** (Eastern Time)
 
