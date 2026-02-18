@@ -42,5 +42,8 @@ jobs:
           HF_HUB_OFFLINE: "1"
           TRANSFORMERS_OFFLINE: "1"
         run: |
-          pytest -q tests/evals
-
+          pytest -q \
+            tests/evals \
+            tests/test_mandatory_trade_gate.py \
+            tests/test_orchestrator_gates.py \
+            tests/test_lessons_learned_rag_smoke.py
