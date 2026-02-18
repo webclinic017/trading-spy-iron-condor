@@ -177,9 +177,7 @@ class TestExecuteCashSecuredPut:
     @patch("scripts.execute_options_trade.get_trend_filter")
     @patch("scripts.execute_options_trade.get_iv_percentile")
     @patch("scripts.execute_options_trade.get_account_info")
-    def test_dry_run_returns_dry_run_status(
-        self, mock_account, mock_iv, mock_trend, mock_find_put
-    ):
+    def test_dry_run_returns_dry_run_status(self, mock_account, mock_iv, mock_trend, mock_find_put):
         """Dry run should return DRY_RUN status without placing orders."""
         mock_iv.return_value = {
             "iv_percentile": 65,

@@ -1,9 +1,5 @@
 """Tests for autonomous meta description generator."""
 
-from pathlib import Path
-
-import pytest
-
 from scripts.add_meta_descriptions import extract_description_from_content, extract_frontmatter
 
 
@@ -32,7 +28,10 @@ This is the first paragraph with meaningful content. It should be used as the de
 More text here.
 """
     desc = extract_description_from_content(body, max_length=160)
-    assert desc == "This is the first paragraph with meaningful content. It should be used as the description."
+    assert (
+        desc
+        == "This is the first paragraph with meaningful content. It should be used as the description."
+    )
 
 
 def test_truncate_long_content():

@@ -33,9 +33,7 @@ def extract_description_from_content(body: str, max_length: int = 160) -> str:
     Priority: Answer Block > First paragraph > First heading.
     """
     # Priority 1: Answer Block (these are SEO-optimized summaries)
-    answer_block = re.search(
-        r"> \*\*Answer Block:\*\* (.+?)(?:\n\n|\n>|$)", body, re.DOTALL
-    )
+    answer_block = re.search(r"> \*\*Answer Block:\*\* (.+?)(?:\n\n|\n>|$)", body, re.DOTALL)
     if answer_block:
         desc = answer_block.group(1).strip()
         desc = re.sub(r"\n+", " ", desc)  # Remove newlines
@@ -70,7 +68,7 @@ def extract_description_from_content(body: str, max_length: int = 160) -> str:
             sentences = re.split(r"(?<=[.!?])\s+", clean)
             result = sentences[0]
             if len(result) > max_length:
-                return result[:max_length - 3] + "..."
+                return result[: max_length - 3] + "..."
             return result
 
     # Priority 3: Fallback - use title context

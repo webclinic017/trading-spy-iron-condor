@@ -48,7 +48,12 @@ def extract_frontmatter_and_body(content: str) -> tuple[dict[str, Any], str]:
         if ":" in line:
             key, _, value = line.partition(":")
             value = value.strip()
-            if value.startswith('"') and value.endswith('"') or value.startswith("'") and value.endswith("'"):
+            if (
+                value.startswith('"')
+                and value.endswith('"')
+                or value.startswith("'")
+                and value.endswith("'")
+            ):
                 value = value[1:-1]
             fm[key.strip()] = value
 
@@ -84,7 +89,7 @@ Output ONLY the meta description text, nothing else."""
 
         description = response.content[0].text.strip()
         # Remove quotes if present
-        description = description.strip('"\'')
+        description = description.strip("\"'")
         # Truncate if too long
         if len(description) > 160:
             description = description[:157] + "..."
@@ -96,7 +101,9 @@ Output ONLY the meta description text, nothing else."""
         return ""
 
 
-def suggest_internal_links(title: str, body: str, existing_posts: list[Path]) -> list[dict[str, str]]:
+def suggest_internal_links(
+    title: str, body: str, existing_posts: list[Path]
+) -> list[dict[str, str]]:
     """Suggest internal links to related posts based on content similarity."""
     # Extract key terms from current post
     body_lower = body.lower()

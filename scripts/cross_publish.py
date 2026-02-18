@@ -199,7 +199,9 @@ def main():
     parser.add_argument("file", help="Path to markdown post file")
     parser.add_argument("--dry-run", action="store_true", help="Preview only, don't publish")
     parser.add_argument("--platform", choices=["devto", "linkedin", "all"], default="all")
-    parser.add_argument("--skip-search-console", action="store_true", help="Skip Search Console submission")
+    parser.add_argument(
+        "--skip-search-console", action="store_true", help="Skip Search Console submission"
+    )
     args = parser.parse_args()
 
     filepath = Path(args.file)

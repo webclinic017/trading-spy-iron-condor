@@ -106,7 +106,9 @@ def test_check_meta_description_too_long():
 def test_check_meta_description_valid():
     """Test meta description when valid."""
     issue = check_meta_description(
-        {"description": "A valid description that is between 50 and 160 characters long for optimal SEO performance."},
+        {
+            "description": "A valid description that is between 50 and 160 characters long for optimal SEO performance."
+        },
         Path("test.md"),
     )
     assert issue is None

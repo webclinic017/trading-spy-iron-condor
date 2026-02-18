@@ -154,7 +154,9 @@ def main() -> int:
     if not os.environ.get("GOOGLE_SEARCH_CONSOLE_KEY"):
         print("⚠️  GOOGLE_SEARCH_CONSOLE_KEY not set")
         print("   Set up service account at: https://console.cloud.google.com/apis/credentials")
-        print("   Enable Google Indexing API: https://console.cloud.google.com/apis/library/indexing.googleapis.com")
+        print(
+            "   Enable Google Indexing API: https://console.cloud.google.com/apis/library/indexing.googleapis.com"
+        )
         if not args.dry_run:
             return 1
 

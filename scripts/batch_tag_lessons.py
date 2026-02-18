@@ -7,16 +7,17 @@ from pathlib import Path
 # Standard tags for lessons-learned daily journal posts
 LESSONS_TAGS = ["lessons-learned", "daily-journal", "ai-trading", "building-in-public"]
 
+
 def update_frontmatter_tags(file_path: Path) -> bool:
     """Add tags to frontmatter if missing."""
     content = file_path.read_text()
 
     # Check if already has tags
-    if re.search(r'^tags:\s*\[.+\]', content, re.MULTILINE):
+    if re.search(r"^tags:\s*\[.+\]", content, re.MULTILINE):
         return False  # Already has tags
 
     # Find frontmatter end
-    parts = content.split('---', 2)
+    parts = content.split("---", 2)
     if len(parts) < 3:
         print(f"⚠️  Skipping {file_path.name} - invalid frontmatter")
         return False
@@ -33,6 +34,7 @@ def update_frontmatter_tags(file_path: Path) -> bool:
     file_path.write_text(updated_content)
 
     return True
+
 
 def main():
     """Process all lessons-learned posts."""
@@ -53,10 +55,11 @@ def main():
             print(f"⏭️  {file_path.name} (already has tags)")
             skipped += 1
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Updated: {updated} files")
     print(f"Skipped: {skipped} files")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
+
 
 if __name__ == "__main__":
     main()

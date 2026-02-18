@@ -23,7 +23,9 @@ class RetrievalEvalCase:
     severity_filter: str | None = None
 
 
-def _write_lesson(dir_path: Path, lesson_id: str, *, severity: str, body: str, tags: list[str]) -> None:
+def _write_lesson(
+    dir_path: Path, lesson_id: str, *, severity: str, body: str, tags: list[str]
+) -> None:
     # Keep filenames free of date-like patterns so recency boosts don't affect ranking.
     assert "jan" not in lesson_id.lower()
     assert "2026" not in lesson_id.lower()
@@ -155,4 +157,3 @@ def test_offline_rag_retrieval_eval(case: RetrievalEvalCase, mini_lessons_dir: P
     results = rag.query(case.query, top_k=3, severity_filter=case.severity_filter)
     assert results, "Expected at least one result"
     assert results[0]["id"] == case.expected_top_id
-

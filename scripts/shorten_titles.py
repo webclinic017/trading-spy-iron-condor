@@ -23,6 +23,7 @@ TITLE_UPDATES = {
     "2026-02-15-tetrate-buildathon-ai-trading-system.md": "Tetrate Buildathon: AI Trading System Entry",
 }
 
+
 def update_title(file_path: Path, new_title: str) -> bool:
     """Update title in frontmatter."""
     content = file_path.read_text()
@@ -45,6 +46,7 @@ def update_title(file_path: Path, new_title: str) -> bool:
         file_path.write_text(updated_content)
         return True
     return False
+
 
 def main():
     """Process all titles that need shortening."""
@@ -72,9 +74,10 @@ def main():
         else:
             print(f"⏭️  {filename} (no change)")
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Updated: {updated} titles")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
+
 
 if __name__ == "__main__":
     main()
