@@ -35,7 +35,7 @@ _Last Sync: 2026-02-19 19:19 UTC (source: `data/system_state.json`)_
 | Account Equity | $101,366.28 |
 | Daily P/L | -$48.56 |
 | Win Rate | 100.0% (1 trades; target 80.0%) |
-| Paper Phase | Day 14/90 |
+| Paper Phase | Day 114/90 |
 | North Star Gate | ACTIVE (VALIDATING) |
 | Open Positions | 0 structure(s), 0 option leg(s) |
 | Unrealized P/L | +$0.00 |
