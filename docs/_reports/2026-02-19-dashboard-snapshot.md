@@ -18,7 +18,7 @@ questions:
   - question: "Are cadence and risk gates passing this week?"
     answer: "Cadence gate is FAIL. Risk mode is validation with recommended max position size 0.0%."
   - question: "What is the North Star probability right now?"
-    answer: "North Star probability is 70.40% (medium), target date 2029-11-14."
+    answer: "North Star probability is 44.10% (low), monthly target $6,000.00 with progress 1.02%."
 ---
 # Daily Dashboard Snapshot | 2026-02-19
 
@@ -27,10 +27,10 @@ This report is auto-generated from system state for search and AI discoverabilit
 ## Answer Block
 
 **Q: Did we make money today?**<br>
-A: Paper daily P/L is $-48.56. Live account total P/L is $187.93.
+A: Paper daily P/L is $-48.56. Live account total P/L is $188.01.
 
 **Q: Are we on track toward the North Star?**<br>
-A: North Star probability is 70.40% (medium), target date 2029-11-14.
+A: North Star probability is 44.10% (low), monthly target $6,000.00 with progress 1.02%.
 
 **Q: Is execution cadence healthy?**<br>
 A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
@@ -47,8 +47,8 @@ A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
 
 | Metric | Value |
 |---|---|
-| Live Equity | $207.93 |
-| Live Total P/L | $187.93 (939.65%) |
+| Live Equity | $208.01 |
+| Live Total P/L | $188.01 (940.05%) |
 | Paper Equity | $101,366.28 |
 | Paper Total P/L | $1,366.28 (1.37%) |
 | Paper Daily Change | $-48.56 |
@@ -57,7 +57,7 @@ A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
 | Weekly Cadence KPI | FAIL |
 | Weekly Risk Mode | validation |
 | Recommended Max Position Size | 0.01% |
-| North Star Probability | 70.40% (medium) |
+| North Star Probability | 44.10% (low) |
 
 ## Evidence
 
@@ -70,4 +70,4 @@ A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
 ## Data Freshness
 
 - Snapshot date: `2026-02-19`
-- Live account sync timestamp: `2026-02-19T19:03:59.295816`
+- Live account sync timestamp: `2026-02-19T19:19:03.598100`
