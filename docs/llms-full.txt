@@ -14,7 +14,7 @@
 - Scripts: https://github.com/IgorGanapolsky/trading/tree/main/scripts
 
 ## Operational Metrics
-- Workflows configured: 83
+- Workflows configured: 84
 - Blog posts indexed: 55
 - Reports indexed: 7
 - Lessons indexed: 168

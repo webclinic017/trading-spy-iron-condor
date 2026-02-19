@@ -18,7 +18,7 @@
 - Blog posts published: 55
 - Reports published: 7
 - Lessons in RAG markdown: 168
-- Automation workflows: 83
+- Automation workflows: 84
 - Latest blog post date: 2026-02-17
 - Latest lesson date: 2026-02-16
 
