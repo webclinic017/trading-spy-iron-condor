@@ -945,7 +945,9 @@ def compute_contribution_plan(
 
     monthly_target = max(0.0, float(NORTH_STAR_MONTHLY_AFTER_TAX))
     daily_target = max(0.0, float(NORTH_STAR_DAILY_AFTER_TAX))
-    progress_pct = (equity_change_this_month / monthly_target * 100.0) if monthly_target > 0 else 0.0
+    progress_pct = (
+        (equity_change_this_month / monthly_target * 100.0) if monthly_target > 0 else 0.0
+    )
     remaining_to_monthly_target = max(0.0, monthly_target - equity_change_this_month)
     days_in_month = calendar.monthrange(today.year, today.month)[1]
     days_elapsed = max(1, today.day)

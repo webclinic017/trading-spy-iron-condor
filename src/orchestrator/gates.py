@@ -1310,9 +1310,7 @@ class Gate3Sentiment:
         llm_contrib_raw = safe_llm * llm_weight
         playwright_contrib_raw = safe_playwright * playwright_weight
         llm_contrib = self._clamp(llm_contrib_raw, -llm_cap, llm_cap)
-        playwright_contrib = self._clamp(
-            playwright_contrib_raw, -playwright_cap, playwright_cap
-        )
+        playwright_contrib = self._clamp(playwright_contrib_raw, -playwright_cap, playwright_cap)
 
         return self._clamp(llm_contrib + playwright_contrib, -1.0, 1.0)
 
@@ -1423,9 +1421,7 @@ class Gate3Sentiment:
                 )
             elif ctx.debate_outcome.winner == "BULL" and ctx.debate_outcome.confidence > 0.5:
                 boost = 0.1 * ctx.debate_outcome.confidence
-                sentiment_score = self._apply_bounded_adjustment(
-                    sentiment_score, boost, bull_cap
-                )
+                sentiment_score = self._apply_bounded_adjustment(sentiment_score, boost, bull_cap)
                 logger.info(
                     "Gate 3 (%s): Sentiment boosted by %.2f (bull debate, conf=%.2f)",
                     ticker,
