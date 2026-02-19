@@ -92,9 +92,11 @@ def _normalize_history_rows(raw: Any) -> list[dict[str, Any]]:
             }
         )
     rows.sort(
-        key=lambda r: _parse_dt(r.get("updated_at"))
-        or _parse_dt(r.get("week_start"))
-        or datetime.min.replace(tzinfo=timezone.utc),
+        key=lambda r: (
+            _parse_dt(r.get("updated_at"))
+            or _parse_dt(r.get("week_start"))
+            or datetime.min.replace(tzinfo=timezone.utc)
+        ),
     )
     return rows
 
@@ -117,9 +119,7 @@ def compute_report(
         if isinstance(weekly_gate.get("cadence_kpi"), dict)
         else {}
     )
-    north_star = (
-        state.get("north_star", {}) if isinstance(state.get("north_star"), dict) else {}
-    )
+    north_star = state.get("north_star", {}) if isinstance(state.get("north_star"), dict) else {}
 
     blockers: list[Blocker] = []
     warnings: list[Blocker] = []
@@ -368,7 +368,9 @@ def render_markdown(report: dict[str, Any]) -> str:
         lines.append("| n/a | n/a | n/a | n/a | n/a | n/a |")
 
     lines.append("")
-    lines.append("_Auto-generated. This issue is updated by workflow and auto-closed when blockers clear._")
+    lines.append(
+        "_Auto-generated. This issue is updated by workflow and auto-closed when blockers clear._"
+    )
     return "\n".join(lines)
 
 

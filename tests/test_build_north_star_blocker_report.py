@@ -124,5 +124,8 @@ def test_render_markdown_contains_absolute_dates_and_history_table() -> None:
     markdown = render_markdown(report)
     assert "Generated (UTC): `2026-02-19T18:00:00Z`" in markdown
     assert "System State Updated (UTC): `2026-02-19T17:30:00Z`" in markdown
-    assert "| Week Start | Updated At (UTC) | Mode | Sample | Expectancy | Cadence Passed |" in markdown
+    assert (
+        "| Week Start | Updated At (UTC) | Mode | Sample | Expectancy | Cadence Passed |"
+        in markdown
+    )
     assert "2026-02-16" in markdown
