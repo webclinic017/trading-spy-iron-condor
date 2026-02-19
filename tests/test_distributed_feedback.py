@@ -7,7 +7,9 @@ from src.learning.distributed_feedback import LocalBackend, aggregate_feedback
 
 
 class FakeBackend:
-    def __init__(self, *, rank: int, world_size: int, global_positive: float, global_negative: float):
+    def __init__(
+        self, *, rank: int, world_size: int, global_positive: float, global_negative: float
+    ):
         self._rank = rank
         self._world_size = world_size
         self._global_positive = global_positive
