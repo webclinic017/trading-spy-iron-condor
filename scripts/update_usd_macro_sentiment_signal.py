@@ -176,9 +176,7 @@ def evaluate_usd_macro_sentiment_signal(
             ratio = broad.latest_value / broad.ma_50
             if ratio <= 0.985:
                 score += 25
-                reasons.append(
-                    f"Broad USD index below 50D MA by {((1.0 - ratio) * 100):.2f}%"
-                )
+                reasons.append(f"Broad USD index below 50D MA by {((1.0 - ratio) * 100):.2f}%")
             elif ratio <= 0.995:
                 score += 12
                 reasons.append(
@@ -213,9 +211,7 @@ def evaluate_usd_macro_sentiment_signal(
                 )
             elif ratio >= 1.003:
                 score += 8
-                reasons.append(
-                    f"USD per EUR modestly above 50D MA by {((ratio - 1.0) * 100):.2f}%"
-                )
+                reasons.append(f"USD per EUR modestly above 50D MA by {((ratio - 1.0) * 100):.2f}%")
 
         if eur.pct_change_20d is not None:
             if eur.pct_change_20d >= 0.015:

@@ -245,7 +245,10 @@ def _normalize_ai_credit_stress_status(signal: dict[str, Any]) -> str:
 def _normalize_usd_macro_status(signal: dict[str, Any]) -> str:
     raw_status = str(signal.get("status") or "").strip().lower()
     score = _as_float(signal.get("bearish_score"), 0.0)
-    if raw_status in {"blocked", "high", "stress", "critical"} or score >= DEFAULT_USD_MACRO_BLOCK_SCORE:
+    if (
+        raw_status in {"blocked", "high", "stress", "critical"}
+        or score >= DEFAULT_USD_MACRO_BLOCK_SCORE
+    ):
         return "blocked"
     if raw_status in {"watch", "warning", "elevated"} or score >= DEFAULT_USD_MACRO_WATCH_SCORE:
         return "watch"
@@ -790,7 +793,9 @@ def compute_weekly_gate(
             mode = "cautious"
         score_text = usd_macro_gate.get("bearish_score")
         score_suffix = (
-            f" score={_as_float(score_text, 0.0):.1f}" if isinstance(score_text, (int, float)) else ""
+            f" score={_as_float(score_text, 0.0):.1f}"
+            if isinstance(score_text, (int, float))
+            else ""
         )
         reason = (
             f"{reason} USD macro sentiment {usd_macro_status}; "

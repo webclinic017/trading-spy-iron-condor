@@ -33,7 +33,7 @@ def test_evaluate_weekly_cadence_extracts_kpi_and_diagnostic():
                         "bearish_score": 37.0,
                         "position_size_multiplier": 0.95,
                         "source": "fred_public",
-                    }
+                    },
                 },
                 "top_rejection_reasons": [{"reason": "Vol=0.1x (low)", "count": 2}],
             },
