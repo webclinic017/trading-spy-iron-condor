@@ -27,7 +27,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
-
 EXPLICIT_NEGATIVE_RE = re.compile(
     r"thumbs\s*down|👎|bad response|wrong answer|incorrect|not what i asked",
     re.IGNORECASE,
@@ -349,7 +348,9 @@ def _read_bandit_snapshot(paths: BridgePaths) -> dict[str, Any]:
         "feature_weights": model.get("feature_weights")
         if isinstance(model.get("feature_weights"), dict)
         else {},
-        "per_category": model.get("per_category") if isinstance(model.get("per_category"), dict) else {},
+        "per_category": model.get("per_category")
+        if isinstance(model.get("per_category"), dict)
+        else {},
     }
 
 
@@ -439,9 +440,7 @@ def build_event_key(
     signal: FeedbackSignal,
 ) -> str:
     session_id = _normalize_text(
-        payload.get("session_id")
-        or payload.get("session-id")
-        or payload.get("sessionId")
+        payload.get("session_id") or payload.get("session-id") or payload.get("sessionId")
     )
     turn_id = _normalize_text(
         payload.get("turn_id") or payload.get("turn-id") or payload.get("turnId")
