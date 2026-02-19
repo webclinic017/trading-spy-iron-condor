@@ -338,8 +338,13 @@ class ContextBundleEngine:
                     title=title,
                     text=_normalize_text(text),
                     tags=tags,
-                    timestamp=datetime.fromtimestamp(file_path.stat().st_mtime, tz=timezone.utc).isoformat(),
-                    metadata={"path": str(file_path.relative_to(self.project_root)), "severity": severity},
+                    timestamp=datetime.fromtimestamp(
+                        file_path.stat().st_mtime, tz=timezone.utc
+                    ).isoformat(),
+                    metadata={
+                        "path": str(file_path.relative_to(self.project_root)),
+                        "severity": severity,
+                    },
                 )
             )
         return docs
@@ -420,7 +425,9 @@ class ContextBundleEngine:
                     title=title,
                     text=_normalize_text(text),
                     tags=["blog", "public"],
-                    timestamp=datetime.fromtimestamp(file_path.stat().st_mtime, tz=timezone.utc).isoformat(),
+                    timestamp=datetime.fromtimestamp(
+                        file_path.stat().st_mtime, tz=timezone.utc
+                    ).isoformat(),
                     metadata={"path": str(file_path.relative_to(self.project_root))},
                 )
             )

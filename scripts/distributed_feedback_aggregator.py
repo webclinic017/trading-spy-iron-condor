@@ -11,8 +11,12 @@ from src.learning.distributed_feedback import aggregate_feedback
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Aggregate feedback across workers via all_reduce.")
-    parser.add_argument("--event-key", required=True, help="Stable dedupe key for the feedback event")
+    parser = argparse.ArgumentParser(
+        description="Aggregate feedback across workers via all_reduce."
+    )
+    parser.add_argument(
+        "--event-key", required=True, help="Stable dedupe key for the feedback event"
+    )
     parser.add_argument(
         "--feedback",
         required=True,
@@ -39,4 +43,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

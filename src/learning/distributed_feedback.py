@@ -344,4 +344,3 @@ def aggregate_feedback(
         _append_jsonl(paths.ledger_file, outcome)
 
     return outcome
-
