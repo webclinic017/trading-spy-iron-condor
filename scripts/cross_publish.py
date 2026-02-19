@@ -117,7 +117,10 @@ def publish_to_devto(title: str, body: str, tags: list[str], canonical_url: str)
         )
         if resp.status_code == 200:
             for article in resp.json()[:20]:
-                if article.get("title") == title or str(article.get("canonical_url") or "").strip() == canonical_url:
+                if (
+                    article.get("title") == title
+                    or str(article.get("canonical_url") or "").strip() == canonical_url
+                ):
                     article_id = article.get("id")
                     if isinstance(article_id, int):
                         updated_url = _update_devto_article(

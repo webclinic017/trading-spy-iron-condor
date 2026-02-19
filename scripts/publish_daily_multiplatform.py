@@ -175,9 +175,7 @@ def publish_daily_report(
 
     linkedin_token = re.sub(r"\s+", "", os.environ.get("LINKEDIN_ACCESS_TOKEN", ""))
     if not linkedin_token:
-        platforms["linkedin"] = PlatformResult(
-            "skipped", "LINKEDIN_ACCESS_TOKEN missing"
-        ).as_dict()
+        platforms["linkedin"] = PlatformResult("skipped", "LINKEDIN_ACCESS_TOKEN missing").as_dict()
     else:
         try:
             linkedin_ok = publish_to_linkedin(title, body, canonical)
@@ -191,7 +189,9 @@ def publish_daily_report(
     x_credentials = resolve_credentials()
     x_missing = missing_credential_names(x_credentials)
     if x_missing:
-        platforms["x"] = PlatformResult("skipped", f"Missing credentials: {', '.join(x_missing)}").as_dict()
+        platforms["x"] = PlatformResult(
+            "skipped", f"Missing credentials: {', '.join(x_missing)}"
+        ).as_dict()
     else:
         tweet = generate_twitter_post("positive", title, canonical)
         x_ok = post_to_twitter(tweet, dry_run=dry_run)
@@ -237,7 +237,9 @@ def main() -> int:
         help="Path to daily report markdown file (e.g., docs/_reports/YYYY-MM-DD-daily-report.md)",
     )
     parser.add_argument("--date", help="Report date override (YYYY-MM-DD)")
-    parser.add_argument("--strict", action="store_true", help="Fail when enabled platform publish fails")
+    parser.add_argument(
+        "--strict", action="store_true", help="Fail when enabled platform publish fails"
+    )
     parser.add_argument("--dry-run-x", action="store_true", help="Dry-run X publish only")
     parser.add_argument("--site-url", default=DEFAULT_SITE_URL, help="Canonical site base URL")
     args = parser.parse_args()
