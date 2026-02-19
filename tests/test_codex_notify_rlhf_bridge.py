@@ -41,12 +41,7 @@ def test_process_payload_writes_state_and_runs_pipeline(tmp_path: Path) -> None:
     scripts_feedback = project / ".claude" / "scripts" / "feedback"
     memory_feedback = project / ".claude" / "memory" / "feedback"
     memalign_script = (
-        project
-        / "plugins"
-        / "automation-plugin"
-        / "skills"
-        / "dynamic-agent-spawner"
-        / "scripts"
+        project / "plugins" / "automation-plugin" / "skills" / "dynamic-agent-spawner" / "scripts"
     )
     scripts_feedback.mkdir(parents=True)
     memory_feedback.mkdir(parents=True)
@@ -132,7 +127,9 @@ def test_process_payload_is_idempotent_per_event_key(tmp_path: Path) -> None:
 
     thompson_log = project / ".claude" / "memory" / "feedback" / "thompson_feedback_log.jsonl"
     assert thompson_log.exists()
-    assert len([line for line in thompson_log.read_text(encoding="utf-8").splitlines() if line]) == 1
+    assert (
+        len([line for line in thompson_log.read_text(encoding="utf-8").splitlines() if line]) == 1
+    )
 
 
 def test_thompson_report_reflects_model_delta(tmp_path: Path) -> None:
