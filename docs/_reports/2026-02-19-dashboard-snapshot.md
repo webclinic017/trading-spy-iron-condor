@@ -1,7 +1,7 @@
 ---
 layout: "post"
 title: "Daily Dashboard Snapshot - 2026-02-19"
-description: "Daily snapshot for 2026-02-19: paper equity $101,339.56, paper daily P/L $-75.28, cadence gate FAIL."
+description: "Daily snapshot for 2026-02-19: paper equity $101,349.56, paper daily P/L $-65.28, cadence gate FAIL."
 date: "2026-02-19"
 last_modified_at: "2026-02-19"
 tags:
@@ -14,7 +14,7 @@ canonical_url: "https://igorganapolsky.github.io/trading/reports/2026-02-19-dash
 faq: true
 questions:
   - question: "What is the current state of the trading system today?"
-    answer: "Daily snapshot for 2026-02-19: paper equity $101,339.56, paper daily P/L $-75.28, cadence gate FAIL."
+    answer: "Daily snapshot for 2026-02-19: paper equity $101,349.56, paper daily P/L $-65.28, cadence gate FAIL."
   - question: "Are cadence and risk gates passing this week?"
     answer: "Cadence gate is FAIL. Risk mode is validation with recommended max position size 0.0%."
   - question: "What is the North Star probability right now?"
@@ -27,7 +27,7 @@ This report is auto-generated from system state for search and AI discoverabilit
 ## Answer Block
 
 **Q: Did we make money today?**<br>
-A: Paper daily P/L is $-75.28. Live account total P/L is $188.40.
+A: Paper daily P/L is $-65.28. Live account total P/L is $188.40.
 
 **Q: Are we on track toward the North Star?**<br>
 A: North Star probability is 70.40% (medium), target date 2029-11-14.
@@ -49,9 +49,9 @@ A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
 |---|---|
 | Live Equity | $208.40 |
 | Live Total P/L | $188.40 (942.00%) |
-| Paper Equity | $101,339.56 |
-| Paper Total P/L | $1,339.56 (1.34%) |
-| Paper Daily Change | $-75.28 |
+| Paper Equity | $101,349.56 |
+| Paper Total P/L | $1,349.56 (1.35%) |
+| Paper Daily Change | $-65.28 |
 | Paper Win Rate | 100.00% (sample: 1) |
 | Open Positions (Paper) | 5 |
 | Weekly Cadence KPI | FAIL |
@@ -70,4 +70,4 @@ A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
 ## Data Freshness
 
 - Snapshot date: `2026-02-19`
-- Live account sync timestamp: `2026-02-19T15:36:48.501885`
+- Live account sync timestamp: `2026-02-19T16:01:27.917145`
