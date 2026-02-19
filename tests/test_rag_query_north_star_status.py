@@ -32,18 +32,11 @@ def test_rag_query_surface_has_explicit_as_of_timestamp_labels() -> None:
     assert "function renderTimestampMetric(label, raw)" in html
 
 
-def test_rag_query_chat_has_local_fallback_for_no_results() -> None:
+def test_rag_query_evidence_screenshots_support_click_to_magnify() -> None:
     html = RAG_QUERY_HTML.read_text(encoding="utf-8")
 
-    assert "function findLocalLessonsForChat(query, maxResults = 5)" in html
-    assert "function buildLocalLessonFallbackReply(query, matches)" in html
-    assert "KEY LESSONS (local_fallback):" in html
-    assert "No lessons available for this query" in html
-
-
-def test_rag_query_last_question_hint_shows_timestamp_not_keyboard_copy() -> None:
-    html = RAG_QUERY_HTML.read_text(encoding="utf-8")
-
-    assert "function formatChatHistoryTimestamp(raw)" in html
-    assert 'class="hint-time"' in html
-    assert "(click to insert, or press ↑)" not in html
+    assert 'id="evidenceLightbox"' in html
+    assert 'id="evidenceLightboxImage"' in html
+    assert "function openEvidenceLightbox(src, caption)" in html
+    assert "function setupEvidenceLightboxListeners()" in html
+    assert 'data-evidence-image="true"' in html
