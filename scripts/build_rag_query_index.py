@@ -215,7 +215,9 @@ def build_index() -> list[dict]:
         rel_path = path.relative_to(RAG_ROOT)
         category = rel_path.parts[0] if rel_path.parts else "general"
         source_path = f"rag_knowledge/{rel_path.as_posix()}"
-        source_mtime_utc = _to_utc_iso(datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc))
+        source_mtime_utc = _to_utc_iso(
+            datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc)
+        )
 
         if category == "lessons_learned":
             item_id = path.stem
