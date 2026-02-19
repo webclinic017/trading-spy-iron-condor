@@ -28,12 +28,12 @@ Full architecture: **[Tech Stack](/trading/tech-stack/)**.
 ## Where We Are Today
 
 <!-- AUTO_STATUS_START -->
-_Last Sync: 2026-02-18 22:06 UTC (source: `data/system_state.json`)_
+_Last Sync: 2026-02-19 11:15 UTC (source: `data/system_state.json`)_
 
 | What | Status |
 | ---- | ------ |
-| Account Equity | $101,374.72 |
-| Daily P/L | -$62.84 |
+| Account Equity | $101,371.84 |
+| Daily P/L | -$43.00 |
 | Win Rate | 100.0% (1 trades; target 80.0%) |
 | Paper Phase | Day 14/90 |
 | North Star Gate | ACTIVE (VALIDATING) |
