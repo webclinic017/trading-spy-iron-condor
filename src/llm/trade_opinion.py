@@ -271,7 +271,9 @@ def get_trade_opinion(
             )
 
         # Parse response
-        text = _extract_text_content(response.choices[0].message.content) if response.choices else ""
+        text = (
+            _extract_text_content(response.choices[0].message.content) if response.choices else ""
+        )
         if not text:
             logger.warning("Trade opinion: empty response from LLM")
             return None
