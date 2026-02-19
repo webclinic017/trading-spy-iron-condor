@@ -15,11 +15,12 @@
 
 ## Operational Metrics
 - Workflows configured: 84
-- Blog posts indexed: 55
-- Reports indexed: 7
+- Blog posts indexed: 56
+- Reports indexed: 8
 - Lessons indexed: 168
 
 ## Blog Posts (Newest First)
+- [Day 114: What We Learned \u2014 February 19, 2026](https://igorganapolsky.github.io/trading/2026/02/19/lessons-learned.html) - 2026-02-19
 - [North Star Operating Strategy: Fast, Gated, Coherent](https://igorganapolsky.github.io/trading/2026/02/17/north-star-operating-strategy.html) - 2026-02-17
 - [Tetrate Buildathon: AI Trading System Entry](https://igorganapolsky.github.io/trading/2026/02/15/tetrate-buildathon-ai-trading-system.html) - 2026-02-15
 - [Tars: Multi-Model Routing for AI Trading](https://igorganapolsky.github.io/trading/2026/02/15/tars-multi-model-routing-trading.html) - 2026-02-15
@@ -57,7 +58,7 @@
 - [Day 87: What We Learned - January 23, 2026](https://igorganapolsky.github.io/trading/2026/01/23/lessons-learned.html) - 2026-01-23
 - [Day 86: The Trust Crisis and Fresh Start](https://igorganapolsky.github.io/trading/2026/01/22/ralph-discovery.html) - 2026-01-22
 - [LL-275: Position Stacking Disaster and Fix](https://igorganapolsky.github.io/trading/2026/01/22/position-stacking-disaster-fix.html) - 2026-01-22
-- [Day 86: What We Learned - January 22, 2026](https://igorganapolsky.github.io/trading/2026/01/22/lessons-learned.html) - 2026-01-22
+- [Day 86 of 90: What We Learned \u2014 January 22, 2026](https://igorganapolsky.github.io/trading/2026/01/22/lessons-learned.html) - 2026-01-22
 - [Day 85: What We Learned - January 21, 2026](https://igorganapolsky.github.io/trading/2026/01/21/lessons-learned.html) - 2026-01-21
 - [Complete Guide: AI-Powered Iron Condor Trading](https://igorganapolsky.github.io/trading/2026/01/21/iron-condors-ai-trading-complete-guide.html) - 2026-01-21
 - [Day 84: What We Learned - January 20, 2026](https://igorganapolsky.github.io/trading/2026/01/20/lessons-learned.html) - 2026-01-20
@@ -78,6 +79,7 @@
 
 ## Reports
 - [Daily Dashboard Snapshot - 2026-02-19](https://igorganapolsky.github.io/trading/reports/2026-02-19-dashboard-snapshot/) - 2026-02-19
+- [Daily Report: February 19, 2026 | $-29.60](https://igorganapolsky.github.io/trading/reports/2026-02-19-daily-report/) - 2026-02-19
 - [Daily Dashboard Snapshot - 2026-02-18](https://igorganapolsky.github.io/trading/reports/2026-02-18-dashboard-snapshot/) - 2026-02-18
 - [Social Positioning Copy (Canonical)](https://igorganapolsky.github.io/trading/reports/2026-02-17-social-positioning-copy/) - 2026-02-17
 - [Daily Dashboard Snapshot - 2026-02-17](https://igorganapolsky.github.io/trading/reports/2026-02-17-dashboard-snapshot/) - 2026-02-17
