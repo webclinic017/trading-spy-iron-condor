@@ -133,17 +133,17 @@
     "cash": 101365.4
   },
   "paper_account": {
-    "equity": 101365.4,
-    "cash": 101365.4,
+    "equity": 101357.32,
+    "cash": 101552.32,
     "buying_power": 405461.6,
     "total_pl": 1365.3999999999942,
     "total_pl_pct": 1.3653999999999942,
     "positions_count": 0,
-    "daily_change": 0.0,
+    "daily_change": -8.08,
     "win_rate": 100.0,
     "win_rate_sample_size": 1,
     "starting_balance": 100000.0,
-    "current_equity": 101365.4,
+    "current_equity": 101357.32,
     "last_equity": 101365.4
   },
   "positions": [],
@@ -911,10 +911,14 @@
   ],
   "trades_loaded": 95,
   "trades": {
-    "last_trade_date": "2026-02-09",
-    "today_trades": 0,
-    "total_trades_today": 0,
-    "last_trade_symbol": "SPY260220P00660000"
+    "last_trade_date": "2026-02-20",
+    "today_trades": 4,
+    "total_trades_today": 4,
+    "last_trade_symbol": "SYNCED",
+    "metrics_date": "2026-02-20",
+    "orders_today": 1,
+    "structures_today": 1,
+    "fills_today": 4
   },
   "risk": {
     "status": "MONITORING",
@@ -939,14 +943,14 @@
     "buying_power": 405461.6
   },
   "meta": {
-    "last_updated": "2026-02-20T14:47:50.889591+00:00",
+    "last_updated": "2026-02-20T14:57:00.902063+00:00",
     "trade_sync": "alpaca_api",
     "sync_frequency_minutes": 5,
     "last_sync_attempt": "2026-02-20T14:47:50.889591+00:00",
     "alpaca_keys_present": true,
     "last_sync": "2026-02-20T14:47:50.816662",
     "sync_mode": "paper+live",
-    "last_daily_verification_at": "2026-02-20T14:00:33.979036+00:00"
+    "last_daily_verification_at": "2026-02-20T14:57:01.842325+00:00"
   },
   "paper_trading": {
     "start_date": "2026-01-30",
@@ -1481,7 +1485,7 @@
     "missing_count": 1
   },
   "options": {
-    "last_theta_harvest": "2026-02-20T14:00:26.686947Z",
+    "last_theta_harvest": "2026-02-20T14:56:56.850617Z",
     "harvest_source": "daily-trading-workflow",
     "execution_date": "2026-02-20",
     "selection_method": "adaptive",
