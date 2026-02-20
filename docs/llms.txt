@@ -16,7 +16,7 @@
 
 ## Content Snapshot
 - Blog posts published: 56
-- Reports published: 8
+- Reports published: 9
 - Lessons in RAG markdown: 168
 - Automation workflows: 84
 - Latest blog post date: 2026-02-19
