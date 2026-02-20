@@ -231,6 +231,114 @@ def close_iron_condor(client, ic: dict, reason: str, dry_run: bool = False) -> b
         return False
 
 
+def record_trade_outcome(ic: dict, reason: str, won: bool) -> None:
+    """Record trade outcome to Thompson model and trajectory log.
+
+    This is the ONLY place trade outcomes feed back into the ML model.
+    Called when an IC is closed (profit target, stop loss, or DTE exit).
+    """
+    pl = ic["total_pl"]
+    credit = ic["credit_received"]
+    expiry = ic["expiry_str"]
+
+    project_root = Path(__file__).parent.parent
+
+    # 1. Update Thompson sampling model
+    model_path = Path(__file__).parent.parent / "models" / "ml" / "trade_confidence_model.json"
+    try:
+        with open(model_path) as f:
+            model = json.load(f)
+
+        for key in ["iron_condor", "spy_specific"]:
+            if key in model:
+                if won:
+                    model[key]["alpha"] = model[key].get("alpha", 1.0) + 1
+                    model[key]["wins"] = model[key].get("wins", 0) + 1
+                else:
+                    model[key]["beta"] = model[key].get("beta", 1.0) + 1
+                    model[key]["losses"] = model[key].get("losses", 0) + 1
+
+        model["last_updated"] = datetime.now().isoformat()
+
+        with open(model_path, "w") as f:
+            json.dump(model, f, indent=2)
+
+        logger.info(f"Thompson model updated: {'WIN' if won else 'LOSS'} "
+                     f"(alpha={model['iron_condor']['alpha']}, beta={model['iron_condor']['beta']})")
+    except Exception as e:
+        logger.warning(f"Could not update Thompson model: {e}")
+
+    # 2. Append to trade trajectory log
+    trajectory_path = project_root / "data" / "feedback" / "trade_trajectories.jsonl"
+    try:
+        trajectory_path.parent.mkdir(parents=True, exist_ok=True)
+        entry = {
+            "timestamp": datetime.now().isoformat() + "Z",
+            "strategy": "iron_condor",
+            "symbol": ic.get("underlying", "SPY"),
+            "expiry": expiry,
+            "exit_reason": reason,
+            "credit": credit,
+            "pnl": pl,
+            "won": won,
+            "source": "position_manager",
+        }
+        with trajectory_path.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(entry) + "\n")
+        logger.info(f"Trade trajectory recorded: {reason} P/L=${pl:.2f}")
+    except Exception as e:
+        logger.warning(f"Could not record trajectory: {e}")
+
+    # 3. Persist structured RLHF close-out event (used by downstream learning/audits)
+    event_key = (
+        f"iron_condor_close::{ic.get('underlying', 'SPY')}::"
+        f"{ic.get('expiry_str', 'unknown')}::{reason}::{round(float(pl), 2)}"
+    )
+    try:
+        from src.learning.rlhf_storage import store_trade_outcome
+
+        store_trade_outcome(
+            symbol=str(ic.get("underlying", "SPY")),
+            strategy="iron_condor",
+            reward=float(pl),
+            won=bool(won),
+            exit_reason=reason,
+            expiry=str(ic.get("expiry_str", "")),
+            event_key=event_key,
+            metadata={"source": "manage_iron_condor_positions"},
+        )
+    except Exception as e:
+        logger.warning(f"Could not store structured RLHF outcome: {e}")
+
+    # 4. Feed distributed feedback model so learning updates are immediate and idempotent
+    try:
+        from src.learning.distributed_feedback import LocalBackend, aggregate_feedback
+
+        feedback_type = "positive" if won else "negative"
+        context = (
+            f"iron_condor closed symbol={ic.get('underlying', 'SPY')} "
+            f"expiry={ic.get('expiry_str', '')} exit_reason={reason} pnl={float(pl):.2f}"
+        )
+        outcome = aggregate_feedback(
+            project_root=project_root,
+            event_key=event_key,
+            feedback_type=feedback_type,
+            context=context,
+            backend=LocalBackend(),
+        )
+        if outcome.get("applied"):
+            logger.info(
+                "Distributed feedback updated (%s): +%.0f/-%.0f",
+                feedback_type,
+                float(outcome.get("global_positive", 0.0)),
+                float(outcome.get("global_negative", 0.0)),
+            )
+        elif outcome.get("skipped_reason") == "duplicate_event":
+            logger.info("Distributed feedback skipped duplicate event: %s", event_key)
+    except Exception as e:
+        logger.warning(f"Could not update distributed feedback model: {e}")
+
+
 def get_alpaca_credentials():
     """Get Alpaca credentials from environment variables (CI-compatible)."""
     import os
@@ -314,6 +422,8 @@ def main(dry_run: bool = False):
 
             if close_iron_condor(client, ic, reason, dry_run):
                 exits_executed += 1
+                won = reason == "PROFIT_TARGET"
+                record_trade_outcome(ic, reason, won)
         else:
             logger.info(f"  Status: HOLD - {details}")
 

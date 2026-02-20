@@ -15,6 +15,7 @@ Coverage:
 All Alpaca API calls are mocked. No real API calls.
 """
 
+import json
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -31,6 +32,7 @@ from scripts.manage_iron_condor_positions import (
     group_iron_condors,
     is_option_symbol,
     parse_option_symbol,
+    record_trade_outcome,
 )
 
 
@@ -312,3 +314,110 @@ class TestCloseIronCondor:
 
         result = close_iron_condor(mock_client, ic, "STOP_LOSS", dry_run=False)
         assert result is False
+
+
+class TestRecordTradeOutcome:
+    """Test trade outcome recording to Thompson model and trajectory log."""
+
+    def _make_ic(self, pl=100.0, credit=200.0):
+        return {
+            "expiry_str": "2026-03-20",
+            "underlying": "SPY",
+            "total_pl": pl,
+            "credit_received": credit,
+            "legs": [],
+        }
+
+    def test_win_updates_thompson_model(self, tmp_path):
+        """Integration test: win updates Thompson model file."""
+        model = {
+            "model_type": "thompson_sampling",
+            "iron_condor": {"alpha": 2.0, "beta": 1.0, "wins": 1, "losses": 0},
+            "spy_specific": {"alpha": 2.0, "beta": 1.0, "wins": 1, "losses": 0},
+            "last_updated": "2026-01-26T00:00:00",
+        }
+        model_path = tmp_path / "models" / "ml" / "trade_confidence_model.json"
+        model_path.parent.mkdir(parents=True)
+        with open(model_path, "w") as f:
+            json.dump(model, f)
+
+        ic = self._make_ic(pl=100.0, credit=200.0)
+
+        with patch("scripts.manage_iron_condor_positions.Path") as MockPath:
+            def path_factory(*args):
+                p = Path(*args)
+                return p
+            MockPath.side_effect = path_factory
+            MockPath.__truediv__ = Path.__truediv__
+
+            # Patch __file__ resolution in the module
+            import scripts.manage_iron_condor_positions as mod
+            with patch.object(mod, "__file__", str(tmp_path / "scripts" / "manage.py")):
+                # Create scripts dir so parent.parent works
+                (tmp_path / "scripts").mkdir(exist_ok=True)
+                record_trade_outcome(ic, "PROFIT_TARGET", won=True)
+
+        with open(model_path) as f:
+            updated = json.load(f)
+
+        assert updated["iron_condor"]["alpha"] == 3.0
+        assert updated["iron_condor"]["wins"] == 2
+        assert updated["iron_condor"]["beta"] == 1.0
+        assert updated["iron_condor"]["losses"] == 0
+
+    def test_loss_updates_thompson_model(self, tmp_path):
+        """Integration test: loss updates Thompson model file."""
+        model = {
+            "model_type": "thompson_sampling",
+            "iron_condor": {"alpha": 2.0, "beta": 1.0, "wins": 1, "losses": 0},
+            "spy_specific": {"alpha": 2.0, "beta": 1.0, "wins": 1, "losses": 0},
+            "last_updated": "2026-01-26T00:00:00",
+        }
+        model_path = tmp_path / "models" / "ml" / "trade_confidence_model.json"
+        model_path.parent.mkdir(parents=True)
+        with open(model_path, "w") as f:
+            json.dump(model, f)
+
+        ic = self._make_ic(pl=-250.0, credit=200.0)
+
+        import scripts.manage_iron_condor_positions as mod
+        with patch.object(mod, "__file__", str(tmp_path / "scripts" / "manage.py")):
+            (tmp_path / "scripts").mkdir(exist_ok=True)
+            record_trade_outcome(ic, "STOP_LOSS", won=False)
+
+        with open(model_path) as f:
+            updated = json.load(f)
+
+        assert updated["iron_condor"]["alpha"] == 2.0
+        assert updated["iron_condor"]["wins"] == 1
+        assert updated["iron_condor"]["beta"] == 2.0
+        assert updated["iron_condor"]["losses"] == 1
+
+    def test_trajectory_log_written(self, tmp_path):
+        """Trade outcome should append to trajectory JSONL."""
+        model = {
+            "model_type": "thompson_sampling",
+            "iron_condor": {"alpha": 1.0, "beta": 1.0, "wins": 0, "losses": 0},
+            "spy_specific": {"alpha": 1.0, "beta": 1.0, "wins": 0, "losses": 0},
+            "last_updated": "2026-01-26T00:00:00",
+        }
+        model_path = tmp_path / "models" / "ml" / "trade_confidence_model.json"
+        model_path.parent.mkdir(parents=True)
+        with open(model_path, "w") as f:
+            json.dump(model, f)
+
+        ic = self._make_ic(pl=80.0, credit=200.0)
+
+        import scripts.manage_iron_condor_positions as mod
+        with patch.object(mod, "__file__", str(tmp_path / "scripts" / "manage.py")):
+            (tmp_path / "scripts").mkdir(exist_ok=True)
+            record_trade_outcome(ic, "DTE_EXIT", won=False)
+
+        traj_path = tmp_path / "data" / "feedback" / "trade_trajectories.jsonl"
+        assert traj_path.exists()
+        with open(traj_path) as f:
+            entry = json.loads(f.readline())
+        assert entry["strategy"] == "iron_condor"
+        assert entry["exit_reason"] == "DTE_EXIT"
+        assert entry["won"] is False
+        assert entry["pnl"] == 80.0

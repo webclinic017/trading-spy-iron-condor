@@ -914,7 +914,7 @@ def main():
                     telemetry.update_ticker_decision(
                         ticker,
                         gate=2,
-                        status="PASS" if opinion.should_trade else "PASS",
+                        status="PASS" if opinion.should_trade else "ADVISORY_SKIP",
                         indicators={
                             "llm_should_trade": bool(opinion.should_trade),
                             "llm_confidence": float(opinion.confidence),
