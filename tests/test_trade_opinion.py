@@ -10,6 +10,7 @@ Verifies:
 """
 
 import json
+import logging
 import os
 import sys
 from unittest.mock import MagicMock, patch
@@ -322,6 +323,15 @@ class TestGetTradeOpinionFallbacks:
             os.environ.pop("OPENROUTER_API_KEY", None)
             result = get_trade_opinion()
             assert result is None
+
+    def test_no_api_key_logs_warning(self, caplog):
+        """Missing key should emit warning so advisory disablement is visible."""
+        with patch.dict(os.environ, {}, clear=True):
+            os.environ.pop("OPENROUTER_API_KEY", None)
+            with caplog.at_level(logging.WARNING):
+                result = get_trade_opinion()
+            assert result is None
+            assert "Trade opinion disabled" in caplog.text
 
     @patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"})
     def test_non_openrouter_provider_returns_none(self):

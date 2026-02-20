@@ -198,7 +198,10 @@ def get_trade_opinion(
     """
     primary_cfg, fallback_cfg = resolve_openrouter_primary_and_fallback_configs()
     if not primary_cfg.api_key:
-        logger.info("Trade opinion: missing OpenAI-compatible API key, skipping LLM advisory")
+        logger.warning(
+            "Trade opinion disabled: no OpenAI-compatible API key resolved "
+            "(set OPENROUTER_API_KEY or gateway key env vars)."
+        )
         return None
 
     # Select model via BATS framework
