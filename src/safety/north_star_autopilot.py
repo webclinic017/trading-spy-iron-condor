@@ -165,7 +165,9 @@ def compute_regime_aware_sizing(state: dict[str, Any]) -> dict[str, Any]:
     diag = _no_trade_diag(weekly)
     gate_status = _gate_status(diag)
 
-    base_cap = _clamp(_to_float(weekly.get("recommended_max_position_pct"), 0.02), lo=0.005, hi=0.05)
+    base_cap = _clamp(
+        _to_float(weekly.get("recommended_max_position_pct"), 0.02), lo=0.005, hi=0.05
+    )
     if bool(weekly.get("block_new_positions")):
         return {
             "base_max_position_pct": round(base_cap, 4),
@@ -401,7 +403,9 @@ def render_autopilot_markdown(snapshot: dict[str, Any]) -> str:
     lines.append("")
     lines.append("## Cadence Optimizer")
     lines.append(f"- Decision: `{cadence.get('decision', 'unknown')}`")
-    lines.append(f"- Current Liquidity Floor: `{cadence.get('current_min_liquidity_volume_ratio')}`")
+    lines.append(
+        f"- Current Liquidity Floor: `{cadence.get('current_min_liquidity_volume_ratio')}`"
+    )
     lines.append(f"- Target Liquidity Floor: `{cadence.get('target_min_liquidity_volume_ratio')}`")
     lines.append(f"- Reason: {cadence.get('reason', 'n/a')}")
     lines.append("")

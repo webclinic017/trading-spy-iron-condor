@@ -222,7 +222,9 @@ def test_weekly_gate_respects_liquidity_floor_override(tmp_path):
     )
     runtime_dir = tmp_path / "runtime"
     runtime_dir.mkdir(parents=True, exist_ok=True)
-    _write_json(runtime_dir / "north_star_gate_overrides.json", {"min_liquidity_volume_ratio": 0.18})
+    _write_json(
+        runtime_dir / "north_star_gate_overrides.json", {"min_liquidity_volume_ratio": 0.18}
+    )
 
     gate, _history = compute_weekly_gate(
         {"paper_account": {"win_rate": 60.0, "win_rate_sample_size": 0, "total_pl": 0}},

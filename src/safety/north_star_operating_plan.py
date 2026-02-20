@@ -118,7 +118,9 @@ def _load_gate_overrides(data_dir: Path) -> dict[str, Any]:
 
 def _resolve_min_liquidity_volume_ratio(data_dir: Path) -> float:
     overrides = _load_gate_overrides(data_dir)
-    ratio = _as_float(overrides.get("min_liquidity_volume_ratio"), DEFAULT_MIN_LIQUIDITY_VOLUME_RATIO)
+    ratio = _as_float(
+        overrides.get("min_liquidity_volume_ratio"), DEFAULT_MIN_LIQUIDITY_VOLUME_RATIO
+    )
     # Safety clamp: never allow pathological liquidity thresholds.
     return max(0.10, min(0.50, ratio))
 
@@ -338,9 +340,7 @@ def _compute_no_trade_diagnostic(
         for row in recent_decisions
         if isinstance(row.get("volume_ratio"), (int, float))
     ]
-    low_liquidity_events = sum(
-        1 for ratio in volume_ratios if ratio < min_liquidity_volume_ratio
-    )
+    low_liquidity_events = sum(1 for ratio in volume_ratios if ratio < min_liquidity_volume_ratio)
     avg_volume_ratio = round(sum(volume_ratios) / len(volume_ratios), 4) if volume_ratios else None
 
     dte_raw = _safe_nested_dict(options_chain, "data").get("recommended_dte")
