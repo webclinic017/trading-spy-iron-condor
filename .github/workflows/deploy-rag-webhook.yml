@@ -16,6 +16,7 @@ env:
   PROJECT_ID: igor-trading-2025-v2
   REGION: us-central1
   SERVICE_NAME: trading-rag-webhook
+  BILLING_ACCOUNT: 013920-9AC710-4EFE94
 
   SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -39,6 +40,11 @@ jobs:
         uses: google-github-actions/setup-gcloud@v3
         with:
           project_id: ${{ env.PROJECT_ID }}
+
+      - name: Ensure project billing is linked
+        run: |
+          gcloud billing projects link ${{ env.PROJECT_ID }} \
+            --billing-account=${{ env.BILLING_ACCOUNT }}
 
       - name: Prepare Dockerfile
         run: |
