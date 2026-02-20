@@ -41,7 +41,11 @@ def _closed_trades(trades_payload: dict[str, Any]) -> list[dict[str, Any]]:
     rows = trades_payload.get("trades", [])
     if not isinstance(rows, list):
         return []
-    return [row for row in rows if isinstance(row, dict) and str(row.get("status", "")).lower() == "closed"]
+    return [
+        row
+        for row in rows
+        if isinstance(row, dict) and str(row.get("status", "")).lower() == "closed"
+    ]
 
 
 def _feedback_type(trade: dict[str, Any]) -> str | None:
@@ -83,7 +87,9 @@ def _context_for_trade(trade: dict[str, Any]) -> str:
     pnl = _to_float(trade.get("realized_pnl", trade.get("pnl", trade.get("pl"))), 0.0)
     symbol = str(trade.get("symbol") or "UNKNOWN")
     strategy = str(trade.get("strategy") or "trade")
-    outcome = str(trade.get("outcome") or "").lower() or ("win" if pnl > 0 else "loss" if pnl < 0 else "flat")
+    outcome = str(trade.get("outcome") or "").lower() or (
+        "win" if pnl > 0 else "loss" if pnl < 0 else "flat"
+    )
     exit_date = str(trade.get("exit_date") or trade.get("timestamp") or "unknown")
     return (
         "historical backfill trade outcome "
@@ -103,7 +109,9 @@ def _write_json(path: Path, payload: dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
 
-def _render_lesson(now_utc: datetime, summary: dict[str, Any], strategy_rows: list[dict[str, Any]]) -> str:
+def _render_lesson(
+    now_utc: datetime, summary: dict[str, Any], strategy_rows: list[dict[str, Any]]
+) -> str:
     lines: list[str] = []
     lines.append("# Historical Learning Backfill (Automated)")
     lines.append("")
