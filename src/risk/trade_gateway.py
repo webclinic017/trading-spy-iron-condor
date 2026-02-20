@@ -94,6 +94,8 @@ class RejectionReason(Enum):
     DTE_OUT_OF_RANGE = "DTE must be 30-45 days per CLAUDE.md"
     CUMULATIVE_RISK_TOO_HIGH = "Cumulative position risk exceeds 5% limit"
     MAX_IRON_CONDORS_EXCEEDED = f"Max {MAX_CONCURRENT_ICS} iron condors at a time"
+    EXPIRY_CONCENTRATION_TOO_HIGH = "Too many ICs in same expiry week (>40%)"
+    BEHAVIORAL_GUARD_BLOCKED = "Behavioral guard blocked trade (FOMO/cooling/blacklist)"
 
 
 @dataclass
@@ -571,6 +573,63 @@ class TradeGateway:
 
         return False, ""
 
+    def _check_expiry_concentration(self, positions: list) -> tuple[bool, str]:
+        """Check if too many ICs are concentrated in a single expiry week.
+
+        Groups ICs by ISO week. Rejects if >40% of ICs share one week.
+        One bad week shouldn't wipe everything.
+        """
+        from datetime import datetime as _dt
+
+        try:
+            from src.core.trading_constants import MAX_EXPIRY_CONCENTRATION_PCT
+        except ImportError:
+            MAX_EXPIRY_CONCENTRATION_PCT = 0.40
+
+        option_positions = [p for p in positions if len(p.get("symbol", "")) > 10]
+        if len(option_positions) < 4:
+            return False, ""
+
+        # Group legs by YYMMDD expiry, then count ICs per ISO week
+        by_expiry = {}
+        for pos in option_positions:
+            symbol = pos.get("symbol", "")
+            if len(symbol) > 15:
+                exp = symbol[3:9]
+                by_expiry.setdefault(exp, []).append(pos)
+
+        # Only count complete IC structures (>=4 legs with 2 short + 2 long)
+        ic_expiries = []
+        for exp, legs in by_expiry.items():
+            if len(legs) >= 4:
+                short_count = sum(1 for p in legs if float(p.get("qty", 0)) < 0)
+                long_count = sum(1 for p in legs if float(p.get("qty", 0)) > 0)
+                if short_count >= 2 and long_count >= 2:
+                    try:
+                        dt = _dt.strptime(f"20{exp}", "%Y%m%d")
+                        ic_expiries.append(dt.isocalendar()[1])  # ISO week number
+                    except ValueError:
+                        continue
+
+        total_ics = len(ic_expiries)
+        if total_ics <= 1:
+            return False, ""
+
+        # Count max ICs in any single week
+        from collections import Counter
+        week_counts = Counter(ic_expiries)
+        max_week, max_count = week_counts.most_common(1)[0]
+        concentration = max_count / total_ics
+
+        if concentration > MAX_EXPIRY_CONCENTRATION_PCT:
+            return (
+                True,
+                f"Expiry concentration: {max_count}/{total_ics} ICs ({concentration*100:.0f}%) "
+                f"in ISO week {max_week} (max {MAX_EXPIRY_CONCENTRATION_PCT*100:.0f}%)",
+            )
+
+        return False, ""
+
     def evaluate(self, request: TradeRequest) -> GatewayDecision:
         """
         Evaluate a trade request against all risk rules.
@@ -918,6 +977,44 @@ class TradeGateway:
                     "reason": condor_reason,
                     "action": "Reduce open iron condors before opening a new one",
                 }
+
+        # ============================================================
+        # CHECK 0.9: EXPIRY CONCENTRATION (>40% in one week)
+        # ============================================================
+        if is_position_opening and request.is_option:
+            is_concentrated, conc_reason = self._check_expiry_concentration(positions)
+            if is_concentrated:
+                rejection_reasons.append(RejectionReason.EXPIRY_CONCENTRATION_TOO_HIGH)
+                logger.warning(f"🛑 EXPIRY CONCENTRATION: {conc_reason}")
+                risk_score += 0.5
+                metadata["expiry_concentration"] = {
+                    "reason": conc_reason,
+                    "action": "Diversify across different expiry weeks",
+                }
+
+        # ============================================================
+        # CHECK 0.10: BEHAVIORAL GUARD (FOMO / cooling / blacklist)
+        # ============================================================
+        if is_position_opening:
+            try:
+                from src.safety.behavioral_guard import BehavioralGuard
+
+                bg_result = BehavioralGuard.evaluate(
+                    symbol=request.symbol,
+                    expiry=None,  # Expiry not on TradeRequest; scanner handles diversification
+                    spy_change_pct=None,  # Caller can set via env or market data
+                )
+                if not bg_result.passed:
+                    rejection_reasons.append(RejectionReason.BEHAVIORAL_GUARD_BLOCKED)
+                    logger.warning(f"🛑 BEHAVIORAL GUARD: {bg_result.rejections}")
+                    risk_score += 0.5
+                    metadata["behavioral_guard"] = {
+                        "checks_run": bg_result.checks_run,
+                        "rejections": bg_result.rejections,
+                        "warnings": bg_result.warnings,
+                    }
+            except ImportError:
+                pass  # Guard not installed — fail open
 
         # ============================================================
         # CHECK 1: Insufficient Funds

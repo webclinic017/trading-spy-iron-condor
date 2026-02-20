@@ -426,6 +426,13 @@ def main(dry_run: bool = False):
                 exits_executed += 1
                 won = reason == "PROFIT_TARGET"
                 record_trade_outcome(ic, reason, won)
+                # Record stop-loss for behavioral guard cooling
+                if reason == "STOP_LOSS":
+                    try:
+                        from src.safety.behavioral_guard import BehavioralGuard
+                        BehavioralGuard.record_stop_loss_exit(ic["expiry_str"])
+                    except ImportError:
+                        pass
         else:
             logger.info(f"  Status: HOLD - {details}")
 
