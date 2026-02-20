@@ -93,6 +93,13 @@ jobs:
           python3 scripts/update_north_star_operating_plan.py
           echo "✅ North Star operating plan updated"
 
+      - name: Backfill historical learning (RAG + RLHF)
+        run: |
+          echo "🧠 Backfilling historical learning into RLHF + RAG..."
+          python3 scripts/historical_learning_backfill.py \
+            --json-out artifacts/devloop/historical_learning_backfill.json
+          echo "✅ Historical learning backfill complete"
+
       - name: Weekly cadence KPI + no-trade diagnostic
         run: |
           echo "📈 Checking cadence KPI and no-trade diagnostic..."
@@ -222,7 +229,7 @@ jobs:
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
-          git add data/system_state.json data/north_star_weekly_history.json data/trades.json data/runtime/north_star_gate_overrides.json data/market_signals/ai_credit_stress_signal.json data/market_signals/usd_macro_sentiment_signal.json artifacts/devloop/box_workspace_manifest.json artifacts/devloop/ai_discoverability_report.md artifacts/devloop/ai_discoverability_report.json artifacts/devloop/profit_readiness_scorecard.md artifacts/devloop/north_star_autopilot_report.json artifacts/devloop/north_star_autopilot_report.md artifacts/tars/ docs/ docs/_reports/*-dashboard-snapshot.md docs/_reports/hackathon-system-explainer.md docs/lessons/judge-demo.html wiki/ docs/index.md 2>/dev/null || true
+          git add data/system_state.json data/north_star_weekly_history.json data/trades.json data/runtime/north_star_gate_overrides.json data/market_signals/ai_credit_stress_signal.json data/market_signals/usd_macro_sentiment_signal.json data/feedback/feedback_historical_backfill.jsonl artifacts/devloop/box_workspace_manifest.json artifacts/devloop/ai_discoverability_report.md artifacts/devloop/ai_discoverability_report.json artifacts/devloop/profit_readiness_scorecard.md artifacts/devloop/north_star_autopilot_report.json artifacts/devloop/north_star_autopilot_report.md artifacts/devloop/historical_learning_backfill.json artifacts/tars/ docs/ docs/_reports/*-dashboard-snapshot.md docs/_reports/hackathon-system-explainer.md docs/lessons/judge-demo.html wiki/ docs/index.md rag_knowledge/lessons_learned/ll_historical_learning_backfill.md 2>/dev/null || true
           if ! git diff --staged --quiet; then
             git commit -m "chore: Sync dashboard data [auto]"
             if [ -n "${{ secrets.GH_PAT }}" ]; then
