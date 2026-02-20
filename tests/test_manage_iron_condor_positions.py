@@ -344,14 +344,17 @@ class TestRecordTradeOutcome:
         ic = self._make_ic(pl=100.0, credit=200.0)
 
         with patch("scripts.manage_iron_condor_positions.Path") as MockPath:
+
             def path_factory(*args):
                 p = Path(*args)
                 return p
+
             MockPath.side_effect = path_factory
             MockPath.__truediv__ = Path.__truediv__
 
             # Patch __file__ resolution in the module
             import scripts.manage_iron_condor_positions as mod
+
             with patch.object(mod, "__file__", str(tmp_path / "scripts" / "manage.py")):
                 # Create scripts dir so parent.parent works
                 (tmp_path / "scripts").mkdir(exist_ok=True)
@@ -381,6 +384,7 @@ class TestRecordTradeOutcome:
         ic = self._make_ic(pl=-250.0, credit=200.0)
 
         import scripts.manage_iron_condor_positions as mod
+
         with patch.object(mod, "__file__", str(tmp_path / "scripts" / "manage.py")):
             (tmp_path / "scripts").mkdir(exist_ok=True)
             record_trade_outcome(ic, "STOP_LOSS", won=False)
@@ -409,6 +413,7 @@ class TestRecordTradeOutcome:
         ic = self._make_ic(pl=80.0, credit=200.0)
 
         import scripts.manage_iron_condor_positions as mod
+
         with patch.object(mod, "__file__", str(tmp_path / "scripts" / "manage.py")):
             (tmp_path / "scripts").mkdir(exist_ok=True)
             record_trade_outcome(ic, "DTE_EXIT", won=False)

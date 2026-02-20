@@ -91,7 +91,9 @@ class TradeMemory:
         )
         self.add_pattern(pattern)
 
-    def query_similar(self, strategy: str, entry_reason: str, symbol: str | None = None) -> dict[str, Any]:
+    def query_similar(
+        self, strategy: str, entry_reason: str, symbol: str | None = None
+    ) -> dict[str, Any]:
         """Query historical outcomes for matching strategy pattern."""
         strategy_key = (strategy or "unknown").strip().lower()
         reason_key = (entry_reason or "unknown").strip().lower()
@@ -161,7 +163,8 @@ class TradeMemory:
         exact = [
             p
             for p in self.patterns
-            if p.strategy.lower() == strategy.lower() and p.entry_reason.lower() == entry_reason.lower()
+            if p.strategy.lower() == strategy.lower()
+            and p.entry_reason.lower() == entry_reason.lower()
         ]
         if not exact:
             exact = [p for p in self.patterns if p.strategy.lower() == strategy.lower()]

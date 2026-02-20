@@ -263,8 +263,10 @@ def record_trade_outcome(ic: dict, reason: str, won: bool) -> None:
         with open(model_path, "w") as f:
             json.dump(model, f, indent=2)
 
-        logger.info(f"Thompson model updated: {'WIN' if won else 'LOSS'} "
-                     f"(alpha={model['iron_condor']['alpha']}, beta={model['iron_condor']['beta']})")
+        logger.info(
+            f"Thompson model updated: {'WIN' if won else 'LOSS'} "
+            f"(alpha={model['iron_condor']['alpha']}, beta={model['iron_condor']['beta']})"
+        )
     except Exception as e:
         logger.warning(f"Could not update Thompson model: {e}")
 
