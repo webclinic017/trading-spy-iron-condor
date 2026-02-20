@@ -142,3 +142,5 @@ jobs:
           path: |
             artifacts/devloop/north_star_blocker_report.json
             artifacts/devloop/north_star_blocker_report.md
+            artifacts/devloop/north_star_autopilot_report.json
+            artifacts/devloop/north_star_autopilot_report.md

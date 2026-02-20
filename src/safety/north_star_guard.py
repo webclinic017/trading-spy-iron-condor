@@ -103,6 +103,7 @@ def get_guard_context(state_path: Path = DEFAULT_STATE_PATH) -> dict[str, Any]:
     paper_trading = state.get("paper_trading", {}) if isinstance(state, dict) else {}
     portfolio = state.get("portfolio", {}) if isinstance(state, dict) else {}
     weekly_gate = state.get("north_star_weekly_gate", {}) if isinstance(state, dict) else {}
+    autopilot = state.get("north_star_autopilot", {}) if isinstance(state, dict) else {}
 
     equity = _as_float(paper_account.get("equity"), 0.0)
     if equity <= 0:
@@ -170,6 +171,17 @@ def get_guard_context(state_path: Path = DEFAULT_STATE_PATH) -> dict[str, Any]:
         if expectancy_present and expectancy <= 0 and not block_new_positions:
             max_position_pct = min(max_position_pct, 0.02)
             reasons.append("Weekly expectancy is non-positive; keep risk-on size conservative.")
+
+    # Optional autopilot cap (generated from regime/macro multipliers).
+    if isinstance(autopilot, dict):
+        tuned = autopilot.get("regime_aware_sizing", {})
+        if isinstance(tuned, dict):
+            tuned_cap = _as_float(tuned.get("recommended_max_position_pct"), 0.0)
+            if tuned_cap > 0:
+                max_position_pct = min(max_position_pct, tuned_cap)
+                reasons.append(
+                    f"Autopilot regime-aware sizing caps max position size at {tuned_cap * 100:.2f}%."
+                )
 
     block_reason = ""
     if block_new_positions:

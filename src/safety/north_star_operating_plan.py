@@ -30,6 +30,7 @@ DEFAULT_MIN_QUALIFIED_SETUPS_PER_WEEK = 3
 DEFAULT_MIN_CLOSED_TRADES_PER_WEEK = 1
 DEFAULT_MIN_CLOSED_TRADES_FOR_SCALING = 30
 DEFAULT_MIN_LIQUIDITY_VOLUME_RATIO = 0.20
+DEFAULT_GATE_OVERRIDES_PATH = Path("runtime/north_star_gate_overrides.json")
 DEFAULT_MAX_TARGET_DTE = 45
 DEFAULT_MIN_TARGET_DTE = 21
 DEFAULT_AI_CREDIT_STRESS_PATH = Path("market_signals/ai_credit_stress_signal.json")
@@ -108,6 +109,18 @@ def _load_json_list(path: Path) -> list[dict[str, Any]]:
         )
     except Exception:
         return []
+
+
+def _load_gate_overrides(data_dir: Path) -> dict[str, Any]:
+    payload = _load_json_dict(data_dir / DEFAULT_GATE_OVERRIDES_PATH)
+    return payload if isinstance(payload, dict) else {}
+
+
+def _resolve_min_liquidity_volume_ratio(data_dir: Path) -> float:
+    overrides = _load_gate_overrides(data_dir)
+    ratio = _as_float(overrides.get("min_liquidity_volume_ratio"), DEFAULT_MIN_LIQUIDITY_VOLUME_RATIO)
+    # Safety clamp: never allow pathological liquidity thresholds.
+    return max(0.10, min(0.50, ratio))
 
 
 def _parse_session_date_from_filename(path: Path) -> date | None:
@@ -289,6 +302,7 @@ def _compute_no_trade_diagnostic(
     recent_decisions: list[dict[str, Any]],
     closed_trades_recent: int,
     qualified_setups_recent: int,
+    min_liquidity_volume_ratio: float = DEFAULT_MIN_LIQUIDITY_VOLUME_RATIO,
 ) -> dict[str, Any]:
     workflow_state_dir = data_dir / "workflow_state"
     iron_condor_state = _load_json_dict(workflow_state_dir / "iron_condor_pipeline_state.json")
@@ -325,7 +339,7 @@ def _compute_no_trade_diagnostic(
         if isinstance(row.get("volume_ratio"), (int, float))
     ]
     low_liquidity_events = sum(
-        1 for ratio in volume_ratios if ratio < DEFAULT_MIN_LIQUIDITY_VOLUME_RATIO
+        1 for ratio in volume_ratios if ratio < min_liquidity_volume_ratio
     )
     avg_volume_ratio = round(sum(volume_ratios) / len(volume_ratios), 4) if volume_ratios else None
 
@@ -398,7 +412,7 @@ def _compute_no_trade_diagnostic(
             ),
             "avg_volume_ratio": avg_volume_ratio,
             "low_liquidity_events": low_liquidity_events,
-            "threshold_min_volume_ratio": DEFAULT_MIN_LIQUIDITY_VOLUME_RATIO,
+            "threshold_min_volume_ratio": round(min_liquidity_volume_ratio, 4),
         },
     }
 
@@ -647,6 +661,7 @@ def compute_weekly_gate(
     trades_payload = _load_json_dict(trades_path)
     recent_closed = _extract_recent_closed_trades(trades_payload, today=today)
     data_dir = trades_path.parent
+    min_liquidity_volume_ratio = _resolve_min_liquidity_volume_ratio(data_dir)
     recent_decisions = _extract_recent_session_decisions(
         data_dir=data_dir,
         today=today,
@@ -738,6 +753,7 @@ def compute_weekly_gate(
         recent_decisions=recent_decisions,
         closed_trades_recent=samples,
         qualified_setups_recent=qualified_setups,
+        min_liquidity_volume_ratio=min_liquidity_volume_ratio,
     )
 
     ai_credit_gate = _safe_nested_dict(no_trade_diagnostic, "gate_status", "ai_credit_stress")
@@ -893,6 +909,7 @@ def compute_weekly_gate(
         "usd_macro_sentiment": usd_macro_gate,
         "scale_multiplier_from_usd_macro": round(usd_macro_multiplier, 4),
         "scaling_sample_gate": scaling_sample_gate,
+        "liquidity_min_volume_ratio": round(min_liquidity_volume_ratio, 4),
         "no_trade_diagnostic": no_trade_diagnostic,
         "updated_at": datetime.now(timezone.utc).isoformat(),
     }

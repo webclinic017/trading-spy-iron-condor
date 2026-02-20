@@ -82,3 +82,30 @@ def test_guard_applies_weekly_gate_position_cap(tmp_path):
     assert guard["block_new_positions"] is False
     assert guard["max_position_pct"] <= 0.0125
     assert guard["weekly_gate_mode"] == "cautious"
+
+
+def test_guard_applies_autopilot_regime_sizing_cap(tmp_path):
+    state = tmp_path / "system_state.json"
+    state.write_text(
+        """
+{
+  "paper_account": {"equity": 200000, "win_rate": 85.0, "win_rate_sample_size": 60},
+  "paper_trading": {"current_day": 120, "target_duration_days": 90},
+  "north_star_weekly_gate": {
+    "mode": "cautious",
+    "recommended_max_position_pct": 0.02,
+    "block_new_positions": false
+  },
+  "north_star_autopilot": {
+    "regime_aware_sizing": {
+      "recommended_max_position_pct": 0.0115
+    }
+  }
+}
+""".strip(),
+        encoding="utf-8",
+    )
+
+    guard = get_guard_context(state)
+    assert guard["block_new_positions"] is False
+    assert guard["max_position_pct"] <= 0.0115

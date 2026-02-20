@@ -190,6 +190,54 @@ def test_weekly_gate_adds_cadence_kpi_and_no_trade_diagnostic(tmp_path):
     assert gate.get("recommended_max_position_pct", 1) <= 0.01
 
 
+def test_weekly_gate_respects_liquidity_floor_override(tmp_path):
+    trades_path = tmp_path / "trades.json"
+    history_path = tmp_path / "weekly_history.json"
+    today = date(2026, 2, 16)
+    _write_json(trades_path, {"trades": []})
+
+    _write_json(
+        tmp_path / "session_decisions_2026-02-16.json",
+        {
+            "session": "paper",
+            "decisions": [
+                {
+                    "ticker": "SPY",
+                    "timestamp": "2026-02-16T15:00:00+00:00",
+                    "gate_reached": 1,
+                    "decision": "REJECTED",
+                    "rejection_reason": "Vol=0.18x (low)",
+                    "indicators": {"volume_ratio": 0.18},
+                },
+                {
+                    "ticker": "SPY",
+                    "timestamp": "2026-02-16T16:00:00+00:00",
+                    "gate_reached": 1,
+                    "decision": "REJECTED",
+                    "rejection_reason": "Vol=0.19x (low)",
+                    "indicators": {"volume_ratio": 0.19},
+                },
+            ],
+        },
+    )
+    runtime_dir = tmp_path / "runtime"
+    runtime_dir.mkdir(parents=True, exist_ok=True)
+    _write_json(runtime_dir / "north_star_gate_overrides.json", {"min_liquidity_volume_ratio": 0.18})
+
+    gate, _history = compute_weekly_gate(
+        {"paper_account": {"win_rate": 60.0, "win_rate_sample_size": 0, "total_pl": 0}},
+        trades_path=trades_path,
+        weekly_history_path=history_path,
+        today=today,
+    )
+
+    assert gate.get("liquidity_min_volume_ratio") == 0.18
+    diagnostic = gate.get("no_trade_diagnostic", {})
+    liquidity = diagnostic.get("gate_status", {}).get("liquidity", {})
+    assert liquidity.get("threshold_min_volume_ratio") == 0.18
+    assert liquidity.get("status") == "pass"
+
+
 def test_expansion_mode_requires_thirty_closed_trades_for_scaling(tmp_path):
     trades_path = tmp_path / "trades.json"
     history_path = tmp_path / "weekly_history.json"
