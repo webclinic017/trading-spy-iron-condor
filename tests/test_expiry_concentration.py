@@ -26,12 +26,14 @@ def _make_ic_positions(expiry_yymmdd_list: list[str]) -> list[dict]:
             ("C", "00720000", "-1"),
             ("C", "00730000", "1"),
         ]:
-            positions.append({
-                "symbol": f"SPY{exp}{leg_type}{strike}",
-                "qty": qty,
-                "market_value": "100",
-                "unrealized_pl": "10",
-            })
+            positions.append(
+                {
+                    "symbol": f"SPY{exp}{leg_type}{strike}",
+                    "qty": qty,
+                    "market_value": "100",
+                    "unrealized_pl": "10",
+                }
+            )
     return positions
 
 
@@ -84,9 +86,7 @@ class TestExpiryConcentration:
 
     def test_exactly_at_threshold(self):
         """2 of 5 in same week = 40% -> not blocked (at threshold, not over)."""
-        positions = _make_ic_positions([
-            "260313", "260320", "260320", "260327", "260403"
-        ])
+        positions = _make_ic_positions(["260313", "260320", "260320", "260327", "260403"])
         gw = self._make_gateway()
         blocked, msg = gw._check_expiry_concentration(positions)
         assert blocked is False

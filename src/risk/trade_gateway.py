@@ -617,6 +617,7 @@ class TradeGateway:
 
         # Count max ICs in any single week
         from collections import Counter
+
         week_counts = Counter(ic_expiries)
         max_week, max_count = week_counts.most_common(1)[0]
         concentration = max_count / total_ics
@@ -624,8 +625,8 @@ class TradeGateway:
         if concentration > MAX_EXPIRY_CONCENTRATION_PCT:
             return (
                 True,
-                f"Expiry concentration: {max_count}/{total_ics} ICs ({concentration*100:.0f}%) "
-                f"in ISO week {max_week} (max {MAX_EXPIRY_CONCENTRATION_PCT*100:.0f}%)",
+                f"Expiry concentration: {max_count}/{total_ics} ICs ({concentration * 100:.0f}%) "
+                f"in ISO week {max_week} (max {MAX_EXPIRY_CONCENTRATION_PCT * 100:.0f}%)",
             )
 
         return False, ""

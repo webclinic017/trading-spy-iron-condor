@@ -41,7 +41,9 @@ class BehavioralGuard:
     """Prevents emotion-driven trading mistakes."""
 
     @staticmethod
-    def evaluate(symbol: str, expiry: str | None = None, spy_change_pct: float | None = None) -> BehavioralCheckResult:
+    def evaluate(
+        symbol: str, expiry: str | None = None, spy_change_pct: float | None = None
+    ) -> BehavioralCheckResult:
         """Run all behavioral checks.
 
         Args:
@@ -62,8 +64,8 @@ class BehavioralGuard:
         if spy_change_pct is not None:
             if abs(spy_change_pct) >= FOMO_INTRADAY_MOVE_PCT:
                 rejections.append(
-                    f"FOMO blocked: SPY moved {abs(spy_change_pct)*100:.1f}% intraday "
-                    f"(threshold: {FOMO_INTRADAY_MOVE_PCT*100:.0f}%). "
+                    f"FOMO blocked: SPY moved {abs(spy_change_pct) * 100:.1f}% intraday "
+                    f"(threshold: {FOMO_INTRADAY_MOVE_PCT * 100:.0f}%). "
                     f"Premiums inflated, direction unclear."
                 )
         else:
@@ -115,6 +117,7 @@ class BehavioralGuard:
         """Belt+suspenders blacklist check."""
         try:
             from src.constants.trading_thresholds import TargetSymbols
+
             if underlying.upper() in [s.upper() for s in TargetSymbols.BLACKLIST]:
                 return f"Blacklisted ticker: {underlying} is in TargetSymbols.BLACKLIST"
         except ImportError:
@@ -129,19 +132,20 @@ class BehavioralGuard:
         """
         state = BehavioralGuard._load_state()
         exits = state.get("stop_loss_exits", [])
-        exits.append({
-            "expiry": expiry,
-            "timestamp": datetime.now().isoformat(),
-        })
+        exits.append(
+            {
+                "expiry": expiry,
+                "timestamp": datetime.now().isoformat(),
+            }
+        )
         # Prune entries older than 48h
         cutoff = datetime.now() - timedelta(hours=48)
-        exits = [
-            e for e in exits
-            if datetime.fromisoformat(e["timestamp"]) > cutoff
-        ]
+        exits = [e for e in exits if datetime.fromisoformat(e["timestamp"]) > cutoff]
         state["stop_loss_exits"] = exits
         BehavioralGuard._save_state(state)
-        logger.info(f"Recorded stop-loss exit for expiry {expiry} (cooling: {STOP_LOSS_COOLING_HOURS}h)")
+        logger.info(
+            f"Recorded stop-loss exit for expiry {expiry} (cooling: {STOP_LOSS_COOLING_HOURS}h)"
+        )
 
     @staticmethod
     def _load_state() -> dict:

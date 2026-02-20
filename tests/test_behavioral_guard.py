@@ -46,9 +46,7 @@ class TestStopLossCooling:
     def test_recent_stop_loss_blocks(self, tmp_path):
         state_path = tmp_path / "behavioral_guard_state.json"
         state = {
-            "stop_loss_exits": [
-                {"expiry": "2026-03-20", "timestamp": datetime.now().isoformat()}
-            ]
+            "stop_loss_exits": [{"expiry": "2026-03-20", "timestamp": datetime.now().isoformat()}]
         }
         with open(state_path, "w") as f:
             json.dump(state, f)
@@ -61,11 +59,7 @@ class TestStopLossCooling:
     def test_old_stop_loss_allows(self, tmp_path):
         state_path = tmp_path / "behavioral_guard_state.json"
         old_time = datetime.now() - timedelta(hours=25)
-        state = {
-            "stop_loss_exits": [
-                {"expiry": "2026-03-20", "timestamp": old_time.isoformat()}
-            ]
-        }
+        state = {"stop_loss_exits": [{"expiry": "2026-03-20", "timestamp": old_time.isoformat()}]}
         with open(state_path, "w") as f:
             json.dump(state, f)
 
@@ -76,9 +70,7 @@ class TestStopLossCooling:
     def test_different_expiry_allows(self, tmp_path):
         state_path = tmp_path / "behavioral_guard_state.json"
         state = {
-            "stop_loss_exits": [
-                {"expiry": "2026-03-20", "timestamp": datetime.now().isoformat()}
-            ]
+            "stop_loss_exits": [{"expiry": "2026-03-20", "timestamp": datetime.now().isoformat()}]
         }
         with open(state_path, "w") as f:
             json.dump(state, f)
@@ -90,11 +82,7 @@ class TestStopLossCooling:
     def test_record_and_prune(self, tmp_path):
         state_path = tmp_path / "behavioral_guard_state.json"
         old_time = datetime.now() - timedelta(hours=49)
-        state = {
-            "stop_loss_exits": [
-                {"expiry": "2026-02-20", "timestamp": old_time.isoformat()}
-            ]
-        }
+        state = {"stop_loss_exits": [{"expiry": "2026-02-20", "timestamp": old_time.isoformat()}]}
         with open(state_path, "w") as f:
             json.dump(state, f)
 

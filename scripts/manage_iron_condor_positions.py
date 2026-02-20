@@ -430,6 +430,7 @@ def main(dry_run: bool = False):
                 if reason == "STOP_LOSS":
                     try:
                         from src.safety.behavioral_guard import BehavioralGuard
+
                         BehavioralGuard.record_stop_loss_exit(ic["expiry_str"])
                     except ImportError:
                         pass
