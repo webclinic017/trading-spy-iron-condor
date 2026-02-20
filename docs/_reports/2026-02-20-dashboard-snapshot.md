@@ -1,7 +1,7 @@
 ---
 layout: "post"
 title: "Daily Dashboard Snapshot - 2026-02-20"
-description: "Daily snapshot for 2026-02-20: paper equity $101,244.24, paper daily P/L $-121.16, cadence gate FAIL."
+description: "Daily snapshot for 2026-02-20: paper equity $101,227.24, paper daily P/L $-138.16, cadence gate FAIL."
 date: "2026-02-20"
 last_modified_at: "2026-02-20"
 tags:
@@ -14,7 +14,7 @@ canonical_url: "https://igorganapolsky.github.io/trading/reports/2026-02-20-dash
 faq: true
 questions:
   - question: "What is the current state of the trading system today?"
-    answer: "Daily snapshot for 2026-02-20: paper equity $101,244.24, paper daily P/L $-121.16, cadence gate FAIL."
+    answer: "Daily snapshot for 2026-02-20: paper equity $101,227.24, paper daily P/L $-138.16, cadence gate FAIL."
   - question: "Are cadence and risk gates passing this week?"
     answer: "Cadence gate is FAIL. Risk mode is validation with recommended max position size 0.0%."
   - question: "What is the North Star probability right now?"
@@ -27,7 +27,7 @@ This report is auto-generated from system state for search and AI discoverabilit
 ## Answer Block
 
 **Q: Did we make money today?**<br>
-A: Paper daily P/L is $-121.16. Live account total P/L is $189.09.
+A: Paper daily P/L is $-138.16. Live account total P/L is $189.20.
 
 **Q: Are we on track toward the North Star?**<br>
 A: North Star probability is 44.10% (low), monthly target $6,000.00 with progress 1.02%.
@@ -47,11 +47,11 @@ A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
 
 | Metric | Value |
 |---|---|
-| Live Equity | $209.09 |
-| Live Total P/L | $189.09 (945.45%) |
-| Paper Equity | $101,244.24 |
-| Paper Total P/L | $1,244.24 (1.24%) |
-| Paper Daily Change | $-121.16 |
+| Live Equity | $209.20 |
+| Live Total P/L | $189.20 (946.00%) |
+| Paper Equity | $101,227.24 |
+| Paper Total P/L | $1,227.24 (1.23%) |
+| Paper Daily Change | $-138.16 |
 | Paper Win Rate | 100.00% (sample: 1) |
 | Open Positions (Paper) | 7 |
 | Weekly Cadence KPI | FAIL |
@@ -70,4 +70,4 @@ A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
 ## Data Freshness
 
 - Snapshot date: `2026-02-20`
-- Live account sync timestamp: `2026-02-20T19:54:23.338968`
+- Live account sync timestamp: `2026-02-20T20:03:52.233126`
