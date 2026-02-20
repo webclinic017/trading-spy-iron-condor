@@ -1,7 +1,7 @@
-timestamp_utc=2026-02-20T14:48:35Z
+timestamp_utc=2026-02-20T14:58:07Z
 checks=retrieval_readiness
 src_rag_dir=present
 src_rag_py_files=11
 data_dir=present
-data_files=572
+data_files=577
 vectorize_script=present
