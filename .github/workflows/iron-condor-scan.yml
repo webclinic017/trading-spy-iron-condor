@@ -28,7 +28,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install alpaca-py python-dotenv
+          pip install -r requirements-minimal.txt
 
       - name: Scan for opportunity
         id: scan
@@ -43,9 +43,6 @@ jobs:
           import os
           import sys
           sys.path.insert(0, '.')
-
-          from dotenv import load_dotenv
-          load_dotenv()
 
           from scripts.iron_condor_scanner import scan_for_opportunity
 
@@ -77,9 +74,6 @@ jobs:
           import json
           import sys
           sys.path.insert(0, '.')
-
-          from dotenv import load_dotenv
-          load_dotenv()
 
           # Load opportunity from scan step
           with open('opportunity.json') as f:
