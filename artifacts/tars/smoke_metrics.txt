@@ -1,11 +1,11 @@
-timestamp_utc=2026-02-20T21:03:53Z
-latency_ms=1280
+timestamp_utc=2026-02-20T21:24:11Z
+latency_ms=1365
 prompt_tokens=30
 completion_tokens=20
 total_tokens=50
 estimated_total_cost_usd=0.00001650
 cost_estimate_basis=input_cost_per_1m=0.150,output_cost_per_1m=0.600
 estimated_cost_rates_usd_per_1m=input:0.150,output:0.600
-smoke_request_id=chatcmpl-DBRxA1kPOv6rPGr94GTlcNEWn9mka
+smoke_request_id=chatcmpl-DBSGo1lvmdyk017H57Yl0Mu4Bs4mU
 gateway_base_url_host=api.router.tetrate.ai
 gateway_key_source=LLM_GATEWAY_API_KEY
