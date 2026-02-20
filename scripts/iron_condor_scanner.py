@@ -46,8 +46,8 @@ logger = logging.getLogger(__name__)
 MAX_POSITIONS = 5
 POSITION_SIZE_PCT = 0.05  # 5% max risk per position
 TARGET_DELTA = 0.15  # 15-20 delta range
-MIN_DTE = 30
-MAX_DTE = 45
+MIN_DTE = 21
+MAX_DTE = 50
 WING_WIDTH = 10  # $10 wide spreads per CLAUDE.md
 
 IC_TRADE_LOG = Path(__file__).parent.parent / "data" / "ic_trade_log.json"
@@ -117,33 +117,54 @@ def count_open_ic_positions(trading_client) -> int:
         return 0
 
 
-def find_expiration_date() -> str:
-    """Find optimal expiration date (30-45 DTE, must be Friday)."""
+def get_existing_expiries(trading_client) -> set[str]:
+    """Get expiry dates of existing IC positions to avoid duplicates."""
+    try:
+        positions = trading_client.get_all_positions()
+        expiries = set()
+        for p in positions:
+            sym = p.symbol
+            if sym.startswith("SPY") and len(sym) > 5:
+                # OCC format: SPY260327P00640000 -> 260327 -> 2026-03-27
+                date_part = sym[3:9]
+                expiry = f"20{date_part[:2]}-{date_part[2:4]}-{date_part[4:6]}"
+                expiries.add(expiry)
+        logger.info(f"Existing IC expiries: {sorted(expiries) if expiries else 'none'}")
+        return expiries
+    except Exception as e:
+        logger.warning(f"Could not get existing expiries: {e}")
+        return set()
+
+
+def find_expiration_date(exclude_expiries: set[str] | None = None) -> str | None:
+    """Find optimal expiration date (30-45 DTE, must be Friday).
+
+    Cycles through available Fridays in the 30-45 DTE window,
+    skipping any expiry dates we already have positions in.
+    """
     et = ZoneInfo("America/New_York")
     today = datetime.now(et)
+    exclude = exclude_expiries or set()
 
-    # Target 35 DTE (middle of range)
-    target_date = today + timedelta(days=35)
+    # Find all Fridays in the 30-45 DTE window
+    candidates = []
+    for days_out in range(MIN_DTE, MAX_DTE + 1):
+        candidate = today + timedelta(days=days_out)
+        if candidate.weekday() == 4:  # Friday
+            expiry_str = candidate.strftime("%Y-%m-%d")
+            if expiry_str not in exclude:
+                dte = (candidate - today).days
+                candidates.append((expiry_str, dte))
 
-    # Find next Friday
-    days_until_friday = (4 - target_date.weekday()) % 7
-    if days_until_friday == 0 and target_date.weekday() != 4:
-        days_until_friday = 7
+    if not candidates:
+        logger.warning("No available expiry dates (all Fridays in window already have positions)")
+        return None
 
-    expiry = target_date + timedelta(days=days_until_friday)
-    dte = (expiry - today).days
-
-    # Ensure within 30-45 DTE range
-    if dte < MIN_DTE:
-        expiry += timedelta(days=7)
-        dte = (expiry - today).days
-    elif dte > MAX_DTE:
-        expiry -= timedelta(days=7)
-        dte = (expiry - today).days
-
-    expiry_str = expiry.strftime("%Y-%m-%d")
-    logger.info(f"Target expiration: {expiry_str} ({dte} DTE)")
-    return expiry_str
+    # Pick the one closest to 35 DTE (optimal theta decay)
+    candidates.sort(key=lambda x: abs(x[1] - 35))
+    best = candidates[0]
+    logger.info(f"Target expiration: {best[0]} ({best[1]} DTE)")
+    return best[0]
 
 
 def calculate_strikes(spy_price: float) -> dict:
@@ -338,8 +359,12 @@ def scan_for_opportunity(dry_run: bool = False) -> dict | None:
         logger.warning(f"VIX conditions unfavorable: {vix_status}")
         return None
 
-    # Calculate opportunity
-    expiry = find_expiration_date()
+    # Find expiry that doesn't overlap with existing positions
+    existing_expiries = get_existing_expiries(trading_client)
+    expiry = find_expiration_date(exclude_expiries=existing_expiries)
+    if not expiry:
+        logger.info("No available expiry dates — all slots in DTE window taken")
+        return None
     dte = (datetime.strptime(expiry, "%Y-%m-%d") - datetime.now()).days
     strikes = calculate_strikes(spy_price)
     pricing = estimate_credit(strikes)
