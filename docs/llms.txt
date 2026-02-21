@@ -15,11 +15,11 @@
 - Full markdown catalog: https://igorganapolsky.github.io/trading/llms-full.txt
 
 ## Content Snapshot
-- Blog posts published: 56
+- Blog posts published: 57
 - Reports published: 9
 - Lessons in RAG markdown: 168
 - Automation workflows: 84
-- Latest blog post date: 2026-02-19
+- Latest blog post date: 2026-02-21
 - Latest lesson date: 2026-02-16
 
 ## Tech Stack (How It Plays Together)
@@ -30,6 +30,7 @@
 - Reliability layer: GitHub Actions + Ralph Mode self-healing loops.
 
 ## Recent Posts
+- [Day 116: What We Learned \u2014 February 21, 2026](https://igorganapolsky.github.io/trading/2026/02/21/lessons-learned.html) - 2026-02-21
 - [Day 114: What We Learned \u2014 February 19, 2026](https://igorganapolsky.github.io/trading/2026/02/19/lessons-learned.html) - 2026-02-19
 - [North Star Operating Strategy: Fast, Gated, Coherent](https://igorganapolsky.github.io/trading/2026/02/17/north-star-operating-strategy.html) - 2026-02-17
 - [Tetrate Buildathon: AI Trading System Entry](https://igorganapolsky.github.io/trading/2026/02/15/tetrate-buildathon-ai-trading-system.html) - 2026-02-15
@@ -41,7 +42,6 @@
 - [Day 103: What We Learned - February 08, 2026](https://igorganapolsky.github.io/trading/2026/02/08/lessons-learned.html) - 2026-02-08
 - [When Browser Automation Fails, Pivot Fast](https://igorganapolsky.github.io/trading/2026/02/04/rlhf-win-1728.html) - 2026-02-04
 - [Building a Blog That Writes Itself (Meta, I Know)](https://igorganapolsky.github.io/trading/2026/02/03/rlhf-win.html) - 2026-02-03
-- [Building a Blog That Writes Itself (Meta, I Know)](https://igorganapolsky.github.io/trading/2026/02/03/rlhf-win-1524.html) - 2026-02-03
 
 ## Machine-Readable Policy
 - This file is auto-generated; do not edit manually.

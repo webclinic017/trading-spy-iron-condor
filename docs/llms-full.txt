@@ -15,11 +15,12 @@
 
 ## Operational Metrics
 - Workflows configured: 84
-- Blog posts indexed: 56
+- Blog posts indexed: 57
 - Reports indexed: 9
 - Lessons indexed: 168
 
 ## Blog Posts (Newest First)
+- [Day 116: What We Learned \u2014 February 21, 2026](https://igorganapolsky.github.io/trading/2026/02/21/lessons-learned.html) - 2026-02-21
 - [Day 114: What We Learned \u2014 February 19, 2026](https://igorganapolsky.github.io/trading/2026/02/19/lessons-learned.html) - 2026-02-19
 - [North Star Operating Strategy: Fast, Gated, Coherent](https://igorganapolsky.github.io/trading/2026/02/17/north-star-operating-strategy.html) - 2026-02-17
 - [Tetrate Buildathon: AI Trading System Entry](https://igorganapolsky.github.io/trading/2026/02/15/tetrate-buildathon-ai-trading-system.html) - 2026-02-15
