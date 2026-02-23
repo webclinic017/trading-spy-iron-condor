@@ -15,11 +15,12 @@
 
 ## Operational Metrics
 - Workflows configured: 87
-- Blog posts indexed: 57
+- Blog posts indexed: 58
 - Reports indexed: 15
 - Lessons indexed: 168
 
 ## Blog Posts (Newest First)
+- [Fix: Validate Option Symbols Before Trading](https://igorganapolsky.github.io/trading/2026/02/23/scanner-symbol-validation-fix.html) - 2026-02-23
 - [Day 116: What We Learned \u2014 February 21, 2026](https://igorganapolsky.github.io/trading/2026/02/21/lessons-learned.html) - 2026-02-21
 - [Day 114: What We Learned \u2014 February 19, 2026](https://igorganapolsky.github.io/trading/2026/02/19/lessons-learned.html) - 2026-02-19
 - [North Star Operating Strategy: Fast, Gated, Coherent](https://igorganapolsky.github.io/trading/2026/02/17/north-star-operating-strategy.html) - 2026-02-17
