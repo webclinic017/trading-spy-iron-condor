@@ -181,22 +181,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-minimal.txt  # Faster CI - skip unused PyTorch/transformers
           pip install lancedb sentence-transformers  # LanceDB mandatory for CI RAG checks
-          pip install pytest pytest-cov pytest-timeout
-      - name: Run unit tests with coverage
-        # Coverage threshold: Start at 15%, increase as tests are added
-        # Dec 30, 2025: Keep at 15% until test coverage improves
-        # TODO: Increase to 40% then 70% as more tests are added
+          pip install pytest pytest-cov pytest-timeout coverage
+      - name: Run tests with watchdog and coverage
+        env:
+          CORE_TIMEOUT_MINUTES: "28"
+          INTEGRATION_TIMEOUT_MINUTES: "12"
+          PYTEST_TIMEOUT_SECONDS: "300"
+          COV_FAIL_UNDER: "15"
         run: |
-          python -m pytest \
-            -v \
-            --tb=long \
-            --timeout=300 \
-            --timeout-method=thread \
-            --cov=src \
-            --cov-report=term-missing \
-            --cov-report=xml \
-            --cov-fail-under=15 \
-            2>&1 || (echo "Tests failed - showing last 100 lines" && tail -100 && exit 1)
+          bash scripts/ci/run_all_tests.sh
       - name: RAG retrieval evaluation (LanceDB-first)
         run: |
           python3 scripts/evaluate_rag.py \
@@ -212,7 +205,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage.xml
+          path: |
+            coverage.xml
+            artifacts/test-reports/coverage.txt
+        if: always()
+        continue-on-error: true
+      - name: Upload test diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-diagnostics
+          path: artifacts/test-reports/
         if: always()
         continue-on-error: true
       - name: Dead code guard (max 50 unreferenced scripts)
