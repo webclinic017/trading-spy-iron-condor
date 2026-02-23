@@ -16,7 +16,7 @@
 ## Operational Metrics
 - Workflows configured: 86
 - Blog posts indexed: 57
-- Reports indexed: 11
+- Reports indexed: 14
 - Lessons indexed: 168
 
 ## Blog Posts (Newest First)
@@ -82,14 +82,17 @@
 - [Daily Dashboard Snapshot - 2026-02-22](https://igorganapolsky.github.io/trading/reports/2026-02-22-dashboard-snapshot/) - 2026-02-22
 - [Daily Dashboard Snapshot - 2026-02-21](https://igorganapolsky.github.io/trading/reports/2026-02-21-dashboard-snapshot/) - 2026-02-21
 - [Daily Dashboard Snapshot - 2026-02-20](https://igorganapolsky.github.io/trading/reports/2026-02-20-dashboard-snapshot/) - 2026-02-20
+- [Publication Status - 2026-02-19](https://igorganapolsky.github.io/trading/reports/2026-02-19-publication-status/) - 2026-02-19
 - [Daily Dashboard Snapshot - 2026-02-19](https://igorganapolsky.github.io/trading/reports/2026-02-19-dashboard-snapshot/) - 2026-02-19
 - [Daily Report: February 19, 2026 | $-29.60](https://igorganapolsky.github.io/trading/reports/2026-02-19-daily-report/) - 2026-02-19
+- [Agent Brief - 2026-02-19](https://igorganapolsky.github.io/trading/reports/2026-02-19-daily-report.agents/) - 2026-02-19
 - [Daily Dashboard Snapshot - 2026-02-18](https://igorganapolsky.github.io/trading/reports/2026-02-18-dashboard-snapshot/) - 2026-02-18
 - [Social Positioning Copy (Canonical)](https://igorganapolsky.github.io/trading/reports/2026-02-17-social-positioning-copy/) - 2026-02-17
 - [Daily Dashboard Snapshot - 2026-02-17](https://igorganapolsky.github.io/trading/reports/2026-02-17-dashboard-snapshot/) - 2026-02-17
 - [Daily Dashboard Snapshot - 2026-02-16](https://igorganapolsky.github.io/trading/reports/2026-02-16-dashboard-snapshot/) - 2026-02-16
 - [Hackathon System Explainer](https://igorganapolsky.github.io/trading/reports/hackathon-system-explainer/) - undated
 - [Google Doc Sync Setup](https://igorganapolsky.github.io/trading/reports/google-doc-sync-setup/) - undated
+- [Beats](https://igorganapolsky.github.io/trading/reports/beats/) - undated
 
 ## Lessons (Source Markdown)
 - [LL-353: PR Merge Requires CI-Lint + Content-Lint Alignment](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/LL-353_PR_Merge_CI_Hygiene_Feb16.md) - 2026-02-16
