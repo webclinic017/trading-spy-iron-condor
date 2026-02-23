@@ -78,6 +78,8 @@ jobs:
           git config user.email "actions@github.com"
 
           git add data/system_state.json
+          git add data/runtime/intraday_pnl_history.json 2>/dev/null || true
+          git add data/runtime/intraday_pnl_latest.json 2>/dev/null || true
           git add -f data/north_star_weekly_history.json 2>/dev/null || true
           git add data/trades.json 2>/dev/null || true
           git add data/runtime/north_star_gate_overrides.json 2>/dev/null || true

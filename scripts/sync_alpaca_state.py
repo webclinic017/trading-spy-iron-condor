@@ -35,6 +35,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 SYSTEM_STATE_FILE = PROJECT_ROOT / "data" / "system_state.json"
+RUNTIME_DIR = PROJECT_ROOT / "data" / "runtime"
+INTRADAY_PNL_HISTORY_FILE = RUNTIME_DIR / "intraday_pnl_history.json"
+INTRADAY_PNL_LATEST_FILE = RUNTIME_DIR / "intraday_pnl_latest.json"
+INTRADAY_HISTORY_LIMIT = int(os.getenv("INTRADAY_PNL_HISTORY_LIMIT", "500"))
 REQUIRE_KEYS_ENV = "REQUIRE_ALPACA_KEYS"
 
 
@@ -50,6 +54,13 @@ def _truthy(value: str | None) -> bool:
 
 def _now_utc_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def _safe_float(value: object, default: float = 0.0) -> float:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return default
 
 
 def _parse_filled_at(raw_value: str | None) -> datetime | None:
@@ -509,6 +520,7 @@ def update_system_state(alpaca_data: dict | None) -> None:
     with open(temp_file, "w") as f:
         json.dump(state, f, indent=2)
     temp_file.rename(SYSTEM_STATE_FILE)
+    _write_intraday_pnl_snapshot(state=state, now_iso=now_iso)
 
     # Log result
     paper_equity = state.get("paper_account", {}).get("equity", 0)
@@ -517,6 +529,55 @@ def update_system_state(alpaca_data: dict | None) -> None:
     logger.info(
         f"✅ Updated system_state.json (PAPER=${paper_equity:.2f}, LIVE=${live_equity:.2f}, positions={positions_count})"
     )
+
+
+def _write_intraday_pnl_snapshot(state: dict, now_iso: str) -> None:
+    """Persist bounded intraday P/L snapshots for auditability across sync runs."""
+    paper = state.get("paper_account", {}) if isinstance(state.get("paper_account"), dict) else {}
+    live = state.get("live_account", {}) if isinstance(state.get("live_account"), dict) else {}
+    meta = state.get("meta", {}) if isinstance(state.get("meta"), dict) else {}
+
+    snapshot = {
+        "captured_at": now_iso,
+        "sync_mode": meta.get("sync_mode"),
+        "paper": {
+            "equity": _safe_float(paper.get("equity")),
+            "daily_change": _safe_float(paper.get("daily_change")),
+            "positions_count": int(paper.get("positions_count", 0) or 0),
+            "synced_at": paper.get("synced_at"),
+        },
+        "live": {
+            "equity": _safe_float(live.get("equity")),
+            "daily_change": _safe_float(live.get("daily_change")),
+            "positions_count": int(live.get("positions_count", 0) or 0),
+            "synced_at": live.get("synced_at"),
+        },
+    }
+
+    RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
+
+    history: list[dict] = []
+    if INTRADAY_PNL_HISTORY_FILE.exists():
+        try:
+            with open(INTRADAY_PNL_HISTORY_FILE) as history_file:
+                loaded = json.load(history_file)
+                if isinstance(loaded, list):
+                    history = loaded
+        except Exception as exc:
+            logger.warning(f"Could not read intraday P/L history; rebuilding history file: {exc}")
+
+    history.append(snapshot)
+    history = history[-INTRADAY_HISTORY_LIMIT:]
+
+    history_tmp = INTRADAY_PNL_HISTORY_FILE.with_suffix(".tmp")
+    latest_tmp = INTRADAY_PNL_LATEST_FILE.with_suffix(".tmp")
+    with open(history_tmp, "w") as history_file:
+        json.dump(history, history_file, indent=2)
+    with open(latest_tmp, "w") as latest_file:
+        json.dump(snapshot, latest_file, indent=2)
+
+    history_tmp.rename(INTRADAY_PNL_HISTORY_FILE)
+    latest_tmp.rename(INTRADAY_PNL_LATEST_FILE)
 
 
 def main() -> int:
