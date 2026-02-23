@@ -144,7 +144,7 @@
     "win_rate_sample_size": 1,
     "starting_balance": 100000.0,
     "current_equity": 101222.49,
-    "last_equity": 101365.4
+    "last_equity": 101256.49
   },
   "positions": [
     {
@@ -960,10 +960,14 @@
   ],
   "trades_loaded": 95,
   "trades": {
-    "last_trade_date": "2026-02-09",
+    "last_trade_date": "2026-02-23",
     "today_trades": 0,
     "total_trades_today": 0,
-    "last_trade_symbol": "SPY260220P00660000"
+    "last_trade_symbol": "SYNCED",
+    "metrics_date": "2026-02-23",
+    "orders_today": 0,
+    "structures_today": 0,
+    "fills_today": 0
   },
   "risk": {
     "status": "MONITORING",
@@ -988,14 +992,14 @@
     "buying_power": 197630.98
   },
   "meta": {
-    "last_updated": "2026-02-23T11:15:26.409254+00:00",
+    "last_updated": "2026-02-23T14:02:18.606099+00:00",
     "trade_sync": "alpaca_api",
     "sync_frequency_minutes": 5,
     "last_sync_attempt": "2026-02-23T11:15:26.409254+00:00",
     "alpaca_keys_present": true,
     "last_sync": "2026-02-23T11:15:25.992626",
     "sync_mode": "paper+live",
-    "last_daily_verification_at": "2026-02-20T14:57:01.842325+00:00"
+    "last_daily_verification_at": "2026-02-23T14:02:19.369424+00:00"
   },
   "paper_trading": {
     "start_date": "2026-01-30",
@@ -1320,7 +1324,7 @@
     "updated_at": "2026-02-23T11:15:29.343209+00:00"
   },
   "ic_position_management": {
-    "last_run": "2026-02-22T15:07:13.666545",
+    "last_run": "2026-02-23T14:02:09.447127",
     "iron_condors_evaluated": 1,
     "exits_triggered": 0,
     "exits_executed": 0
@@ -1634,15 +1638,15 @@
     }
   },
   "stop_verification": {
-    "last_check": "2026-02-19T14:59:26.254623",
+    "last_check": "2026-02-23T14:02:03.199186",
     "status": "MISSING_STOPS",
     "verified_count": 0,
-    "missing_count": 1
+    "missing_count": 3
   },
   "options": {
-    "last_theta_harvest": "2026-02-20T14:56:56.850617Z",
+    "last_theta_harvest": "2026-02-23T14:02:12.982522Z",
     "harvest_source": "daily-trading-workflow",
-    "execution_date": "2026-02-20",
+    "execution_date": "2026-02-23",
     "selection_method": "adaptive",
     "target_tickers": [
       "SPY",
@@ -1654,10 +1658,10 @@
     "tickers_with_orders": []
   },
   "position_management": {
-    "last_run": "2026-02-19T14:59:30.078655",
-    "positions_evaluated": 7,
-    "exits_triggered": 4,
-    "exits_executed": 3
+    "last_run": "2026-02-23T14:02:07.367634",
+    "positions_evaluated": 6,
+    "exits_triggered": 3,
+    "exits_executed": 0
   },
   "position_entries": {},
   "position_entry_features": {},
