@@ -1,4 +1,5 @@
 import logging
+import shutil
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -92,7 +93,11 @@ def test_{idea.name.lower().replace(" ", "_")}_initialization():
     def _verify_deployment(self, strategy_path: Path, test_path: Path):
         """Runs linting and tests to ensure zero-tech-debt deployment."""
         logger.info("🔍 Verifying Harness Deployment...")
-        subprocess.run(["ruff", "check", str(strategy_path)], check=False)
+        ruff_bin = shutil.which("ruff")
+        if not ruff_bin:
+            logger.warning("ruff not found on PATH; skipping harness lint verification.")
+            return
+        subprocess.run([ruff_bin, "check", str(strategy_path)], check=False)
         # subprocess.run(["pytest", str(test_path)], check=False)
 
 

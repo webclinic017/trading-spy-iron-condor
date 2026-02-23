@@ -1,34 +1,24 @@
-import os
-import shutil
 from pathlib import Path
+
 import pytest
+
 from src.orchestration.harness.strategy_harness import StrategyHarness, StrategyIdea
 
 
 @pytest.fixture
-def test_harness_env():
+def test_harness_env(tmp_path: Path):
     """Create a temporary test environment for the Harness."""
-    test_dir = Path("tests/tmp_harness_env")
+    test_dir = tmp_path / "tmp_harness_env"
     strategies_dir = test_dir / "src/strategies"
     tests_dir = test_dir / "tests"
-    config_dir = test_dir / "config"
-
-    # Clean setup
-    if test_dir.exists():
-        shutil.rmtree(test_dir)
-
-    os.makedirs(strategies_dir)
-    os.makedirs(tests_dir)
-    os.makedirs(config_dir)
+    (test_dir / "config").mkdir(parents=True)
+    strategies_dir.mkdir(parents=True)
+    tests_dir.mkdir(parents=True)
 
     # Initialize Harness with test root
     harness = StrategyHarness(root_dir=str(test_dir))
 
     yield harness
-
-    # Teardown
-    if test_dir.exists():
-        shutil.rmtree(test_dir)
 
 
 def test_generate_strategy_prompt(test_harness_env):
