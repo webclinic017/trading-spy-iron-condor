@@ -20,9 +20,11 @@ def fresh_breaker():
     """Reset singleton state before each test so tests are isolated."""
     APICircuitBreaker._instance = None
     APICircuitBreaker._lock.__class__()  # not strictly needed but documents intent
-    with patch.object(APICircuitBreaker, "_load_state"), \
-         patch.object(APICircuitBreaker, "_save_state"), \
-         patch.object(APICircuitBreaker, "_send_alert"):
+    with (
+        patch.object(APICircuitBreaker, "_load_state"),
+        patch.object(APICircuitBreaker, "_save_state"),
+        patch.object(APICircuitBreaker, "_send_alert"),
+    ):
         breaker = APICircuitBreaker()
         yield breaker
     # Clean up singleton so next test starts fresh
@@ -47,8 +49,7 @@ def test_record_success_keeps_closed(fresh_breaker):
 
 
 def test_failures_below_threshold_stay_closed(fresh_breaker):
-    with patch.object(fresh_breaker, "_save_state"), \
-         patch.object(fresh_breaker, "_send_alert"):
+    with patch.object(fresh_breaker, "_save_state"), patch.object(fresh_breaker, "_send_alert"):
         for i in range(MAX_CONSECUTIVE_FAILURES - 1):
             fresh_breaker.record_failure(f"error {i}")
     assert fresh_breaker.is_open() is False
@@ -59,8 +60,10 @@ def test_failures_below_threshold_stay_closed(fresh_breaker):
 
 
 def test_trips_at_threshold(fresh_breaker):
-    with patch.object(fresh_breaker, "_save_state"), \
-         patch.object(fresh_breaker, "_send_alert") as mock_alert:
+    with (
+        patch.object(fresh_breaker, "_save_state"),
+        patch.object(fresh_breaker, "_send_alert") as mock_alert,
+    ):
         for i in range(MAX_CONSECUTIVE_FAILURES):
             fresh_breaker.record_failure(f"error {i}")
     assert fresh_breaker.is_open() is True
@@ -70,8 +73,7 @@ def test_trips_at_threshold(fresh_breaker):
 
 
 def test_trips_exactly_at_threshold_not_before(fresh_breaker):
-    with patch.object(fresh_breaker, "_save_state"), \
-         patch.object(fresh_breaker, "_send_alert"):
+    with patch.object(fresh_breaker, "_save_state"), patch.object(fresh_breaker, "_send_alert"):
         for i in range(MAX_CONSECUTIVE_FAILURES - 1):
             fresh_breaker.record_failure(f"error {i}")
         assert fresh_breaker._is_open is False
@@ -81,8 +83,7 @@ def test_trips_exactly_at_threshold_not_before(fresh_breaker):
 
 
 def test_extra_failures_after_trip_do_not_increment_trip_count(fresh_breaker):
-    with patch.object(fresh_breaker, "_save_state"), \
-         patch.object(fresh_breaker, "_send_alert"):
+    with patch.object(fresh_breaker, "_save_state"), patch.object(fresh_breaker, "_send_alert"):
         for i in range(MAX_CONSECUTIVE_FAILURES + 3):
             fresh_breaker.record_failure(f"error {i}")
     # _trip() returns early if already open, so trip_count stays 1
@@ -93,16 +94,14 @@ def test_extra_failures_after_trip_do_not_increment_trip_count(fresh_breaker):
 
 
 def test_is_open_returns_true_during_cooldown(fresh_breaker):
-    with patch.object(fresh_breaker, "_save_state"), \
-         patch.object(fresh_breaker, "_send_alert"):
+    with patch.object(fresh_breaker, "_save_state"), patch.object(fresh_breaker, "_send_alert"):
         for i in range(MAX_CONSECUTIVE_FAILURES):
             fresh_breaker.record_failure(f"error {i}")
     assert fresh_breaker.is_open() is True
 
 
 def test_check_circuit_breaker_raises_when_open(fresh_breaker):
-    with patch.object(fresh_breaker, "_save_state"), \
-         patch.object(fresh_breaker, "_send_alert"):
+    with patch.object(fresh_breaker, "_save_state"), patch.object(fresh_breaker, "_send_alert"):
         for i in range(MAX_CONSECUTIVE_FAILURES):
             fresh_breaker.record_failure(f"error {i}")
 
@@ -120,8 +119,7 @@ def test_check_circuit_breaker_ok_when_closed(fresh_breaker):
 
 
 def test_cooldown_expiry_resets_breaker(fresh_breaker):
-    with patch.object(fresh_breaker, "_save_state"), \
-         patch.object(fresh_breaker, "_send_alert"):
+    with patch.object(fresh_breaker, "_save_state"), patch.object(fresh_breaker, "_send_alert"):
         for i in range(MAX_CONSECUTIVE_FAILURES):
             fresh_breaker.record_failure(f"error {i}")
 
@@ -136,8 +134,7 @@ def test_cooldown_expiry_resets_breaker(fresh_breaker):
 
 
 def test_cooldown_not_expired_stays_open(fresh_breaker):
-    with patch.object(fresh_breaker, "_save_state"), \
-         patch.object(fresh_breaker, "_send_alert"):
+    with patch.object(fresh_breaker, "_save_state"), patch.object(fresh_breaker, "_send_alert"):
         for i in range(MAX_CONSECUTIVE_FAILURES):
             fresh_breaker.record_failure(f"error {i}")
 
@@ -149,8 +146,7 @@ def test_cooldown_not_expired_stays_open(fresh_breaker):
 
 
 def test_success_resets_failure_counter(fresh_breaker):
-    with patch.object(fresh_breaker, "_save_state"), \
-         patch.object(fresh_breaker, "_send_alert"):
+    with patch.object(fresh_breaker, "_save_state"), patch.object(fresh_breaker, "_send_alert"):
         for i in range(3):
             fresh_breaker.record_failure(f"error {i}")
         assert fresh_breaker.consecutive_failures == 3
@@ -161,8 +157,7 @@ def test_success_resets_failure_counter(fresh_breaker):
 
 
 def test_success_clears_open_state(fresh_breaker):
-    with patch.object(fresh_breaker, "_save_state"), \
-         patch.object(fresh_breaker, "_send_alert"):
+    with patch.object(fresh_breaker, "_save_state"), patch.object(fresh_breaker, "_send_alert"):
         for i in range(MAX_CONSECUTIVE_FAILURES):
             fresh_breaker.record_failure(f"error {i}")
         assert fresh_breaker._is_open is True
@@ -174,8 +169,7 @@ def test_success_clears_open_state(fresh_breaker):
 
 def test_success_after_cooldown_expiry(fresh_breaker):
     """After cooldown expires and a success comes in, state is fully reset."""
-    with patch.object(fresh_breaker, "_save_state"), \
-         patch.object(fresh_breaker, "_send_alert"):
+    with patch.object(fresh_breaker, "_save_state"), patch.object(fresh_breaker, "_send_alert"):
         for i in range(MAX_CONSECUTIVE_FAILURES):
             fresh_breaker.record_failure(f"error {i}")
 
@@ -203,8 +197,7 @@ def test_get_status_returns_dataclass(fresh_breaker):
 
 
 def test_get_status_reflects_failures(fresh_breaker):
-    with patch.object(fresh_breaker, "_save_state"), \
-         patch.object(fresh_breaker, "_send_alert"):
+    with patch.object(fresh_breaker, "_save_state"), patch.object(fresh_breaker, "_send_alert"):
         for i in range(MAX_CONSECUTIVE_FAILURES):
             fresh_breaker.record_failure(f"error {i}")
 
@@ -228,8 +221,7 @@ def test_trip_with_no_trip_time_stays_open(fresh_breaker):
 
 def test_interleaved_failures_and_successes(fresh_breaker):
     """Successes reset the counter so it takes another full run to trip."""
-    with patch.object(fresh_breaker, "_save_state"), \
-         patch.object(fresh_breaker, "_send_alert"):
+    with patch.object(fresh_breaker, "_save_state"), patch.object(fresh_breaker, "_send_alert"):
         for i in range(MAX_CONSECUTIVE_FAILURES - 1):
             fresh_breaker.record_failure(f"error {i}")
         fresh_breaker.record_success()  # reset
@@ -243,8 +235,7 @@ def test_interleaved_failures_and_successes(fresh_breaker):
 
 def test_multiple_trips_across_resets(fresh_breaker):
     """Trip count accumulates across resets."""
-    with patch.object(fresh_breaker, "_save_state"), \
-         patch.object(fresh_breaker, "_send_alert"):
+    with patch.object(fresh_breaker, "_save_state"), patch.object(fresh_breaker, "_send_alert"):
         # First trip
         for i in range(MAX_CONSECUTIVE_FAILURES):
             fresh_breaker.record_failure(f"error {i}")
@@ -261,16 +252,20 @@ def test_multiple_trips_across_resets(fresh_breaker):
 
 
 def test_send_alert_called_on_trip(fresh_breaker):
-    with patch.object(fresh_breaker, "_save_state"), \
-         patch.object(fresh_breaker, "_send_alert") as mock_alert:
+    with (
+        patch.object(fresh_breaker, "_save_state"),
+        patch.object(fresh_breaker, "_send_alert") as mock_alert,
+    ):
         for i in range(MAX_CONSECUTIVE_FAILURES):
             fresh_breaker.record_failure(f"error {i}")
     mock_alert.assert_called_once_with(f"error {MAX_CONSECUTIVE_FAILURES - 1}")
 
 
 def test_send_alert_not_called_below_threshold(fresh_breaker):
-    with patch.object(fresh_breaker, "_save_state"), \
-         patch.object(fresh_breaker, "_send_alert") as mock_alert:
+    with (
+        patch.object(fresh_breaker, "_save_state"),
+        patch.object(fresh_breaker, "_send_alert") as mock_alert,
+    ):
         for i in range(MAX_CONSECUTIVE_FAILURES - 1):
             fresh_breaker.record_failure(f"error {i}")
     mock_alert.assert_not_called()

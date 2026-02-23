@@ -23,6 +23,7 @@ from src.utils.staleness_guard import (
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _write_state(tmp_path: Path, data: dict) -> Path:
     """Write a system_state.json in tmp_path and return its path."""
     p = tmp_path / "system_state.json"
@@ -46,7 +47,6 @@ def _fresh_state(hours_ago: float = 1.0) -> dict:
 
 
 class TestCheckDataStaleness:
-
     def test_fresh_data_is_not_stale(self, tmp_path):
         p = _write_state(tmp_path, _fresh_state(hours_ago=1.0))
         result = check_data_staleness(state_path=p)
@@ -129,19 +129,24 @@ class TestCheckDataStaleness:
 
 
 class TestRequireFreshData:
-
     def test_fresh_data_returns_true(self):
         fresh = StalenessResult(
-            is_stale=False, hours_old=1.0, last_updated="2026-01-01T00:00:00Z",
-            reason="Data is fresh", blocking=False,
+            is_stale=False,
+            hours_old=1.0,
+            last_updated="2026-01-01T00:00:00Z",
+            reason="Data is fresh",
+            blocking=False,
         )
         with patch("src.utils.staleness_guard.check_data_staleness", return_value=fresh):
             assert require_fresh_data(is_market_day=True) is True
 
     def test_stale_blocking_raises_runtime_error(self):
         stale = StalenessResult(
-            is_stale=True, hours_old=30.0, last_updated="2025-12-01T00:00:00Z",
-            reason="Data is 30.0 hours old", blocking=True,
+            is_stale=True,
+            hours_old=30.0,
+            last_updated="2025-12-01T00:00:00Z",
+            reason="Data is 30.0 hours old",
+            blocking=True,
         )
         with patch("src.utils.staleness_guard.check_data_staleness", return_value=stale):
             with pytest.raises(RuntimeError, match="Trading blocked"):
@@ -149,8 +154,11 @@ class TestRequireFreshData:
 
     def test_stale_non_blocking_returns_true(self):
         stale_no_block = StalenessResult(
-            is_stale=True, hours_old=30.0, last_updated="2025-12-01T00:00:00Z",
-            reason="Data is 30.0 hours old", blocking=False,
+            is_stale=True,
+            hours_old=30.0,
+            last_updated="2025-12-01T00:00:00Z",
+            reason="Data is 30.0 hours old",
+            blocking=False,
         )
         with patch("src.utils.staleness_guard.check_data_staleness", return_value=stale_no_block):
             assert require_fresh_data(is_market_day=False) is True
@@ -162,19 +170,24 @@ class TestRequireFreshData:
 
 
 class TestGetStalenessWarning:
-
     def test_returns_none_when_fresh(self):
         fresh = StalenessResult(
-            is_stale=False, hours_old=1.0, last_updated="2026-01-01T00:00:00Z",
-            reason="Data is fresh", blocking=False,
+            is_stale=False,
+            hours_old=1.0,
+            last_updated="2026-01-01T00:00:00Z",
+            reason="Data is fresh",
+            blocking=False,
         )
         with patch("src.utils.staleness_guard.check_data_staleness", return_value=fresh):
             assert get_staleness_warning() is None
 
     def test_returns_warning_string_when_stale(self):
         stale = StalenessResult(
-            is_stale=True, hours_old=30.0, last_updated="2025-12-01T00:00:00Z",
-            reason="Data is 30.0 hours old", blocking=False,
+            is_stale=True,
+            hours_old=30.0,
+            last_updated="2025-12-01T00:00:00Z",
+            reason="Data is 30.0 hours old",
+            blocking=False,
         )
         with patch("src.utils.staleness_guard.check_data_staleness", return_value=stale):
             warning = get_staleness_warning()
@@ -184,8 +197,11 @@ class TestGetStalenessWarning:
     def test_never_blocks(self):
         """get_staleness_warning always passes is_market_day=False internally."""
         stale = StalenessResult(
-            is_stale=True, hours_old=float("inf"), last_updated=None,
-            reason="system_state.json does not exist", blocking=False,
+            is_stale=True,
+            hours_old=float("inf"),
+            last_updated=None,
+            reason="system_state.json does not exist",
+            blocking=False,
         )
         with patch("src.utils.staleness_guard.check_data_staleness", return_value=stale):
             warning = get_staleness_warning()
@@ -198,7 +214,6 @@ class TestGetStalenessWarning:
 
 
 class TestValidateSystemState:
-
     def test_valid_state(self, tmp_path):
         p = _write_state(tmp_path, _fresh_state())
         result = validate_system_state(state_path=p)
@@ -338,7 +353,6 @@ class TestValidateSystemState:
 
 
 class TestCheckDataIntegrity:
-
     def test_returns_true_for_valid_state(self):
         valid = DataIntegrityResult(is_valid=True, errors=[], warnings=[])
         with patch("src.utils.staleness_guard.validate_system_state", return_value=valid):

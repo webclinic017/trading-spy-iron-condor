@@ -35,7 +35,7 @@ plugins:
 # Navigation - clean 3-item nav
 header_pages:
   - blog.html
-  - beats.md
+  - _reports/beats.md
   - tech-stack.md
   - about.html
 

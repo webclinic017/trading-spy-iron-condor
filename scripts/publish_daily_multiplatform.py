@@ -509,7 +509,7 @@ def main() -> int:
     md_report = PROJECT_ROOT / "docs" / "_reports" / f"{report_date}-publication-status.md"
     agents_md_report = PROJECT_ROOT / "docs" / "_reports" / f"{report_date}-daily-report.agents.md"
     timeline_json = PROJECT_ROOT / "docs" / "data" / "content_timeline.json"
-    beats_page = PROJECT_ROOT / "docs" / "beats.md"
+    beats_page = PROJECT_ROOT / "docs" / "_reports" / "beats.md"
 
     _write_json(status_json, result)
     _append_jsonl(status_jsonl, result)

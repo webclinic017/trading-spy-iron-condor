@@ -21,6 +21,7 @@ from src.ml.grpo_trade_learner import (
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 def _make_features(**overrides) -> TradeFeatures:
     defaults = dict(
         vix_level=18.0,
@@ -63,6 +64,7 @@ def _make_record(pnl: float = 100.0, outcome: str = "win", **kw) -> TradeRecord:
 # TradeFeatures
 # ---------------------------------------------------------------------------
 
+
 class TestTradeFeatures:
     def test_to_array_shape_and_dtype(self):
         f = _make_features()
@@ -74,7 +76,7 @@ class TestTradeFeatures:
         f = _make_features(vix_level=25.0, days_to_expiry=60.0)
         arr = f.to_array()
         assert arr[0] == pytest.approx(25.0 / 50.0)  # vix normalized
-        assert arr[6] == pytest.approx(60.0 / 60.0)   # dte normalized
+        assert arr[6] == pytest.approx(60.0 / 60.0)  # dte normalized
 
     def test_to_array_returns_scaling(self):
         f = _make_features(spy_20d_return=0.02, spy_5d_return=-0.01)
@@ -87,6 +89,7 @@ class TestTradeFeatures:
 # TradeParams
 # ---------------------------------------------------------------------------
 
+
 class TestTradeParams:
     def test_to_dict_keys(self):
         p = _make_params()
@@ -96,7 +99,7 @@ class TestTradeParams:
     def test_to_dict_rounding(self):
         p = _make_params(delta=0.15678, entry_hour=0.12345, confidence=0.98765)
         d = p.to_dict()
-        assert d["delta"] == 0.157   # 3 decimals
+        assert d["delta"] == 0.157  # 3 decimals
         assert d["entry_hour"] == 0.12  # 2 decimals
         assert d["confidence"] == 0.988  # 3 decimals
 
@@ -104,6 +107,7 @@ class TestTradeParams:
 # ---------------------------------------------------------------------------
 # TradeRecord
 # ---------------------------------------------------------------------------
+
 
 class TestTradeRecord:
     def test_to_dict_has_required_fields(self):
@@ -125,6 +129,7 @@ class TestTradeRecord:
 # ---------------------------------------------------------------------------
 # GRPOTradeLearner — construction
 # ---------------------------------------------------------------------------
+
 
 class TestGRPOTradeLearnerInit:
     @patch("src.ml.grpo_trade_learner.TORCH_AVAILABLE", False)
@@ -156,6 +161,7 @@ class TestGRPOTradeLearnerInit:
 # ---------------------------------------------------------------------------
 # calculate_rewards
 # ---------------------------------------------------------------------------
+
 
 class TestCalculateRewards:
     @patch("src.ml.grpo_trade_learner.TORCH_AVAILABLE", False)
@@ -216,6 +222,7 @@ class TestCalculateRewards:
 # load_trade_history
 # ---------------------------------------------------------------------------
 
+
 class TestLoadTradeHistory:
     @patch("src.ml.grpo_trade_learner.TORCH_AVAILABLE", False)
     @patch("src.ml.grpo_trade_learner.MODEL_PATH", Path("/nonexistent/model.pt"))
@@ -272,7 +279,13 @@ class TestLoadTradeHistory:
     @patch("src.ml.grpo_trade_learner.MODEL_PATH", Path("/nonexistent/model.pt"))
     def test_skips_null_symbol(self, tmp_path):
         trades = [
-            {"symbol": None, "filled_at": "2026-02-20T10:30:00Z", "price": "1.0", "qty": "1", "side": "SELL"},
+            {
+                "symbol": None,
+                "filled_at": "2026-02-20T10:30:00Z",
+                "price": "1.0",
+                "qty": "1",
+                "side": "SELL",
+            },
         ]
         f = tmp_path / "state.json"
         f.write_text(json.dumps({"trade_history": trades}))
@@ -296,6 +309,7 @@ class TestLoadTradeHistory:
 # ---------------------------------------------------------------------------
 # _process_raw_trades
 # ---------------------------------------------------------------------------
+
 
 class TestProcessRawTrades:
     @patch("src.ml.grpo_trade_learner.TORCH_AVAILABLE", False)
@@ -395,6 +409,7 @@ class TestProcessRawTrades:
 # predict_optimal_params
 # ---------------------------------------------------------------------------
 
+
 class TestPredictOptimalParams:
     @patch("src.ml.grpo_trade_learner.TORCH_AVAILABLE", False)
     @patch("src.ml.grpo_trade_learner.MODEL_PATH", Path("/nonexistent/model.pt"))
@@ -419,6 +434,7 @@ class TestPredictOptimalParams:
 # ---------------------------------------------------------------------------
 # train_policy
 # ---------------------------------------------------------------------------
+
 
 class TestTrainPolicy:
     @patch("src.ml.grpo_trade_learner.TORCH_AVAILABLE", False)
@@ -446,6 +462,7 @@ class TestTrainPolicy:
 # ---------------------------------------------------------------------------
 # get_learning_summary
 # ---------------------------------------------------------------------------
+
 
 class TestGetLearningSummary:
     @patch("src.ml.grpo_trade_learner.TORCH_AVAILABLE", False)
@@ -496,6 +513,7 @@ class TestGetLearningSummary:
 # save_model / load_model
 # ---------------------------------------------------------------------------
 
+
 class TestModelPersistence:
     @patch("src.ml.grpo_trade_learner.TORCH_AVAILABLE", False)
     @patch("src.ml.grpo_trade_learner.MODEL_PATH", Path("/nonexistent/model.pt"))
@@ -521,8 +539,10 @@ class TestModelPersistence:
         # Even if file exists, no torch => False
         fake = tmp_path / "fake_model.pt"
         fake.touch()
-        with patch("src.ml.grpo_trade_learner.TORCH_AVAILABLE", False), \
-             patch("src.ml.grpo_trade_learner.MODEL_PATH", fake):
+        with (
+            patch("src.ml.grpo_trade_learner.TORCH_AVAILABLE", False),
+            patch("src.ml.grpo_trade_learner.MODEL_PATH", fake),
+        ):
             learner = GRPOTradeLearner()
             result = learner.load_model()
             assert result is False
@@ -531,6 +551,7 @@ class TestModelPersistence:
 # ---------------------------------------------------------------------------
 # get_optimal_trade_params (module-level helper)
 # ---------------------------------------------------------------------------
+
 
 class TestGetOptimalTradeParams:
     @patch("src.ml.grpo_trade_learner.TORCH_AVAILABLE", False)
@@ -550,6 +571,7 @@ class TestGetOptimalTradeParams:
 # ---------------------------------------------------------------------------
 # _estimate_features_from_trade
 # ---------------------------------------------------------------------------
+
 
 class TestEstimateFeatures:
     @patch("src.ml.grpo_trade_learner.TORCH_AVAILABLE", False)
@@ -591,6 +613,7 @@ class TestEstimateFeatures:
 # ---------------------------------------------------------------------------
 # _estimate_params_from_trades
 # ---------------------------------------------------------------------------
+
 
 class TestEstimateParams:
     @patch("src.ml.grpo_trade_learner.TORCH_AVAILABLE", False)
