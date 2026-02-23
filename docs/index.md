@@ -23,6 +23,8 @@ This is the unfiltered story of building an autonomous AI trading system—every
 
 Full architecture: **[Tech Stack](/trading/tech-stack/)**.
 
+Latest shipping timeline (reports + cross-post status): **[Beats](/trading/beats/)**.
+
 ---
 
 ## Where We Are Today

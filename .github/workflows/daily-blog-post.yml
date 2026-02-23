@@ -133,6 +133,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No publishable changes detected."
             echo "push_mode=none" >> "$GITHUB_OUTPUT"
+            echo "push_ref=none" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -140,6 +141,7 @@ jobs:
 
           if git push origin HEAD:main; then
             echo "push_mode=direct-main" >> "$GITHUB_OUTPUT"
+            echo "push_ref=main" >> "$GITHUB_OUTPUT"
             echo "Direct push to main succeeded."
             exit 0
           fi
@@ -153,14 +155,21 @@ jobs:
             --title "feat(blog): Daily report + publication status for $REPORT_DATE" \
             --body "Automated daily blog/report publication update." \
             --head "$BRANCH_NAME" \
-            --base main \
-            --label automation 2>/dev/null || true)
+            --base main 2>/dev/null || true)
 
-          if [ -n "$PR_URL" ]; then
-            echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
-            gh pr merge "$BRANCH_NAME" --auto --squash || true
+          if [ -z "$PR_URL" ]; then
+            PR_URL=$(gh pr view "$BRANCH_NAME" --json url -q .url 2>/dev/null || true)
           fi
+
+          if [ -z "$PR_URL" ]; then
+            echo "::error::PR fallback failed: unable to create or resolve PR for ${BRANCH_NAME}"
+            exit 1
+          fi
+
+          echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
+          gh pr merge "$BRANCH_NAME" --auto --squash || true
           echo "push_mode=pr" >> "$GITHUB_OUTPUT"
+          echo "push_ref=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Publish to Dev.to + LinkedIn + X
         id: publish
@@ -189,10 +198,14 @@ jobs:
           set -euo pipefail
           REPORT_DATE="${{ steps.report_date.outputs.report_date }}"
           PUSH_MODE="${{ steps.push_content.outputs.push_mode }}"
+          PUSH_REF="${{ steps.push_content.outputs.push_ref }}"
 
-          git add "docs/_reports/${REPORT_DATE}-publication-status.md" || true
-          git add "data/analytics/${REPORT_DATE}-publication-status.json" || true
-          git add "data/analytics/publication-status-history.jsonl" || true
+          git add -f "docs/_reports/${REPORT_DATE}-publication-status.md" || true
+          git add -f "docs/_reports/${REPORT_DATE}-daily-report.agents.md" || true
+          git add -f "data/analytics/${REPORT_DATE}-publication-status.json" || true
+          git add -f "data/analytics/publication-status-history.jsonl" || true
+          git add -f "docs/data/content_timeline.json" || true
+          git add -f "docs/beats.md" || true
 
           if git diff --staged --quiet; then
             echo "No publication status artifact changes to commit."
@@ -205,8 +218,8 @@ jobs:
 
           if [ "$PUSH_MODE" = "direct-main" ]; then
             git push origin HEAD:main
-          elif [ "$PUSH_MODE" = "pr" ]; then
-            git push
+          elif [ "$PUSH_MODE" = "pr" ] && [ -n "$PUSH_REF" ] && [ "$PUSH_REF" != "none" ]; then
+            git push origin "HEAD:${PUSH_REF}"
           else
             echo "No prior push mode; attempting main push."
             git push origin HEAD:main || true
