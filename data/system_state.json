@@ -133,17 +133,17 @@
     "cash": 101815.49
   },
   "paper_account": {
-    "equity": 101242.49,
-    "cash": 101815.49,
+    "equity": 101237.43,
+    "cash": 102028.43,
     "buying_power": 197630.98,
     "total_pl": 1242.4900000000052,
     "total_pl_pct": 1.2424900000000052,
     "positions_count": 6,
-    "daily_change": -14.0,
+    "daily_change": -19.06,
     "win_rate": 100.0,
     "win_rate_sample_size": 1,
     "starting_balance": 100000.0,
-    "current_equity": 101242.49,
+    "current_equity": 101237.43,
     "last_equity": 101256.49
   },
   "positions": [
@@ -960,10 +960,14 @@
   ],
   "trades_loaded": 95,
   "trades": {
-    "last_trade_date": "2026-02-09",
-    "today_trades": 0,
-    "total_trades_today": 0,
-    "last_trade_symbol": "SPY260220P00660000"
+    "last_trade_date": "2026-02-23",
+    "today_trades": 2,
+    "total_trades_today": 2,
+    "last_trade_symbol": "SYNCED",
+    "metrics_date": "2026-02-23",
+    "orders_today": 2,
+    "structures_today": 0,
+    "fills_today": 2
   },
   "risk": {
     "status": "MONITORING",
@@ -988,14 +992,14 @@
     "buying_power": 197630.98
   },
   "meta": {
-    "last_updated": "2026-02-23T14:49:07.040189+00:00",
+    "last_updated": "2026-02-23T14:59:22.203426+00:00",
     "trade_sync": "alpaca_api",
     "sync_frequency_minutes": 5,
     "last_sync_attempt": "2026-02-23T14:49:07.040189+00:00",
     "alpaca_keys_present": true,
     "last_sync": "2026-02-23T14:49:06.439096",
     "sync_mode": "paper+live",
-    "last_daily_verification_at": "2026-02-23T14:02:19.369424+00:00"
+    "last_daily_verification_at": "2026-02-23T14:59:23.425393+00:00"
   },
   "paper_trading": {
     "start_date": "2026-01-30",
@@ -1320,7 +1324,7 @@
     "updated_at": "2026-02-23T14:49:48.891161+00:00"
   },
   "ic_position_management": {
-    "last_run": "2026-02-23T14:49:08.267447",
+    "last_run": "2026-02-23T14:59:07.805125",
     "iron_condors_evaluated": 1,
     "exits_triggered": 0,
     "exits_executed": 0
@@ -1640,13 +1644,13 @@
     }
   },
   "stop_verification": {
-    "last_check": "2026-02-23T14:02:03.199186",
+    "last_check": "2026-02-23T14:59:00.221076",
     "status": "MISSING_STOPS",
     "verified_count": 0,
-    "missing_count": 3
+    "missing_count": 2
   },
   "options": {
-    "last_theta_harvest": "2026-02-23T14:02:12.982522Z",
+    "last_theta_harvest": "2026-02-23T14:59:13.346232Z",
     "harvest_source": "daily-trading-workflow",
     "execution_date": "2026-02-23",
     "selection_method": "adaptive",
@@ -1660,10 +1664,10 @@
     "tickers_with_orders": []
   },
   "position_management": {
-    "last_run": "2026-02-23T14:02:07.367634",
-    "positions_evaluated": 6,
-    "exits_triggered": 3,
-    "exits_executed": 0
+    "last_run": "2026-02-23T14:59:05.539066",
+    "positions_evaluated": 5,
+    "exits_triggered": 1,
+    "exits_executed": 1
   },
   "position_entries": {},
   "position_entry_features": {},
