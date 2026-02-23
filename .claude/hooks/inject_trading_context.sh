@@ -4,6 +4,9 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(cd "${SCRIPT_DIR}/../.." && pwd)}"
+
 # All date/time operations use Eastern Time (trading timezone)
 TODAY=$(TZ=America/New_York date +%Y-%m-%d)
 FULL_DATE=$(TZ=America/New_York date "+%A, %B %d, %Y")
@@ -31,7 +34,7 @@ if [[ ${IS_WEEKEND} == "false" ]]; then
 fi
 
 # Calculate days since last system_state update
-SYSTEM_STATE="${CLAUDE_PROJECT_DIR}/data/system_state.json"
+SYSTEM_STATE="${PROJECT_ROOT}/data/system_state.json"
 DAYS_OLD=0
 if [[ -f ${SYSTEM_STATE} ]]; then
 	LAST_UPDATE=$(grep -o '"last_updated": "[^"]*"' "${SYSTEM_STATE}" | head -1 | cut -d'"' -f4 | cut -d'T' -f1 2>/dev/null || echo "")

@@ -3,8 +3,8 @@
 # Tool Installer for Trading System Autonomous Orchestration
 #
 # This script checks for and installs required tools:
-# - oh-my-claudecode (npm package)
-# - ralphex (npm package, optional)
+# - oh-my-codex / omx (npm package)
+# - ralphex (Homebrew formula, required)
 # - launchd scheduler (macOS)
 #
 # Usage:
@@ -51,6 +51,16 @@ check_npm() {
 	fi
 }
 
+check_brew() {
+	if command -v brew &>/dev/null; then
+		log_info "Homebrew: $(brew --version | head -1)"
+		return 0
+	else
+		log_error "Homebrew not found"
+		return 1
+	fi
+}
+
 check_python() {
 	if command -v python3 &>/dev/null; then
 		log_info "Python: $(python3 --version)"
@@ -61,26 +71,44 @@ check_python() {
 	fi
 }
 
-check_oh_my_claudecode() {
-	if npm list -g oh-my-claudecode &>/dev/null 2>&1; then
+check_omx() {
+	if command -v omx &>/dev/null 2>&1; then
 		local version
-		version=$(npm list -g oh-my-claudecode 2>/dev/null | grep oh-my-claudecode | awk -F@ '{print $2}')
-		log_info "oh-my-claudecode: $version"
+		version=$(omx version 2>/dev/null | head -1 | awk '{print $2}')
+		log_info "omx: ${version:-installed}"
 		return 0
 	else
-		log_warn "oh-my-claudecode not installed"
+		log_warn "omx not installed"
 		return 1
 	fi
 }
 
+version_gte() {
+	# Returns 0 when version $1 >= version $2
+	[[ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | head -n1)" == "$2" ]]
+}
+
+parse_ralphex_version() {
+	ralphex --version 2>/dev/null | sed -nE 's/.*v([0-9]+\.[0-9]+\.[0-9]+).*/\1/p' | head -1
+}
+
 check_ralphex() {
-	if npm list -g ralphex &>/dev/null 2>&1; then
+	local min_version="0.16.0"
+	if command -v ralphex &>/dev/null 2>&1; then
 		local version
-		version=$(npm list -g ralphex 2>/dev/null | grep ralphex | awk -F@ '{print $2}')
-		log_info "ralphex: $version"
-		return 0
+		version=$(parse_ralphex_version)
+		if [[ -z $version ]]; then
+			log_error "ralphex installed but version could not be parsed"
+			return 1
+		fi
+		if version_gte "$version" "$min_version"; then
+			log_info "ralphex: $version (meets minimum $min_version)"
+			return 0
+		fi
+		log_warn "ralphex: $version (below minimum $min_version)"
+		return 1
 	else
-		log_warn "ralphex not installed (optional)"
+		log_warn "ralphex not installed"
 		return 1
 	fi
 }
@@ -96,39 +124,53 @@ check_launchd() {
 }
 
 check_swarm_skill() {
-	if [[ -f "$PROJECT_DIR/.claude/skills/swarm-orchestration/SKILL.md" ]]; then
-		log_info "Swarm orchestration skill: Present"
+	local candidates=(
+		"$PROJECT_DIR/.claude/skills/swarm-orchestration/SKILL.md"
+		"$HOME/.agents/skills/swarm/SKILL.md"
+		"$HOME/.agents/skills/team/SKILL.md"
+	)
+
+	for skill_path in "${candidates[@]}"; do
+		if [[ -f "$skill_path" ]]; then
+			log_info "Swarm orchestration skill: Present (${skill_path})"
+			return 0
+		fi
+	done
+
+	if command -v omx >/dev/null 2>&1 && omx help 2>/dev/null | grep -q "omx team"; then
+		log_info "Swarm orchestration capability: Present (omx team)"
 		return 0
-	else
-		log_error "Swarm orchestration skill: Missing"
-		return 1
 	fi
+
+	log_error "Swarm orchestration skill: Missing"
+	return 1
 }
 
 # ============================================================================
 # INSTALLERS
 # ============================================================================
 
-install_oh_my_claudecode() {
-	log_info "Installing oh-my-claudecode..."
-	if npm install -g oh-my-claudecode; then
-		log_info "oh-my-claudecode installed successfully"
+install_omx() {
+	log_info "Installing oh-my-codex (omx)..."
+	if npm install -g oh-my-codex; then
+		log_info "omx installed successfully"
 		return 0
 	else
-		log_error "Failed to install oh-my-claudecode"
+		log_error "Failed to install omx"
 		return 1
 	fi
 }
 
 install_ralphex() {
-	log_info "Attempting to install ralphex..."
-	if npm install -g ralphex 2>/dev/null; then
-		log_info "ralphex installed successfully"
-		return 0
+	log_info "Installing or upgrading ralphex via Homebrew..."
+	check_brew || return 1
+	brew tap umputun/apps >/dev/null
+	if command -v ralphex >/dev/null 2>&1; then
+		brew upgrade ralphex >/dev/null || true
 	else
-		log_warn "ralphex not available (this is okay, it's optional)"
-		return 0 # Don't fail, it's optional
+		brew install ralphex >/dev/null
 	fi
+	check_ralphex
 }
 
 install_launchd() {
@@ -184,9 +226,10 @@ run_checks() {
 
 	check_node || all_ok=false
 	check_npm || all_ok=false
+	check_brew || all_ok=false
 	check_python || all_ok=false
-	check_oh_my_claudecode || all_ok=false
-	check_ralphex || true # Optional, don't fail
+	check_omx || all_ok=false
+	check_ralphex || all_ok=false
 	check_launchd || true # Optional, just report
 	check_swarm_skill || all_ok=false
 
@@ -217,14 +260,28 @@ run_install() {
 		exit 1
 	}
 
+	check_brew || {
+		log_error "Homebrew required for ralphex. Install via: https://brew.sh"
+		exit 1
+	}
+
 	check_python || {
 		log_error "Python3 required. Install via: brew install python"
 		exit 1
 	}
 
-	# Install npm packages
-	check_oh_my_claudecode || install_oh_my_claudecode
+	# Install required orchestration tools
+	check_omx || install_omx
 	check_ralphex || install_ralphex
+
+	check_omx || {
+		log_error "omx installation verification failed"
+		exit 1
+	}
+	check_ralphex || {
+		log_error "ralphex installation verification failed (requires >=0.16.0)"
+		exit 1
+	}
 
 	# Verify swarm skill
 	check_swarm_skill || {

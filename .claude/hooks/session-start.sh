@@ -71,9 +71,9 @@ echo ""
 # TIER 4: Cortex Sync Status (fast check, sync action deferred to async)
 PENDING_FILE="${PROJECT_ROOT}/.claude/memory/feedback/pending_cortex_sync.jsonl"
 if [[ -f ${PENDING_FILE} ]] && [[ -s ${PENDING_FILE} ]]; then
-	PENDING_COUNT=$(grep -c '"synced":\s*false' "${PENDING_FILE}" 2>/dev/null || echo "0")
+	PENDING_COUNT=$(grep -c '"synced":\s*false' "${PENDING_FILE}" 2>/dev/null || true)
 	LEGACY_COUNT=$(grep -v '"synced"' "${PENDING_FILE}" 2>/dev/null | wc -l | xargs)
-	PENDING_COUNT=${PENDING_COUNT:-0}
+	PENDING_COUNT=$(printf '%s\n' "${PENDING_COUNT:-0}" | tail -n1 | tr -d '[:space:]')
 	LEGACY_COUNT=${LEGACY_COUNT:-0}
 	TOTAL=$((PENDING_COUNT + LEGACY_COUNT))
 	if [[ ${TOTAL} -gt 0 ]]; then
@@ -84,7 +84,7 @@ fi
 # TIER 5: Launch async hook in background
 ASYNC_HOOK="${SCRIPT_DIR}/session-start-async.sh"
 if [[ -f ${ASYNC_HOOK} ]] && [[ -x ${ASYNC_HOOK} ]]; then
-	"${ASYNC_HOOK}" &
+	"${ASYNC_HOOK}" >/tmp/claude-session-start-async.log 2>&1 &
 	echo "[ASYNC] Background tasks launched (LanceDB, health check, cortex sync)"
 fi
 
