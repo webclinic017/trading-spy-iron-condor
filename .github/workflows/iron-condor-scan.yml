@@ -102,6 +102,18 @@ jobs:
           secret = os.environ.get('ALPACA_PAPER_TRADING_API_SECRET')
           client = TradingClient(api_key, secret, paper=True)
 
+          # Validate symbols exist before submitting order
+          from alpaca.data.historical.option import OptionHistoricalDataClient
+          from alpaca.data.requests import OptionSnapshotRequest
+          opts_client = OptionHistoricalDataClient(api_key, secret)
+          symbols = [long_put, short_put, short_call, long_call]
+          snaps = opts_client.get_option_snapshot(OptionSnapshotRequest(symbol_or_symbols=symbols))
+          missing = [s for s in symbols if s not in snaps]
+          if missing:
+              print(f"❌ ABORT: symbols not found on Alpaca: {missing}")
+              import sys; sys.exit(1)
+          print(f"✅ All 4 symbols validated on Alpaca")
+
           legs = [
               OptionLegRequest(symbol=long_put, side=OrderSide.BUY, ratio_qty=1),
               OptionLegRequest(symbol=short_put, side=OrderSide.SELL, ratio_qty=1),

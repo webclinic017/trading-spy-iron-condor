@@ -136,34 +136,86 @@ def get_existing_expiries(trading_client) -> set[str]:
         return set()
 
 
-def find_expiration_date(exclude_expiries: set[str] | None = None) -> str | None:
-    """Find optimal expiration date (30-45 DTE, must be Friday).
+def find_expiration_date(
+    options_client=None,
+    spy_price: float = 600.0,
+    exclude_expiries: set[str] | None = None,
+) -> str | None:
+    """Find optimal expiration date by querying Alpaca for real option chains.
 
-    Cycles through available Fridays in the 30-45 DTE window,
-    skipping any expiry dates we already have positions in.
+    Validates that contracts actually exist before returning an expiry.
+    Falls back to Friday-based calculation only if the API is unavailable.
     """
     et = ZoneInfo("America/New_York")
     today = datetime.now(et)
     exclude = exclude_expiries or set()
 
-    # Find all Fridays in the 30-45 DTE window
+    # Try to get real expirations from Alpaca options API
+    if options_client:
+        try:
+            from alpaca.data.requests import OptionChainRequest
+
+            # Query a near-ATM put to discover available expirations
+            request = OptionChainRequest(
+                underlying_symbol="SPY",
+                strike_price_gte=spy_price * 0.93,
+                strike_price_lte=spy_price * 0.97,
+                type="put",
+            )
+            chain = options_client.get_option_chain(request)
+
+            # Extract unique expirations from the chain
+            real_expiries = set()
+            for symbol in chain:
+                # OCC symbol: SPY260327P00650000 -> expiry 260327
+                if len(symbol) >= 9:
+                    date_part = symbol[3:9]
+                    try:
+                        exp_date = datetime.strptime(f"20{date_part}", "%Y%m%d")
+                        exp_str = exp_date.strftime("%Y-%m-%d")
+                        dte = (exp_date.replace(tzinfo=et) - today).days
+                        if MIN_DTE <= dte <= MAX_DTE and exp_str not in exclude:
+                            real_expiries.add((exp_str, dte))
+                    except ValueError:
+                        continue
+
+            if real_expiries:
+                candidates = sorted(real_expiries, key=lambda x: abs(x[1] - 35))
+                best = candidates[0]
+                logger.info(f"Target expiration (API-verified): {best[0]} ({best[1]} DTE)")
+                return best[0]
+            else:
+                logger.warning("No valid expirations found in Alpaca option chain for DTE window")
+        except Exception as e:
+            logger.warning(f"Option chain query failed, falling back to Friday calc: {e}")
+
+    # Fallback: Find Fridays in the 30-45 DTE window (third Friday = monthly)
     candidates = []
     for days_out in range(MIN_DTE, MAX_DTE + 1):
         candidate = today + timedelta(days=days_out)
-        if candidate.weekday() == 4:  # Friday
+        # Prefer third Fridays (monthly expirations) — always listed on Alpaca
+        if candidate.weekday() == 4:
+            day = candidate.day
+            is_third_friday = 15 <= day <= 21
             expiry_str = candidate.strftime("%Y-%m-%d")
             if expiry_str not in exclude:
                 dte = (candidate - today).days
-                candidates.append((expiry_str, dte))
+                candidates.append((expiry_str, dte, is_third_friday))
 
     if not candidates:
         logger.warning("No available expiry dates (all Fridays in window already have positions)")
         return None
 
-    # Pick the one closest to 35 DTE (optimal theta decay)
-    candidates.sort(key=lambda x: abs(x[1] - 35))
-    best = candidates[0]
-    logger.info(f"Target expiration: {best[0]} ({best[1]} DTE)")
+    # Prefer third Fridays (monthly), then closest to 35 DTE
+    third_fridays = [c for c in candidates if c[2]]
+    if third_fridays:
+        third_fridays.sort(key=lambda x: abs(x[1] - 35))
+        best = third_fridays[0]
+    else:
+        candidates.sort(key=lambda x: abs(x[1] - 35))
+        best = candidates[0]
+
+    logger.info(f"Target expiration (fallback): {best[0]} ({best[1]} DTE)")
     return best[0]
 
 
@@ -187,6 +239,44 @@ def calculate_strikes(spy_price: float) -> dict:
         "short_call": short_call,
         "long_call": long_call,
     }
+
+
+def build_occ_symbol(expiry: str, strike: float, opt_type: str) -> str:
+    """Build OCC option symbol. expiry='2026-03-27', opt_type='P' or 'C'."""
+    date_part = expiry.replace("-", "")[2:]  # YYMMDD
+    return f"SPY{date_part}{opt_type}{int(strike * 1000):08d}"
+
+
+def validate_symbols_exist(options_client, expiry: str, strikes: dict) -> bool:
+    """Verify that the OCC symbols for all 4 legs exist on Alpaca."""
+    if not options_client:
+        logger.warning("No options client — skipping symbol validation")
+        return True  # Optimistic if no client
+
+    symbols = [
+        build_occ_symbol(expiry, strikes["long_put"], "P"),
+        build_occ_symbol(expiry, strikes["short_put"], "P"),
+        build_occ_symbol(expiry, strikes["short_call"], "C"),
+        build_occ_symbol(expiry, strikes["long_call"], "C"),
+    ]
+
+    try:
+        from alpaca.data.requests import OptionSnapshotRequest
+
+        request = OptionSnapshotRequest(symbol_or_symbols=symbols)
+        snapshots = options_client.get_option_snapshot(request)
+        found = set(snapshots.keys())
+        missing = [s for s in symbols if s not in found]
+
+        if missing:
+            logger.warning(f"Missing symbols on Alpaca: {missing}")
+            return False
+
+        logger.info(f"All 4 IC legs validated: {symbols}")
+        return True
+    except Exception as e:
+        logger.warning(f"Symbol validation failed: {e}")
+        return False
 
 
 def estimate_credit(strikes: dict) -> dict:
@@ -361,12 +451,22 @@ def scan_for_opportunity(dry_run: bool = False) -> dict | None:
 
     # Find expiry that doesn't overlap with existing positions
     existing_expiries = get_existing_expiries(trading_client)
-    expiry = find_expiration_date(exclude_expiries=existing_expiries)
+    expiry = find_expiration_date(
+        options_client=options_client,
+        spy_price=spy_price,
+        exclude_expiries=existing_expiries,
+    )
     if not expiry:
         logger.info("No available expiry dates — all slots in DTE window taken")
         return None
     dte = (datetime.strptime(expiry, "%Y-%m-%d") - datetime.now()).days
     strikes = calculate_strikes(spy_price)
+
+    # Validate all 4 OCC symbols exist on Alpaca before proceeding
+    if not validate_symbols_exist(options_client, expiry, strikes):
+        logger.error(f"Symbol validation failed for {expiry} — contracts don't exist on Alpaca")
+        return None
+
     pricing = estimate_credit(strikes)
 
     opportunity = {
