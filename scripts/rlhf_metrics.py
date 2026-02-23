@@ -122,12 +122,18 @@ def _evaluate_target(value: float | int | None, target: float | int) -> str:
 
 
 def _normalize_signal(entry: dict) -> str | None:
+    # Skip undo-revert entries — not real user feedback
+    tags = entry.get("tags", [])
+    signal_raw = entry.get("signal", "")
+    if "undo-revert" in tags or signal_raw == "undo_revert":
+        return None
+
     raw = entry.get("feedback") or entry.get("signal") or entry.get("type")
     if isinstance(raw, str):
         value = raw.lower()
         if value in {"positive", "thumbs_up"}:
             return "positive"
-        if value in {"negative", "thumbs_down"}:
+        if value in {"negative", "thumbs_down", "negative_strong"}:
             return "negative"
     return None
 
