@@ -53,24 +53,24 @@ The system tracks progress toward validated autonomous trading:
 
 ## 🎯 North Star Goal
 
-**Vision**: Validated autonomous iron condor system producing consistent monthly income.
+**Vision**: Validated autonomous trading system generating **$6,000/month after-tax passive income**.
 
-**Capital requirements** (code-enforced in `src/risk/capital_efficiency.py`):
-- Iron condors: **$10,000 minimum** ($500 collateral per $5-wide spread)
-- PDT-safe trading: **$25,000+** recommended
-- $200 is NOT enough for options — only ETF accumulation is viable below $500
+**Financial Roadmap** (Reverse-engineered from $6K Net):
+- **Target**: $6,000/mo Net ≈ **$8,600/mo Gross** (assuming ~30% tax).
+- **Yield**: Target 2.5% monthly return (conservative for Iron Condors + Credit Spreads).
+- **Capital Required**: ~$350,000 deployed capital.
 
 | Phase | Timeline | Target | Status |
 |-------|----------|--------|--------|
-| **Phase 1: Validate** | Now → Jun 2026 | 30 trades, >75% win rate on $100K paper | 🔄 In progress (1/30) |
-| **Phase 2: Scale** | Jul → Dec 2026 | 3 concurrent ICs, $500/mo on $25K+ | ⏳ Pending |
-| **Phase 3: Grow** | 2027 | 5 ICs + credit spreads, $1,500/mo | ⏳ Pending |
-| **Phase 4: Productize** | 2028 | Packaged system for accounts $10K+ | ⏳ Pending |
+| **Phase 1: Validate** | Now → Jun 2026 | 30 trades, >85% win rate on $100K paper | 🔄 In progress (1/30) |
+| **Phase 2: Scale** | Jul → Dec 2026 | Reach $150K capital, generate $3,000/mo gross | ⏳ Pending |
+| **Phase 3: Dominate** | 2027 | Scale to $350K+, achieve **$8,600/mo gross** | ⏳ Pending |
+| **Phase 4: Productize** | 2028 | Packaged system for HNW accounts ($250K+) | ⏳ Pending |
 
 **Strategy Parameters** (updated Feb 2026 — positive EV):
-- Profit target: **75%** of max profit (let winners run)
-- Stop loss: **100%** of credit (cut losers fast)
-- Expected value per trade: **+$94** at 80% win rate
+- Profit target: **50%** of max profit (high velocity)
+- Stop loss: **200%** of credit (statistical management)
+- Expected value per trade: **+$140** at 15-delta (85% probability)
 
 ---
 
