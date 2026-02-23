@@ -1,4 +1,5 @@
 import logging
+import shutil
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -6,15 +7,18 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class StrategyIdea:
     """Declarative description of a trading strategy."""
+
     name: str
     description: str
     universe: list[str]
     signals: list[str]  # e.g., ["RSI < 30", "MACD Crossover"]
     risk_params: dict[str, Any]
     target_filename: str
+
 
 class StrategyHarness:
     """
@@ -72,10 +76,10 @@ REQUIREMENTS:
         # 2. Generate a Test Case
         test_content = f"""
 import pytest
-from src.strategies.{idea.target_filename.replace('.py', '')} import {idea.name.replace(' ', '')}
+from src.strategies.{idea.target_filename.replace(".py", "")} import {idea.name.replace(" ", "")}
 
-def test_{idea.name.lower().replace(' ', '_')}_initialization():
-    strategy = {idea.name.replace(' ', '')}()
+def test_{idea.name.lower().replace(" ", "_")}_initialization():
+    strategy = {idea.name.replace(" ", "")}()
     assert strategy.name is not None
     assert len(strategy.universe) > 0
 """
@@ -89,8 +93,13 @@ def test_{idea.name.lower().replace(' ', '_')}_initialization():
     def _verify_deployment(self, strategy_path: Path, test_path: Path):
         """Runs linting and tests to ensure zero-tech-debt deployment."""
         logger.info("🔍 Verifying Harness Deployment...")
-        subprocess.run(["ruff", "check", str(strategy_path)], check=False)
+        ruff_bin = shutil.which("ruff")
+        if not ruff_bin:
+            logger.warning("ruff not found on PATH; skipping harness lint verification.")
+            return
+        subprocess.run([ruff_bin, "check", str(strategy_path)], check=False)
         # subprocess.run(["pytest", str(test_path)], check=False)
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
@@ -103,7 +112,7 @@ if __name__ == "__main__":
         universe=["SPY", "QQQ"],
         signals=["Price < Lower Bollinger Band", "RSI < 30"],
         risk_params={"stop_loss": 0.02, "take_profit": 0.04},
-        target_filename="mean_reversion_pro.py"
+        target_filename="mean_reversion_pro.py",
     )
 
     print(f"Harness Prompt:\n{harness.generate_strategy_code_prompt(mean_reversion_idea)}")

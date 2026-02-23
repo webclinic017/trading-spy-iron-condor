@@ -33,6 +33,7 @@ from src.utils.pre_trade_validator import (
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def validator():
     """Default validator with $100K account."""
@@ -49,8 +50,8 @@ def small_validator():
 # Valid trade scenarios
 # ---------------------------------------------------------------------------
 
-class TestValidTrades:
 
+class TestValidTrades:
     def test_spy_iron_condor_passes(self, validator):
         result = validator.validate(
             symbol="SPY",
@@ -137,8 +138,8 @@ class TestValidTrades:
 # Blocked ticker
 # ---------------------------------------------------------------------------
 
-class TestTickerValidation:
 
+class TestTickerValidation:
     def test_blocked_ticker_sofi(self, validator):
         with pytest.raises(PreTradeValidationError, match="BLOCKED.*not in allowed tickers"):
             validator.validate(
@@ -204,8 +205,8 @@ class TestTickerValidation:
 # Risk limit
 # ---------------------------------------------------------------------------
 
-class TestRiskValidation:
 
+class TestRiskValidation:
     def test_risk_exceeds_limit(self, validator):
         """Risk > 5% of account should be blocked."""
         over_limit = validator.max_risk + 0.01
@@ -260,8 +261,8 @@ class TestRiskValidation:
 # Position balance (leg imbalance)
 # ---------------------------------------------------------------------------
 
-class TestLegBalance:
 
+class TestLegBalance:
     def test_iron_condor_imbalanced_legs(self, validator):
         with pytest.raises(PreTradeValidationError, match="Position imbalance"):
             validator.validate(
@@ -323,8 +324,8 @@ class TestLegBalance:
 # Disallowed strategy
 # ---------------------------------------------------------------------------
 
-class TestStrategyValidation:
 
+class TestStrategyValidation:
     @pytest.mark.parametrize(
         "bad_strategy",
         ["naked_put", "naked_call", "short_straddle", "short_strangle", "butterfly", ""],
@@ -345,8 +346,8 @@ class TestStrategyValidation:
 # Multiple simultaneous failures
 # ---------------------------------------------------------------------------
 
-class TestMultipleErrors:
 
+class TestMultipleErrors:
     def test_bad_ticker_and_bad_strategy_and_risk(self, validator):
         """All checks fail at once -- error message contains all failures."""
         with pytest.raises(PreTradeValidationError) as exc_info:
@@ -382,8 +383,8 @@ class TestMultipleErrors:
 # Convenience function validate_trade()
 # ---------------------------------------------------------------------------
 
-class TestValidateTradeFunction:
 
+class TestValidateTradeFunction:
     def test_valid_trade(self):
         result = validate_trade(
             symbol="SPY",
@@ -428,8 +429,8 @@ class TestValidateTradeFunction:
 # Constructor / account_value
 # ---------------------------------------------------------------------------
 
-class TestConstructor:
 
+class TestConstructor:
     def test_default_account_value(self):
         v = PreTradeValidator()
         assert v.account_value == 5000.0
@@ -462,8 +463,8 @@ class TestConstructor:
 # RAG advice
 # ---------------------------------------------------------------------------
 
-class TestGetRagAdvice:
 
+class TestGetRagAdvice:
     def test_rag_unavailable_returns_fallback(self, validator):
         """When RAG import fails, returns cautionary message."""
         with patch.dict("sys.modules", {"src.rag.lessons_learned_rag": None}):
@@ -498,8 +499,8 @@ class TestGetRagAdvice:
 # PreTradeValidationError
 # ---------------------------------------------------------------------------
 
-class TestPreTradeValidationError:
 
+class TestPreTradeValidationError:
     def test_is_exception(self):
         assert issubclass(PreTradeValidationError, Exception)
 

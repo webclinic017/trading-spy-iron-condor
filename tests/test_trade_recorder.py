@@ -30,12 +30,8 @@ def test_record_trade_creates_file(tmp_path):
 
 
 def test_record_trade_appends_to_existing(tmp_path):
-    record_trade_result(
-        symbol="SPY", strategy="ic", result={"id": "1"}, data_dir=str(tmp_path)
-    )
-    record_trade_result(
-        symbol="SPY", strategy="ic", result={"id": "2"}, data_dir=str(tmp_path)
-    )
+    record_trade_result(symbol="SPY", strategy="ic", result={"id": "1"}, data_dir=str(tmp_path))
+    record_trade_result(symbol="SPY", strategy="ic", result={"id": "2"}, data_dir=str(tmp_path))
     # Both should be in the same daily file
     trades = get_daily_trades("ic", data_dir=str(tmp_path))
     assert len(trades) == 2
@@ -69,9 +65,7 @@ def test_record_trade_no_extra_fields(tmp_path):
 
 def test_record_trade_creates_nested_data_dir(tmp_path):
     nested = tmp_path / "a" / "b" / "c"
-    path = record_trade_result(
-        symbol="SPY", strategy="ic", result={}, data_dir=str(nested)
-    )
+    path = record_trade_result(symbol="SPY", strategy="ic", result={}, data_dir=str(nested))
     assert path.exists()
     assert nested.exists()
 
@@ -106,9 +100,7 @@ def test_record_trade_handles_empty_file(tmp_path):
     empty_file = tmp_path / f"ic_{date_str}.json"
     empty_file.write_text("")
 
-    path = record_trade_result(
-        symbol="SPY", strategy="ic", result={"x": 1}, data_dir=str(tmp_path)
-    )
+    path = record_trade_result(symbol="SPY", strategy="ic", result={"x": 1}, data_dir=str(tmp_path))
     trades = json.loads(path.read_text())
     assert len(trades) == 1
 
@@ -117,9 +109,7 @@ def test_record_trade_handles_empty_file(tmp_path):
 
 
 def test_get_daily_trades_returns_list(tmp_path):
-    record_trade_result(
-        symbol="SPY", strategy="ic", result={"a": 1}, data_dir=str(tmp_path)
-    )
+    record_trade_result(symbol="SPY", strategy="ic", result={"a": 1}, data_dir=str(tmp_path))
     trades = get_daily_trades("ic", data_dir=str(tmp_path))
     assert isinstance(trades, list)
     assert len(trades) == 1
@@ -157,9 +147,7 @@ def test_get_daily_trades_specific_date(tmp_path):
 
 def test_get_daily_trades_wrong_date_returns_empty(tmp_path):
     """Trades recorded today should not appear when querying a different date."""
-    record_trade_result(
-        symbol="SPY", strategy="ic", result={}, data_dir=str(tmp_path)
-    )
+    record_trade_result(symbol="SPY", strategy="ic", result={}, data_dir=str(tmp_path))
     other_date = datetime(2020, 1, 1)
     trades = get_daily_trades("ic", data_dir=str(tmp_path), date=other_date)
     assert trades == []
@@ -174,9 +162,7 @@ def test_get_trade_count_zero_when_no_file(tmp_path):
 
 def test_get_trade_count_matches_recorded(tmp_path):
     for i in range(3):
-        record_trade_result(
-            symbol="SPY", strategy="ic", result={"i": i}, data_dir=str(tmp_path)
-        )
+        record_trade_result(symbol="SPY", strategy="ic", result={"i": i}, data_dir=str(tmp_path))
     assert get_trade_count("ic", data_dir=str(tmp_path)) == 3
 
 

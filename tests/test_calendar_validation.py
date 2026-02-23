@@ -114,9 +114,7 @@ def test_is_trading_day_passes_correct_date_string(mock_client_fn):
     target = datetime(2026, 7, 4, 9, 30, 0)
     is_trading_day(target)
 
-    mock_client.get_calendar.assert_called_once_with(
-        start="2026-07-04", end="2026-07-04"
-    )
+    mock_client.get_calendar.assert_called_once_with(start="2026-07-04", end="2026-07-04")
 
 
 # ---------------------------------------------------------------------------

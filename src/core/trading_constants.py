@@ -10,6 +10,8 @@ Created: Jan 19, 2026 (Adversarial audit finding - 4 duplicate definitions)
 Updated: Feb 17, 2026 (P0 tech debt - consolidated 5 duplicate extract_underlying impls)
 """
 
+from __future__ import annotations
+
 import re
 from datetime import date
 
@@ -48,8 +50,8 @@ IRON_CONDOR_STOP_LOSS_MULTIPLIER: float = 1.0
 # BEHAVIORAL + EXPIRY CONCENTRATION GUARDS
 # =============================================================================
 MAX_EXPIRY_CONCENTRATION_PCT: float = 0.40  # 40% max ICs in one expiry week
-FOMO_INTRADAY_MOVE_PCT: float = 0.02        # 2% SPY move blocks new IC entry
-STOP_LOSS_COOLING_HOURS: int = 24            # Hours to wait after stop-loss exit
+FOMO_INTRADAY_MOVE_PCT: float = 0.02  # 2% SPY move blocks new IC entry
+STOP_LOSS_COOLING_HOURS: int = 24  # Hours to wait after stop-loss exit
 
 # =============================================================================
 # ANTI-CHURN GUARDRAILS (intraday) - SINGLE SOURCE OF TRUTH

@@ -43,9 +43,7 @@ def test_track_accumulates_multiple_calls(tracker):
 
 def test_track_uses_default_cost_from_api_costs(tracker):
     tracker.track("openrouter_opus")
-    assert tracker.data["spent_this_month"] == pytest.approx(
-        API_COSTS["openrouter_opus"]
-    )
+    assert tracker.data["spent_this_month"] == pytest.approx(API_COSTS["openrouter_opus"])
 
 
 def test_track_unknown_api_defaults_to_0_001(tracker):
