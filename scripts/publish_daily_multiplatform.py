@@ -230,10 +230,14 @@ def _verify_live_url(url: str, *, allow_pending: bool = False) -> PlatformResult
         )
 
     if response.status_code >= 400:
-        return PlatformResult("failed", f"Live URL probe returned HTTP {response.status_code}", url=url)
+        return PlatformResult(
+            "failed", f"Live URL probe returned HTTP {response.status_code}", url=url
+        )
 
     resolved = str(response.url) if response.url else url
-    return PlatformResult("success", f"Live URL probe returned HTTP {response.status_code}", url=resolved)
+    return PlatformResult(
+        "success", f"Live URL probe returned HTTP {response.status_code}", url=resolved
+    )
 
 
 def _verify_devto_diagrams(article_url: str) -> PlatformResult:
@@ -244,7 +248,9 @@ def _verify_devto_diagrams(article_url: str) -> PlatformResult:
             headers={"User-Agent": "trading-publication-verifier/1.0"},
         )
     except requests.RequestException as exc:
-        return PlatformResult("failed", f"Dev.to verification failed: {exc.__class__.__name__}", url=article_url)
+        return PlatformResult(
+            "failed", f"Dev.to verification failed: {exc.__class__.__name__}", url=article_url
+        )
 
     if response.status_code >= 400:
         return PlatformResult(
@@ -334,9 +340,7 @@ def _write_beats_page(path: Path, rows: list[dict[str, Any]]) -> None:
             paper_ref = str(refs.get("paper", ""))
             live_ref = str(refs.get("live", ""))
             if paper_ref and live_ref:
-                lines.append(
-                    f"  - diagrams: `{paper_ref}` + `{live_ref}`"
-                )
+                lines.append(f"  - diagrams: `{paper_ref}` + `{live_ref}`")
 
         if isinstance(platforms, dict):
             platform_links = []
@@ -521,8 +525,16 @@ def main() -> int:
             "generated_at_utc": str(result.get("generated_at_utc", "")),
             "platforms": result.get("platforms", {}),
             "paperbanana_refs": {
-                "paper": str(result.get("verification", {}).get("paperbanana_in_report", {}).get("paper_ref", "")),
-                "live": str(result.get("verification", {}).get("paperbanana_in_report", {}).get("live_ref", "")),
+                "paper": str(
+                    result.get("verification", {})
+                    .get("paperbanana_in_report", {})
+                    .get("paper_ref", "")
+                ),
+                "live": str(
+                    result.get("verification", {})
+                    .get("paperbanana_in_report", {})
+                    .get("live_ref", "")
+                ),
             },
         },
     )
