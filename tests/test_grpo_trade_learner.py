@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import pytest
 import numpy as np
-from src.ml.grpo_trade_learner import GRPOTradeLearner, TradeFeatures, TradeParams
+from src.ml.grpo_trade_learner import GRPOTradeLearner, TradeFeatures
 
 TEST_STATE_FILE = "data/test_grpo_state.json"
 
