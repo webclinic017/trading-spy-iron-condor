@@ -1,0 +1,24 @@
+{
+  "name": "trading-triggers",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Trigger.dev tasks for AI Trading System — Iron Condor Guardian, Position Monitor, and Daily Scanner",
+  "type": "module",
+  "scripts": {
+    "dev": "npx trigger.dev@latest dev",
+    "deploy": "npx trigger.dev@latest deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@trigger.dev/sdk": "^4.4.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "@types/node": "^22.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

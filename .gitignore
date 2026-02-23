@@ -72,6 +72,9 @@ api_keys.txt
 .coverage
 htmlcov/
 
+# Node.js (Trigger.dev)
+node_modules/
+
 # Distribution
 dist/
 build/
