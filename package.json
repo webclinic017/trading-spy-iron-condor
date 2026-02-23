@@ -13,6 +13,10 @@
   "dependencies": {
     "@trigger.dev/sdk": "^4.4.1"
   },
+  "overrides": {
+    "systeminformation": "5.31.0",
+    "cookie": "0.7.0"
+  },
   "devDependencies": {
     "typescript": "^5.7.0",
     "vitest": "^3.0.0",
