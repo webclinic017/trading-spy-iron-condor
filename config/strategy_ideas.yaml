@@ -1,0 +1,16 @@
+# Declarative Trading Strategy Idea
+# This is the 'Harness Prompt' for OpenAI Engineering Codex style automation.
+
+strategy:
+  name: "VIXMeanReversion"
+  description: "Trading mean reversion on VIX spikes during London open."
+  universe: ["VIX", "UVXY", "SVXY"]
+  signals:
+    - "VIX > 25 (spike detected)"
+    - "RSI(VIX, 2) > 90 (extreme overbought)"
+  risk_params:
+    stop_loss_pct: 0.05
+    take_profit_pct: 0.15
+    max_position_size: 0.03
+  target_filename: "vix_mean_reversion.py"
+  test_filename: "test_vix_mean_reversion.py"

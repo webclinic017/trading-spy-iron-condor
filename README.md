@@ -20,7 +20,19 @@ Autonomous AI trading system with multi-model routing via [Tetrate Agent Router 
 
 ---
 
+## System Overview
+
+![System Overview](docs/assets/system_overview.png)
+*End-to-end architecture: data ingestion, AI decision engine, autonomous execution, safety compliance, and transparent reporting*
+
+---
+
 ## Architecture
+
+### CI/CD Pipeline (30+ Automated Gates)
+
+![CI/CD Pipeline](docs/assets/ci_cd_pipeline.png)
+*Every code change passes through 30+ automated quality, security, testing, and trading-specific gates*
 
 ### LLM Gateway & TARS Integration
 
@@ -97,6 +109,26 @@ Max risk: $5,000 per position (5% of $100K), max 5 concurrent positions
 ```
 
 **Why iron condors**: Defined risk on both sides, ~85% probability of profit at 15-delta, theta decay works daily, profits in sideways markets. Phil Town Rule #1 (don't lose money) enforced at every level.
+
+### Iron Condor Payoff Profile
+
+![Iron Condor Payoff](docs/assets/iron_condor_payoff.png)
+*Defined risk on both sides: $150 credit collected, $350 max risk, 85% probability profit zone*
+
+### Theta Decay & Exit Rules
+
+![Theta Decay Curve](docs/assets/theta_decay_curve.png)
+*Time decay accelerates exponentially — 50% profit target at 20-25 DTE, mandatory exit at 7 DTE*
+
+### Thompson Sampling Learning
+
+![Thompson Sampling](docs/assets/thompson_sampling.png)
+*Bayesian reliability estimation: uncertainty narrows from 15-95% CI to 68-86% CI as signals accumulate*
+
+### RAG Knowledge Retrieval
+
+![RAG Retrieval Flow](docs/assets/rag_retrieval_flow.png)
+*6-stage retrieval: embed query → semantic search → top-K results → context injection → informed decision*
 
 ---
 
