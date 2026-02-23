@@ -19,7 +19,6 @@ from src.utils.api_circuit_breaker import (
 def fresh_breaker():
     """Reset singleton state before each test so tests are isolated."""
     APICircuitBreaker._instance = None
-    APICircuitBreaker._lock.__class__()  # not strictly needed but documents intent
     with (
         patch.object(APICircuitBreaker, "_load_state"),
         patch.object(APICircuitBreaker, "_save_state"),

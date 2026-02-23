@@ -9,7 +9,7 @@ import os
 import re
 import sys
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -371,7 +371,7 @@ def publish_daily_report(
             "date": report_date or datetime.now(ET).date().isoformat(),
             "report_path": str(report_path),
             "generated_at_et": datetime.now(ET).isoformat(),
-            "generated_at_utc": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
+            "generated_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "error": "report_missing",
             "platforms": {
                 "gh_pages": PlatformResult("failed", "Report file does not exist").as_dict(),
@@ -447,7 +447,7 @@ def publish_daily_report(
         "title": title,
         "canonical_url": canonical,
         "generated_at_et": datetime.now(ET).isoformat(),
-        "generated_at_utc": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
+        "generated_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "platforms": platforms,
         "verification": {
             "paperbanana_in_report": {
