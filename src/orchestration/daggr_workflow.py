@@ -483,6 +483,26 @@ def create_trading_workflow() -> TradingWorkflow:
             "trade_params": options.get("data", {}) if decision == "TRADE" else None,
         }
 
+    async def make_adversarial_audit(**kwargs) -> dict:
+        """Adversarial audit node to catch strategy drift or safety violations."""
+        try:
+            from src.agents.audit_agent import AuditAgent
+            agent = AuditAgent()
+            # Audit today's logs
+            report = agent.perform_audit()
+            return {
+                "status": report.status,
+                "violations": len(report.violations),
+                "summary": report.summary,
+                "passed": report.status != "FAIL"
+            }
+        except Exception as e:
+            return {
+                "status": "ERROR",
+                "error": str(e),
+                "passed": False
+            }
+
     workflow.add_node(
         "options_chain",
         analyze_options_chain,
@@ -495,6 +515,13 @@ def create_trading_workflow() -> TradingWorkflow:
         "execution",
         dependencies=["options_chain", "perplexity_intel"],
         cache_enabled=False,  # Never cache trade decisions
+    )
+    workflow.add_node(
+        "adversarial_audit",
+        make_adversarial_audit,
+        "gate_keeper", # Treat as a gate for the next cycle
+        dependencies=["trade_decision"],
+        cache_enabled=False
     )
 
     return workflow

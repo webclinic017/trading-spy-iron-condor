@@ -2,7 +2,11 @@
 
 Project instructions live in `.claude/CLAUDE.md`. Rules auto-load from `.claude/rules/`.
 
-See @.claude/CLAUDE.md
+## Dual-Track Strategy (Aligned Feb 23, 2026)
+
+- **The Lab ($100K Paper)**: Formulation and GRPO self-training.
+- **The Field ($200 Live)**: Opportunistic real-money shadow execution.
+- **North Star**: $6,000/month after-tax passive income.
 
 ## Session Directive: PR Management & System Hygiene
 

@@ -60,6 +60,7 @@ class TradeFeatures:
 
     vix_level: float  # Current VIX
     vix_percentile: float  # VIX percentile (0-1)
+    vix_term_structure: float  # VIX/VXV ratio (>1.0 = Backwardation/Danger)
     spy_20d_return: float  # 20-day momentum
     spy_5d_return: float  # 5-day momentum
     hour_of_day: float  # Normalized 0-1 (9:30=0, 16:00=1)
@@ -75,6 +76,7 @@ class TradeFeatures:
             [
                 self.vix_level / 50.0,  # Normalize VIX
                 self.vix_percentile,
+                self.vix_term_structure,
                 self.spy_20d_return * 10,  # Scale returns
                 self.spy_5d_return * 10,
                 self.hour_of_day,
@@ -91,6 +93,7 @@ class TradeFeatures:
             [
                 self.vix_level / 50.0,
                 self.vix_percentile,
+                self.vix_term_structure,
                 self.spy_20d_return * 10,
                 self.spy_5d_return * 10,
                 self.hour_of_day,
@@ -160,12 +163,12 @@ if TORCH_AVAILABLE:
         Policy network that outputs trade parameters.
 
         Architecture:
-        - Input: 8 market features
+        - Input: 9 market features (vix, percentile, term_structure, returns, etc.)
         - Hidden: 2 layers with ReLU
         - Output: 4 parameters (delta, dte, entry_hour, exit_pct)
         """
 
-        def __init__(self, input_dim: int = 8, hidden_dim: int = 32):
+        def __init__(self, input_dim: int = 9, hidden_dim: int = 32):
             super().__init__()
             self.network = nn.Sequential(
                 nn.Linear(input_dim, hidden_dim),
@@ -402,8 +405,12 @@ class GRPOTradeLearner:
 
     def _estimate_features_from_trade(self, trade: dict, date_key: str) -> TradeFeatures:
         """Estimate market features at time of trade."""
-        # Default features - in production these would come from historical data
+        # Default features
         filled_at = trade.get("filled_at", "")
+        
+        # Check for embedded indicators (new regime-aware format)
+        indicators = trade.get("indicators", {})
+        vix_level = float(indicators.get("vix", 18.0))
 
         # Extract hour from timestamp
         hour = 0.5  # Default to mid-day
@@ -443,6 +450,7 @@ class GRPOTradeLearner:
         return TradeFeatures(
             vix_level=18.0,  # Default - would query historical VIX
             vix_percentile=0.5,
+            vix_term_structure=0.9,  # Default Contango
             spy_20d_return=0.0,
             spy_5d_return=0.0,
             hour_of_day=hour,
@@ -503,30 +511,33 @@ class GRPOTradeLearner:
 
     def calculate_rewards(self) -> np.ndarray:
         """
-        Calculate normalized rewards from trade P/L.
+        Calculate normalized rewards from trade P/L with Phil Town Rule #1 Penalty.
 
-        GRPO uses group-relative rewards:
-            reward = (pnl - mean(group_pnl)) / std(group_pnl)
-
-        This makes the reward scale-invariant and centers it around zero.
+        GRPO uses group-relative rewards. We enhance this by:
+        1. Multiplied penalty for losses (Rule #1: Don't Lose Money).
+        2. Normalized advantage.
         """
         if not self.trade_history:
             return np.array([])
 
-        # Get raw P/L values
-        pnls = np.array([t.pnl for t in self.trade_history])
+        # Get raw P/L values and apply Rule #1 Weighting
+        # Losses are 2x more 'impactful' than wins
+        raw_pnls = np.array([t.pnl for t in self.trade_history])
+        weighted_pnls = np.array(
+            [p * 2.0 if p < 0 else p for p in raw_pnls]
+        )
 
-        if len(pnls) < 2:
-            return pnls
+        if len(weighted_pnls) < 2:
+            return weighted_pnls
 
         # Group-relative normalization
-        mean_pnl = np.mean(pnls)
-        std_pnl = np.std(pnls)
+        mean_pnl = np.mean(weighted_pnls)
+        std_pnl = np.std(weighted_pnls)
 
         if std_pnl > 0:
-            rewards = (pnls - mean_pnl) / std_pnl
+            rewards = (weighted_pnls - mean_pnl) / std_pnl
         else:
-            rewards = pnls - mean_pnl
+            rewards = weighted_pnls - mean_pnl
 
         # Clip extreme values
         rewards = np.clip(rewards, -3.0, 3.0)
@@ -691,6 +702,7 @@ class GRPOTradeLearner:
                 return TradeFeatures(
                     vix_level=market.get("vix", 18.0),
                     vix_percentile=0.5,
+                    vix_term_structure=0.9,
                     spy_20d_return=market.get("spy_20d_return", 0.0),
                     spy_5d_return=market.get("spy_5d_return", 0.0),
                     hour_of_day=hour,
@@ -704,6 +716,7 @@ class GRPOTradeLearner:
         return TradeFeatures(
             vix_level=18.0,
             vix_percentile=0.5,
+            vix_term_structure=0.9,
             spy_20d_return=0.0,
             spy_5d_return=0.0,
             hour_of_day=hour,

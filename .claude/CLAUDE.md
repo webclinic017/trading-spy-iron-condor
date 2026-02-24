@@ -4,30 +4,37 @@ CTO: Claude | CEO: Igor Ganapolsky
 
 ## North Star
 
-$6,000/month after-tax = FINANCIAL INDEPENDENCE by Nov 14, 2029. Grow $100K -> $600K via iron condors on SPY.
-Account: PA3C5AG0CECQ ($100K paper). Credentials: `get_alpaca_credentials()` from `src/utils/alpaca_client.py`.
+$6,000/month after-tax = FINANCIAL INDEPENDENCE by Nov 14, 2029.
+Required: ~$350K capital @ 2.5% monthly return.
 
-## Strategy
+## Dual-Track Mandate
 
-Primary strategy: SPY iron condor credit spreads (paper first), gated by safety checks and lessons learned.
+The system operates on two parallel accounts simultaneously:
 
-- Position limit: 5 concurrent iron condors across different expiry cycles.
-- $10-wide wings for more premium collection ($150-250 per IC).
-- Tickers: SPY only (unless explicitly expanded in rules/lessons).
+1. **The Lab (Paper Account `PA3C5AG0CECQ`)**: 
+   - **Capital**: ~$100,000. 
+   - **Purpose**: Strategy formulation, GRPO self-training, and full-scale validation.
+   - **Strategy**: 5 concurrent SPY Iron Condors.
 
-## Stack
+2. **The Field (Live Account `979807421`)**:
+   - **Capital**: ~$200 (Accumulation phase).
+   - **Purpose**: Opportunistic execution. Shadows the Lab's signals.
+   - **Execution**: Fractional ETF (SPY/VOO) buys to match Lab's directional bias.
 
-Python 3.11 + Alpaca API + GitHub Actions. Broker: Alpaca Paper (NO PDT restrictions).
+## AI-Native Strategy (GRPO)
+
+- **Optimized Parameters**: Dynamic Delta/DTE set by `src/ml/grpo_trade_learner.py`.
+- **Current Optimal**: Delta 0.245 | DTE 24 | Exit 29% (Update daily via `run_grpo_training.py`).
+- **Algorithm**: RLM Algorithm 1 (Plan -> Generate -> Execute -> Finalize).
 
 ## Commands
 
 ```bash
-pytest tests/ -q --tb=no                    # run tests
-ruff check src/                              # lint
-python scripts/validate_env_keys.py          # validate API keys
-python scripts/system_health_check.py        # health check
-python scripts/rlhf_metrics.py               # RLHF metrics
-.claude/scripts/pre-work-check.sh            # pre-work validation
+pytest tests/ -q                            # run tests
+python scripts/run_grpo_training.py          # train/optimize ML brain
+python src/orchestration/daggr_workflow.py   # run full trading session
+python scripts/check_north_star_probability.py # trajectory audit
+python scripts/sync_dual_accounts.py         # sync Lab and Field
 ```
 
 ## Pre-Merge Checklist

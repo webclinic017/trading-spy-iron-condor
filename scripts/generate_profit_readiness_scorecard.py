@@ -259,6 +259,68 @@ def expectancy_metrics_fallback_from_system_state(
     }
 
 
+def expectancy_metrics_from_system_state_history(
+    system_state: dict,
+) -> dict[str, float | int | str | None]:
+    """Calculate expectancy from raw trade history in system_state."""
+    history = system_state.get("trade_history", [])
+    if not history or not isinstance(history, list):
+        return {
+            "sample_size": 0,
+            "wins": 0,
+            "losses": 0,
+            "avg_winner": None,
+            "avg_loser": None,
+            "profit_factor": None,
+            "source": "system_state.trade_history (empty)",
+        }
+
+    # Group by date to aggregate IC legs
+    days: dict[str, float] = {}
+    for trade in history:
+        pnl = _as_float(trade.get("pnl") or trade.get("realized_pnl"))
+        if pnl is None:
+            continue
+        date = str(trade.get("filled_at") or trade.get("timestamp") or "")[:10]
+        if not date:
+            continue
+        days[date] = days.get(date, 0.0) + pnl
+
+    win_pnls = [v for v in days.values() if v > 0]
+    loss_pnls = [abs(v) for v in days.values() if v < 0]
+
+    wins = len(win_pnls)
+    losses = len(loss_pnls)
+    sample = wins + losses
+
+    if sample == 0:
+        return {
+            "sample_size": 0,
+            "wins": 0,
+            "losses": 0,
+            "avg_winner": None,
+            "avg_loser": None,
+            "profit_factor": None,
+            "source": "system_state.trade_history (no_pnl)",
+        }
+
+    gross_win = sum(win_pnls)
+    gross_loss = sum(loss_pnls)
+    avg_winner = (gross_win / wins) if wins > 0 else None
+    avg_loser = (gross_loss / losses) if losses > 0 else None
+    profit_factor = (gross_win / gross_loss) if gross_loss > 0 else (float("inf") if gross_win > 0 else None)
+
+    return {
+        "sample_size": sample,
+        "wins": wins,
+        "losses": losses,
+        "avg_winner": avg_winner,
+        "avg_loser": avg_loser,
+        "profit_factor": profit_factor,
+        "source": "system_state.trade_history",
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate profit readiness scorecard.")
     parser.add_argument("--repo-root", default=".", help="Repository root")
@@ -385,7 +447,10 @@ def main() -> int:
         ),
     ]
 
-    expectancy = expectancy_metrics_from_trades_json(repo_root)
+    # Try sources in order of specificity
+    expectancy = expectancy_metrics_from_system_state_history(system_state)
+    if int(expectancy.get("sample_size", 0) or 0) == 0:
+        expectancy = expectancy_metrics_from_trades_json(repo_root)
     if int(expectancy.get("sample_size", 0) or 0) == 0:
         expectancy = expectancy_metrics_fallback_from_system_state(system_state)
 
