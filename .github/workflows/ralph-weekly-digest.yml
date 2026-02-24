@@ -130,7 +130,7 @@ jobs:
 
       - name: Publish to Dev.to
         if: steps.generate.outputs.has_activity == 'true' && env.DEVTO_API_KEY != ''
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: external API publish failure shouldn't block digest workflow
         run: |
           python3 -c "
           import requests, os

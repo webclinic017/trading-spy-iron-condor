@@ -74,7 +74,7 @@ class TestCircuitBreakerStateTransitions:
 
     def test_open_to_half_open_after_recovery_timeout(self):
         """Circuit transitions from OPEN to HALF_OPEN after recovery_timeout."""
-        breaker = CircuitBreaker(name="test", failure_threshold=1, recovery_timeout=0.1)
+        breaker = CircuitBreaker(name="test", failure_threshold=1, recovery_timeout=60.0)
 
         @breaker
         def failing_func():
@@ -86,16 +86,16 @@ class TestCircuitBreakerStateTransitions:
 
         assert breaker.state == CircuitState.OPEN
 
-        # Wait for recovery timeout
-        time.sleep(0.15)
-
-        # Accessing state should trigger transition
-        assert breaker.state == CircuitState.HALF_OPEN
+        # Mock time.time() to simulate recovery_timeout passing instantly
+        with patch("src.resilience.circuit_breaker.time") as mock_time:
+            mock_time.time.return_value = time.time() + 61.0
+            # Accessing state should trigger transition
+            assert breaker.state == CircuitState.HALF_OPEN
 
     def test_half_open_to_closed_on_success_threshold(self):
         """Circuit closes from HALF_OPEN after success_threshold successes."""
         breaker = CircuitBreaker(
-            name="test", failure_threshold=1, recovery_timeout=0.1, success_threshold=2
+            name="test", failure_threshold=1, recovery_timeout=60.0, success_threshold=2
         )
 
         call_count = 0
@@ -114,9 +114,10 @@ class TestCircuitBreakerStateTransitions:
 
         assert breaker.state == CircuitState.OPEN
 
-        # Wait for recovery
-        time.sleep(0.15)
-        assert breaker.state == CircuitState.HALF_OPEN
+        # Mock time.time() to simulate recovery_timeout passing instantly
+        with patch("src.resilience.circuit_breaker.time") as mock_time:
+            mock_time.time.return_value = time.time() + 61.0
+            assert breaker.state == CircuitState.HALF_OPEN
 
         # Successful calls to meet threshold
         sometimes_fails()  # success 1
@@ -127,7 +128,7 @@ class TestCircuitBreakerStateTransitions:
 
     def test_half_open_to_open_on_failure(self):
         """Circuit reopens from HALF_OPEN on any failure."""
-        breaker = CircuitBreaker(name="test", failure_threshold=1, recovery_timeout=0.1)
+        breaker = CircuitBreaker(name="test", failure_threshold=1, recovery_timeout=60.0)
 
         call_count = 0
 
@@ -141,9 +142,10 @@ class TestCircuitBreakerStateTransitions:
         with pytest.raises(ValueError):
             always_fails()
 
-        # Wait and enter half-open
-        time.sleep(0.15)
-        assert breaker.state == CircuitState.HALF_OPEN
+        # Mock time.time() to simulate recovery_timeout passing instantly
+        with patch("src.resilience.circuit_breaker.time") as mock_time:
+            mock_time.time.return_value = time.time() + 61.0
+            assert breaker.state == CircuitState.HALF_OPEN
 
         # Failure in half-open should reopen
         with pytest.raises(ValueError):
@@ -254,7 +256,7 @@ class TestCircuitBreakerMethods:
 
     def test_allow_request(self):
         """allow_request returns True when CLOSED or HALF_OPEN."""
-        breaker = CircuitBreaker(name="test", failure_threshold=1, recovery_timeout=0.1)
+        breaker = CircuitBreaker(name="test", failure_threshold=1, recovery_timeout=60.0)
 
         assert breaker.allow_request() is True
 
@@ -265,9 +267,10 @@ class TestCircuitBreakerMethods:
 
         assert breaker.allow_request() is False
 
-        # Wait for half-open
-        time.sleep(0.15)
-        assert breaker.allow_request() is True
+        # Mock time.time() to simulate recovery_timeout passing instantly
+        with patch("src.resilience.circuit_breaker.time") as mock_time:
+            mock_time.time.return_value = time.time() + 61.0
+            assert breaker.allow_request() is True
 
 
 class TestCircuitBreakerThreadSafety:

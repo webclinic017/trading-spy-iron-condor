@@ -9,6 +9,9 @@ WORKDIR /app
 # - gcc, g++: Required for compiling C extensions
 # - curl: For health checks
 # - chromium and chromedriver: For Selenium web scraping
+# NOTE: Chromium packages add ~500MB. If image size is a concern,
+# consider moving chromium/chromedriver into a separate build stage
+# used only by services that need Selenium.
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
@@ -69,9 +72,9 @@ EXPOSE 8501
 # Health check to ensure the application is running
 # Checks if main process is alive
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD pgrep -f "python.*main.py" || exit 1
+    CMD pgrep -f "python.*orchestrator/main.py" || exit 1
 
 # Default entrypoint - run the trading bot
 # Can be overridden in docker-compose for different services
 ENTRYPOINT ["python", "-u"]
-CMD ["src/main.py"]
+CMD ["src/orchestrator/main.py"]

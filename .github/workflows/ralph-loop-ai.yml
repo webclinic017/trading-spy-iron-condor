@@ -224,7 +224,7 @@ jobs:
           pip install -q -r requirements.txt || true
 
       - name: Query RAG for lessons
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: RAG context is advisory, AI loop works without it
         run: |
           echo "=== Querying local LanceDB RAG for recent lessons ==="
           python3 - << 'PY'

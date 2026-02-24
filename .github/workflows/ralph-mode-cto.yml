@@ -109,7 +109,7 @@ jobs:
 
       - name: Run pytest
         id: tests
-        continue-on-error: true
+        continue-on-error: true  # Intentional: captures pass/fail in outputs, downstream step creates report
         run: |
           pytest tests/ -q --tb=no 2>&1 | tee test_output.txt
           if grep -q "passed" test_output.txt; then
@@ -122,7 +122,7 @@ jobs:
 
       - name: Run ruff lint
         id: lint
-        continue-on-error: true
+        continue-on-error: true  # Intentional: captures pass/fail in outputs, downstream step creates report
         run: |
           if ruff check src/ scripts/ 2>&1; then
             echo "passed=true" >> $GITHUB_OUTPUT

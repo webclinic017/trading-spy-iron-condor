@@ -1077,7 +1077,6 @@ jobs:
       - name: Manage Iron Condor Positions (Exit Rules)
         id: manage_ic_positions
         if: steps.execute_trading.conclusion == 'success'
-        continue-on-error: true
         timeout-minutes: 5
         env:
           ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
@@ -1331,7 +1330,7 @@ jobs:
 
       - name: Update performance log
         if: steps.execute_trading.conclusion == 'success'
-        continue-on-error: true # Non-fatal - trading succeeded
+        continue-on-error: true  # Non-critical: performance log is reporting only, trading already succeeded
         env:
           ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
           ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
@@ -1343,7 +1342,7 @@ jobs:
       - name: Verify Positions (Alpaca vs Local)
         id: verify_positions
         if: steps.execute_trading.conclusion == 'success'
-        continue-on-error: true # Non-fatal - trading succeeded, sync issues shouldn't fail workflow
+        continue-on-error: true  # Non-critical: informational check only, Alpaca is source of truth
         env:
           ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
           ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
@@ -1357,7 +1356,7 @@ jobs:
       - name: Verify Orders (Trust But Verify)
         id: verify_orders
         if: steps.execute_trading.conclusion == 'success'
-        continue-on-error: true # Non-fatal - Alpaca is source of truth
+        continue-on-error: true  # Non-critical: informational check only, Alpaca is source of truth
         env:
           ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
           ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
@@ -1389,7 +1388,6 @@ jobs:
       - name: P/L Sanity Check
         id: sanity_check
         if: always()
-        continue-on-error: true # FIX Jan 5 2026: Don't fail workflow - just warn
         env:
           ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
           ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
@@ -1483,7 +1481,6 @@ jobs:
       # system_state.json and trades_{date}.json get published with stale today_trades=0.
       - name: Sync Trades from Alpaca (Pre-Dashboard)
         if: always()
-        continue-on-error: true
         env:
           ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
           ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
@@ -1501,7 +1498,7 @@ jobs:
       - name: Daily Verification Report
         # Must run BEFORE commit/API sync so verification_reports.json is published to main.
         if: always()
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: report generation failure shouldn't block data commits
         env:
           ALPACA_API_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_KEY || secrets.ALPACA_PAPER_TRADING_API_KEY }}
           ALPACA_SECRET_KEY: ${{ github.event.inputs.trading_mode == 'live' && secrets.ALPACA_BROKERAGE_TRADING_API_SECRET || secrets.ALPACA_PAPER_TRADING_API_SECRET }}
@@ -1511,7 +1508,7 @@ jobs:
 
       - name: Commit trading data updates
         if: always()
-        continue-on-error: true # Non-fatal - trading already succeeded
+        continue-on-error: true  # Non-critical: git commit/push can fail due to conflicts, trading already succeeded
         run: |
           echo "💾 Committing trading data updates..."
 
@@ -1574,7 +1571,7 @@ jobs:
         # This is an atomic operation that bypasses git conflicts entirely
         # Added Jan 6, 2026 after repeated push failures during concurrent merges
         if: always()
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: fallback sync, primary git push already attempted
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT || github.token }}
           GH_TOKEN: ${{ secrets.GH_PAT || github.token }}
@@ -1638,7 +1635,7 @@ jobs:
 
       - name: Monitor TLT Momentum Gate
         if: steps.check_execution.outputs.skip != 'true'
-        continue-on-error: true # Don't fail workflow if monitoring fails
+        continue-on-error: true  # Non-critical: TLT monitoring is advisory, not a trade gate
         timeout-minutes: 3
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -1650,7 +1647,7 @@ jobs:
       - name: Update GitHub Pages Data
         # PREVENTION: Auto-update docs/index.md with current portfolio data
         # Added Jan 3, 2026 after discovering stale data on GitHub Pages
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: cosmetic dashboard update shouldn't block trading
         timeout-minutes: 2
         run: |
           echo "📊 Updating GitHub Pages with current portfolio data..."
@@ -1671,7 +1668,7 @@ jobs:
         # FIXED Dec 29, 2025: Always update dashboard, even when trading skipped
         # FIXED Jan 5, 2026: Added if: always() so dashboard updates even when trading fails
         if: always() # Run even when previous steps fail
-        continue-on-error: true # Don't fail workflow if wiki update fails
+        continue-on-error: true  # Non-critical: wiki/dashboard update shouldn't block trading workflow
         timeout-minutes: 5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -1781,7 +1778,6 @@ jobs:
 
       - name: Run health check
         if: always()
-        continue-on-error: true # Non-blocking check
         run: |
           echo "🏥 Running post-execution health check..."
           python3 scripts/health_monitor.py || echo "⚠️  Health check detected issues (see health-alert workflow)"
@@ -1815,7 +1811,6 @@ jobs:
         # CRITICAL: Added Jan 5, 2026 after 13-day silent outage
         # Detects when workflow "succeeds" but executes ZERO trades
         if: always()
-        continue-on-error: true # Don't fail workflow, but warn loudly
         run: |
           echo "🔍 ========================================"
           echo "🔍 TRADE ACTIVITY MONITOR"
@@ -1835,7 +1830,7 @@ jobs:
 
       - name: Upload execution logs
         if: always()
-        continue-on-error: true # Don't fail workflow if log upload fails
+        continue-on-error: true  # Non-critical: artifact upload failure shouldn't mask trading results
         uses: actions/upload-artifact@v4
         with:
           name: trading-logs-${{ github.run_id }}
@@ -1851,7 +1846,7 @@ jobs:
 
       - name: Upload logs on failure (early)
         if: failure() || cancelled()
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: artifact upload failure shouldn't mask the actual failure
         uses: actions/upload-artifact@v4
         with:
           name: failure-logs-${{ github.run_id }}
@@ -1866,7 +1861,7 @@ jobs:
       # ========================================================================
       - name: Notify CEO on failure
         if: failure()
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: notification failure shouldn't change workflow status
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}

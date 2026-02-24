@@ -39,7 +39,7 @@ jobs:
 
       - name: Check for lint issues
         id: check
-        continue-on-error: true
+        continue-on-error: true  # Intentional: captures exit code in outputs, downstream step acts on has_issues
         run: |
           if ruff check src/ scripts/ 2>&1; then
             echo "has_issues=false" >> $GITHUB_OUTPUT
@@ -95,7 +95,7 @@ jobs:
 
       - name: Run tests
         id: test
-        continue-on-error: true
+        continue-on-error: true  # Intentional: captures exit code in outputs, downstream step reports failures
         run: |
           set +e
           pytest tests/ -q --tb=short 2>&1 | tee test_output.txt

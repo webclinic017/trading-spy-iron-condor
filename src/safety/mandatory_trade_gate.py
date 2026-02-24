@@ -121,7 +121,8 @@ def _today_et_str() -> str:
         from zoneinfo import ZoneInfo
 
         return datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d")
-    except Exception:
+    except Exception as exc:
+        logger.debug("ZoneInfo unavailable, falling back to UTC: %s", exc)
         return datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
 
@@ -135,7 +136,8 @@ def _count_structures_today_from_trade_file(date_str: str) -> int:
         return 0
     try:
         payload = json.loads(trades_path.read_text(encoding="utf-8"))
-    except Exception:
+    except Exception as exc:
+        logger.warning("Failed to read trade file %s: %s", trades_path, exc)
         return 0
     if not isinstance(payload, list):
         return 0
@@ -167,13 +169,15 @@ def _load_intraday_metrics(context: dict[str, Any] | None = None) -> dict[str, f
         def _as_float(v: Any, default: float = 0.0) -> float:
             try:
                 return float(v)
-            except Exception:
+            except Exception as exc:
+                logger.debug("_as_float conversion failed for %r: %s", v, exc)
                 return default
 
         def _as_int(v: Any, default: int = 0) -> int:
             try:
                 return int(v)
-            except Exception:
+            except Exception as exc:
+                logger.debug("_as_int conversion failed for %r: %s", v, exc)
                 return default
 
         date_str = str(raw.get("date") or today)
@@ -203,7 +207,8 @@ def _load_intraday_metrics(context: dict[str, Any] | None = None) -> dict[str, f
     if _SYSTEM_STATE_PATH.exists():
         try:
             state = json.loads(_SYSTEM_STATE_PATH.read_text(encoding="utf-8"))
-        except Exception:
+        except Exception as exc:
+            logger.warning("Failed to parse system_state.json: %s", exc)
             state = {}
         if isinstance(state, dict):
             trades = state.get("trades", {}) if isinstance(state.get("trades"), dict) else {}
@@ -215,21 +220,25 @@ def _load_intraday_metrics(context: dict[str, Any] | None = None) -> dict[str, f
             if str(trades.get("metrics_date") or "").strip() == today:
                 try:
                     daily_pnl = float(paper.get("daily_change", 0.0) or 0.0)
-                except Exception:
+                except Exception as exc:
+                    logger.debug("Failed to parse daily_pnl: %s", exc)
                     daily_pnl = None
                 try:
                     fills_today = int(trades.get("fills_today", trades.get("today_trades", 0)) or 0)
-                except Exception:
+                except Exception as exc:
+                    logger.debug("Failed to parse fills_today: %s", exc)
                     fills_today = 0
                 try:
                     orders_today = int(trades.get("orders_today", 0) or 0)
-                except Exception:
+                except Exception as exc:
+                    logger.debug("Failed to parse orders_today: %s", exc)
                     orders_today = 0
                 try:
                     structures_today = int(
                         trades.get("structures_today", structures_today) or structures_today
                     )
-                except Exception:
+                except Exception as exc:
+                    logger.debug("Failed to parse structures_today: %s", exc)
                     structures_today = structures_today
 
     return {
@@ -831,7 +840,8 @@ def _parse_occ_expiry(symbol: str) -> date | None:
         month = int(yymmdd[2:4])
         day = int(yymmdd[4:6])
         return date(year, month, day)
-    except Exception:
+    except Exception as exc:
+        logger.debug("Failed to parse OCC expiry from %r: %s", symbol, exc)
         return None
 
 
@@ -862,9 +872,11 @@ def _get_account_equity_from_client(client: Any) -> float | None:
                 continue
             try:
                 return float(val)
-            except Exception:
+            except Exception as exc:
+                logger.debug("Failed to convert account.%s=%r to float: %s", attr, val, exc)
                 continue
-    except Exception:
+    except Exception as exc:
+        logger.warning("Failed to read account equity from client: %s", exc)
         return None
     return None
 
@@ -876,7 +888,8 @@ def _get_positions_qty_map(client: Any) -> dict[str, float] | None:
         return None
     try:
         positions = getter()
-    except Exception:
+    except Exception as exc:
+        logger.warning("Failed to get positions from client: %s", exc)
         return None
     qty_map: dict[str, float] = {}
     try:
@@ -891,9 +904,11 @@ def _get_positions_qty_map(client: Any) -> dict[str, float] | None:
                 continue
             try:
                 qty_map[str(sym)] = float(raw_qty or 0.0)
-            except Exception:
+            except Exception as exc:
+                logger.debug("Failed to convert qty for %s: %s", sym, exc)
                 qty_map[str(sym)] = 0.0
-    except Exception:
+    except Exception as exc:
+        logger.warning("Failed to iterate positions for qty map: %s", exc)
         return None
     return qty_map
 
@@ -913,7 +928,8 @@ def _infer_is_closing_order(client: Any, order_request: Any) -> bool | None:
     order_qty = getattr(order_request, "qty", None)
     try:
         order_qty_val = int(float(order_qty)) if order_qty is not None else 1
-    except Exception:
+    except Exception as exc:
+        logger.debug("Failed to parse order qty %r: %s", order_qty, exc)
         order_qty_val = 1
 
     legs = getattr(order_request, "legs", None)
@@ -926,7 +942,8 @@ def _infer_is_closing_order(client: Any, order_request: Any) -> bool | None:
             ratio_qty = getattr(leg, "ratio_qty", None)
             try:
                 leg_qty = int(float(ratio_qty or 1)) * order_qty_val
-            except Exception:
+            except Exception as exc:
+                logger.debug("Failed to parse leg ratio_qty %r: %s", ratio_qty, exc)
                 leg_qty = 1 * order_qty_val
 
             existing = float(qty_map.get(leg_symbol, 0.0))
@@ -959,7 +976,8 @@ def _infer_is_closing_order(client: Any, order_request: Any) -> bool | None:
 
     try:
         qty_val = int(float(getattr(order_request, "qty", 1) or 1))
-    except Exception:
+    except Exception as exc:
+        logger.debug("Failed to parse order qty for closing inference: %s", exc)
         qty_val = 1
 
     if _side_is_buy(side):
@@ -1041,7 +1059,8 @@ def _estimate_opening_max_loss(order_request: Any) -> tuple[float | None, int | 
     contracts = getattr(order_request, "qty", None)
     try:
         contracts_val = int(float(contracts)) if contracts is not None else 1
-    except Exception:
+    except Exception as exc:
+        logger.debug("Failed to parse contracts qty %r: %s", contracts, exc)
         contracts_val = 1
     max_loss = float(width) * 100.0 * float(max(1, contracts_val))
     return max_loss, dte, underlying
@@ -1105,8 +1124,8 @@ def safe_submit_order(client, order_request):
                         account_context["positions"] = [
                             {"symbol": sym, "qty": qty} for sym, qty in qty_map.items()
                         ]
-                except Exception:
-                    pass
+                except Exception as exc:
+                    logger.warning("Failed to load positions for gate context: %s", exc)
 
                 # Inject North Star guard context for dynamic risk sizing/blocking.
                 try:
@@ -1115,8 +1134,8 @@ def safe_submit_order(client, order_request):
                     guard_context = get_guard_context()
                     if guard_context:
                         account_context["north_star_guard"] = guard_context
-                except Exception:
-                    pass
+                except Exception as exc:
+                    logger.warning("Failed to load North Star guard context: %s", exc)
 
                 # Inject milestone controller context for family-level auto-pause enforcement.
                 try:
@@ -1125,8 +1144,8 @@ def safe_submit_order(client, order_request):
                     milestone_context = get_milestone_context(strategy="order_request")
                     if milestone_context:
                         account_context["milestone_controller"] = milestone_context
-                except Exception:
-                    pass
+                except Exception as exc:
+                    logger.warning("Failed to load milestone controller context: %s", exc)
 
                 gate = validate_trade_mandatory(
                     symbol=str(getattr(order_request, "symbol", "") or ""),
@@ -1183,7 +1202,7 @@ def safe_submit_order(client, order_request):
     except Exception as exc:
         # Never block order submission due to enforcement instrumentation failure.
         # Ticker whitelist still applies above.
-        logger.debug("Pre-trade checklist enforcement skipped: %s", exc)
+        logger.warning("Pre-trade checklist enforcement skipped due to error: %s", exc)
 
     return client.submit_order(order_request)
 

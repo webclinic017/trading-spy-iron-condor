@@ -209,14 +209,14 @@ jobs:
             coverage.xml
             artifacts/test-reports/coverage.txt
         if: always()
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: artifact upload failure shouldn't fail CI
       - name: Upload test diagnostics
         uses: actions/upload-artifact@v4
         with:
           name: test-diagnostics
           path: artifacts/test-reports/
         if: always()
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: artifact upload failure shouldn't fail CI
       - name: Dead code guard (max 50 unreferenced scripts)
         run: |
           count=0
@@ -647,7 +647,7 @@ jobs:
 
       - name: Fail on dead code (strict mode for PRs)
         if: github.event_name == 'pull_request'
-        continue-on-error: true  # Advisory: 21 pre-existing dead files need cleanup
+        continue-on-error: true  # Non-critical: advisory only, 21 pre-existing dead files need gradual cleanup
         run: |
           echo "Running strict dead code check for PR..."
           python3 scripts/detect_dead_code.py --src src --strict || {

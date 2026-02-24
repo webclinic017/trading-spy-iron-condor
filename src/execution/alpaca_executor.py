@@ -535,7 +535,7 @@ class AlpacaExecutor:
             logger.critical(f"🚨 CIRCUIT BREAKER OPEN - Order blocked: {cb_err}")
             raise
         except ImportError:
-            pass  # Circuit breaker not available, proceed
+            logger.debug("Circuit breaker module not available, proceeding without it")
 
         try:
             order_result = self.broker.submit_order(

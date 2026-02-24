@@ -63,7 +63,6 @@ jobs:
           python3 scripts/update_north_star_operating_plan.py || echo "⚠️ North Star operating plan update failed"
 
       - name: Manage Iron Condor Exits (Intraday)
-        continue-on-error: true
         env:
           ALPACA_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
           ALPACA_SECRET_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}
@@ -101,7 +100,7 @@ jobs:
 
       - name: Notify on Failure
         if: failure()
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: notification failure shouldn't change workflow status
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}

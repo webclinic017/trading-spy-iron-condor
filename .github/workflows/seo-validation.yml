@@ -42,12 +42,11 @@ jobs:
         run: |
           python scripts/seo_health_check.py
           echo "score=$(jq -r .score data/seo_health.json)" >> $GITHUB_OUTPUT
-        continue-on-error: true
 
       - name: Comment PR with SEO score
         if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
         uses: actions/github-script@v7
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: PR comment failure shouldn't fail SEO validation
         with:
           script: |
             const fs = require('fs');

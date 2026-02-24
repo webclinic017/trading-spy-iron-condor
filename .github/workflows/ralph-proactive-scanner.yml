@@ -50,7 +50,7 @@ jobs:
 
       - name: Run Bandit security scan
         id: scan
-        continue-on-error: true
+        continue-on-error: true  # Intentional: captures scan results in outputs, downstream steps create issues
         run: |
           echo "## Security Scan Results" >> $GITHUB_STEP_SUMMARY
 
@@ -95,7 +95,7 @@ jobs:
 
       - name: Run dead code scan
         id: scan
-        continue-on-error: true
+        continue-on-error: true  # Intentional: captures scan results in outputs, downstream steps create issues
         run: |
           echo "## Dead Code Scan" >> $GITHUB_STEP_SUMMARY
 

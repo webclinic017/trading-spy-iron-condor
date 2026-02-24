@@ -70,14 +70,14 @@ jobs:
           pip install alpaca-py python-dotenv requests pyyaml tweepy
 
       - name: Update performance log (best effort)
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: blog support step, perf log failure shouldn't block blog post
         env:
           PYTHONPATH: ${{ github.workspace }}
         run: |
           python3 scripts/update_performance_log.py
 
       - name: Sync RAG lessons to blog (best effort)
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: RAG sync failure shouldn't block blog post generation
         env:
           PYTHONPATH: ${{ github.workspace }}
         run: |

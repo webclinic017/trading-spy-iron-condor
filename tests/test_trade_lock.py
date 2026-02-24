@@ -81,7 +81,8 @@ class TestTradeLock:
             # Start first worker - holds lock for 2 seconds
             t1 = threading.Thread(target=worker, args=(1, 2.0, 5))
             t1.start()
-            time.sleep(0.2)  # Let t1 acquire lock
+            # Increased margin to reduce CI flakiness
+            time.sleep(0.5)  # Let t1 acquire lock
 
             # Start second worker - should timeout after 0.5s (before t1 releases)
             t2 = threading.Thread(target=worker, args=(2, 0.5, 0.5))

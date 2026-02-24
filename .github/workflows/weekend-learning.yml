@@ -162,7 +162,7 @@ jobs:
 
       - name: "Phase 1c: Learn from Bogleheads Forum (CEO Directive)"
         # CEO Directive (Jan 7, 2026): Learn from top traders, Bogleheads, blogs
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: external forum scraping may hit rate limits
         run: |
           echo "📥 Learning from Bogleheads.org forum..."
           echo "Extracting investing wisdom from experienced value investors..."
@@ -174,7 +174,7 @@ jobs:
       - name: "Phase 1d: Analyze YouTube transcripts for trading insights"
         # FIX (Jan 9, 2026): Transcripts were being fetched but NOT analyzed
         # This extracts actionable trading insights from Phil Town/options videos
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: external transcript analysis, may fail on missing files
         run: |
           echo "🔍 Analyzing YouTube transcripts for trading insights..."
           for transcript in rag_knowledge/youtube/transcripts/*.md; do
@@ -294,7 +294,7 @@ jobs:
 
       # === PHASE 3c: EVALUATION ===
       - name: "Phase 3c: Evaluate retrieval quality and strategy outputs"
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: evaluation/metrics step, shouldn't block learning pipeline
         run: |
           echo "📏 Evaluating RAG retrieval quality..."
           python3 scripts/evaluate_rag.py --prefer-lancedb --save --json || echo "⚠️ RAG eval warning"

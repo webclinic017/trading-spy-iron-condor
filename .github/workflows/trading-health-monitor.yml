@@ -278,7 +278,7 @@ jobs:
 
       - name: Notify CEO on Critical
         if: steps.check_execution.outputs.health_status == 'critical'
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: notification failure shouldn't change health check status
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}

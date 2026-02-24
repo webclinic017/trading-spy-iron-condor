@@ -152,7 +152,7 @@ jobs:
 
       - name: Ingest to RAG
         if: success()
-        continue-on-error: true
+        continue-on-error: true  # Non-critical: RAG ingestion failure shouldn't invalidate backtest results
         run: |
           "$pythonLocation/bin/python3" scripts/backtest/ingest_backtest_to_rag.py \
             --lessons-dir data/backtests \
