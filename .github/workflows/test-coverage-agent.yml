@@ -1,0 +1,33 @@
+name: Test Coverage Agent
+
+on:
+  schedule:
+    # Run weekly on Sunday at 8 AM ET (13 UTC)
+    - cron: "0 13 * * 0"
+  workflow_dispatch:
+
+jobs:
+  find-gaps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest 2>/dev/null || pip install pytest
+
+      - name: Find uncovered modules
+        run: python3 scripts/find_uncovered_modules.py
+
+      - name: Upload coverage gaps report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-gaps
+          path: data/coverage_gaps.json
