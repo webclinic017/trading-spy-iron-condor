@@ -30,12 +30,12 @@ Latest shipping timeline (reports + cross-post status): **[Beats](/trading/repor
 ## Where We Are Today
 
 <!-- AUTO_STATUS_START -->
-_Last Sync: 2026-02-24 14:52 UTC (source: `data/system_state.json`)_
+_Last Sync: 2026-02-24 14:58 UTC (source: `data/system_state.json`)_
 
 | What | Status |
 | ---- | ------ |
 | Account Equity | $101,155.58 |
-| Daily P/L | +$0.00 |
+| Daily P/L | -$7.08 |
 | Win Rate | 100.0% (1 trades; target 80.0%) |
 | Paper Phase | Day 14/90 |
 | North Star Gate | ACTIVE (VALIDATING) |
@@ -60,9 +60,9 @@ Latest snapshots are refreshed by automation and published to GitHub Pages.
 | --- | --- |
 | ![Alpaca Paper Snapshot](/trading/assets/snapshots/alpaca_paper_latest.png) | ![PaperBanana Paper Diagram](/trading/assets/snapshots/paperbanana_paper_latest.svg) |
 
-Captured: `2026-02-24T14:05:00Z`
+Captured: `2026-02-24T14:59:45Z`
 
-Technical readout: Paper Account: net liquidation value $101,155.58; daily P/L +0.00 (+0.0 bps) indicating a flat premium-decay session; cumulative P/L +1,155.58 (+1.16%); low capital deployment at 0.0% utilization with cash $101,155.58; open position proxy 0; win-rate estimate 100.0% (n=1); North Star gate LOW.
+Technical readout: Paper Account: net liquidation value $101,148.50; daily P/L -7.08 (-0.7 bps) indicating a negative drift session; cumulative P/L +1,155.58 (+1.16%); low capital deployment at 0.0% utilization with cash $101,367.50; open position proxy 0; win-rate estimate 100.0% (n=1); North Star gate LOW.
 
 ### Brokerage (Live) Snapshot + PaperBanana Financial Diagram
 
@@ -70,14 +70,14 @@ Technical readout: Paper Account: net liquidation value $101,155.58; daily P/L +
 | --- | --- |
 | ![Alpaca Brokerage Snapshot](/trading/assets/snapshots/alpaca_live_latest.png) | ![PaperBanana Brokerage Diagram](/trading/assets/snapshots/paperbanana_live_latest.svg) |
 
-Captured: `2026-02-24T14:05:00Z`
+Captured: `2026-02-24T14:59:45Z`
 
-Technical readout: Brokerage Account: net liquidation value $208.12; daily P/L +0.00 (+0.0 bps) indicating a flat premium-decay session; cumulative P/L +188.12 (+940.60%); high capital deployment at 99.0% utilization with cash $4.00; open position proxy 0; win-rate estimate 0.0% (n=0); North Star gate LOW.
+Technical readout: Brokerage Account: net liquidation value $208.40; daily P/L +0.00 (+0.0 bps) indicating a flat premium-decay session; cumulative P/L +188.40 (+942.00%); high capital deployment at 99.0% utilization with cash $4.00; open position proxy 0; win-rate estimate 0.0% (n=0); North Star gate LOW.
 
 ### Progress Dashboard Snapshot
 ![Progress Dashboard Snapshot](/trading/assets/snapshots/progress_latest.png)
 
-Captured: `2026-02-24T14:05:00Z`
+Captured: `2026-02-24T14:59:45Z`
 
 Manifest: [`/trading/data/alpaca_snapshots.json`](/trading/data/alpaca_snapshots.json)
 <!-- AUTO_SNAPSHOT_END -->
