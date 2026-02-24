@@ -59,7 +59,7 @@ class SelfHealer:
     Self-healing system monitor.
 
     Usage:
-        healer = SelfHealer(project_root="/home/user/trading")
+        healer = SelfHealer()  # auto-detects project root
         results = healer.run_all_checks()
 
         # Auto-fix issues

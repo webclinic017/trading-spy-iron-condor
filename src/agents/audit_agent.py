@@ -176,12 +176,12 @@ class AuditAgent(BaseAgent):
         Use RLM Algorithm 1 to perform a deep reasoning audit.
         Generates Python code to analyze logs for subtle patterns.
         """
-        prompt = f"""
-        You are the Adversarial Audit Agent. Your mission is to find hidden bugs, 
+        _prompt = f"""
+        You are the Adversarial Audit Agent. Your mission is to find hidden bugs,
         risk management failures, or logic errors in today's ({date_str}) trade logs.
-        
+
         Log location: data/trades_{date_str}.json
-        
+
         Task:
         1. Write a pure Python script to analyze this JSON file.
         2. Look for:

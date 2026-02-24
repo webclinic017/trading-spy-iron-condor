@@ -98,7 +98,9 @@ class TradePerformanceTracker:
 
     def __init__(self, data_dir: Path | None = None):
         """Initialize tracker with data directory."""
-        self.data_dir = data_dir or Path("/home/user/trading/data/trades")
+        self.data_dir = data_dir or (
+            Path(__file__).resolve().parent.parent.parent / "data" / "trades"
+        )
         self.data_dir.mkdir(parents=True, exist_ok=True)
         self.trades_file = self.data_dir / "trade_history.json"
         self.metrics_file = self.data_dir / "performance_metrics.json"

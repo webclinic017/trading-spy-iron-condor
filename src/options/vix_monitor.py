@@ -81,8 +81,10 @@ class VIXMonitor:
         VolatilityRegime.EXTREME: (35, 100),
     }
 
-    # Historical data storage
-    VIX_HISTORY_FILE = "/home/user/trading/data/vix_history.json"
+    # Historical data storage — resolved relative to project root
+    VIX_HISTORY_FILE = str(
+        Path(__file__).resolve().parent.parent.parent / "data" / "vix_history.json"
+    )
 
     def __init__(self, use_alpaca: bool = True):
         """
