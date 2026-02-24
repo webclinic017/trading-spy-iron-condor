@@ -2,6 +2,7 @@ import pytest
 import asyncio
 from src.orchestration.daggr_workflow import create_trading_workflow
 
+
 @pytest.mark.asyncio
 async def test_workflow_consumes_ml_params():
     """
@@ -17,7 +18,7 @@ async def test_workflow_consumes_ml_params():
         "technicals": {"signal": 0.8},
         "news": {"signal": 0.6},
         "risk_gate": {"passed": True},
-        "regime_gate": {"passed": True}
+        "regime_gate": {"passed": True},
     }
 
     # Manual execution of the node to inspect output
@@ -34,6 +35,7 @@ async def test_workflow_consumes_ml_params():
     assert data["recommended_dte"] == 30
 
     print(f"\n✅ PROVEN: Workflow is using ML Delta: {data['recommended_delta']}")
+
 
 if __name__ == "__main__":
     asyncio.run(test_workflow_consumes_ml_params())

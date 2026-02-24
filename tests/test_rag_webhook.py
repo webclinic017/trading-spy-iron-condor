@@ -30,7 +30,6 @@ class TestRAGWebhookFormat:
         """Verify response matches RAG Webhook format."""
         # Import the function
 
-
         from src.agents.rag_webhook import create_webhook_response
 
         response = create_webhook_response("Test message")
@@ -45,7 +44,6 @@ class TestRAGWebhookFormat:
     def test_format_lessons_response_no_results(self):
         """Verify empty results return helpful message."""
 
-
         from src.agents.rag_webhook import format_lessons_response
 
         result = format_lessons_response([], "test query")
@@ -56,7 +54,6 @@ class TestRAGWebhookFormat:
 
     def test_format_lessons_response_with_results(self):
         """Verify lessons are formatted correctly."""
-
 
         from src.agents.rag_webhook import format_lessons_response
 
@@ -205,7 +202,6 @@ class TestRAGWebhookEdgeCases:
     def test_format_lesson_full(self):
         """Test format_lesson_full function."""
 
-
         from src.agents.rag_webhook import format_lesson_full
 
         lesson = {
@@ -221,7 +217,6 @@ class TestRAGWebhookEdgeCases:
 
     def test_format_lesson_full_no_title(self):
         """Test format_lesson_full with no H1 title."""
-
 
         from src.agents.rag_webhook import format_lesson_full
 
@@ -344,7 +339,6 @@ class TestTradeQueryDetection:
     def test_is_trade_query_money_keywords(self):
         """Test that money-related queries are detected as trade queries."""
 
-
         from src.agents.rag_webhook import is_trade_query
 
         # These should ALL be detected as trade queries
@@ -366,7 +360,6 @@ class TestTradeQueryDetection:
     def test_is_trade_query_lesson_queries(self):
         """Test that lesson queries are NOT detected as trade queries."""
 
-
         from src.agents.rag_webhook import is_trade_query
 
         # These should NOT be detected as trade queries
@@ -383,7 +376,6 @@ class TestTradeQueryDetection:
 
     def test_is_trade_query_case_insensitive(self):
         """Test that query detection is case insensitive."""
-
 
         from src.agents.rag_webhook import is_trade_query
 
@@ -594,7 +586,6 @@ class TestPortfolioStatusFunction:
     def test_get_current_portfolio_status_returns_dict(self):
         """Test that function returns a dictionary with expected keys."""
 
-
         from src.agents.rag_webhook import get_current_portfolio_status
 
         result = get_current_portfolio_status()
@@ -612,7 +603,6 @@ class TestPortfolioStatusFunction:
     def test_get_current_portfolio_status_live_account_fields(self):
         """Test that live account has expected fields."""
 
-
         from src.agents.rag_webhook import get_current_portfolio_status
 
         result = get_current_portfolio_status()
@@ -626,7 +616,6 @@ class TestPortfolioStatusFunction:
 
     def test_get_current_portfolio_status_paper_account_fields(self):
         """Test that paper account has expected fields."""
-
 
         from src.agents.rag_webhook import get_current_portfolio_status
 
@@ -642,7 +631,6 @@ class TestPortfolioStatusFunction:
         """Test that GitHub fallback is attempted when local file unavailable."""
         import json
         from unittest.mock import MagicMock, patch
-
 
         # Mock state data that would come from GitHub
         mock_state = {
@@ -666,7 +654,10 @@ class TestPortfolioStatusFunction:
         # Patch Path.exists to return False (no local file)
         # Patch urllib.request.urlopen to return mock data
         with patch("pathlib.Path.exists", return_value=False):
-            with patch("urllib.request.urlopen") as mock_urlopen, patch("src.agents.rag_webhook.query_alpaca_api_direct", return_value=None):
+            with (
+                patch("urllib.request.urlopen") as mock_urlopen,
+                patch("src.agents.rag_webhook.query_alpaca_api_direct", return_value=None),
+            ):
                 # Set up mock response
                 mock_response = MagicMock()
                 mock_response.read.return_value = json.dumps(mock_state).encode("utf-8")
@@ -702,7 +693,6 @@ class TestPortfolioStatusFunction:
         """Test that empty dict is returned when both local and GitHub fail."""
         from unittest.mock import patch
 
-
         # Patch Path.exists to return False (no local file)
         # Patch urllib.request.urlopen to raise exception
         with patch("pathlib.Path.exists", return_value=False):
@@ -721,7 +711,6 @@ class TestReadinessQueryDetection:
     def test_is_readiness_query_detects_ready_keyword(self):
         """Test that 'ready' queries are detected."""
 
-
         from src.agents.rag_webhook import is_readiness_query
 
         readiness_queries = [
@@ -737,7 +726,6 @@ class TestReadinessQueryDetection:
     def test_is_readiness_query_detects_prepared_keyword(self):
         """Test that 'prepared' queries are detected."""
 
-
         from src.agents.rag_webhook import is_readiness_query
 
         assert is_readiness_query("Are we prepared to trade?")
@@ -745,7 +733,6 @@ class TestReadinessQueryDetection:
 
     def test_is_readiness_query_detects_checklist_keywords(self):
         """Test that checklist-related queries are detected."""
-
 
         from src.agents.rag_webhook import is_readiness_query
 
@@ -756,7 +743,6 @@ class TestReadinessQueryDetection:
     def test_is_readiness_query_case_insensitive(self):
         """Test that detection is case insensitive."""
 
-
         from src.agents.rag_webhook import is_readiness_query
 
         assert is_readiness_query("READY")
@@ -765,7 +751,6 @@ class TestReadinessQueryDetection:
 
     def test_is_readiness_query_not_trade_query(self):
         """Test that portfolio queries are NOT detected as readiness."""
-
 
         from src.agents.rag_webhook import is_readiness_query
 
@@ -786,7 +771,6 @@ class TestReadinessAssessment:
     def test_assess_trading_readiness_returns_dict(self):
         """Test that function returns expected dictionary structure."""
 
-
         from src.agents.rag_webhook import assess_trading_readiness
 
         result = assess_trading_readiness()
@@ -805,7 +789,6 @@ class TestReadinessAssessment:
     def test_assess_trading_readiness_valid_status(self):
         """Test that status is one of expected values."""
 
-
         from src.agents.rag_webhook import assess_trading_readiness
 
         result = assess_trading_readiness()
@@ -815,7 +798,6 @@ class TestReadinessAssessment:
 
     def test_assess_trading_readiness_valid_emoji(self):
         """Test that emoji corresponds to status."""
-
 
         from src.agents.rag_webhook import assess_trading_readiness
 
@@ -834,7 +816,6 @@ class TestReadinessAssessment:
     def test_assess_trading_readiness_score_bounds(self):
         """Test that score is within bounds."""
 
-
         from src.agents.rag_webhook import assess_trading_readiness
 
         result = assess_trading_readiness()
@@ -846,7 +827,6 @@ class TestReadinessAssessment:
 
     def test_assess_trading_readiness_lists_are_lists(self):
         """Test that checks/warnings/blockers are lists."""
-
 
         from src.agents.rag_webhook import assess_trading_readiness
 
@@ -862,7 +842,6 @@ class TestFormatReadinessResponse:
 
     def test_format_readiness_response_contains_status(self):
         """Test that formatted response contains status."""
-
 
         from src.agents.rag_webhook import format_readiness_response
 
@@ -887,7 +866,6 @@ class TestFormatReadinessResponse:
     def test_format_readiness_response_shows_blockers(self):
         """Test that blockers are displayed."""
 
-
         from src.agents.rag_webhook import format_readiness_response
 
         assessment = {
@@ -911,7 +889,6 @@ class TestFormatReadinessResponse:
     def test_format_readiness_response_shows_warnings(self):
         """Test that warnings are displayed."""
 
-
         from src.agents.rag_webhook import format_readiness_response
 
         assessment = {
@@ -934,7 +911,6 @@ class TestFormatReadinessResponse:
 
     def test_format_readiness_response_shows_checks(self):
         """Test that passing checks are displayed."""
-
 
         from src.agents.rag_webhook import format_readiness_response
 
@@ -1047,7 +1023,6 @@ class TestRAGWebhookSmokeTests:
 
     def test_webhook_response_not_truncated(self):
         """Verify long responses are not truncated."""
-
 
         from src.agents.rag_webhook import create_webhook_response
 
