@@ -20,6 +20,7 @@ from typing import TypedDict
 # Types
 # ---------------------------------------------------------------------------
 
+
 class UncoveredModule(TypedDict):
     module_path: str
     module_name: str
@@ -59,6 +60,7 @@ def _priority_for(module_path: Path) -> str:
 # Discovery
 # ---------------------------------------------------------------------------
 
+
 def _collect_source_modules(src_dir: Path) -> list[Path]:
     """Return sorted list of .py files under src/, excluding __init__.py."""
     modules: list[Path] = []
@@ -94,6 +96,7 @@ def _expected_test_name(module_path: Path) -> str:
 # ---------------------------------------------------------------------------
 # Main logic
 # ---------------------------------------------------------------------------
+
 
 def build_report(project_root: Path) -> CoverageReport:
     """Scan src/ and tests/ to build the coverage-gap report."""
