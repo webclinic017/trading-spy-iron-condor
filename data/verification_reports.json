@@ -116,5 +116,17 @@
     "last_equity": 101256.49,
     "daily_pnl": -19.060000000012224,
     "total_pnl": 1237.429999999993
+  },
+  {
+    "date": "2026-02-24",
+    "traded": false,
+    "orders": 0,
+    "structures": 0,
+    "fills": 0,
+    "positions": 0,
+    "equity": 101155.58,
+    "last_equity": 101155.58,
+    "daily_pnl": 0.0,
+    "total_pnl": 1155.5800000000017
   }
 ]
