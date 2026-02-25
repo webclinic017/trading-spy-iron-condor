@@ -6,7 +6,8 @@
   "blocked": false,
   "watch": false,
   "reasons": [
-    "No USD macro data available."
+    "No USD macro data available.",
+    "DEXUSEU: 502 Server Error: Bad Gateway for url: https://fred.stlouisfed.org/graph/fredgraph.csv?id=DEXUSEU"
   ],
   "latest_data_date": null,
   "stale_days": null,
@@ -33,5 +34,5 @@
     }
   },
   "source": "fred_public",
-  "updated_at": "2026-02-25T19:21:47.025508+00:00"
+  "updated_at": "2026-02-25T19:46:28.336128+00:00"
 }

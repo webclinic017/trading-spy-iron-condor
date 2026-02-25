@@ -30,17 +30,17 @@ Latest shipping timeline (reports + cross-post status): **[Beats](/trading/repor
 ## Where We Are Today
 
 <!-- AUTO_STATUS_START -->
-_Last Sync: 2026-02-25 19:20 UTC (source: `data/system_state.json`)_
+_Last Sync: 2026-02-25 19:45 UTC (source: `data/system_state.json`)_
 
 | What | Status |
 | ---- | ------ |
-| Account Equity | $100,854.57 |
-| Daily P/L | -$39.40 |
+| Account Equity | $100,843.41 |
+| Daily P/L | -$50.56 |
 | Win Rate | 100.0% (1 trades; target 80.0%) |
 | Paper Phase | Day 14/90 |
 | North Star Gate | ACTIVE (VALIDATING) |
-| Open Positions | 1 structure(s), 4 option leg(s) |
-| Unrealized P/L | +$144.00 |
+| Open Positions | 1 structure(s), 8 option leg(s) |
+| Unrealized P/L | +$133.00 |
 
 **Execution Focus:** Do not scale risk until validation passes.
 <!-- AUTO_STATUS_END -->
