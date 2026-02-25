@@ -33,13 +33,13 @@ Welcome to the **AI-Powered Automated Trading System** wiki!
 
 ---
 
-## 📈 Current Status (Feb 24, 2026)
+## 📈 Current Status (Feb 25, 2026)
 
 | Metric | Value |
 |--------|-------|
-| **Account Equity** | $101,119.18 |
+| **Account Equity** | $100,859.65 |
 | **Starting Capital** | $100,000 (Jan 30, 2026) |
-| **Net Gain** | $+1,119.18 (+1.12%) |
+| **Net Gain** | $+859.65 (+0.86%) |
 | **Open Positions** | 3 Iron Condor(s) |
 | **Strategy** | SPY Iron Condors (15-20 delta, $10-wide, max 5 concurrent) |
 
@@ -47,8 +47,8 @@ Welcome to the **AI-Powered Automated Trading System** wiki!
 | Expiry | Put Spread | Call Spread |
 |--------|------------|-------------|
 | Mar 27, 2026 | 640/650 | 715/725 |
-| Mar 31, 2026 | 640/650 | 715/725 |
-| Apr 02, 2026 | 640/650 | 715/725 |
+| Mar 31, 2026 | 645/655 | 725/735 |
+| Apr 02, 2026 | 645/655 | 725/735 |
 
 ---
 
@@ -82,4 +82,4 @@ The **Iron Condor Guardian** runs every 30 minutes during market hours to enforc
 
 ---
 
-*Last updated: 2026-02-24 12:59 ET by GitHub Actions*
+*Last updated: 2026-02-25 12:11 ET by GitHub Actions*

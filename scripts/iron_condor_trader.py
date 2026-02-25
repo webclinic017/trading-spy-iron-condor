@@ -783,6 +783,7 @@ def main():
                             for t in today_trades
                             if isinstance(t, dict)
                             and t.get("strategy") == "iron_condor"
+                            and t.get("status") != "SIMULATED"
                             and (t.get("order_ids") or isinstance(t.get("legs"), dict))
                         ]
                     )

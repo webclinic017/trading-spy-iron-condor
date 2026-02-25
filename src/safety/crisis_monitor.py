@@ -40,10 +40,10 @@ try:
         MAX_POSITIONS,
     )
 except ImportError:
-    # Fallback values
+    # Fallback values — must match trading_constants.py canonical values
     CRISIS_LOSS_PCT = 0.25
     CRISIS_POSITION_COUNT = 4
-    MAX_POSITIONS = 4
+    MAX_POSITIONS = 8  # 2 iron condors = 8 legs max
     IRON_CONDOR_STOP_LOSS_MULTIPLIER = 2.0
 
 # File paths

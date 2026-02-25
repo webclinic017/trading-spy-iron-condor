@@ -92,7 +92,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ALPACA_PAPER_TRADING_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
-      ALPACA_PAPER_TRADING_SECRET_KEY: ${{ secrets.ALPACA_PAPER_TRADING_SECRET_KEY }}
+      ALPACA_PAPER_TRADING_SECRET_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}
       ALPACA_API_BASE_URL: https://paper-api.alpaca.markets
 
     steps:

@@ -1,15 +1,14 @@
 {
-  "current_daily_profit": -35.6,
-  "projected_daily_profit": 45.84,
+  "current_daily_profit": -258.32,
+  "projected_daily_profit": -64.87,
   "target_daily_profit": 200.0,
-  "target_gap": 154.16,
+  "target_gap": 264.87,
   "current_daily_budget": 1000.0,
-  "recommended_daily_budget": 1997.2,
-  "scaling_factor": 2.0,
-  "avg_return_pct": 10.01,
+  "recommended_daily_budget": null,
+  "scaling_factor": null,
+  "avg_return_pct": 6.41,
   "win_rate": 100.0,
   "actions": [
-    "Projected daily profit is $154.16 below target; scale budget gradually.",
-    "Target daily budget: $1,997.20 (2.00x current)."
+    "Do not scale budget yet; insufficient closed-trade sample (2/30)."
   ]
 }

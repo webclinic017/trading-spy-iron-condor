@@ -1,0 +1,150 @@
+[
+  {
+    "timestamp": "2026-02-25T10:29:34.034308",
+    "strategy": "iron_condor",
+    "underlying": "SPY",
+    "symbol": "SPY",
+    "expiry": "2026-03-20",
+    "dte": 35,
+    "legs": {
+      "long_put": 650.0,
+      "short_put": 655.0,
+      "short_call": 725.0,
+      "long_call": 730.0
+    },
+    "credit": 3.5,
+    "max_profit": 350.0,
+    "max_risk": 150.0,
+    "status": "SIMULATED",
+    "order_ids": [],
+    "decision_trace": {
+      "captured_at": "2026-02-25T10:29:34.034314",
+      "entry_reason": "test entry",
+      "market_context": {
+        "vix": 18.719999313354492,
+        "vix_3day_ma": 19.759999593098957
+      },
+      "signals_checked": [
+        "vix_mean_reversion"
+      ],
+      "strike_selection": {
+        "method": "15_delta_5pct_otm",
+        "short_put": 655.0,
+        "short_call": 725.0,
+        "wing_width": 5.0
+      },
+      "precedent_query": "SPY iron_condor 35DTE"
+    }
+  },
+  {
+    "timestamp": "2026-02-25T10:37:18.114555",
+    "strategy": "iron_condor",
+    "underlying": "SPY",
+    "symbol": "SPY",
+    "expiry": "2026-03-20",
+    "dte": 35,
+    "legs": {
+      "long_put": 650.0,
+      "short_put": 655.0,
+      "short_call": 725.0,
+      "long_call": 730.0
+    },
+    "credit": 3.5,
+    "max_profit": 350.0,
+    "max_risk": 150.0,
+    "status": "SIMULATED",
+    "order_ids": [],
+    "decision_trace": {
+      "captured_at": "2026-02-25T10:37:18.114566",
+      "entry_reason": "test entry",
+      "market_context": {
+        "vix": 18.739999771118164,
+        "vix_3day_ma": 19.766666412353516
+      },
+      "signals_checked": [
+        "vix_mean_reversion"
+      ],
+      "strike_selection": {
+        "method": "15_delta_5pct_otm",
+        "short_put": 655.0,
+        "short_call": 725.0,
+        "wing_width": 5.0
+      },
+      "precedent_query": "SPY iron_condor 35DTE"
+    }
+  },
+  {
+    "timestamp": "2026-02-25T10:48:15.748823",
+    "strategy": "iron_condor",
+    "underlying": "SPY",
+    "symbol": "SPY",
+    "expiry": "2026-03-20",
+    "dte": 35,
+    "legs": {
+      "long_put": 650.0,
+      "short_put": 655.0,
+      "short_call": 725.0,
+      "long_call": 730.0
+    },
+    "credit": 3.5,
+    "max_profit": 350.0,
+    "max_risk": 150.0,
+    "status": "SIMULATED",
+    "order_ids": [],
+    "decision_trace": {
+      "captured_at": "2026-02-25T10:48:15.748828",
+      "entry_reason": "test entry",
+      "market_context": {
+        "vix": 18.540000915527344,
+        "vix_3day_ma": 19.700000127156574
+      },
+      "signals_checked": [
+        "vix_mean_reversion"
+      ],
+      "strike_selection": {
+        "method": "15_delta_5pct_otm",
+        "short_put": 655.0,
+        "short_call": 725.0,
+        "wing_width": 5.0
+      },
+      "precedent_query": "SPY iron_condor 35DTE"
+    }
+  },
+  {
+    "timestamp": "2026-02-25T12:06:52.947897",
+    "strategy": "iron_condor",
+    "underlying": "SPY",
+    "symbol": "SPY",
+    "expiry": "2026-03-20",
+    "dte": 35,
+    "legs": {
+      "long_put": 650.0,
+      "short_put": 655.0,
+      "short_call": 725.0,
+      "long_call": 730.0
+    },
+    "credit": 3.5,
+    "max_profit": 350.0,
+    "max_risk": 150.0,
+    "status": "SIMULATED",
+    "order_ids": [],
+    "decision_trace": {
+      "captured_at": "2026-02-25T12:06:52.947903",
+      "entry_reason": "test entry",
+      "market_context": {
+        "vix": 18.3799991607666,
+        "vix_3day_ma": 19.646666208902996
+      },
+      "signals_checked": [
+        "vix_mean_reversion"
+      ],
+      "strike_selection": {
+        "method": "15_delta_5pct_otm",
+        "short_put": 655.0,
+        "short_call": 725.0,
+        "wing_width": 5.0
+      },
+      "precedent_query": "SPY iron_condor 35DTE"
+    }
+  }
+]

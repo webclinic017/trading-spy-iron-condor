@@ -1,10 +1,12 @@
-import pytest
 import asyncio
 from src.orchestration.daggr_workflow import create_trading_workflow
 
 
-@pytest.mark.asyncio
-async def test_workflow_consumes_ml_params():
+def test_workflow_consumes_ml_params():
+    asyncio.run(_test_workflow_consumes_ml_params())
+
+
+async def _test_workflow_consumes_ml_params():
     """
     Integration Test: Proves that the Daggr Workflow correctly
     calls and consumes parameters from the ML learner.

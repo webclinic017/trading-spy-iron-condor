@@ -99,10 +99,10 @@ try:
     )
 except ImportError:
     MAX_POSITION_PCT = float(os.environ.get("MAX_POSITION_PCT", "0.05"))
-    MAX_DAILY_LOSS_PCT = float(os.environ.get("MAX_DAILY_LOSS_PCT", "0.05"))
+    MAX_DAILY_LOSS_PCT = float(os.environ.get("MAX_DAILY_LOSS_PCT", "0.02"))
     MAX_DAILY_STRUCTURES = int(os.environ.get("MAX_DAILY_STRUCTURES", "1"))
     MAX_DAILY_FILLS = int(os.environ.get("MAX_DAILY_FILLS", "20"))
-    MAX_POSITIONS = int(os.environ.get("MAX_POSITIONS", "4"))
+    MAX_POSITIONS = int(os.environ.get("MAX_POSITIONS", "8"))
     logger.warning("Using env-var position limits - trading_constants unavailable")
 
 MIN_TRADE_AMOUNT = float(os.environ.get("MIN_TRADE_AMOUNT", "1.0"))
@@ -1148,9 +1148,9 @@ def safe_submit_order(client, order_request):
                     logger.warning("Failed to load milestone controller context: %s", exc)
 
                 gate = validate_trade_mandatory(
-                    symbol=str(getattr(order_request, "symbol", "") or ""),
+                    symbol=str(getattr(order_request, "symbol", "") or (getattr(legs[0], "symbol", "") if getattr(order_request, "legs", None) else "")),
                     amount=est_amount if est_amount > 0 else MIN_TRADE_AMOUNT,
-                    side=str(getattr(order_request, "side", "BUY")).upper(),
+                    side=str(getattr(order_request, "side", None) or "SELL").upper(),
                     strategy="order_request",
                     context=account_context,
                 )

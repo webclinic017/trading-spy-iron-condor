@@ -1,6 +1,69 @@
 {
   "heartbeats": [
     {
+      "timestamp": "2026-02-25T12:08:28.014182",
+      "workflow": "trading_session",
+      "status": "success",
+      "details": {
+        "tickers_processed": 2,
+        "session_type": "market_hours"
+      }
+    },
+    {
+      "timestamp": "2026-02-25T12:08:27.864125",
+      "workflow": "trading_session",
+      "status": "success",
+      "details": {
+        "tickers_processed": 2,
+        "session_type": "market_hours"
+      }
+    },
+    {
+      "timestamp": "2026-02-25T12:08:27.702705",
+      "workflow": "trading_session",
+      "status": "success",
+      "details": {
+        "tickers_processed": 2,
+        "session_type": "market_hours"
+      }
+    },
+    {
+      "timestamp": "2026-02-25T10:34:14.877709",
+      "workflow": "trading_session",
+      "status": "success",
+      "details": {
+        "tickers_processed": 2,
+        "session_type": "market_hours"
+      }
+    },
+    {
+      "timestamp": "2026-02-25T10:34:14.309724",
+      "workflow": "trading_session",
+      "status": "success",
+      "details": {
+        "tickers_processed": 2,
+        "session_type": "market_hours"
+      }
+    },
+    {
+      "timestamp": "2026-02-25T10:34:13.845696",
+      "workflow": "trading_session",
+      "status": "success",
+      "details": {
+        "tickers_processed": 2,
+        "session_type": "market_hours"
+      }
+    },
+    {
+      "timestamp": "2026-02-25T09:35:15.991929",
+      "workflow": "trading_session",
+      "status": "success",
+      "details": {
+        "tickers_processed": 2,
+        "session_type": "market_hours"
+      }
+    },
+    {
       "timestamp": "2026-02-24T12:55:08.060620",
       "workflow": "trading_session",
       "status": "success",
@@ -278,9 +341,9 @@
       "total_runs": 21
     },
     "trading_session": {
-      "last_heartbeat": "2026-02-24T12:55:08.060620",
+      "last_heartbeat": "2026-02-25T12:08:28.014182",
       "last_status": "success",
-      "total_runs": 16
+      "total_runs": 23
     }
   }
 }

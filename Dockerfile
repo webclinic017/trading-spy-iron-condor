@@ -50,7 +50,7 @@ RUN useradd -m -u 1000 trader && \
 
 # Copy application source code
 COPY --chown=trader:trader src/ /app/src/
-COPY --chown=trader:trader dashboard/ /app/dashboard/
+# dashboard/ removed — directory does not exist in repo
 
 # Create volume mount points for persistent data
 # - data/: Trading data, positions, history

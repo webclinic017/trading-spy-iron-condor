@@ -21,6 +21,11 @@ on:
           - status
           - force_scan
 
+# Prevent concurrent trade execution (LL-281 race condition fix)
+concurrency:
+  group: global-trade-execution
+  cancel-in-progress: false
+
 env:
   SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
