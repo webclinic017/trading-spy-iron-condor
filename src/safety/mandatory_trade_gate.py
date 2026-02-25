@@ -1126,6 +1126,25 @@ def safe_submit_order(client, order_request, strategy: str | None = None):
     try:
         is_closing = _infer_is_closing_order(client, order_request)
         if is_closing is False:
+            # =================================================================
+            # TIER 0: MACRO RISK GUARD (Feb 25, 2026 - CNBC/PwC Ingestion)
+            # =================================================================
+            try:
+                from src.safety.macro_risk_guard import MacroRiskGuard
+                macro_guard = MacroRiskGuard(client)
+                # Fetch vitals (placeholder for real-time feed)
+                vitals = macro_guard.get_macro_snapshot()
+                safe, macro_reason = macro_guard.check_macro_vitals(vitals)
+                if not safe:
+                    gateway.capture_span("macro_block", trace_id, attributes={"reason": macro_reason})
+                    raise ValueError(f"MACRO BLOCK: {macro_reason}")
+            except ImportError:
+                logger.warning("MacroRiskGuard unavailable - skipping macro check.")
+            except Exception as e:
+                if "MACRO BLOCK" in str(e):
+                    raise
+                logger.error(f"Macro Guard Error: {e}")
+
             # Mandatory trade gate enforcement for NEW entries.
             # This ensures intraday guardrails (daily loss, max fills/structures) apply
             # even when scripts submit orders directly (outside AlpacaExecutor.place_order).
