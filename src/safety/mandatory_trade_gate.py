@@ -1183,6 +1183,57 @@ def safe_submit_order(client, order_request, strategy: str | None = None):
                 option_symbols = [str(symbol)]
             option_symbols = [s for s in option_symbols if _looks_like_option_symbol(s)]
 
+            # =================================================================
+            # MULTI-MODEL CONSENSUS (Jan 25, 2026 - 'Exclusivity is Dead')
+            # =================================================================
+            try:
+                from src.safety.multi_model_juror import MultiModelJuror
+                juror = MultiModelJuror()
+                proposal = {
+                    "symbol": symbol,
+                    "strategy": strategy,
+                    "legs": option_symbols,
+                    "amount": est_amount
+                }
+                if not juror.get_consensus(proposal, primary_reasoning="System trade logic entry"):
+                    raise ValueError("MULTI-MODEL CONSENSUS FAILED: Juror detected a risk violation.")
+            except ImportError:
+                logger.warning("MultiModelJuror unavailable - proceeding with standard safety.")
+            except Exception as e:
+                logger.error(f"CONSENSUS ERROR: {e}")
+                raise ValueError(f"CRITICAL: Consensus check failed: {e}")
+
+            # =================================================================
+            # REASONING EVALUATION (Jan 22, 2026 - TruLens Pattern)
+            # =================================================================
+            try:
+                from src.safety.reasoning_evaluator import ReasoningEvaluator
+                evaluator = ReasoningEvaluator(threshold=0.7) # 70% groundedness required
+                
+                # Fetch recent lessons for groundedness check
+                try:
+                    from src.rag.lessons_search import LessonsSearch
+                    lessons = LessonsSearch().search(f"{strategy} {symbol}", limit=3)
+                    retrieved_context = [l.content for l in lessons]
+                except Exception:
+                    retrieved_context = []
+                
+                score = evaluator.evaluate(
+                    proposal=proposal,
+                    reasoning="Executing strategy based on VIX Mean Reversion and Phil Town Rule #1.",
+                    retrieved_context=retrieved_context
+                )
+                
+                if score.is_hallucination_risk:
+                    raise ValueError(f"REASONING AUDIT FAILED: {score.reasoning_trace}")
+                    
+            except ImportError:
+                logger.warning("ReasoningEvaluator unavailable - proceeding with standard safety.")
+            except Exception as e:
+                if "REASONING AUDIT FAILED" in str(e):
+                    raise
+                logger.error(f"EVALUATION ERROR: {e}")
+
             if option_symbols:
                 from src.risk.pre_trade_checklist import PreTradeChecklist
 
