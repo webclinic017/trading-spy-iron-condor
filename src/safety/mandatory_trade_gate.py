@@ -1091,7 +1091,7 @@ def safe_submit_order(client, order_request, strategy: str | None = None):
 
     # For MLEG orders, check the legs
     legs = getattr(order_request, "legs", None)
-    
+
     # Infer strategy if not provided
     if not strategy:
         if legs and len(legs) == 4:
@@ -1100,6 +1100,13 @@ def safe_submit_order(client, order_request, strategy: str | None = None):
             strategy = "credit_spread"
         else:
             strategy = "order_request"
+
+    import uuid
+
+    from src.monitoring.telemetry_gateway import TelemetryGateway
+    gateway = TelemetryGateway()
+    trace_id = uuid.uuid4().hex
+    gateway.capture_span("strategy_entry", trace_id, attributes={"strategy": strategy, "symbol": symbol})
 
     if legs:
         for leg in legs:
@@ -1197,6 +1204,7 @@ def safe_submit_order(client, order_request, strategy: str | None = None):
                 }
                 if not juror.get_consensus(proposal, primary_reasoning="System trade logic entry"):
                     raise ValueError("MULTI-MODEL CONSENSUS FAILED: Juror detected a risk violation.")
+                gateway.capture_span("juror_consensus", trace_id, attributes={"status": "AGREE"})
             except ImportError:
                 logger.warning("MultiModelJuror unavailable - proceeding with standard safety.")
             except Exception as e:
@@ -1209,24 +1217,25 @@ def safe_submit_order(client, order_request, strategy: str | None = None):
             try:
                 from src.safety.reasoning_evaluator import ReasoningEvaluator
                 evaluator = ReasoningEvaluator(threshold=0.7) # 70% groundedness required
-                
+
                 # Fetch recent lessons for groundedness check
                 try:
                     from src.rag.lessons_search import LessonsSearch
                     lessons = LessonsSearch().search(f"{strategy} {symbol}", limit=3)
-                    retrieved_context = [l.content for l in lessons]
+                    retrieved_context = [lesson.content for lesson in lessons]
                 except Exception:
                     retrieved_context = []
-                
+
                 score = evaluator.evaluate(
                     proposal=proposal,
                     reasoning="Executing strategy based on VIX Mean Reversion and Phil Town Rule #1.",
                     retrieved_context=retrieved_context
                 )
-                
+
                 if score.is_hallucination_risk:
                     raise ValueError(f"REASONING AUDIT FAILED: {score.reasoning_trace}")
-                    
+                gateway.capture_span("reasoning_evaluation", trace_id, attributes={"score": score.groundedness, "trace": score.reasoning_trace})
+
             except ImportError:
                 logger.warning("ReasoningEvaluator unavailable - proceeding with standard safety.")
             except Exception as e:
@@ -1268,7 +1277,14 @@ def safe_submit_order(client, order_request, strategy: str | None = None):
         # Ticker whitelist still applies above.
         logger.warning("Pre-trade checklist enforcement skipped due to error: %s", exc)
 
-    return client.submit_order(order_request)
+    gateway.capture_span("order_submitted", trace_id, attributes={"symbol": symbol, "strategy": strategy})
+    try:
+        order = client.submit_order(order_request)
+        gateway.capture_span("order_confirmed", trace_id, attributes={"order_id": str(getattr(order, "id", ""))})
+        return order
+    except Exception as e:
+        gateway.capture_span("order_failed", trace_id, attributes={"error": str(e)})
+        raise e
 
 
 def safe_close_position(client, symbol, **kwargs):
