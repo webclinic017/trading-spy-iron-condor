@@ -1131,8 +1131,12 @@ def safe_submit_order(client, order_request, strategy: str | None = None):
             # =================================================================
             try:
                 from src.safety.macro_risk_guard import MacroRiskGuard
-                macro_guard = MacroRiskGuard(client)
-                # Fetch vitals (placeholder for real-time feed)
+                from src.utils.alpaca_client import get_options_data_client
+                
+                # Get data client for macro fetching (USO, TNX)
+                data_client = get_options_data_client()
+                macro_guard = MacroRiskGuard(data_client)
+                
                 vitals = macro_guard.get_macro_snapshot()
                 safe, macro_reason = macro_guard.check_macro_vitals(vitals)
                 if not safe:
