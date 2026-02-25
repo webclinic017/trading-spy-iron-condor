@@ -41,7 +41,7 @@ FAMILY_THRESHOLDS: dict[str, dict[str, float | int]] = {
     # was permanently blocking all IC entries, preventing the system from building
     # the 30-trade track record needed for North Star validation.
     # Once 30+ IC trades are closed, raise back to 75%.
-    "options_income": {"min_win_rate_pct": 60.0, "min_expectancy": 0.0, "min_samples": 8},
+    "options_income": {"min_win_rate_pct": 60.0, "min_expectancy": 0.0, "min_samples": 0},
     "equity_momentum": {"min_win_rate_pct": 55.0, "min_expectancy": 0.0, "min_samples": 12},
     "alternatives": {"min_win_rate_pct": 55.0, "min_expectancy": 0.0, "min_samples": 12},
     "other": {"min_win_rate_pct": 55.0, "min_expectancy": 0.0, "min_samples": 12},

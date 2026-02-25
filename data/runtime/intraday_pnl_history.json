@@ -926,5 +926,37 @@
       "positions_count": 0,
       "synced_at": null
     }
+  },
+  {
+    "captured_at": "2026-02-25T17:31:34.977495+00:00",
+    "sync_mode": "paper+live",
+    "paper": {
+      "equity": 100880.01,
+      "daily_change": -13.96,
+      "positions_count": 4,
+      "synced_at": null
+    },
+    "live": {
+      "equity": 210.65,
+      "daily_change": 0.0,
+      "positions_count": 0,
+      "synced_at": "2026-02-25T12:31:34.975348"
+    }
+  },
+  {
+    "captured_at": "2026-02-25T17:56:12.751635+00:00",
+    "sync_mode": "paper+live",
+    "paper": {
+      "equity": 100852.69,
+      "daily_change": -41.28,
+      "positions_count": 8,
+      "synced_at": null
+    },
+    "live": {
+      "equity": 210.74,
+      "daily_change": 0.0,
+      "positions_count": 0,
+      "synced_at": "2026-02-25T12:56:12.748912"
+    }
   }
 ]

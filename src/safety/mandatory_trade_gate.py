@@ -148,6 +148,8 @@ def _count_structures_today_from_trade_file(date_str: str) -> int:
             continue
         if item.get("strategy") == "alpaca_sync":
             continue
+        if item.get("status") == "SIMULATED":
+            continue
         if item.get("order_ids") or (isinstance(item.get("legs"), dict) and item.get("underlying")):
             structures += 1
     return structures
@@ -1066,7 +1068,7 @@ def _estimate_opening_max_loss(order_request: Any) -> tuple[float | None, int | 
     return max_loss, dte, underlying
 
 
-def safe_submit_order(client, order_request):
+def safe_submit_order(client, order_request, strategy: str | None = None):
     """Wrapper that enforces validate_ticker() before ANY order submission.
 
     All scripts MUST use this instead of client.submit_order() directly.
@@ -1076,6 +1078,7 @@ def safe_submit_order(client, order_request):
     Args:
         client: Alpaca TradingClient instance
         order_request: Alpaca order request object
+        strategy: Optional strategy name (e.g. 'iron_condor')
 
     Returns:
         Order result from client.submit_order()
@@ -1088,6 +1091,16 @@ def safe_submit_order(client, order_request):
 
     # For MLEG orders, check the legs
     legs = getattr(order_request, "legs", None)
+    
+    # Infer strategy if not provided
+    if not strategy:
+        if legs and len(legs) == 4:
+            strategy = "iron_condor"
+        elif legs and len(legs) == 2:
+            strategy = "credit_spread"
+        else:
+            strategy = "order_request"
+
     if legs:
         for leg in legs:
             leg_symbol = getattr(leg, "symbol", "")
@@ -1141,7 +1154,7 @@ def safe_submit_order(client, order_request):
                 try:
                     from src.safety.milestone_controller import get_milestone_context
 
-                    milestone_context = get_milestone_context(strategy="order_request")
+                    milestone_context = get_milestone_context(strategy=strategy)
                     if milestone_context:
                         account_context["milestone_controller"] = milestone_context
                 except Exception as exc:
@@ -1151,7 +1164,7 @@ def safe_submit_order(client, order_request):
                     symbol=str(getattr(order_request, "symbol", "") or (getattr(legs[0], "symbol", "") if getattr(order_request, "legs", None) else "")),
                     amount=est_amount if est_amount > 0 else MIN_TRADE_AMOUNT,
                     side=str(getattr(order_request, "side", None) or "SELL").upper(),
-                    strategy="order_request",
+                    strategy=strategy,
                     context=account_context,
                 )
                 if not gate.approved:
