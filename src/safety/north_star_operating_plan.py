@@ -1168,9 +1168,9 @@ def apply_operating_plan_to_state(
     state["risk"]["weekly_ai_cycle_score"] = _safe_nested_dict(weekly_gate, "ai_cycle").get(
         "severity_score"
     )
-    state["risk"]["weekly_ai_cycle_multiplier"] = _safe_nested_dict(
-        weekly_gate, "ai_cycle"
-    ).get("position_size_multiplier")
+    state["risk"]["weekly_ai_cycle_multiplier"] = _safe_nested_dict(weekly_gate, "ai_cycle").get(
+        "position_size_multiplier"
+    )
     state["risk"]["weekly_ai_cycle_regime"] = _safe_nested_dict(weekly_gate, "ai_cycle").get(
         "regime"
     )

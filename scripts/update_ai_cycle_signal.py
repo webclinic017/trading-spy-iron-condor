@@ -218,7 +218,16 @@ def evaluate_ai_cycle_signal(
         edge_ret_20d,
     ]
     if all(value is None for value in available_points):
-        return "unknown", 0.0, 1.0, "unknown", False, None, 0.0, ["No AI-cycle market data available."]
+        return (
+            "unknown",
+            0.0,
+            1.0,
+            "unknown",
+            False,
+            None,
+            0.0,
+            ["No AI-cycle market data available."],
+        )
 
     capex20 = float(capex_ret_20d or 0.0)
     capex5 = float(capex_ret_5d or 0.0)
@@ -235,7 +244,9 @@ def evaluate_ai_cycle_signal(
         and prior_nvda_gross_margin_pct is not None
         and prior_nvda_gross_margin_pct > 0
     ):
-        gross_margin_trend_bps = round((nvda_gross_margin_pct - prior_nvda_gross_margin_pct) * 100.0, 2)
+        gross_margin_trend_bps = round(
+            (nvda_gross_margin_pct - prior_nvda_gross_margin_pct) * 100.0, 2
+        )
 
     severity_score = 0.0
 
@@ -270,7 +281,9 @@ def evaluate_ai_cycle_signal(
             reasons.append(f"NVDA gross margin trend down {gross_margin_trend_bps:.0f} bps")
         elif gross_margin_trend_bps <= -50:
             severity_score += 8.0
-            reasons.append(f"NVDA gross margin trend slightly down {gross_margin_trend_bps:.0f} bps")
+            reasons.append(
+                f"NVDA gross margin trend slightly down {gross_margin_trend_bps:.0f} bps"
+            )
 
     if edge_vs_infra_spread >= 0.05 and edge20 > 0:
         severity_score -= 8.0
@@ -387,7 +400,9 @@ def _build_payload(
         effective_status = "unknown"
         effective_multiplier = 1.0
         effective_shock = False
-        effective_reasons.append(f"AI-cycle data stale: {stale_days} days old (max {max_stale_days})")
+        effective_reasons.append(
+            f"AI-cycle data stale: {stale_days} days old (max {max_stale_days})"
+        )
 
     return {
         "signal": "ai_cycle",
@@ -445,7 +460,9 @@ def _apply_override(payload: dict, override_status: str, override_reason: str) -
 
     out = dict(payload)
     reasons = list(out.get("reasons", []))
-    reasons.append(override_reason.strip() if override_reason.strip() else f"Manual override applied: {status}")
+    reasons.append(
+        override_reason.strip() if override_reason.strip() else f"Manual override applied: {status}"
+    )
     out["status"] = status
     out["position_size_multiplier"] = _multiplier_for_status(status)
     if status == "unknown":

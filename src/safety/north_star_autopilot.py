@@ -210,9 +210,7 @@ def compute_regime_aware_sizing(state: dict[str, Any]) -> dict[str, Any]:
     ai_cycle_multiplier = _clamp(ai_cycle_multiplier, lo=0.10, hi=1.00)
     if ai_cycle_status in {"watch", "blocked"} and ai_cycle_multiplier < 1.0:
         tuned_cap *= ai_cycle_multiplier
-        multipliers.append(
-            {"name": "ai_cycle_multiplier", "value": round(ai_cycle_multiplier, 4)}
-        )
+        multipliers.append({"name": "ai_cycle_multiplier", "value": round(ai_cycle_multiplier, 4)})
 
     if bool(ai_cycle_gate.get("capex_deceleration_shock")):
         tuned_cap *= 0.80
