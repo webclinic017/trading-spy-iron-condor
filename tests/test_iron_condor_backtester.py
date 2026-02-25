@@ -27,8 +27,8 @@ class TestIronCondorConfig:
         assert config.wing_width == 5.0
         assert config.dte_min == 30
         assert config.dte_max == 45
-        assert config.profit_target_pct == 0.75
-        assert config.stop_loss_pct == 1.00
+        assert config.profit_target_pct == 0.50
+        assert config.stop_loss_pct == 2.00
         assert config.max_dte == 7
 
     def test_config_to_dict(self):

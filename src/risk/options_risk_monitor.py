@@ -14,12 +14,11 @@ from typing import Literal
 
 logger = logging.getLogger(__name__)
 
-# Default stop-loss multiplier: close when loss = 1x credit received
-# 75% profit / 100% stop = positive EV (old 50/200 was EV-neutral)
-DEFAULT_STOP_LOSS_MULTIPLIER = 1.0
+# Default stop-loss multiplier: close when loss = 2x credit received per CLAUDE.md
+DEFAULT_STOP_LOSS_MULTIPLIER = 2.0
 
-# 75% profit exit for positive EV with 100% stop loss
-DEFAULT_PROFIT_TARGET_PCT = 0.75
+# 50% profit exit per CLAUDE.md exit rules
+DEFAULT_PROFIT_TARGET_PCT = 0.50
 
 
 @dataclass

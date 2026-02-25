@@ -161,7 +161,7 @@ class RiskThresholds:
     # Stop loss levels
     CSP_STOP_LOSS_MULTIPLIER = 2.0  # Exit at 2x premium received
     COVERED_CALL_STOP_LOSS_MULTIPLIER = 2.0
-    IRON_CONDOR_STOP_LOSS_MULTIPLIER = 1.0  # 75/100 positive EV (replaces 50/200 zero-EV)
+    IRON_CONDOR_STOP_LOSS_MULTIPLIER = 2.0  # 200% of credit per CLAUDE.md risk rules
 
     # Take profit levels
     # For iron condors, enforce the system exit rule: 50% profit OR 7 DTE.
