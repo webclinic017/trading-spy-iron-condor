@@ -160,7 +160,7 @@ class TestShouldClosePosition:
     def test_position_at_max_loss_triggers_close(self, monitor, credit_spread_position):
         """Position at 1x credit loss should trigger close.
 
-        Rule: Close at 1x credit received (positive EV)
+        Rule: Close at 1x credit received per canonical constant
         - Credit = $0.60
         - Max loss = 1 * $0.60 = $0.60
         - Close when current_price = $0.60 + $0.60 = $1.20
@@ -176,8 +176,8 @@ class TestShouldClosePosition:
 
     def test_position_exceeds_max_loss_triggers_close(self, monitor, credit_spread_position):
         """Position exceeding 1x credit loss should trigger close."""
-        # Beyond stop-loss: spread costs $1.50 to close (loss = $0.90 > 1x credit)
-        credit_spread_position.current_price = 1.50
+        # Beyond stop-loss: spread costs $1.30 to close (loss = $0.70 > 1x credit)
+        credit_spread_position.current_price = 1.30
         monitor.add_position(credit_spread_position)
         should_close, reason = monitor.should_close_position("SPY240119P00480000")
 
@@ -186,7 +186,7 @@ class TestShouldClosePosition:
 
     def test_position_just_below_max_loss_no_close(self, monitor, credit_spread_position):
         """Position just below 1x credit should not trigger close."""
-        # Just below stop-loss: spread costs $1.19 (loss = $0.59 < $0.60)
+        # Just below stop-loss: spread costs $1.19 (loss = $0.59 < $0.60 = 1x credit)
         credit_spread_position.current_price = 1.19
         monitor.add_position(credit_spread_position)
         should_close, reason = monitor.should_close_position("SPY240119P00480000")
@@ -385,13 +385,13 @@ class TestRealWorldScenario:
     """Integration tests with real-world scenarios."""
 
     def test_spy_credit_spread_scenario(self):
-        """Test SPY credit spread per positive EV strategy.
+        """Test SPY credit spread per CLAUDE.md strategy.
 
         Setup:
         - Sell 15-20 delta put spread
         - ~$60 premium
         - Stop-loss: Close at 1x credit received ($60 max loss)
-        - Profit target: 75% of credit
+        - Profit target: 50% of credit
         """
         monitor = OptionsRiskMonitor()
 
@@ -418,12 +418,12 @@ class TestRealWorldScenario:
         # Day 1: Small profit (spread worth less)
         monitor.update_position_price("SPY240215P00475000", 0.40)
         should_close, _ = monitor.should_close_position("SPY240215P00475000")
-        assert should_close is False  # Profitable, no close (not yet 75%)
+        assert should_close is False  # Profitable, no close (not yet 50%)
 
         # Day 5: Market dips, spread underwater
         monitor.update_position_price("SPY240215P00475000", 1.00)
         should_close, _ = monitor.should_close_position("SPY240215P00475000")
-        assert should_close is False  # Loss $40, under $60 max
+        assert should_close is False  # Loss $40, under $60 max (1x credit)
 
         # Day 7: Market crashes, approaching stop-loss
         monitor.update_position_price("SPY240215P00475000", 1.10)

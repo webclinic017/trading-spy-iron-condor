@@ -7,6 +7,11 @@ on:
     - cron: 0,30 14-21 * * 1-5
   workflow_dispatch:
 
+# Prevent concurrent trade execution (LL-281 race condition fix)
+concurrency:
+  group: global-trade-execution
+  cancel-in-progress: false
+
 permissions:
   contents: read
   actions: read

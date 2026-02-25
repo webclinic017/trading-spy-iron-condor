@@ -1,8 +1,8 @@
 """Options Risk Monitor - Monitors options positions for risk.
 
 Implements CLAUDE.md trading rules:
-- Stop-loss: Close at 2x credit received ($120 max loss for $60 credit)
-- For credit spreads: Close when spread value rises to 3x entry credit
+- Stop-loss: Close at 1x credit received ($60 max loss for $60 credit)
+- For credit spreads: Close when spread value rises to 2x entry credit
 """
 
 from __future__ import annotations
@@ -12,14 +12,15 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 from typing import Literal
 
+from src.core.trading_constants import IRON_CONDOR_STOP_LOSS_MULTIPLIER
+
 logger = logging.getLogger(__name__)
 
-# Default stop-loss multiplier: close when loss = 1x credit received
-# 75% profit / 100% stop = positive EV (old 50/200 was EV-neutral)
-DEFAULT_STOP_LOSS_MULTIPLIER = 1.0
+# Default stop-loss multiplier: close when loss = 1x credit received.
+DEFAULT_STOP_LOSS_MULTIPLIER = IRON_CONDOR_STOP_LOSS_MULTIPLIER
 
-# 75% profit exit for positive EV with 100% stop loss
-DEFAULT_PROFIT_TARGET_PCT = 0.75
+# 50% profit exit per CLAUDE.md exit rules
+DEFAULT_PROFIT_TARGET_PCT = 0.50
 
 
 @dataclass
@@ -46,10 +47,10 @@ class OptionsPosition:
 class OptionsRiskMonitor:
     """Monitors risk for options positions.
 
-    Implements the 2x credit stop-loss rule from CLAUDE.md:
+    Implements the 1x credit stop-loss rule from canonical trading constants:
     - Credit received: ~$60 per spread
-    - Stop-loss trigger: When loss reaches 2x credit ($120)
-    - Close when spread value rises to 3x entry credit ($180)
+    - Stop-loss trigger: When loss reaches 1x credit ($60)
+    - Close when spread value rises to 2x entry credit ($120)
     """
 
     def __init__(
@@ -63,7 +64,7 @@ class OptionsRiskMonitor:
 
         Args:
             max_loss_percent: Maximum loss as percent of portfolio (default 5%)
-            stop_loss_multiplier: Close position when loss = multiplier * credit (default 2.0)
+            stop_loss_multiplier: Close position when loss = multiplier * credit (default 1.0)
             profit_target_pct: Close at this % of max profit (default 0.50 = 50%)
             paper: Paper trading mode (default True)
         """
