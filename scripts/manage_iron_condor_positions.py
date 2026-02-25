@@ -4,7 +4,7 @@ Manage Iron Condor Positions - Exit Rules per LL-268/LL-277 Research
 
 Exit conditions for iron condors (NOT stocks):
 1. 50% profit target: Close when P/L >= 50% of credit received
-2. 100% stop-loss: Close when loss >= 1x credit received
+2. 200% stop-loss: Close when loss >= 2x credit received (per CLAUDE.md)
 3. 7 DTE exit: Close at 7 days to expiration to avoid gamma risk
 
 This script should run on a schedule during market hours to monitor
@@ -158,7 +158,7 @@ def check_exit_conditions(ic: dict) -> tuple[bool, str, str]:
     if dte <= IC_EXIT_CONFIG["exit_dte"]:
         return True, "DTE_EXIT", f"{dte} DTE (threshold: {IC_EXIT_CONFIG['exit_dte']})"
 
-    # Check 75% profit target (positive EV)
+    # Check 50% profit target (positive EV)
     if pl_pct >= IC_EXIT_CONFIG["profit_target_pct"]:
         return (
             True,
@@ -166,7 +166,7 @@ def check_exit_conditions(ic: dict) -> tuple[bool, str, str]:
             f"{pl_pct * 100:.1f}% profit (target: {IC_EXIT_CONFIG['profit_target_pct'] * 100:.0f}%)",
         )
 
-    # Check 100% stop-loss (cut losers fast)
+    # Check 200% stop-loss (cut losers fast)
     if pl_pct <= -IC_EXIT_CONFIG["stop_loss_pct"]:
         return (
             True,
