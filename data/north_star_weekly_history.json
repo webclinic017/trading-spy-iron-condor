@@ -32,9 +32,9 @@
     "sample_size": 2,
     "win_rate_pct": 50.0,
     "expectancy_per_trade": -94.5,
-    "mode": "validation",
+    "mode": "defensive",
     "qualified_setups": 0,
     "cadence_passed": false,
-    "updated_at": "2026-02-24T22:06:29.321367+00:00"
+    "updated_at": "2026-02-26T16:03:50.502652+00:00"
   }
 ]
