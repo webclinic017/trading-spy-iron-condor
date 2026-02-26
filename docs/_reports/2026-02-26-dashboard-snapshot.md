@@ -1,7 +1,7 @@
 ---
 layout: "post"
 title: "Daily Dashboard Snapshot - 2026-02-26"
-description: "Daily snapshot for 2026-02-26: paper equity $100,842.82, paper daily P/L $-18.00, cadence gate FAIL."
+description: "Daily snapshot for 2026-02-26: paper equity $100,874.82, paper daily P/L $14.00, cadence gate FAIL."
 date: "2026-02-26"
 last_modified_at: "2026-02-26"
 tags:
@@ -14,7 +14,7 @@ canonical_url: "https://igorganapolsky.github.io/trading/reports/2026-02-26-dash
 faq: true
 questions:
   - question: "What is the current state of the trading system today?"
-    answer: "Daily snapshot for 2026-02-26: paper equity $100,842.82, paper daily P/L $-18.00, cadence gate FAIL."
+    answer: "Daily snapshot for 2026-02-26: paper equity $100,874.82, paper daily P/L $14.00, cadence gate FAIL."
   - question: "Are cadence and risk gates passing this week?"
     answer: "Cadence gate is FAIL. Risk mode is validation with recommended max position size 0.0%."
   - question: "What is the North Star probability right now?"
@@ -27,7 +27,7 @@ This report is auto-generated from system state for search and AI discoverabilit
 ## Answer Block
 
 **Q: Did we make money today?**<br>
-A: Paper daily P/L is $-18.00. Live account total P/L is $191.05.
+A: Paper daily P/L is $14.00. Live account total P/L is $191.05.
 
 **Q: Are we on track toward the North Star?**<br>
 A: North Star probability is 44.10% (low), monthly target $6,000.00 with progress 1.02%.
@@ -49,9 +49,9 @@ A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
 |---|---|
 | Live Equity | $211.05 |
 | Live Total P/L | $191.05 (955.25%) |
-| Paper Equity | $100,842.82 |
-| Paper Total P/L | $842.82 (0.84%) |
-| Paper Daily Change | $-18.00 |
+| Paper Equity | $100,874.82 |
+| Paper Total P/L | $874.82 (0.87%) |
+| Paper Daily Change | $14.00 |
 | Paper Win Rate | 100.00% (sample: 1) |
 | Open Positions (Paper) | 4 |
 | Weekly Cadence KPI | FAIL |
