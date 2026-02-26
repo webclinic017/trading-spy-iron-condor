@@ -10,7 +10,7 @@
   "capex_deceleration_shock": false,
   "reasons": [
     "Hyperscaler capex proxy 20D drawdown -10.83%",
-    "AI infra basket soft (-7.24% 20D)"
+    "AI infra basket soft (-7.23% 20D)"
   ],
   "latest_data_date": "2026-02-26",
   "stale_days": 0,
@@ -18,9 +18,9 @@
     "hyperscaler_capex_proxy_ret_20d": -0.108258,
     "hyperscaler_capex_proxy_ret_5d": 0.003449,
     "capex_proxy_momentum_delta": 0.111707,
-    "ai_infra_proxy_ret_20d": -0.072369,
+    "ai_infra_proxy_ret_20d": -0.072322,
     "edge_monetization_proxy_ret_20d": -0.06238,
-    "edge_vs_infra_spread_20d": 0.009989,
+    "edge_vs_infra_spread_20d": 0.009942,
     "ai_monetization_proxy_score": 0.045878,
     "nvda_gross_margin_pct": 70.05,
     "nvda_gross_margin_trend_bps": 0.0
@@ -76,10 +76,10 @@
       "point_count": 190
     },
     "ANET": {
-      "latest_close": 130.214996,
+      "latest_close": 130.25,
       "latest_date": "2026-02-26",
-      "ret_5d": -0.051119,
-      "ret_20d": -0.132767,
+      "ret_5d": -0.050863,
+      "ret_20d": -0.132534,
       "point_count": 190
     },
     "AVGO": {
@@ -133,5 +133,5 @@
     }
   },
   "source": "yfinance_public",
-  "updated_at": "2026-02-26T21:08:49.596897+00:00"
+  "updated_at": "2026-02-26T22:05:06.770790+00:00"
 }
