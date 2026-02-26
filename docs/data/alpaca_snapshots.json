@@ -1,28 +1,28 @@
 {
-  "updated_at_utc": "2026-02-25T21:26:00Z",
+  "updated_at_utc": "2026-02-26T14:04:55Z",
   "latest": {
     "alpaca_paper": {
       "file": "alpaca_paper_latest.png",
-      "versioned_file": "alpaca_paper_20260225_212600.png",
+      "versioned_file": "alpaca_paper_20260226_140455.png",
       "url": "/trading/assets/snapshots/alpaca_paper_latest.png",
-      "versioned_url": "/trading/assets/snapshots/alpaca_paper_20260225_212600.png",
-      "captured_at_utc": "2026-02-25T21:26:00Z",
+      "versioned_url": "/trading/assets/snapshots/alpaca_paper_20260226_140455.png",
+      "captured_at_utc": "2026-02-26T14:04:55Z",
       "diagram_file": "paperbanana_paper_latest.svg",
-      "diagram_versioned_file": "paperbanana_paper_20260225_212600.svg",
+      "diagram_versioned_file": "paperbanana_paper_20260226_140455.svg",
       "diagram_url": "/trading/assets/snapshots/paperbanana_paper_latest.svg",
-      "diagram_versioned_url": "/trading/assets/snapshots/paperbanana_paper_20260225_212600.svg",
-      "technical_explainer": "Paper Account: net liquidation value $100,845.25; daily P/L -48.72 (-4.8 bps) indicating a negative drift session; cumulative P/L +845.25 (+0.85%); low capital deployment at 1.8% utilization with cash $101,068.25; open position proxy 4; win-rate estimate 100.0% (n=1); North Star gate LOW.",
+      "diagram_versioned_url": "/trading/assets/snapshots/paperbanana_paper_20260226_140455.svg",
+      "technical_explainer": "Paper Account: net liquidation value $100,842.82; daily P/L -18.00 (-1.8 bps) indicating a negative drift session; cumulative P/L +842.82 (+0.84%); low capital deployment at 1.8% utilization with cash $101,065.82; open position proxy 4; win-rate estimate 100.0% (n=1); North Star gate LOW.",
       "metrics": {
-        "equity": 100845.25,
+        "equity": 100842.82,
         "starting_balance": 100000.0,
-        "last_equity": 100893.97,
-        "daily_change": -48.72,
-        "daily_bps": -4.8288316933113045,
-        "total_pl": 845.25,
-        "total_pl_pct": 0.84525,
-        "buying_power": 198136.5,
-        "cash": 101068.25,
-        "buying_power_utilization_pct": 1.7621058007194157,
+        "last_equity": 100860.82,
+        "daily_change": -18.0,
+        "daily_bps": -1.7846374836135577,
+        "total_pl": 842.820000000007,
+        "total_pl_pct": 0.842820000000007,
+        "buying_power": 198131.64,
+        "cash": 101065.82,
+        "buying_power_utilization_pct": 1.7621482620180595,
         "win_rate": 100.0,
         "win_rate_sample_size": 1,
         "positions_count": 4,
@@ -31,26 +31,26 @@
     },
     "alpaca_live": {
       "file": "alpaca_live_latest.png",
-      "versioned_file": "alpaca_live_20260225_212600.png",
+      "versioned_file": "alpaca_live_20260226_140455.png",
       "url": "/trading/assets/snapshots/alpaca_live_latest.png",
-      "versioned_url": "/trading/assets/snapshots/alpaca_live_20260225_212600.png",
-      "captured_at_utc": "2026-02-25T21:26:00Z",
+      "versioned_url": "/trading/assets/snapshots/alpaca_live_20260226_140455.png",
+      "captured_at_utc": "2026-02-26T14:04:55Z",
       "diagram_file": "paperbanana_live_latest.svg",
-      "diagram_versioned_file": "paperbanana_live_20260225_212600.svg",
+      "diagram_versioned_file": "paperbanana_live_20260226_140455.svg",
       "diagram_url": "/trading/assets/snapshots/paperbanana_live_latest.svg",
-      "diagram_versioned_url": "/trading/assets/snapshots/paperbanana_live_20260225_212600.svg",
-      "technical_explainer": "Brokerage Account: net liquidation value $211.02; daily P/L +0.00 (+0.0 bps) indicating a flat premium-decay session; cumulative P/L +191.02 (+955.10%); high capital deployment at 99.1% utilization with cash $4.00; open position proxy 0; win-rate estimate 0.0% (n=0); North Star gate LOW.",
+      "diagram_versioned_url": "/trading/assets/snapshots/paperbanana_live_20260226_140455.svg",
+      "technical_explainer": "Brokerage Account: net liquidation value $210.75; daily P/L +0.00 (+0.0 bps) indicating a flat premium-decay session; cumulative P/L +190.75 (+953.75%); high capital deployment at 99.1% utilization with cash $4.00; open position proxy 0; win-rate estimate 0.0% (n=0); North Star gate LOW.",
       "metrics": {
-        "equity": 211.02,
+        "equity": 210.75,
         "starting_balance": 20.0,
         "last_equity": 0.0,
         "daily_change": 0.0,
         "daily_bps": 0.0,
-        "total_pl": 191.02,
-        "total_pl_pct": 955.1,
+        "total_pl": 190.75,
+        "total_pl_pct": 953.75,
         "buying_power": 4.0,
         "cash": 4.0,
-        "buying_power_utilization_pct": 99.05222253814804,
+        "buying_power_utilization_pct": 99.05100830367735,
         "win_rate": 0.0,
         "win_rate_sample_size": 0,
         "positions_count": 0,
@@ -59,101 +59,20 @@
     },
     "progress": {
       "file": "progress_latest.png",
-      "versioned_file": "progress_20260225_212600.png",
+      "versioned_file": "progress_20260226_140455.png",
       "url": "/trading/assets/snapshots/progress_latest.png",
-      "versioned_url": "/trading/assets/snapshots/progress_20260225_212600.png",
-      "captured_at_utc": "2026-02-25T21:26:00Z"
+      "versioned_url": "/trading/assets/snapshots/progress_20260226_140455.png",
+      "captured_at_utc": "2026-02-26T14:04:55Z"
     },
     "daily_summary": {
       "file": "daily_summary_latest.png",
-      "versioned_file": "daily_summary_20260225_212600.png",
+      "versioned_file": "daily_summary_20260226_140455.png",
       "url": "/trading/assets/snapshots/daily_summary_latest.png",
-      "versioned_url": "/trading/assets/snapshots/daily_summary_20260225_212600.png",
-      "captured_at_utc": "2026-02-25T21:26:00Z"
+      "versioned_url": "/trading/assets/snapshots/daily_summary_20260226_140455.png",
+      "captured_at_utc": "2026-02-26T14:04:55Z"
     }
   },
   "history": [
-    {
-      "captured_at_utc": "2026-02-19T14:04:16Z",
-      "entries": {
-        "alpaca_paper": {
-          "file": "alpaca_paper_latest.png",
-          "versioned_file": "alpaca_paper_20260219_140416.png",
-          "url": "/trading/assets/snapshots/alpaca_paper_latest.png",
-          "versioned_url": "/trading/assets/snapshots/alpaca_paper_20260219_140416.png",
-          "captured_at_utc": "2026-02-19T14:04:16Z",
-          "diagram_file": "paperbanana_paper_latest.svg",
-          "diagram_versioned_file": "paperbanana_paper_20260219_140416.svg",
-          "diagram_url": "/trading/assets/snapshots/paperbanana_paper_latest.svg",
-          "diagram_versioned_url": "/trading/assets/snapshots/paperbanana_paper_20260219_140416.svg",
-          "technical_explainer": "Paper Account: net liquidation value $101,371.84; daily P/L -43.00 (-4.2 bps) indicating a negative drift session; cumulative P/L +1,371.84 (+1.37%); low capital deployment at 2.4% utilization with cash $101,930.84; open position proxy 12; win-rate estimate 100.0% (n=1); North Star gate MEDIUM.",
-          "metrics": {
-            "equity": 101371.84,
-            "starting_balance": 100000.0,
-            "last_equity": 101414.84,
-            "daily_change": -43.0,
-            "daily_bps": -4.24001063355225,
-            "total_pl": 1371.8399999999965,
-            "total_pl_pct": 1.3718399999999966,
-            "buying_power": 197861.68,
-            "cash": 101930.84,
-            "buying_power_utilization_pct": 2.4079665516577364,
-            "win_rate": 100.0,
-            "win_rate_sample_size": 1,
-            "positions_count": 12,
-            "north_star_gate": "MEDIUM"
-          }
-        },
-        "alpaca_live": {
-          "file": "alpaca_live_latest.png",
-          "versioned_file": "alpaca_live_20260219_140416.png",
-          "url": "/trading/assets/snapshots/alpaca_live_latest.png",
-          "versioned_url": "/trading/assets/snapshots/alpaca_live_20260219_140416.png",
-          "captured_at_utc": "2026-02-19T14:04:16Z",
-          "diagram_file": "paperbanana_live_latest.svg",
-          "diagram_versioned_file": "paperbanana_live_20260219_140416.svg",
-          "diagram_url": "/trading/assets/snapshots/paperbanana_live_latest.svg",
-          "diagram_versioned_url": "/trading/assets/snapshots/paperbanana_live_20260219_140416.svg",
-          "technical_explainer": "Brokerage Account: net liquidation value $208.14; daily P/L +0.00 (+0.0 bps) indicating a flat premium-decay session; cumulative P/L +188.14 (+940.70%); high capital deployment at 90.4% utilization with cash $40.00; open position proxy 0; win-rate estimate 0.0% (n=0); North Star gate MEDIUM.",
-          "metrics": {
-            "equity": 208.14,
-            "starting_balance": 20.0,
-            "last_equity": 0.0,
-            "daily_change": 0.0,
-            "daily_bps": 0.0,
-            "total_pl": 188.14,
-            "total_pl_pct": 940.7,
-            "buying_power": 40.0,
-            "cash": 40.0,
-            "buying_power_utilization_pct": 90.39108292495436,
-            "win_rate": 0.0,
-            "win_rate_sample_size": 0,
-            "positions_count": 0,
-            "north_star_gate": "MEDIUM"
-          }
-        },
-        "progress": {
-          "file": "progress_latest.png",
-          "versioned_file": "progress_20260219_140416.png",
-          "url": "/trading/assets/snapshots/progress_latest.png",
-          "versioned_url": "/trading/assets/snapshots/progress_20260219_140416.png",
-          "captured_at_utc": "2026-02-19T14:04:16Z"
-        },
-        "daily_summary": {
-          "file": "daily_summary_latest.png",
-          "versioned_file": "daily_summary_20260219_140416.png",
-          "url": "/trading/assets/snapshots/daily_summary_latest.png",
-          "versioned_url": "/trading/assets/snapshots/daily_summary_20260219_140416.png",
-          "captured_at_utc": "2026-02-19T14:04:16Z"
-        }
-      },
-      "state": {
-        "paper_trade_count": 95,
-        "paper_equity": 101371.84,
-        "live_equity": 208.14,
-        "date_utc": "2026-02-19"
-      }
-    },
     {
       "captured_at_utc": "2026-02-19T15:00:34Z",
       "entries": {
@@ -2502,12 +2421,93 @@
         "live_equity": 211.02,
         "date_utc": "2026-02-25"
       }
+    },
+    {
+      "captured_at_utc": "2026-02-26T14:04:55Z",
+      "entries": {
+        "alpaca_paper": {
+          "file": "alpaca_paper_latest.png",
+          "versioned_file": "alpaca_paper_20260226_140455.png",
+          "url": "/trading/assets/snapshots/alpaca_paper_latest.png",
+          "versioned_url": "/trading/assets/snapshots/alpaca_paper_20260226_140455.png",
+          "captured_at_utc": "2026-02-26T14:04:55Z",
+          "diagram_file": "paperbanana_paper_latest.svg",
+          "diagram_versioned_file": "paperbanana_paper_20260226_140455.svg",
+          "diagram_url": "/trading/assets/snapshots/paperbanana_paper_latest.svg",
+          "diagram_versioned_url": "/trading/assets/snapshots/paperbanana_paper_20260226_140455.svg",
+          "technical_explainer": "Paper Account: net liquidation value $100,842.82; daily P/L -18.00 (-1.8 bps) indicating a negative drift session; cumulative P/L +842.82 (+0.84%); low capital deployment at 1.8% utilization with cash $101,065.82; open position proxy 4; win-rate estimate 100.0% (n=1); North Star gate LOW.",
+          "metrics": {
+            "equity": 100842.82,
+            "starting_balance": 100000.0,
+            "last_equity": 100860.82,
+            "daily_change": -18.0,
+            "daily_bps": -1.7846374836135577,
+            "total_pl": 842.820000000007,
+            "total_pl_pct": 0.842820000000007,
+            "buying_power": 198131.64,
+            "cash": 101065.82,
+            "buying_power_utilization_pct": 1.7621482620180595,
+            "win_rate": 100.0,
+            "win_rate_sample_size": 1,
+            "positions_count": 4,
+            "north_star_gate": "LOW"
+          }
+        },
+        "alpaca_live": {
+          "file": "alpaca_live_latest.png",
+          "versioned_file": "alpaca_live_20260226_140455.png",
+          "url": "/trading/assets/snapshots/alpaca_live_latest.png",
+          "versioned_url": "/trading/assets/snapshots/alpaca_live_20260226_140455.png",
+          "captured_at_utc": "2026-02-26T14:04:55Z",
+          "diagram_file": "paperbanana_live_latest.svg",
+          "diagram_versioned_file": "paperbanana_live_20260226_140455.svg",
+          "diagram_url": "/trading/assets/snapshots/paperbanana_live_latest.svg",
+          "diagram_versioned_url": "/trading/assets/snapshots/paperbanana_live_20260226_140455.svg",
+          "technical_explainer": "Brokerage Account: net liquidation value $210.75; daily P/L +0.00 (+0.0 bps) indicating a flat premium-decay session; cumulative P/L +190.75 (+953.75%); high capital deployment at 99.1% utilization with cash $4.00; open position proxy 0; win-rate estimate 0.0% (n=0); North Star gate LOW.",
+          "metrics": {
+            "equity": 210.75,
+            "starting_balance": 20.0,
+            "last_equity": 0.0,
+            "daily_change": 0.0,
+            "daily_bps": 0.0,
+            "total_pl": 190.75,
+            "total_pl_pct": 953.75,
+            "buying_power": 4.0,
+            "cash": 4.0,
+            "buying_power_utilization_pct": 99.05100830367735,
+            "win_rate": 0.0,
+            "win_rate_sample_size": 0,
+            "positions_count": 0,
+            "north_star_gate": "LOW"
+          }
+        },
+        "progress": {
+          "file": "progress_latest.png",
+          "versioned_file": "progress_20260226_140455.png",
+          "url": "/trading/assets/snapshots/progress_latest.png",
+          "versioned_url": "/trading/assets/snapshots/progress_20260226_140455.png",
+          "captured_at_utc": "2026-02-26T14:04:55Z"
+        },
+        "daily_summary": {
+          "file": "daily_summary_latest.png",
+          "versioned_file": "daily_summary_20260226_140455.png",
+          "url": "/trading/assets/snapshots/daily_summary_latest.png",
+          "versioned_url": "/trading/assets/snapshots/daily_summary_20260226_140455.png",
+          "captured_at_utc": "2026-02-26T14:04:55Z"
+        }
+      },
+      "state": {
+        "paper_trade_count": 95,
+        "paper_equity": 100842.82,
+        "live_equity": 210.75,
+        "date_utc": "2026-02-26"
+      }
     }
   ],
   "state": {
     "paper_trade_count": 95,
-    "paper_equity": 100845.25,
-    "live_equity": 211.02,
-    "date_utc": "2026-02-25"
+    "paper_equity": 100842.82,
+    "live_equity": 210.75,
+    "date_utc": "2026-02-26"
   }
 }
