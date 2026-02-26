@@ -133,17 +133,17 @@
     "cash": 101065.82
   },
   "paper_account": {
-    "equity": 100875.82,
+    "equity": 100878.82,
     "cash": 101065.82,
     "buying_power": 198131.64,
     "total_pl": 875.820000000007,
     "total_pl_pct": 0.875820000000007,
     "positions_count": 4,
-    "daily_change": 15.0,
+    "daily_change": 18.0,
     "win_rate": 100.0,
     "win_rate_sample_size": 1,
     "starting_balance": 100000.0,
-    "current_equity": 100875.82,
+    "current_equity": 100878.82,
     "last_equity": 100860.82
   },
   "positions": [
@@ -944,10 +944,14 @@
   ],
   "trades_loaded": 95,
   "trades": {
-    "last_trade_date": "2026-02-09",
+    "last_trade_date": "2026-02-26",
     "today_trades": 0,
     "total_trades_today": 0,
-    "last_trade_symbol": "SPY260220P00660000"
+    "last_trade_symbol": "SYNCED",
+    "metrics_date": "2026-02-26",
+    "orders_today": 0,
+    "structures_today": 0,
+    "fills_today": 0
   },
   "risk": {
     "status": "MONITORING",
@@ -977,14 +981,14 @@
     "buying_power": 198131.64
   },
   "meta": {
-    "last_updated": "2026-02-26T14:49:47.470318+00:00",
+    "last_updated": "2026-02-26T14:59:32.461198+00:00",
     "trade_sync": "alpaca_api",
     "sync_frequency_minutes": 5,
     "last_sync_attempt": "2026-02-26T14:49:47.470318+00:00",
     "alpaca_keys_present": true,
     "last_sync": "2026-02-26T14:49:46.858120",
     "sync_mode": "paper+live",
-    "last_daily_verification_at": "2026-02-26T14:03:55.452552+00:00"
+    "last_daily_verification_at": "2026-02-26T14:59:34.207527+00:00"
   },
   "paper_trading": {
     "start_date": "2026-01-30",
@@ -1315,7 +1319,7 @@
     "updated_at": "2026-02-26T14:50:32.727725+00:00"
   },
   "ic_position_management": {
-    "last_run": "2026-02-26T14:49:48.272399",
+    "last_run": "2026-02-26T14:59:16.696633",
     "iron_condors_evaluated": 1,
     "exits_triggered": 0,
     "exits_executed": 0
@@ -1796,13 +1800,13 @@
     }
   },
   "stop_verification": {
-    "last_check": "2026-02-26T14:03:39.568868",
+    "last_check": "2026-02-26T14:59:10.982347",
     "status": "MISSING_STOPS",
     "verified_count": 0,
     "missing_count": 2
   },
   "options": {
-    "last_theta_harvest": "2026-02-26T14:03:48.724524Z",
+    "last_theta_harvest": "2026-02-26T14:59:22.540498Z",
     "harvest_source": "daily-trading-workflow",
     "execution_date": "2026-02-26",
     "selection_method": "adaptive",
