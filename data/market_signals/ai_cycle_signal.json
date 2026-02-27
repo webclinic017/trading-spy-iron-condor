@@ -13,7 +13,7 @@
     "AI infra basket soft (-7.23% 20D)"
   ],
   "latest_data_date": "2026-02-26",
-  "stale_days": 0,
+  "stale_days": 1,
   "features": {
     "hyperscaler_capex_proxy_ret_20d": -0.108258,
     "hyperscaler_capex_proxy_ret_5d": 0.003449,
@@ -22,8 +22,8 @@
     "edge_monetization_proxy_ret_20d": -0.06238,
     "edge_vs_infra_spread_20d": 0.009942,
     "ai_monetization_proxy_score": 0.045878,
-    "nvda_gross_margin_pct": 70.05,
-    "nvda_gross_margin_trend_bps": 0.0
+    "nvda_gross_margin_pct": 71.07,
+    "nvda_gross_margin_trend_bps": 102.0
   },
   "coverage": {
     "hyperscaler_capex_proxy_tickers": [
@@ -133,5 +133,5 @@
     }
   },
   "source": "yfinance_public",
-  "updated_at": "2026-02-26T22:05:06.770790+00:00"
+  "updated_at": "2026-02-27T11:11:15.204527+00:00"
 }
