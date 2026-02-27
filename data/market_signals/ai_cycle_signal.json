@@ -23,7 +23,7 @@
     "edge_vs_infra_spread_20d": 0.009942,
     "ai_monetization_proxy_score": 0.045878,
     "nvda_gross_margin_pct": 71.07,
-    "nvda_gross_margin_trend_bps": 102.0
+    "nvda_gross_margin_trend_bps": 0.0
   },
   "coverage": {
     "hyperscaler_capex_proxy_tickers": [
@@ -133,5 +133,5 @@
     }
   },
   "source": "yfinance_public",
-  "updated_at": "2026-02-27T11:11:15.204527+00:00"
+  "updated_at": "2026-02-27T14:12:34.302685+00:00"
 }
