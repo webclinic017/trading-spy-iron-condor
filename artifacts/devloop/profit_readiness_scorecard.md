@@ -8,7 +8,7 @@
 - Win Rate: 100.00% [PASS] (sample_size=1)
 - Max Drawdown (sync history): 0.04% [PASS] (equity_points=24)
 - Execution Quality (valid trade records): 97.89% [PASS] (valid=93/95)
-- Gateway Latency: 852 ms [PASS] (from artifacts/tars/smoke_metrics.txt)
+- Gateway Latency: 1072 ms [PASS] (from artifacts/tars/smoke_metrics.txt)
 - Gateway Cost (smoke call): $0.000017 [PASS] (set TARS_INPUT_COST_PER_1M and TARS_OUTPUT_COST_PER_1M for estimate)
 - Profit Factor: Inf [PASS] (wins=1 losses=0 sample=1 source=data/trades.json)
 - Average Winner: $41.00 [PASS] (source=data/trades.json)
