@@ -1,4 +1,4 @@
-timestamp_utc=2026-02-27T16:07:46Z
+timestamp_utc=2026-02-27T16:14:41Z
 checks=retrieval_readiness
 src_rag_dir=present
 src_rag_py_files=11
