@@ -911,10 +911,14 @@
   ],
   "trades_loaded": 95,
   "trades": {
-    "last_trade_date": "2026-02-09",
+    "last_trade_date": "2026-02-27",
     "today_trades": 0,
     "total_trades_today": 0,
-    "last_trade_symbol": "SPY260220P00660000"
+    "last_trade_symbol": "SYNCED",
+    "metrics_date": "2026-02-27",
+    "orders_today": 0,
+    "structures_today": 0,
+    "fills_today": 0
   },
   "risk": {
     "status": "MONITORING",
@@ -944,14 +948,14 @@
     "buying_power": 402091.04
   },
   "meta": {
-    "last_updated": "2026-02-27T14:47:50.681807+00:00",
+    "last_updated": "2026-02-27T14:56:46.957905+00:00",
     "trade_sync": "alpaca_api",
     "sync_frequency_minutes": 5,
     "last_sync_attempt": "2026-02-27T14:47:50.681807+00:00",
     "alpaca_keys_present": true,
     "last_sync": "2026-02-27T14:47:49.985216",
     "sync_mode": "paper+live",
-    "last_daily_verification_at": "2026-02-27T14:01:02.409738+00:00"
+    "last_daily_verification_at": "2026-02-27T14:56:48.028928+00:00"
   },
   "paper_trading": {
     "start_date": "2026-01-30",
@@ -1734,7 +1738,7 @@
     "missing_count": 2
   },
   "options": {
-    "last_theta_harvest": "2026-02-27T14:00:53.858493Z",
+    "last_theta_harvest": "2026-02-27T14:56:38.756465Z",
     "harvest_source": "daily-trading-workflow",
     "execution_date": "2026-02-27",
     "selection_method": "adaptive",
