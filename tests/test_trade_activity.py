@@ -52,7 +52,9 @@ def test_fallback_file_counts_only_real_fills(tmp_path: Path) -> None:
         ],
     )
 
-    summary = reconcile_filled_trade_activity({}, data_dir=tmp_path / "data", today=date(2026, 2, 25))
+    summary = reconcile_filled_trade_activity(
+        {}, data_dir=tmp_path / "data", today=date(2026, 2, 25)
+    )
 
     assert summary["last_trade_date"] == "2026-02-25"
     assert summary["trades_today"] == 2

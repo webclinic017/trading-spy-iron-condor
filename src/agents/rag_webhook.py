@@ -486,6 +486,7 @@ def get_current_portfolio_status() -> dict:
             return
         seen_fill_keys.add(fill_key)
         canonical_activity.append({"filled_at": str(filled_at), **trade})
+
     trade_history = state.get("trade_history", [])
     if isinstance(trade_history, list):
         for trade in trade_history:
