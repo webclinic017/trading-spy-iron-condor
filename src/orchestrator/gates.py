@@ -1259,6 +1259,55 @@ class Gate3Sentiment:
         # Fall back to LLM
         return self._evaluate_llm(ticker, ctx, neg_threshold, playwright_score)
 
+    def _get_perplexity_sentiment(self, ticker: str) -> float | None:
+        """Get real-time sentiment from Perplexity API for the last 15 minutes."""
+        import os
+        api_key = os.getenv("PERPLEXITY_API_KEY")
+        if not api_key:
+            return None
+
+        url = "https://api.perplexity.ai/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": "sonar-pro",
+            "messages": [
+                {"role": "system", "content": "You are a financial analyst. Provide a sentiment score between -1.0 and 1.0 for the requested stock based on news from the last 15 minutes. Output ONLY a valid JSON object like {\"score\": 0.5, \"reason\": \"positive earnings\"}."},
+                {"role": "user", "content": f"Why is {ticker} moving right now? Summarize news from the last 15 minutes and score it."}
+            ],
+            "search_recency_filter": "hour" # closest to 15 mins
+        }
+        try:
+            import asyncio
+            import json
+
+            import httpx
+
+            async def fetch():
+                async with httpx.AsyncClient() as client:
+                    return await client.post(url, headers=headers, json=payload, timeout=20.0)
+
+            resp = asyncio.get_event_loop().run_until_complete(fetch())
+            if resp.status_code == 200:
+                data = resp.json()
+                content = data["choices"][0]["message"]["content"]
+
+                # Extract JSON if wrapped in markdown
+                if "```json" in content:
+                    content = content.split("```json")[1].split("```")[0]
+                elif "```" in content:
+                    content = content.split("```")[1].split("```")[0]
+
+                result = json.loads(content.strip())
+                score = float(result.get("score", 0.0))
+                logger.info("Gate 3 (%s): Perplexity real-time sentiment=%.2f, reason=%s", ticker, score, result.get("reason", ""))
+                return score
+        except Exception as e:
+            logger.warning("Gate 3 (%s): Perplexity API failed: %s", ticker, e)
+        return None
+
     def _get_playwright_sentiment(self, ticker: str) -> float:
         """Scrape sentiment from web sources."""
         try:
@@ -1367,7 +1416,7 @@ class Gate3Sentiment:
     def _evaluate_llm(
         self, ticker: str, ctx: TradeContext, threshold: float, playwright_score: float
     ) -> GateResult:
-        """Call LLM for sentiment analysis."""
+        """Call LLM and Perplexity for sentiment analysis."""
         llm_model = getattr(self.llm_agent, "model_name", None)
 
         if not self.budget_controller.can_afford_execution(model=llm_model):
@@ -1387,20 +1436,25 @@ class Gate3Sentiment:
             retry=2,
         )
 
+        llm_score = 0.0
+        llm_result = {}
         if not outcome.ok:
             logger.warning("Gate 3 (%s): LLM error, falling back", ticker)
-            return GateResult(
-                gate_name="llm_sentiment",
-                status=GateStatus.SKIP,
-                ticker=ticker,
-                reason=f"LLM error: {outcome.failure.error}",
-            )
+            # We don't return ERROR immediately, we can rely on Perplexity if available
+        else:
+            llm_result = outcome.result
+            llm_score = llm_result.get("score", 0.0)
 
-        llm_result = outcome.result
-        llm_score = llm_result.get("score", 0.0)
+        # Get Perplexity real-time sentiment
+        perplexity_score = self._get_perplexity_sentiment(ticker)
 
-        # Blend with playwright
-        sentiment_score = self._blend_llm_playwright_sentiment(llm_score, playwright_score)
+        if perplexity_score is not None:
+            # Perplexity provides real-time high-quality data. Overrides or blends heavily
+            sentiment_score = perplexity_score * 0.7 + self._blend_llm_playwright_sentiment(llm_score, playwright_score) * 0.3
+            logger.info("Gate 3 (%s): Blended with Perplexity score=%.2f", ticker, sentiment_score)
+        else:
+            # Blend with playwright
+            sentiment_score = self._blend_llm_playwright_sentiment(llm_score, playwright_score)
 
         # Inter-gate data sharing: incorporate upstream signals (agentic workflow improvement)
         # If debate concluded bearish with high confidence, dampen positive sentiment

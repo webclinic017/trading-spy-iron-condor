@@ -358,6 +358,30 @@ If exact numbers aren't available, provide reasonable estimates with confidence 
 
         return metrics
 
+    async def analyze_historical_trades(self, csv_path: str) -> dict[str, Any]:
+        """
+        High-Capacity Data Ingestion for 'The Lab'.
+        Feeds historical trade CSV into Perplexity API for deep pattern recognition.
+        """
+        if not self.api_key:
+            return {"error": "PERPLEXITY_API_KEY not configured"}
+
+        csv_file = Path(csv_path)
+        if not csv_file.exists():
+            return {"error": f"CSV file not found: {csv_path}"}
+
+        # Read the CSV contents
+        csv_content = csv_file.read_text()
+
+        # Truncate if too massive, though sonar-pro has a 200k context window
+        if len(csv_content) > 600_000:  # Roughly 150k tokens safe limit
+            csv_content = csv_content[:600_000] + "\n...[TRUNCATED]"
+
+        query = f"I am providing a CSV of historical trades. Analyze this data and find hidden alpha. What specific conditions (like DTE, delta, VIX, or yields) lead to the highest win rates and profit factors?\n\n<csv_data>\n{csv_content}\n</csv_data>"
+
+        print("Feeding historical trades to Perplexity for Deep Research...")
+        return await self.research(query, extract_metrics=True)
+
     async def run_backtest_suite(
         self,
         queries: list[BacktestQuery] | None = None,
