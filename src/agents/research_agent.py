@@ -711,6 +711,7 @@ async def run_weekend_research() -> dict[str, Any]:
         )
 
         # Phase 1.5: Historical Trade Analysis (Perplexity Deep Research)
+        agent = PerplexityResearchAgent()
         print("\n[Phase 1.5] Historical Trade Analysis")
         print("-" * 40)
         trades_json = DATA_DIR / "trades_for_clustering.json"
