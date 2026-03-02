@@ -93,7 +93,22 @@ jobs:
             --base-ref "origin/${{ github.base_ref }}" \
             --mode quick \
             --report-md artifacts/devloop/agent_handoff_gate.md \
-            --report-json artifacts/devloop/agent_handoff_gate.json
+            --report-json artifacts/devloop/agent_handoff_gate.json \
+            --delegation-contract-out artifacts/devloop/delegation_contract.json \
+            --fallback-plan-json artifacts/devloop/handoff_fallback_plan.json \
+            --audit-jsonl artifacts/devloop/agent_handoff_audit.jsonl \
+            --policy-ab-json artifacts/devloop/trading_policy_ab_metrics.json
+
+      - name: Collect handoff A/B metrics
+        if: always()
+        run: |
+          python3 scripts/collect_agent_handoff_ab_metrics.py collect \
+            --variant "${{ vars.POLICY_AB_VARIANT || 'A' }}" \
+            --gate-report artifacts/devloop/agent_handoff_gate.json \
+            --policy-report artifacts/devloop/trading_policy_ab_metrics.json \
+            --ci-conclusion "${{ job.status }}" \
+            --summary-out artifacts/devloop/agent_handoff_ab_metrics_latest.json \
+            --jsonl-out artifacts/devloop/agent_handoff_ab_metrics_history.jsonl
 
       - name: Upload gate artifacts
         if: always()
@@ -103,6 +118,12 @@ jobs:
           path: |
             artifacts/devloop/agent_handoff_gate.md
             artifacts/devloop/agent_handoff_gate.json
+            artifacts/devloop/delegation_contract.json
+            artifacts/devloop/handoff_fallback_plan.json
+            artifacts/devloop/agent_handoff_audit.jsonl
+            artifacts/devloop/trading_policy_ab_metrics.json
+            artifacts/devloop/agent_handoff_ab_metrics_latest.json
+            artifacts/devloop/agent_handoff_ab_metrics_history.jsonl
 
   # Added Dec 12, 2025: Workflow validation to prevent dependency issues (LL-021)
   workflow-validation:
