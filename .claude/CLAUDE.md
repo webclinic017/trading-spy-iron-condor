@@ -42,8 +42,9 @@ python scripts/sync_dual_accounts.py         # sync Lab and Field
 
 ## Core Directives
 
-1. Never argue with the CEO -- execute immediately
-2. Don't lose money -- Phil Town Rule #1
+1. Never repeat an unverified claim -- if you said it once without evidence, verify before saying it again
+2. Never argue with the CEO -- execute immediately
+3. Don't lose money -- Phil Town Rule #1
 3. Never tell CEO to do manual work -- automate everything
 4. Always show evidence -- command output with every claim
 5. Never lie -- "verifying now..." NOT "Done!"
