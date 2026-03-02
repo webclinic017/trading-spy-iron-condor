@@ -140,5 +140,77 @@
     "last_equity": 101155.58,
     "daily_pnl": -7.080000000001746,
     "total_pnl": 1148.5
+  },
+  {
+    "date": "2026-02-25",
+    "traded": false,
+    "orders": 0,
+    "structures": 0,
+    "fills": 0,
+    "positions": 4,
+    "equity": 100893.97,
+    "last_equity": 100893.97,
+    "daily_pnl": 0.0,
+    "total_pnl": 893.9700000000012
+  },
+  {
+    "date": "2026-02-25",
+    "traded": false,
+    "orders": 0,
+    "structures": 0,
+    "fills": 0,
+    "positions": 4,
+    "equity": 100886.97,
+    "last_equity": 100893.97,
+    "daily_pnl": -7.0,
+    "total_pnl": 886.9700000000012
+  },
+  {
+    "date": "2026-02-26",
+    "traded": false,
+    "orders": 0,
+    "structures": 0,
+    "fills": 0,
+    "positions": 4,
+    "equity": 100842.82,
+    "last_equity": 100860.82,
+    "daily_pnl": -18.0,
+    "total_pnl": 842.820000000007
+  },
+  {
+    "date": "2026-02-26",
+    "traded": false,
+    "orders": 0,
+    "structures": 0,
+    "fills": 0,
+    "positions": 4,
+    "equity": 100878.82,
+    "last_equity": 100860.82,
+    "daily_pnl": 18.0,
+    "total_pnl": 878.820000000007
+  },
+  {
+    "date": "2026-02-27",
+    "traded": false,
+    "orders": 0,
+    "structures": 0,
+    "fills": 0,
+    "positions": 0,
+    "equity": 100522.76,
+    "last_equity": 100522.76,
+    "daily_pnl": 0.0,
+    "total_pnl": 522.7599999999948
+  },
+  {
+    "date": "2026-02-27",
+    "traded": false,
+    "orders": 0,
+    "structures": 0,
+    "fills": 0,
+    "positions": 0,
+    "equity": 100522.76,
+    "last_equity": 100522.76,
+    "daily_pnl": 0.0,
+    "total_pnl": 522.7599999999948
   }
 ]
