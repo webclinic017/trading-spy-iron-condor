@@ -13,7 +13,7 @@
     "AI infra basket soft (-6.86% 20D)"
   ],
   "latest_data_date": "2026-02-27",
-  "stale_days": 2,
+  "stale_days": 3,
   "features": {
     "hyperscaler_capex_proxy_ret_20d": -0.112661,
     "hyperscaler_capex_proxy_ret_5d": -0.010311,
@@ -133,5 +133,5 @@
     }
   },
   "source": "yfinance_public",
-  "updated_at": "2026-03-01T15:06:51.887144+00:00"
+  "updated_at": "2026-03-02T11:13:31.437047+00:00"
 }
