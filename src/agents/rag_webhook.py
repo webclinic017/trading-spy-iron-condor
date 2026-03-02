@@ -712,6 +712,41 @@ def is_compound_pl_analytical_query(query: str) -> bool:
     return is_direct_pl_query(query) and is_analytical_query(query)
 
 
+def extract_ticker_from_query(query: str) -> str | None:
+    """Extract a potential ticker symbol from a trade query.
+
+    Returns the ticker if found, or None if the query is generic
+    (e.g., "show all trades", "recent trades").
+    """
+    import re
+
+    # Known valid tickers in our system
+    known_tickers = {"SPY", "XSP", "SPX", "VOO", "QQQ"}
+    # Generic trade keywords that are NOT ticker references
+    generic_words = {
+        "trade", "trades", "trading", "bought", "sold", "position", "positions",
+        "pnl", "profit", "loss", "money", "made", "earn", "earned", "today",
+        "gains", "returns", "equity", "balance", "account", "stock", "option",
+        "entry", "exit", "filled", "executed", "order", "recent", "last",
+        "first", "all", "my", "our", "the", "when", "was", "were", "how",
+        "much", "many", "what", "which", "show", "list", "get", "find",
+        "close", "open", "iron", "condor", "condors", "spread", "spreads",
+        "performance", "portfolio", "symbol", "current",
+    }
+    words = re.findall(r"\b[a-zA-Z]+\b", query)
+    for word in words:
+        upper = word.upper()
+        lower = word.lower()
+        if lower in generic_words:
+            continue
+        if upper in known_tickers:
+            return upper
+        # Looks like a ticker attempt (2-5 uppercase letters, not a common word)
+        if len(word) <= 5 and word.isalpha() and lower not in generic_words:
+            return upper
+    return None
+
+
 def is_trade_query(query: str) -> bool:
     """
     Detect if query is about trades vs lessons.
@@ -1583,25 +1618,48 @@ async def webhook(
         elif is_trade_query(user_query):
             # Query trade history from local JSON files
             logger.info(f"Detected TRADE query: {safe_query}")
-            trades = query_trades(user_query, limit=10)
 
-            if trades:
-                response_text = format_trades_response(trades, user_query)
-                logger.info(f"Returning {len(trades)} trades")
-            elif is_analytical_query(user_query):
-                # FIX Jan 13, 2026: Analytical questions (WHY, explain, etc.)
-                # should go to RAG for semantic understanding, not portfolio status
-                logger.info(f"Detected ANALYTICAL trade query: {safe_query} - routing to RAG")
-                results, source = query_rag_hybrid(user_query, top_k=5)
+            # Check if user is asking about a specific unknown ticker
+            mentioned_ticker = extract_ticker_from_query(user_query)
+            known_tickers = {"SPY", "XSP", "SPX", "VOO", "QQQ"}
+            _unknown_ticker = mentioned_ticker and mentioned_ticker not in known_tickers
 
-                # Get portfolio context to include in response
-                portfolio = get_current_portfolio_status()
-                portfolio_context = ""
-                if portfolio:
-                    live = portfolio.get("live", {})
-                    paper = portfolio.get("paper", {})
-                    last_trade = portfolio.get("last_trade_date", "unknown")
-                    portfolio_context = f"""
+            if _unknown_ticker:
+                response_text = (
+                    f"I don't recognize '{mentioned_ticker}' as a ticker in our system. "
+                    f"We only trade **SPY** iron condors. "
+                    f"Try asking about SPY trades, current P/L, or exit rules."
+                )
+                logger.info(f"Unknown ticker query: {mentioned_ticker}")
+
+            if not _unknown_ticker:
+                trades = query_trades(user_query, limit=10)
+
+                # Filter by mentioned ticker if specified
+                if mentioned_ticker and trades:
+                    trades = [
+                        t for t in trades
+                        if (t.get("metadata", {}).get("symbol") or "").upper() == mentioned_ticker
+                        or mentioned_ticker == "SPY"  # SPY options have OCC symbols
+                    ]
+
+                if trades:
+                    response_text = format_trades_response(trades, user_query)
+                    logger.info(f"Returning {len(trades)} trades")
+                elif is_analytical_query(user_query):
+                    # FIX Jan 13, 2026: Analytical questions (WHY, explain, etc.)
+                    # should go to RAG for semantic understanding, not portfolio status
+                    logger.info(f"Detected ANALYTICAL trade query: {safe_query} - routing to RAG")
+                    results, source = query_rag_hybrid(user_query, top_k=5)
+
+                    # Get portfolio context to include in response
+                    portfolio = get_current_portfolio_status()
+                    portfolio_context = ""
+                    if portfolio:
+                        live = portfolio.get("live", {})
+                        paper = portfolio.get("paper", {})
+                        last_trade = portfolio.get("last_trade_date", "unknown")
+                        portfolio_context = f"""
 **Current Status:**
 - Paper Equity: ${paper.get("equity", 0):,.2f} | P/L: ${paper.get("total_pl", 0):,.2f}
 - Live Equity: ${live.get("equity", 0):.2f}
@@ -1609,14 +1667,14 @@ async def webhook(
 
 """
 
-                if results:
-                    rag_response = format_rag_response(results, user_query, source)
-                    response_text = f"""📊 **Analysis: {user_query}**
+                    if results:
+                        rag_response = format_rag_response(results, user_query, source)
+                        response_text = f"""📊 **Analysis: {user_query}**
 
 {portfolio_context}{rag_response}"""
-                else:
-                    # No RAG results - provide helpful analysis
-                    response_text = f"""📊 **Analysis: {user_query}**
+                    else:
+                        # No RAG results - provide helpful analysis
+                        response_text = f"""📊 **Analysis: {user_query}**
 
 {portfolio_context}**Possible reasons for no profit:**
 1. **No trades executed** - Check if automation is running
@@ -1628,98 +1686,98 @@ async def webhook(
 - Check GitHub Actions for trading workflow status
 - Review paper account positions in Alpaca dashboard
 - Ask: "Are we ready to trade?" for full readiness assessment"""
-                logger.info(f"Returning analytical response with RAG from {source}")
-            elif is_direct_pl_query(user_query):
-                # FIX Jan 13, 2026: Direct P/L questions get conversational answers
-                # Not a full portfolio dump - just answer the question directly
-                logger.info(f"Detected DIRECT P/L query: {safe_query}")
-                portfolio = get_current_portfolio_status()
-                if portfolio:
-                    paper = portfolio.get("paper", {})
-                    live = portfolio.get("live", {})
-                    trades_today = portfolio.get("trades_today", 0)
-                    # FIX: today_pl doesn't exist - use daily_change from paper account
-                    today_pl = paper.get("daily_change", 0)
-                    actual_today = portfolio.get("actual_today", "today")
+                    logger.info(f"Returning analytical response with RAG from {source}")
+                elif is_direct_pl_query(user_query):
+                    # FIX Jan 13, 2026: Direct P/L questions get conversational answers
+                    # Not a full portfolio dump - just answer the question directly
+                    logger.info(f"Detected DIRECT P/L query: {safe_query}")
+                    portfolio = get_current_portfolio_status()
+                    if portfolio:
+                        paper = portfolio.get("paper", {})
+                        live = portfolio.get("live", {})
+                        trades_today = portfolio.get("trades_today", 0)
+                        # FIX: today_pl doesn't exist - use daily_change from paper account
+                        today_pl = paper.get("daily_change", 0)
+                        actual_today = portfolio.get("actual_today", "today")
 
-                    if trades_today > 0 and today_pl != 0:
-                        # Trades executed with P/L
-                        if today_pl > 0:
-                            response_text = (
-                                f"You made **${today_pl:,.2f}** today "
-                                f"from {trades_today} trade(s). Nice work!"
-                            )
+                        if trades_today > 0 and today_pl != 0:
+                            # Trades executed with P/L
+                            if today_pl > 0:
+                                response_text = (
+                                    f"You made **${today_pl:,.2f}** today "
+                                    f"from {trades_today} trade(s). Nice work!"
+                                )
+                            else:
+                                response_text = (
+                                    f"You lost **${abs(today_pl):,.2f}** today "
+                                    f"from {trades_today} trade(s). Let's review."
+                                )
+                        elif trades_today > 0:
+                            # Trades executed - show TODAY's change, not total P/L
+                            daily_change = paper.get("daily_change", 0)
+                            total_pl = paper.get("total_pl", 0)
+                            if daily_change > 0:
+                                response_text = (
+                                    f"You executed {trades_today} trade(s) today. "
+                                    f"**Today's gain: +${daily_change:,.2f}** "
+                                    f"(Overall P/L: ${total_pl:,.2f})"
+                                )
+                            elif daily_change < 0:
+                                response_text = (
+                                    f"You executed {trades_today} trade(s) today. "
+                                    f"**Today's loss: -${abs(daily_change):,.2f}** "
+                                    f"(Overall P/L: ${total_pl:,.2f})"
+                                )
+                            else:
+                                response_text = (
+                                    f"You executed {trades_today} trade(s) today. "
+                                    f"**Flat today** (Overall P/L: ${total_pl:,.2f})"
+                                )
                         else:
-                            response_text = (
-                                f"You lost **${abs(today_pl):,.2f}** today "
-                                f"from {trades_today} trade(s). Let's review."
+                            # No trades today
+                            paper_pl = _coerce_float(paper.get("total_pl", 0))
+                            pct = _coerce_float(paper.get("total_pl_pct", 0))
+                            daily_change = _coerce_float(paper.get("daily_change", 0))
+                            positions_count = int(paper.get("positions_count", 0) or 0)
+
+                            drift_label = "mark-to-market" if positions_count > 0 else "equity drift"
+                            drift_line = (
+                                f"Today's {drift_label}: **{_format_signed_dollars(daily_change)}** "
+                                f"(no trades)."
+                                if abs(daily_change) >= 0.005
+                                else "Today's mark-to-market: **$0.00** (no trades)."
                             )
-                    elif trades_today > 0:
-                        # Trades executed - show TODAY's change, not total P/L
-                        daily_change = paper.get("daily_change", 0)
-                        total_pl = paper.get("total_pl", 0)
-                        if daily_change > 0:
                             response_text = (
-                                f"You executed {trades_today} trade(s) today. "
-                                f"**Today's gain: +${daily_change:,.2f}** "
-                                f"(Overall P/L: ${total_pl:,.2f})"
+                                f"No trades executed **today** ({actual_today}).\n\n"
+                                f"{drift_line}\n\n"
+                                f"Overall paper P/L: **${paper_pl:,.2f}** ({pct:.2f}%)"
                             )
-                        elif daily_change < 0:
-                            response_text = (
-                                f"You executed {trades_today} trade(s) today. "
-                                f"**Today's loss: -${abs(daily_change):,.2f}** "
-                                f"(Overall P/L: ${total_pl:,.2f})"
-                            )
-                        else:
-                            response_text = (
-                                f"You executed {trades_today} trade(s) today. "
-                                f"**Flat today** (Overall P/L: ${total_pl:,.2f})"
-                            )
+                        logger.info("Returning conversational P/L response")
                     else:
-                        # No trades today
-                        paper_pl = _coerce_float(paper.get("total_pl", 0))
-                        pct = _coerce_float(paper.get("total_pl_pct", 0))
-                        daily_change = _coerce_float(paper.get("daily_change", 0))
-                        positions_count = int(paper.get("positions_count", 0) or 0)
-
-                        drift_label = "mark-to-market" if positions_count > 0 else "equity drift"
-                        drift_line = (
-                            f"Today's {drift_label}: **{_format_signed_dollars(daily_change)}** "
-                            f"(no trades)."
-                            if abs(daily_change) >= 0.005
-                            else "Today's mark-to-market: **$0.00** (no trades)."
-                        )
                         response_text = (
-                            f"No trades executed **today** ({actual_today}).\n\n"
-                            f"{drift_line}\n\n"
-                            f"Overall paper P/L: **${paper_pl:,.2f}** ({pct:.2f}%)"
+                            "I couldn't retrieve your P/L data right now. "
+                            "Try asking 'Are we ready to trade?' for status."
                         )
-                    logger.info("Returning conversational P/L response")
+                        logger.warning("Direct P/L query but no portfolio data")
                 else:
-                    response_text = (
-                        "I couldn't retrieve your P/L data right now. "
-                        "Try asking 'Are we ready to trade?' for status."
-                    )
-                    logger.warning("Direct P/L query but no portfolio data")
-            else:
-                # Fallback: Get current portfolio status from system_state.json
-                portfolio = get_current_portfolio_status()
-                if portfolio:
-                    live = portfolio.get("live", {})
-                    paper = portfolio.get("paper", {})
-                    trades_today = portfolio.get("trades_today", 0)
-                    last_trade = portfolio.get("last_trade_date", "unknown")
-                    actual_today = portfolio.get("actual_today", "unknown")
+                    # Fallback: Get current portfolio status from system_state.json
+                    portfolio = get_current_portfolio_status()
+                    if portfolio:
+                        live = portfolio.get("live", {})
+                        paper = portfolio.get("paper", {})
+                        trades_today = portfolio.get("trades_today", 0)
+                        last_trade = portfolio.get("last_trade_date", "unknown")
+                        actual_today = portfolio.get("actual_today", "unknown")
 
-                    # Build trading activity message based on whether trades happened today
-                    if trades_today > 0:
-                        activity_msg = (
-                            f"**Today ({actual_today}):** {trades_today} trades executed ✅"
-                        )
-                    else:
-                        activity_msg = f"**Today ({actual_today}):** No trades yet\n**Last Trade:** {last_trade}"
+                        # Build trading activity message based on whether trades happened today
+                        if trades_today > 0:
+                            activity_msg = (
+                                f"**Today ({actual_today}):** {trades_today} trades executed ✅"
+                            )
+                        else:
+                            activity_msg = f"**Today ({actual_today}):** No trades yet\n**Last Trade:** {last_trade}"
 
-                    response_text = f"""📊 Current Portfolio Status (Day {portfolio.get("challenge_day", "?")}/90)
+                        response_text = f"""📊 Current Portfolio Status (Day {portfolio.get("challenge_day", "?")}/90)
 
 **Live Account:**
 - Equity: ${live.get("equity", 0):.2f}
@@ -1733,10 +1791,10 @@ async def webhook(
 - Positions: {paper.get("positions_count", 0)}
 
 {activity_msg}"""
-                    logger.info("Returning portfolio status from system_state.json")
-                else:
-                    # Final fallback: Clear message (don't dump lessons for P/L questions)
-                    response_text = """📊 **Portfolio Status Unavailable**
+                        logger.info("Returning portfolio status from system_state.json")
+                    else:
+                        # Final fallback: Clear message (don't dump lessons for P/L questions)
+                        response_text = """📊 **Portfolio Status Unavailable**
 
 I couldn't retrieve the current portfolio data. This may be because:
 - The system state file is not accessible
@@ -1747,7 +1805,7 @@ Please check directly:
 - **Local System**: Run `cat data/system_state.json` for latest state
 
 Or ask me about **lessons learned** instead (e.g., "What lessons did we learn about risk management?")"""
-                    logger.warning("Trade query but no portfolio data available")
+                        logger.warning("Trade query but no portfolio data available")
         else:
             # Query RAG system for relevant lessons (LanceDB-first)
             results, source = query_rag_hybrid(user_query, top_k=5)
