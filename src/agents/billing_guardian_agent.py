@@ -9,11 +9,13 @@ import httpx
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("BillingGuardian")
 
+
 class BillingGuardianAgent:
     """
     Autonomous guardian to monitor GCP costs and kill expensive unwhitelisted projects.
     Uses Perplexity API for deep research on detected anomalies if needed.
     """
+
     def __init__(self):
         self.whitelisted_projects = ["igor-trading-2025-v2", "claude-code-learning"]
         self.telegram_bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -36,7 +38,9 @@ class BillingGuardianAgent:
         try:
             result = subprocess.run(
                 ["gcloud", "projects", "list", "--filter=lifecycleState=ACTIVE", "--format=json"],
-                capture_output=True, text=True, check=True
+                capture_output=True,
+                text=True,
+                check=True,
             )
             return json.loads(result.stdout)
         except Exception as e:
@@ -44,7 +48,9 @@ class BillingGuardianAgent:
             return []
 
     def enforce_billing_policies(self):
-        logger.info(f"[{datetime.now(timezone.utc).isoformat()}] Billing Guardian checking GCP projects...")
+        logger.info(
+            f"[{datetime.now(timezone.utc).isoformat()}] Billing Guardian checking GCP projects..."
+        )
         projects = self.get_active_projects()
 
         for project in projects:
@@ -59,7 +65,9 @@ class BillingGuardianAgent:
 
                 try:
                     subprocess.run(["gcloud", "projects", "delete", pid, "--quiet"], check=True)
-                    self._send_telegram_alert(f"✅ Successfully deleted project <code>{pid}</code>.")
+                    self._send_telegram_alert(
+                        f"✅ Successfully deleted project <code>{pid}</code>."
+                    )
                     logger.info(f"Deleted project {pid}")
                 except Exception as e:
                     logger.error(f"Failed to delete project {pid}: {e}")
@@ -76,14 +84,17 @@ class BillingGuardianAgent:
         url = "https://api.perplexity.ai/chat/completions"
         headers = {
             "Authorization": f"Bearer {self.perplexity_api_key}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
         payload = {
             "model": "sonar-pro",
             "messages": [
                 {"role": "system", "content": "You are a Cloud FinOps security expert."},
-                {"role": "user", "content": f"I found this anomaly in my GCP billing/usage: {anomaly_description}. What services could cause this and how do I neutralize it via gcloud CLI?"}
-            ]
+                {
+                    "role": "user",
+                    "content": f"I found this anomaly in my GCP billing/usage: {anomaly_description}. What services could cause this and how do I neutralize it via gcloud CLI?",
+                },
+            ],
         }
         try:
             async with httpx.AsyncClient() as client:
@@ -95,6 +106,7 @@ class BillingGuardianAgent:
                     # In a fully autonomous loop, we could parse the gcloud commands from this response
         except Exception as e:
             logger.error(f"Perplexity anomaly check failed: {e}")
+
 
 if __name__ == "__main__":
     guardian = BillingGuardianAgent()

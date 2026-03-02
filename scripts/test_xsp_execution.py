@@ -46,7 +46,7 @@ def test_xsp_execution():
         side=OrderSide.BUY,
         type="limit",
         limit_price=0.01,
-        time_in_force=TimeInForce.DAY
+        time_in_force=TimeInForce.DAY,
     )
 
     try:
@@ -58,6 +58,7 @@ def test_xsp_execution():
         print("Order canceled.")
     except Exception as e:
         print(f"ROUTING FAILED: Alpaca rejected the index option order. Error: {e}")
+
 
 if __name__ == "__main__":
     test_xsp_execution()

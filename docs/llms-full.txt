@@ -17,7 +17,7 @@
 - Workflows configured: 89
 - Blog posts indexed: 58
 - Reports indexed: 21
-- Lessons indexed: 168
+- Lessons indexed: 169
 
 ## Blog Posts (Newest First)
 - [Fix: Validate Option Symbols Before Trading](https://igorganapolsky.github.io/trading/2026/02/23/scanner-symbol-validation-fix.html) - 2026-02-23
@@ -172,6 +172,7 @@
 - [SPX Tax Advantage Over SPY (Feb 8, 2026)](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/spx_tax_advantage_feb08.md) - undated
 - [Ralph Proactive Scan Findings](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_proactive_scan_20260216.md) - undated
 - [Ralph Proactive Scan Findings](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_proactive_scan_20260215.md) - undated
+- [LL-340: Macro-Economic and Geopolitical Risk Ingestion (Feb 25, 2026)](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_340_macro_geopolitical_risk.md) - undated
 - [LL-300: Cloud RAG Cost Explosion - $98/mo vs $20/mo Budget](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_300_cloud_rag_cost_explosion_feb1.md) - undated
 - [$22.61 Loss from SPY Share Churning - Crisis Workflow Failure](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_298_share_churning_loss_jan23.md) - undated
 - [LL-298: Invalid Option Strikes Causing CALL Legs to Fail](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_298_invalid_strikes_call_legs_fail_jan23.md) - undated
@@ -222,7 +223,6 @@
 - [LL-202: SOFI Earnings Risk - Emergency Close](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_202_sofi_earnings_risk_jan14.md) - undated
 - [LL-201: Resource Evaluation: Systems Thinking Audiobook](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_201_systems_thinking_audiobook_evaluation_jan14.md) - undated
 - [LL-198: Git Workflows Video Evaluation](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_198_git_workflows_evaluation_jan13.md) - undated
-- [Critical Math Reality Check - Credit Spread Risk/Reward](https://github.com/IgorGanapolsky/trading/blob/main/rag_knowledge/lessons_learned/ll_197_math_reality_check_jan13.md) - undated
 
 ## Notes
 - Lesson links point to source markdown in GitHub.

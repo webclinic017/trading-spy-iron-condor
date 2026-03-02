@@ -9,6 +9,7 @@ if not key:
 
 client = OptionHistoricalDataClient(key, secret)
 
+
 def check_symbol(sym):
     try:
         req = OptionChainRequest(underlying_symbol=sym)
@@ -16,6 +17,7 @@ def check_symbol(sym):
         print(f"{sym} chain retrieved, {len(res)} contracts")
     except Exception as e:
         print(f"Data fetch error for {sym}: {e}")
+
 
 check_symbol("SPY")
 check_symbol("XSP")
