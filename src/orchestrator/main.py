@@ -17,6 +17,7 @@ from src.integrations.playwright_mcp import SentimentScraper, TradeVerifier
 from src.learning.trade_memory import TradeMemory
 
 # LLM sentiment handled by Gate 3 with BiasProvider
+from src.agents.billing_guardian_agent import BillingGuardianAgent
 from src.orchestrator.anomaly_monitor import AnomalyMonitor
 from src.orchestrator.budget import BudgetController
 from src.orchestrator.failure_isolation import FailureIsolationManager
@@ -334,6 +335,16 @@ class TradingOrchestrator:
         # Gate0Psychology.evaluate() gracefully handles None mental_coach
         self.mental_coach = None
         logger.info("Gate 0: Mental coach disabled (feature not implemented)")
+
+        # Billing Guardian - Protects against unauthorized GCP charges
+        self.billing_guardian = BillingGuardianAgent()
+        # Non-blocking initial check
+        try:
+            import threading
+            threading.Thread(target=self.billing_guardian.enforce_billing_policies, daemon=True).start()
+            logger.info("Billing Guardian initialized and initial check started in background")
+        except Exception as e:
+            logger.warning(f"Billing Guardian failed to start: {e}")
 
         # Initialize LLM-friendly gate pipeline (Dec 2025 refactor)
         # Each gate is <150 lines, independently testable
