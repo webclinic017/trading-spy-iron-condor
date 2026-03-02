@@ -9,17 +9,17 @@
   "confidence": 0.575,
   "capex_deceleration_shock": false,
   "reasons": [
-    "Hyperscaler capex proxy 20D drawdown -9.51%"
+    "Hyperscaler capex proxy 20D drawdown -9.50%"
   ],
   "latest_data_date": "2026-03-02",
   "stale_days": 0,
   "features": {
-    "hyperscaler_capex_proxy_ret_20d": -0.095062,
-    "hyperscaler_capex_proxy_ret_5d": 0.023445,
-    "capex_proxy_momentum_delta": 0.118507,
-    "ai_infra_proxy_ret_20d": -0.047774,
-    "edge_monetization_proxy_ret_20d": -0.076502,
-    "edge_vs_infra_spread_20d": -0.028728,
+    "hyperscaler_capex_proxy_ret_20d": -0.094989,
+    "hyperscaler_capex_proxy_ret_5d": 0.02353,
+    "capex_proxy_momentum_delta": 0.118519,
+    "ai_infra_proxy_ret_20d": -0.047648,
+    "edge_monetization_proxy_ret_20d": -0.076429,
+    "edge_vs_infra_spread_20d": -0.028781,
     "ai_monetization_proxy_score": 0.01856,
     "nvda_gross_margin_pct": 71.07,
     "nvda_gross_margin_trend_bps": 0.0
@@ -75,10 +75,10 @@
       "point_count": 187
     },
     "ANET": {
-      "latest_close": 129.289993,
+      "latest_close": 129.300003,
       "latest_date": "2026-03-02",
-      "ret_5d": 0.014596,
-      "ret_20d": -0.087837,
+      "ret_5d": 0.014675,
+      "ret_20d": -0.087766,
       "point_count": 187
     },
     "AVGO": {
@@ -110,17 +110,17 @@
       "point_count": 187
     },
     "NVDA": {
-      "latest_close": 182.373001,
+      "latest_close": 182.479996,
       "latest_date": "2026-03-02",
-      "ret_5d": -0.047909,
-      "ret_20d": -0.045817,
+      "ret_5d": -0.047351,
+      "ret_20d": -0.045257,
       "point_count": 187
     },
     "ORCL": {
-      "latest_close": 149.190002,
+      "latest_close": 149.25,
       "latest_date": "2026-03-02",
-      "ret_5d": 0.055764,
-      "ret_20d": -0.093511,
+      "ret_5d": 0.056189,
+      "ret_20d": -0.093146,
       "point_count": 187
     },
     "SMCI": {
@@ -132,5 +132,5 @@
     }
   },
   "source": "yfinance_public",
-  "updated_at": "2026-03-02T21:08:18.205724+00:00"
+  "updated_at": "2026-03-02T22:06:42.711395+00:00"
 }
