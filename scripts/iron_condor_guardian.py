@@ -253,12 +253,8 @@ def run_guardian():
         entry_key = f"IC_{expiry}"
         if entry_key not in entries:
             # Estimate credit: shorts collected premium, longs paid premium.
-            short_premium = sum(
-                p["entry"] for p in ic_data["positions"] if p["qty"] < 0
-            )
-            long_premium = sum(
-                p["entry"] for p in ic_data["positions"] if p["qty"] > 0
-            )
+            short_premium = sum(p["entry"] for p in ic_data["positions"] if p["qty"] < 0)
+            long_premium = sum(p["entry"] for p in ic_data["positions"] if p["qty"] > 0)
             entry_credit = short_premium - long_premium
 
             # IC is a credit trade — entry_credit MUST be positive.
