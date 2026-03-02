@@ -947,7 +947,7 @@
     "weekly_usd_macro_score": 0.0,
     "weekly_usd_macro_multiplier": 1.0,
     "weekly_ai_cycle_status": "watch",
-    "weekly_ai_cycle_score": 35.0,
+    "weekly_ai_cycle_score": 45.0,
     "weekly_ai_cycle_multiplier": 0.95,
     "weekly_ai_cycle_regime": "transition",
     "weekly_ai_cycle_capex_deceleration_shock": false
@@ -1161,14 +1161,14 @@
     "ai_cycle": {
       "status": "watch",
       "signal_status": "watch",
-      "severity_score": 35.0,
+      "severity_score": 45.0,
       "position_size_multiplier": 0.95,
       "regime": "transition",
-      "confidence": 0.559,
+      "confidence": 0.558,
       "capex_deceleration_shock": false,
       "signal_date": "2026-03-02",
       "source": "yfinance_public",
-      "detail": "Hyperscaler capex proxy 20D drawdown -9.50%"
+      "detail": "Hyperscaler capex proxy 20D drawdown -9.44%"
     },
     "scale_blocked_by_ai_cycle": false,
     "scale_multiplier_from_ai_cycle": 0.95,
@@ -1230,23 +1230,23 @@
         "ai_cycle": {
           "status": "watch",
           "signal_status": "watch",
-          "severity_score": 35.0,
+          "severity_score": 45.0,
           "position_size_multiplier": 0.95,
           "regime": "transition",
-          "confidence": 0.559,
+          "confidence": 0.558,
           "capex_deceleration_shock": false,
           "signal_date": "2026-03-02",
           "source": "yfinance_public",
-          "detail": "Hyperscaler capex proxy 20D drawdown -9.50%"
+          "detail": "Hyperscaler capex proxy 20D drawdown -9.44%"
         }
       },
       "blocked_categories": [],
       "gate_block_counts": {},
       "top_rejection_reasons": [],
       "summary": "Closed trades exist in lookback window; no-trade root cause not currently active.",
-      "updated_at": "2026-03-02T17:59:26.247531+00:00"
+      "updated_at": "2026-03-02T18:00:57.854823+00:00"
     },
-    "updated_at": "2026-03-02T17:59:26.247782+00:00"
+    "updated_at": "2026-03-02T18:00:57.855056+00:00"
   },
   "north_star_contributions": {
     "enabled": true,
@@ -1276,7 +1276,7 @@
     "estimated_live_contribution_this_month": 0.34,
     "contribution_estimate_confidence": "medium",
     "inference_note": "Live account has no open positions; live equity change is treated as estimated contribution.",
-    "updated_at": "2026-03-02T17:59:26.247829+00:00"
+    "updated_at": "2026-03-02T18:00:57.855094+00:00"
   },
   "ic_position_management": {
     "last_run": "2026-03-02T17:59:26.863480",
@@ -1313,7 +1313,7 @@
         }
       },
       "source": "fred_public",
-      "updated_at": "2026-03-02T17:37:13.631884+00:00"
+      "updated_at": "2026-03-02T18:00:49.071936+00:00"
     },
     "usd_macro_sentiment": {
       "signal": "usd_macro_sentiment",
@@ -1350,31 +1350,32 @@
         }
       },
       "source": "fred_public",
-      "updated_at": "2026-03-02T17:37:14.681498+00:00"
+      "updated_at": "2026-03-02T18:00:55.135070+00:00"
     },
     "ai_cycle": {
       "signal": "ai_cycle",
       "status": "watch",
-      "severity_score": 35.0,
+      "severity_score": 45.0,
       "position_size_multiplier": 0.95,
       "blocked": false,
       "watch": true,
       "regime": "transition",
-      "confidence": 0.559,
+      "confidence": 0.558,
       "capex_deceleration_shock": false,
       "reasons": [
-        "Hyperscaler capex proxy 20D drawdown -9.50%"
+        "Hyperscaler capex proxy 20D drawdown -9.44%",
+        "AI infra basket soft (-5.11% 20D)"
       ],
       "latest_data_date": "2026-03-02",
       "stale_days": 0,
       "features": {
-        "hyperscaler_capex_proxy_ret_20d": -0.094977,
-        "hyperscaler_capex_proxy_ret_5d": 0.020756,
-        "capex_proxy_momentum_delta": 0.115733,
-        "ai_infra_proxy_ret_20d": -0.048661,
-        "edge_monetization_proxy_ret_20d": -0.07616,
-        "edge_vs_infra_spread_20d": -0.027499,
-        "ai_monetization_proxy_score": 0.018817,
+        "hyperscaler_capex_proxy_ret_20d": -0.094365,
+        "hyperscaler_capex_proxy_ret_5d": 0.024135,
+        "capex_proxy_momentum_delta": 0.1185,
+        "ai_infra_proxy_ret_20d": -0.051098,
+        "edge_monetization_proxy_ret_20d": -0.075231,
+        "edge_vs_infra_spread_20d": -0.024133,
+        "ai_monetization_proxy_score": 0.019134,
         "nvda_gross_margin_pct": 71.07,
         "nvda_gross_margin_trend_bps": 0.0
       },
@@ -1408,90 +1409,90 @@
       },
       "metrics": {
         "AAPL": {
-          "latest_close": 265.890015,
+          "latest_close": 266.109985,
           "latest_date": "2026-03-02",
-          "ret_5d": -0.001089,
-          "ret_20d": 0.025662,
+          "ret_5d": -0.000263,
+          "ret_20d": 0.026511,
           "point_count": 188
         },
         "AMD": {
-          "latest_close": 197.797501,
+          "latest_close": 197.115005,
           "latest_date": "2026-03-02",
-          "ret_5d": 0.006091,
-          "ret_20d": -0.164459,
+          "ret_5d": 0.00262,
+          "ret_20d": -0.167343,
           "point_count": 188
         },
         "AMZN": {
-          "latest_close": 210.0,
-          "latest_date": "2026-02-27",
-          "ret_5d": -0.000524,
-          "ret_20d": -0.131262,
-          "point_count": 187
+          "latest_close": 208.419998,
+          "latest_date": "2026-03-02",
+          "ret_5d": 0.015346,
+          "ret_20d": -0.129043,
+          "point_count": 188
         },
         "ANET": {
-          "latest_close": 130.460007,
+          "latest_close": 130.110001,
           "latest_date": "2026-03-02",
-          "ret_5d": 0.023778,
-          "ret_20d": -0.079582,
+          "ret_5d": 0.021031,
+          "ret_20d": -0.082052,
           "point_count": 188
         },
         "AVGO": {
-          "latest_close": 316.38501,
+          "latest_close": 316.475006,
           "latest_date": "2026-03-02",
-          "ret_5d": -0.042244,
-          "ret_20d": -0.04502,
+          "ret_5d": -0.041972,
+          "ret_20d": -0.044748,
           "point_count": 188
         },
         "GOOGL": {
-          "latest_close": 307.920013,
+          "latest_close": 308.089996,
           "latest_date": "2026-03-02",
-          "ret_5d": -0.011461,
-          "ret_20d": -0.088994,
+          "ret_5d": -0.010915,
+          "ret_20d": -0.088491,
           "point_count": 188
         },
         "META": {
-          "latest_close": 656.570007,
+          "latest_close": 655.664978,
           "latest_date": "2026-03-02",
-          "ret_5d": 0.030318,
-          "ret_20d": -0.083643,
+          "ret_5d": 0.028898,
+          "ret_20d": -0.084906,
           "point_count": 188
         },
         "MSFT": {
-          "latest_close": 399.936401,
+          "latest_close": 399.619995,
           "latest_date": "2026-03-02",
-          "ret_5d": 0.040228,
-          "ret_20d": -0.068421,
+          "ret_5d": 0.039405,
+          "ret_20d": -0.069158,
           "point_count": 188
         },
         "NVDA": {
-          "latest_close": 182.639999,
+          "latest_close": 182.729996,
           "latest_date": "2026-03-02",
-          "ret_5d": -0.046515,
-          "ret_20d": -0.04442,
+          "ret_5d": -0.046045,
+          "ret_20d": -0.043949,
           "point_count": 188
         },
         "ORCL": {
-          "latest_close": 147.699997,
+          "latest_close": 148.084793,
           "latest_date": "2026-03-02",
-          "ret_5d": 0.04522,
-          "ret_20d": -0.102564,
+          "ret_5d": 0.047943,
+          "ret_20d": -0.100226,
           "point_count": 188
         },
         "SMCI": {
-          "latest_close": 31.735001,
+          "latest_close": 31.5145,
           "latest_date": "2026-03-02",
-          "ret_5d": 0.033377,
-          "ret_20d": 0.090175,
+          "ret_5d": 0.026197,
+          "ret_20d": 0.0826,
           "point_count": 188
         }
       },
       "source": "yfinance_public",
-      "updated_at": "2026-03-02T17:37:17.006974+00:00"
+      "updated_at": "2026-03-02T18:00:57.708912+00:00"
     }
   },
   "ops": {
     "box_workspace_mirror": {
-      "generated_at": "2026-03-02T17:37:17.490519+00:00",
+      "generated_at": "2026-03-02T18:00:58.190141+00:00",
       "repo_root": "/home/runner/work/trading/trading",
       "include_patterns": [
         "artifacts/devloop/**/*.md",
@@ -1511,253 +1512,253 @@
         "**/node_modules/**"
       ],
       "file_count": 41,
-      "total_bytes": 137668,
+      "total_bytes": 138637,
       "entries": [
         {
           "path": "artifacts/devloop/historical_learning_backfill.json",
           "size_bytes": 484,
-          "sha256": "a6935e4be583d69a0b0b10872eca08d095d0a026e3f31f6bb28ff62da15b0e4f",
-          "modified_utc": "2026-03-02T17:37:17.302640+00:00"
+          "sha256": "1b43357bc393ced60542612348262a50ed0b7d5c5109239bbdd81b21fbb99134",
+          "modified_utc": "2026-03-02T18:00:58.003461+00:00"
         },
         {
           "path": "artifacts/devloop/kpi_page.md",
           "size_bytes": 1057,
           "sha256": "8a748924182622e33a198e58f3c3d4e506895315eeb76ad33b91532df1fe4f5a",
-          "modified_utc": "2026-03-02T17:36:54.773819+00:00"
+          "modified_utc": "2026-03-02T18:00:29.081586+00:00"
         },
         {
           "path": "artifacts/devloop/kpi_priority.json",
           "size_bytes": 2007,
           "sha256": "22d2d8e0b9d9a8a3b3e4f895a27c81dd03b2fb88f1611753e87607132ed13690",
-          "modified_utc": "2026-03-02T17:36:54.773880+00:00"
+          "modified_utc": "2026-03-02T18:00:29.081651+00:00"
         },
         {
           "path": "artifacts/devloop/kpi_priority_report.md",
           "size_bytes": 1106,
           "sha256": "0c9e2494428aed7f8caf7fb415b9c0ccef242b882ae1d55f0925e3b14975dd89",
-          "modified_utc": "2026-03-02T17:36:54.773880+00:00"
+          "modified_utc": "2026-03-02T18:00:29.081651+00:00"
         },
         {
           "path": "artifacts/devloop/kpi_priority_state.json",
           "size_bytes": 147,
           "sha256": "a949e5e08067fa8329fc00b088e38993399f30925b4b0f4a8d58d29d0c4fd168",
-          "modified_utc": "2026-03-02T17:36:54.773880+00:00"
+          "modified_utc": "2026-03-02T18:00:29.081651+00:00"
         },
         {
           "path": "artifacts/devloop/layer_expansion_report.md",
           "size_bytes": 1708,
           "sha256": "306d033742ad6fa9bd3ebd227052ebb11cb3dc83364a3ff58f70318eae3a4322",
-          "modified_utc": "2026-03-02T17:36:54.773880+00:00"
+          "modified_utc": "2026-03-02T18:00:29.081651+00:00"
         },
         {
           "path": "artifacts/devloop/morning_report.md",
           "size_bytes": 2173,
           "sha256": "472d3be62ca8198b3afd54c72bcb90e8742e11ff6d95a1a0d87895fed43a3b3c",
-          "modified_utc": "2026-03-02T17:36:54.773880+00:00"
+          "modified_utc": "2026-03-02T18:00:29.081651+00:00"
         },
         {
           "path": "artifacts/devloop/next_copilot_prompt.md",
           "size_bytes": 969,
           "sha256": "1dc55550595d3c5574733dae1a58a00b728e8cb096ac24aaa2939f2bee11232a",
-          "modified_utc": "2026-03-02T17:36:54.773880+00:00"
+          "modified_utc": "2026-03-02T18:00:29.081651+00:00"
         },
         {
           "path": "artifacts/devloop/north_star_autopilot_report.json",
           "size_bytes": 2514,
-          "sha256": "11d8565ce8f2c4ae25032ae40bd72576739a789c125a06c79bf3a9537250eb3d",
-          "modified_utc": "2026-03-02T17:37:17.155265+00:00"
+          "sha256": "c497e1922dfbf452cf25c1aaf431dffb66a5e4d9696f8a49c3b71459ef555a39",
+          "modified_utc": "2026-03-02T18:00:57.857137+00:00"
         },
         {
           "path": "artifacts/devloop/north_star_autopilot_report.md",
           "size_bytes": 962,
-          "sha256": "866b4ff3c1836a08099ca6be778218f4c49a13dba85ffcba98d071111a1cd67d",
-          "modified_utc": "2026-03-02T17:37:17.155337+00:00"
+          "sha256": "22c56861dec324ddbb3311840e8c9f5841a6007f5584006bf9dc7f00af2daa56",
+          "modified_utc": "2026-03-02T18:00:57.857209+00:00"
         },
         {
           "path": "artifacts/devloop/profit_readiness_scorecard.md",
-          "size_bytes": 1565,
-          "sha256": "10d7ed75091614bf323c324c80e065a677f9e832440fadaed5bf2a4105b9bba6",
-          "modified_utc": "2026-03-02T17:36:54.773880+00:00"
+          "size_bytes": 1564,
+          "sha256": "6fe3f1f0e016c4818490c7220617a24411aa85facd1fd6fe213ce562beb5a1e4",
+          "modified_utc": "2026-03-02T18:00:29.081651+00:00"
         },
         {
           "path": "artifacts/devloop/rag_status.md",
           "size_bytes": 1261,
           "sha256": "a02fd447300b7ec41686bc8ad68064fbea2a81535032d206507dd9dc835e6361",
-          "modified_utc": "2026-03-02T17:36:54.777321+00:00"
+          "modified_utc": "2026-03-02T18:00:29.085303+00:00"
         },
         {
           "path": "artifacts/devloop/tasks.md",
           "size_bytes": 1816,
           "sha256": "b0aea267b27c4da6323d0a853d450e911b0a9a79e70dfc6a349de611c061f881",
-          "modified_utc": "2026-03-02T17:36:54.777321+00:00"
+          "modified_utc": "2026-03-02T18:00:29.085303+00:00"
         },
         {
           "path": "artifacts/devloop/weekly_cadence_kpi.md",
           "size_bytes": 140,
           "sha256": "870ea8151a499e9d3ffd595e3ee80a9dce2a2f2c22a3fcf0fa1815e039b0b357",
-          "modified_utc": "2026-03-02T17:37:17.361946+00:00"
+          "modified_utc": "2026-03-02T18:00:58.062178+00:00"
         },
         {
           "path": "data/market_signals/ai_credit_stress_signal.json",
           "size_bytes": 671,
-          "sha256": "dd9067a488f6182eabeeba24f0c8f816dc9142cddd5d9ef46076aa26bc3538af",
-          "modified_utc": "2026-03-02T17:37:13.632353+00:00"
+          "sha256": "c271ab78e5789d29e4d7ac598aebf1468a5a0c305f8dd249fde4535ae621ccd0",
+          "modified_utc": "2026-03-02T18:00:49.072247+00:00"
         },
         {
           "path": "data/market_signals/ai_cycle_signal.json",
-          "size_bytes": 3280,
-          "sha256": "187e987c42d2a156983ed7c19e61489bfb1316a705a3ef53aec34a18905e73f8",
-          "modified_utc": "2026-03-02T17:37:17.007309+00:00"
+          "size_bytes": 3323,
+          "sha256": "bbf71a9f9f02afd7039b4c2a604f8c5c7732e70ea8731548eb914c48af3fbc0a",
+          "modified_utc": "2026-03-02T18:00:57.709228+00:00"
         },
         {
           "path": "data/market_signals/usd_macro_sentiment_signal.json",
           "size_bytes": 841,
-          "sha256": "fddc6ae516c876c81ad0b5e15213a5ae581fad3c9d90017f94be7e43b86f2e20",
-          "modified_utc": "2026-03-02T17:37:14.681923+00:00"
+          "sha256": "057e2be8af7ef3ef06aa33dfc4afd66491ab871c5ee4f6f892914caaaec00421",
+          "modified_utc": "2026-03-02T18:00:55.135514+00:00"
         },
         {
           "path": "data/north_star_weekly_history.json",
           "size_bytes": 1238,
           "sha256": "b813593f8d4589c6e450f4d514e6d782aabe349269e4bb382ba51629feda758b",
-          "modified_utc": "2026-03-02T17:36:54.819741+00:00"
+          "modified_utc": "2026-03-02T18:00:29.122935+00:00"
         },
         {
           "path": "data/system_state.json",
-          "size_bytes": 57683,
-          "sha256": "6a9121ff52868b33a2488fc6e779701d8038e6a57849a6af3db30bcef169a38f",
-          "modified_utc": "2026-03-02T17:37:17.154975+00:00"
+          "size_bytes": 58607,
+          "sha256": "6dc3dcc031d16a2599bbe061d1e56d84b5e4a0310177aee9f379cfdf959de332",
+          "modified_utc": "2026-03-02T18:00:57.856879+00:00"
         },
         {
           "path": "docs/_reports/2026-02-16-dashboard-snapshot.md",
           "size_bytes": 2585,
           "sha256": "8be9f5c3d14950bcdcd68dd420b39e70579947984ebc4386a87485e6de890636",
-          "modified_utc": "2026-03-02T17:36:55.734337+00:00"
+          "modified_utc": "2026-03-02T18:00:30.032300+00:00"
         },
         {
           "path": "docs/_reports/2026-02-17-dashboard-snapshot.md",
           "size_bytes": 2512,
           "sha256": "a20ace96f606a4503c1d431309bcc5cac23b47f73722a90ce120c1a541b7e5bb",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-02-17-social-positioning-copy.md",
           "size_bytes": 1032,
           "sha256": "8099291fdfaaadfdb13f709281ffbf6a87d50004528c2c5b27695cc99a141d50",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-02-18-dashboard-snapshot.md",
           "size_bytes": 2647,
           "sha256": "69965af6cb828d50592204462e2f4e4a9c856e2c87939077053a9029eb83c446",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-02-19-daily-report.agents.md",
           "size_bytes": 770,
           "sha256": "999d97cd3114619a1877c3451a91a9e31ae4d4a9f38dda2a46514b0e653cde9e",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-02-19-daily-report.md",
           "size_bytes": 8519,
           "sha256": "4244c535ad9e9bfa8d4f3d67cac0431a099b86cb31493659c672392a05a8ae4e",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-02-19-dashboard-snapshot.md",
           "size_bytes": 2681,
           "sha256": "c10ecbbf5af42bb82604738a36208b3ee3bced4159c2f39582d06857ae16294f",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-02-19-publication-status.md",
           "size_bytes": 935,
           "sha256": "0f2fd21fe9dd56da347121fe07e703068cafed1963b8f3f5502408d29f2c7158",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-02-20-dashboard-snapshot.md",
           "size_bytes": 2685,
           "sha256": "aa5287a403174eb500d23056ebd511b776bcec4c06b0177630ce032297a7d0b9",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-02-21-dashboard-snapshot.md",
           "size_bytes": 2681,
           "sha256": "8f73b700819e2ba9a5ff337b634c314d7616f1ceadf99cc2553ff0c2d115b414",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-02-22-dashboard-snapshot.md",
           "size_bytes": 2681,
           "sha256": "c4eab7c24bccd9efefa2bcb075b7c6dc1f0d67b56c2a042d4a389f74587abe5a",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-02-23-dashboard-snapshot.md",
           "size_bytes": 2681,
           "sha256": "abc504360f060da11793ea66c19c8bbbe965a42c881d69f421f27515e4337ea8",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-02-24-dashboard-snapshot.md",
           "size_bytes": 2683,
           "sha256": "53d355d9e6327911fe3f6b8b33006a872f46a54efbcd7121a16aceefb6a307d0",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-02-25-dashboard-snapshot.md",
           "size_bytes": 2679,
           "sha256": "c7de3ff9c78f91b1afbb09a185d6b2f144a73aed478f4160ecb6764cd6a8c72a",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-02-26-dashboard-snapshot.md",
           "size_bytes": 2683,
           "sha256": "872e6fb7676495870f3217858003632ee7701ee181c636f0df766bc1ffeb89bd",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-02-27-dashboard-snapshot.md",
           "size_bytes": 2683,
           "sha256": "06bd93068e817132228076541c80ddff8f95d071ed483096b2b576aae94c8d7a",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-02-28-dashboard-snapshot.md",
           "size_bytes": 2671,
           "sha256": "5ca0d22920e6dd39eb961a3577e0156bdd3e85273baff24ca5fcbceeb0b15a72",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-03-01-dashboard-snapshot.md",
           "size_bytes": 2671,
           "sha256": "ed861fb546e87dd688a518a5515c922a41a17bc9ba092f509964d2fae6d840fd",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/2026-03-02-dashboard-snapshot.md",
-          "size_bytes": 2678,
-          "sha256": "0dbee58dc51c4a7953e3942c846b051c71fde8902d2d1dabdf724b691d373a9d",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "size_bytes": 2682,
+          "sha256": "bc1d8b14f71c0340065719461cbc30fddf19ce03dc3fa05cdd844a0d874737dc",
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/beats.md",
           "size_bytes": 545,
           "sha256": "971c92a81f3cecc5441af3bce83f984c6f65593737aaf36eb4400f7161d14153",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/google-doc-sync-setup.md",
           "size_bytes": 1566,
           "sha256": "d46583b550de52a26fcfbabfb7ad5202b513571f6b66b601218066b807471fae",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         },
         {
           "path": "docs/_reports/hackathon-system-explainer.md",
-          "size_bytes": 2778,
-          "sha256": "e198625a156948413932bd01c827c796685ccfbd13b78d8891f8454e53721936",
-          "modified_utc": "2026-03-02T17:36:55.735618+00:00"
+          "size_bytes": 2777,
+          "sha256": "d19e42574c2ab0dcb35a290af62c79562bbf093435b90704520acb044ae2a8ec",
+          "modified_utc": "2026-03-02T18:00:30.033661+00:00"
         }
       ],
       "sync": {
@@ -1772,7 +1773,7 @@
   },
   "content": {
     "discoverability": {
-      "generated_at": "2026-03-02T17:37:22.914982Z",
+      "generated_at": "2026-03-02T18:01:05.283518Z",
       "overall_status": "warn",
       "answer_block_ratio": 0.9,
       "evidence_link_ratio": 0.2,
@@ -1811,7 +1812,7 @@
   "position_entries": {},
   "position_entry_features": {},
   "north_star_autopilot": {
-    "generated_at_utc": "2026-03-02T17:59:26.247850Z",
+    "generated_at_utc": "2026-03-02T18:00:57.855112Z",
     "cadence_optimizer": {
       "decision": "hold",
       "reason": "Liquidity floor unchanged.",
@@ -1901,7 +1902,7 @@
       "changed": false,
       "payload": {
         "min_liquidity_volume_ratio": 0.2,
-        "updated_at": "2026-03-02T17:59:26.247850+00:00",
+        "updated_at": "2026-03-02T18:00:57.855112+00:00",
         "source": "north_star_autopilot"
       }
     }
