@@ -2,12 +2,6 @@
 
 ## Phil Town Rule #1: Don't Lose Money
 
-## Canonical Trading Policy Constants
-
-- `IRON_CONDOR_STOP_LOSS_MULTIPLIER = 1.0`
-- `NORTH_STAR_MONTHLY_AFTER_TAX = 6000.0`
-- `MAX_POSITIONS = 8`
-
 ### Position Sizing
 
 - NEVER more than 5% on single trade ($5,000 risk per position)

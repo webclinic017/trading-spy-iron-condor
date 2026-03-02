@@ -2,12 +2,6 @@
 
 ## Strategy: Iron Condors on SPY
 
-## Canonical Trading Policy Constants
-
-- `IRON_CONDOR_STOP_LOSS_MULTIPLIER = 1.0`
-- `NORTH_STAR_MONTHLY_AFTER_TAX = 6000.0`
-- `MAX_POSITIONS = 8`
-
 - Sell 15-20 delta put spread (bull put) + 15-20 delta call spread (bear call)
 - $10-wide wings, 30-45 DTE ($100K account supports wider wings for more premium)
 - Collect $150-250 per IC per side with $10-wide strikes
@@ -47,12 +41,3 @@
 - NO attributing P/L to iron condors without decomposing by order source
 - All P/L claims MUST use `validate_pl_report()` from `src/utils/pl_validator.py`
 - If asked "how much did we make" — show decomposed report, not a single number
-
-## Phil Town Alignment
-
-Iron condors align with Rule #1:
-
-- Defined risk on BOTH sides (put AND call spread)
-- 15-delta = ~85% probability of profit
-- 1.5:1 reward/risk ratio (vs credit spreads' 0.5:1)
-- Profit if SPY stays within range

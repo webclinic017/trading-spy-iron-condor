@@ -1,11 +1,5 @@
 # Mandatory Rules
 
-These supplement Core Directives in CLAUDE.md. Do not duplicate what is already there.
-
-1. **No documentation** -- don't create .md files (except rules)
-2. **Trust hooks** -- they provide context each session
-3. **Safe cleanup** -- run `python3 scripts/pre_cleanup_check.py <path>` before deleting code
-
 ## Cleanup Protocol (Prevents Breaking CI)
 
 Before deleting ANY code:
