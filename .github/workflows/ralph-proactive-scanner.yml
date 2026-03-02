@@ -43,6 +43,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
 
       - name: Install security tools
         run: |
@@ -89,6 +90,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
 
       - name: Install vulture
         run: pip install vulture
@@ -126,6 +128,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
 
       - name: Install tools
         run: pip install ruff radon

@@ -45,6 +45,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
 
       - name: Check for discoveries
         id: check
@@ -81,6 +82,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
 
       - name: Install dependencies
         run: pip install requests
