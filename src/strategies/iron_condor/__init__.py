@@ -4,7 +4,7 @@ Orchestrates Signal -> Risk -> Execution.
 """
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 from .executor import IronCondorExecutor
 from .risk import IronCondorRisk
@@ -37,7 +37,6 @@ class IronCondorController:
             return {"status": "SKIPPED", "reason": signal_result.reason}
 
         # 2. RISK & POSITION SIZING
-        equity = account_info.get("equity", 0.0)
         positions = account_info.get("positions", [])
 
         if not self.risk.validate_exposure(positions, symbol):

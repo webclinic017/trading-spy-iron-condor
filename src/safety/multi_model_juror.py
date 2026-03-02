@@ -32,24 +32,6 @@ class MultiModelJuror:
             logger.info("⚖️ Requesting Multi-Model Consensus from Juror...")
 
             # Format the prompt for the Juror
-            prompt = f"""
-            SYSTEM: You are a Risk Management Juror for a high-frequency options trading system.
-            MISSION: Audit the following trade proposal for Phil Town Rule #1 compliance.
-            
-            PROPOSAL:
-            {trade_proposal}
-            
-            PRIMARY AI REASONING:
-            {primary_reasoning}
-            
-            CRITICAL RULES:
-            1. Never lose money (Phil Town Rule #1).
-            2. Every trade must have a 200% stop-loss.
-            3. Maximum 5% position size.
-            
-            QUESTION: Do you detect any hallucinations, logic errors, or risk violations in this proposal?
-            Respond with exactly 'AGREE' if the trade is safe, or 'DISAGREE: [reason]' if you detect a risk.
-            """
 
             # Use ModelSelector to route to a high-frontier juror
             # In a real system, this would be a forced different provider
