@@ -1909,7 +1909,7 @@ async def webhook(
                     f"We only trade **SPY** iron condors. "
                     f"Try asking about SPY trades, current P/L, or exit rules."
                 )
-                logger.info(f"Unknown ticker query: {mentioned_ticker}")
+                logger.info("Unknown ticker query: %s", mentioned_ticker)
 
             if not _unknown_ticker:
                 trades = query_trades(user_query, limit=10)
