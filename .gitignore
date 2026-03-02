@@ -98,6 +98,7 @@ data/google_sheets_credentials.json
 .ruff_cache/
 .pre-commit-config.yaml.save
 worktrees/
+.worktrees/
 trading_worktrees/
 GEMINI.md
 
