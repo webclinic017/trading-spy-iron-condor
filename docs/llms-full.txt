@@ -14,9 +14,9 @@
 - Scripts: https://github.com/IgorGanapolsky/trading/tree/main/scripts
 
 ## Operational Metrics
-- Workflows configured: 89
+- Workflows configured: 88
 - Blog posts indexed: 58
-- Reports indexed: 21
+- Reports indexed: 22
 - Lessons indexed: 169
 
 ## Blog Posts (Newest First)
@@ -80,6 +80,7 @@
 - [The Silent 74 Days: System Reported Success, Did Nothing](https://igorganapolsky.github.io/trading/2026/01/07/the-silent-74-days.html) - 2026-01-07
 
 ## Reports
+- [Daily Dashboard Snapshot - 2026-03-02](https://igorganapolsky.github.io/trading/reports/2026-03-02-dashboard-snapshot/) - 2026-03-02
 - [Daily Dashboard Snapshot - 2026-03-01](https://igorganapolsky.github.io/trading/reports/2026-03-01-dashboard-snapshot/) - 2026-03-01
 - [Daily Dashboard Snapshot - 2026-02-28](https://igorganapolsky.github.io/trading/reports/2026-02-28-dashboard-snapshot/) - 2026-02-28
 - [Daily Dashboard Snapshot - 2026-02-27](https://igorganapolsky.github.io/trading/reports/2026-02-27-dashboard-snapshot/) - 2026-02-27
