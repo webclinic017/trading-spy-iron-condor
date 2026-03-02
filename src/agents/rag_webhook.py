@@ -722,27 +722,65 @@ def extract_ticker_from_query(query: str) -> str | None:
 
     # Known valid tickers in our system
     known_tickers = {"SPY", "XSP", "SPX", "VOO", "QQQ"}
-    # Generic trade keywords that are NOT ticker references
-    generic_words = {
-        "trade", "trades", "trading", "bought", "sold", "position", "positions",
-        "pnl", "profit", "loss", "money", "made", "earn", "earned", "today",
-        "gains", "returns", "equity", "balance", "account", "stock", "option",
-        "entry", "exit", "filled", "executed", "order", "recent", "last",
-        "first", "all", "my", "our", "the", "when", "was", "were", "how",
-        "much", "many", "what", "which", "show", "list", "get", "find",
-        "close", "open", "iron", "condor", "condors", "spread", "spreads",
-        "performance", "portfolio", "symbol", "current",
+    # Common English words that should never be treated as tickers
+    _stop_words = {
+        "a", "an", "am", "as", "at", "be", "by", "do", "go", "he", "hi",
+        "if", "in", "is", "it", "me", "my", "no", "of", "oh", "ok", "on",
+        "or", "so", "to", "up", "us", "we", "did", "has", "had", "his",
+        "her", "its", "let", "may", "not", "now", "old", "one", "our",
+        "out", "own", "put", "run", "say", "see", "set", "she", "the",
+        "too", "try", "use", "way", "who", "why", "win", "yes", "yet",
+        "you", "all", "and", "are", "but", "buy", "can", "for", "got", "how",
+        "new", "per", "via", "was", "any", "big", "day", "end", "far",
+        "few", "get", "lot", "man", "net", "off", "pay", "red", "tax",
+        "top", "two", "ago", "ask", "bad", "bet", "bit", "cut", "due",
+        "fit", "hit", "hot", "key", "low", "max", "min", "mix", "ran",
+        "raw", "risk", "rule", "safe", "sell", "side", "size", "stop",
+        "take", "tell", "than", "that", "them", "then", "they", "this",
+        "time", "told", "took", "turn", "used", "very", "want", "week",
+        "well", "went", "what", "when", "will", "with", "work", "year",
+        "your", "also", "back", "been", "best", "both", "call", "came",
+        "come", "data", "does", "done", "down", "each", "even", "fact",
+        "feel", "give", "good", "half", "hand", "have", "help", "here",
+        "high", "hold", "home", "into", "just", "keep", "kind", "know",
+        "last", "left", "less", "life", "like", "line", "long", "look",
+        "lose", "lost", "make", "more", "most", "move", "much", "must",
+        "name", "need", "next", "only", "over", "part", "plan", "play",
+        "real", "rest", "same", "seem", "show", "some", "such", "sure",
+        "test", "true", "type", "upon", "view",
+        "from", "about", "after", "could", "every", "first", "found",
+        "great", "never", "other", "right", "shall", "since", "still",
+        "their", "there", "these", "thing", "think", "those", "three",
+        "under", "until", "using", "where", "which", "while", "would",
+        # Trading-specific words
+        "trade", "trades", "trading", "bought", "sold", "position",
+        "positions", "pnl", "profit", "loss", "money", "made", "earn",
+        "earned", "today", "gains", "returns", "equity", "balance",
+        "account", "stock", "option", "entry", "exit", "filled",
+        "executed", "order", "recent", "iron", "condor", "condors",
+        "spread", "spreads", "performance", "portfolio", "symbol",
+        "current", "close", "open", "list", "find", "many",
     }
     words = re.findall(r"\b[a-zA-Z]+\b", query)
     for word in words:
         upper = word.upper()
         lower = word.lower()
-        if lower in generic_words:
+        if lower in _stop_words:
             continue
         if upper in known_tickers:
             return upper
-        # Looks like a ticker attempt (2-5 uppercase letters, not a common word)
-        if len(word) <= 5 and word.isalpha() and lower not in generic_words:
+        # Only treat as unknown ticker if: 3-6 chars and either ALL CAPS in
+        # original query or not a recognizable English word
+        if 3 <= len(word) <= 6 and word.isalpha() and word.isupper():
+            return upper
+    # Second pass: look for 3-6 char words that aren't stop words
+    # (handles lowercase ticker mentions like "kurast")
+    for word in words:
+        upper = word.upper()
+        lower = word.lower()
+        if lower in _stop_words:
+            continue
+        if 3 <= len(word) <= 6 and word.isalpha():
             return upper
     return None
 
