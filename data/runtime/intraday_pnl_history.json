@@ -1790,5 +1790,21 @@
       "positions_count": 0,
       "synced_at": "2026-03-02T17:13:24.890687"
     }
+  },
+  {
+    "captured_at": "2026-03-02T17:36:33.901899+00:00",
+    "sync_mode": "paper+live",
+    "paper": {
+      "equity": 100047.93,
+      "daily_change": -114.96,
+      "positions_count": 0,
+      "synced_at": null
+    },
+    "live": {
+      "equity": 208.95,
+      "daily_change": 0.0,
+      "positions_count": 0,
+      "synced_at": "2026-03-02T17:36:33.900469"
+    }
   }
 ]
