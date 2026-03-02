@@ -1104,9 +1104,12 @@ def safe_submit_order(client, order_request, strategy: str | None = None):
     import uuid
 
     from src.monitoring.telemetry_gateway import TelemetryGateway
+
     gateway = TelemetryGateway()
     trace_id = uuid.uuid4().hex
-    gateway.capture_span("strategy_entry", trace_id, attributes={"strategy": strategy, "symbol": symbol})
+    gateway.capture_span(
+        "strategy_entry", trace_id, attributes={"strategy": strategy, "symbol": symbol}
+    )
 
     if legs:
         for leg in legs:
@@ -1132,15 +1135,17 @@ def safe_submit_order(client, order_request, strategy: str | None = None):
             try:
                 from src.safety.macro_risk_guard import MacroRiskGuard
                 from src.utils.alpaca_client import get_options_data_client
-                
+
                 # Get data client for macro fetching (USO, TNX)
                 data_client = get_options_data_client()
                 macro_guard = MacroRiskGuard(data_client)
-                
+
                 vitals = macro_guard.get_macro_snapshot()
                 safe, macro_reason = macro_guard.check_macro_vitals(vitals)
                 if not safe:
-                    gateway.capture_span("macro_block", trace_id, attributes={"reason": macro_reason})
+                    gateway.capture_span(
+                        "macro_block", trace_id, attributes={"reason": macro_reason}
+                    )
                     raise ValueError(f"MACRO BLOCK: {macro_reason}")
             except ImportError:
                 logger.warning("MacroRiskGuard unavailable - skipping macro check.")
@@ -1191,7 +1196,14 @@ def safe_submit_order(client, order_request, strategy: str | None = None):
                     logger.warning("Failed to load milestone controller context: %s", exc)
 
                 gate = validate_trade_mandatory(
-                    symbol=str(getattr(order_request, "symbol", "") or (getattr(legs[0], "symbol", "") if getattr(order_request, "legs", None) else "")),
+                    symbol=str(
+                        getattr(order_request, "symbol", "")
+                        or (
+                            getattr(legs[0], "symbol", "")
+                            if getattr(order_request, "legs", None)
+                            else ""
+                        )
+                    ),
                     amount=est_amount if est_amount > 0 else MIN_TRADE_AMOUNT,
                     side=str(getattr(order_request, "side", None) or "SELL").upper(),
                     strategy=strategy,
@@ -1218,15 +1230,18 @@ def safe_submit_order(client, order_request, strategy: str | None = None):
             # =================================================================
             try:
                 from src.safety.multi_model_juror import MultiModelJuror
+
                 juror = MultiModelJuror()
                 proposal = {
                     "symbol": symbol,
                     "strategy": strategy,
                     "legs": option_symbols,
-                    "amount": est_amount
+                    "amount": est_amount,
                 }
                 if not juror.get_consensus(proposal, primary_reasoning="System trade logic entry"):
-                    raise ValueError("MULTI-MODEL CONSENSUS FAILED: Juror detected a risk violation.")
+                    raise ValueError(
+                        "MULTI-MODEL CONSENSUS FAILED: Juror detected a risk violation."
+                    )
                 gateway.capture_span("juror_consensus", trace_id, attributes={"status": "AGREE"})
             except ImportError:
                 logger.warning("MultiModelJuror unavailable - proceeding with standard safety.")
@@ -1239,11 +1254,13 @@ def safe_submit_order(client, order_request, strategy: str | None = None):
             # =================================================================
             try:
                 from src.safety.reasoning_evaluator import ReasoningEvaluator
-                evaluator = ReasoningEvaluator(threshold=0.7) # 70% groundedness required
+
+                evaluator = ReasoningEvaluator(threshold=0.7)  # 70% groundedness required
 
                 # Fetch recent lessons for groundedness check
                 try:
                     from src.rag.lessons_search import LessonsSearch
+
                     lessons = LessonsSearch().search(f"{strategy} {symbol}", limit=3)
                     retrieved_context = [lesson.content for lesson in lessons]
                 except Exception:
@@ -1252,12 +1269,16 @@ def safe_submit_order(client, order_request, strategy: str | None = None):
                 score = evaluator.evaluate(
                     proposal=proposal,
                     reasoning="Executing strategy based on VIX Mean Reversion and Phil Town Rule #1.",
-                    retrieved_context=retrieved_context
+                    retrieved_context=retrieved_context,
                 )
 
                 if score.is_hallucination_risk:
                     raise ValueError(f"REASONING AUDIT FAILED: {score.reasoning_trace}")
-                gateway.capture_span("reasoning_evaluation", trace_id, attributes={"score": score.groundedness, "trace": score.reasoning_trace})
+                gateway.capture_span(
+                    "reasoning_evaluation",
+                    trace_id,
+                    attributes={"score": score.groundedness, "trace": score.reasoning_trace},
+                )
 
             except ImportError:
                 logger.warning("ReasoningEvaluator unavailable - proceeding with standard safety.")
@@ -1300,10 +1321,14 @@ def safe_submit_order(client, order_request, strategy: str | None = None):
         # Ticker whitelist still applies above.
         logger.warning("Pre-trade checklist enforcement skipped due to error: %s", exc)
 
-    gateway.capture_span("order_submitted", trace_id, attributes={"symbol": symbol, "strategy": strategy})
+    gateway.capture_span(
+        "order_submitted", trace_id, attributes={"symbol": symbol, "strategy": strategy}
+    )
     try:
         order = client.submit_order(order_request)
-        gateway.capture_span("order_confirmed", trace_id, attributes={"order_id": str(getattr(order, "id", ""))})
+        gateway.capture_span(
+            "order_confirmed", trace_id, attributes={"order_id": str(getattr(order, "id", ""))}
+        )
         return order
     except Exception as e:
         gateway.capture_span("order_failed", trace_id, attributes={"error": str(e)})

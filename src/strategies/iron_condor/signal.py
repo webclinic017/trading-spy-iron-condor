@@ -3,47 +3,49 @@ Iron Condor Signal Layer
 Role: Define entry/exit signals based on market conditions.
 """
 
-from dataclasses import dataclass
-from typing import Optional, Dict, Any, Tuple
 import logging
+from dataclasses import dataclass
 from datetime import datetime, timedelta
+from typing import Any, Optional
+
 from src.signals.vix_mean_reversion_signal import VIXMeanReversionSignal
-from src.constants.trading_thresholds import RiskThresholds
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class SignalResult:
     should_entry: bool
     confidence: float
     reason: str
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
+
 
 class IronCondorSignal:
     """
     Alpha Engine for Iron Condors.
     """
-    
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+
+    def __init__(self, config: Optional[dict[str, Any]] = None):
         self.config = config or {
             "underlying": "SPY",
-            "target_dte": 40, # Perplexity: 35-45 is optimal
-            "short_delta": 0.10, # Perplexity: ~10-delta is optimal
-            "wing_width": 10
+            "target_dte": 40,  # Perplexity: 35-45 is optimal
+            "short_delta": 0.10,  # Perplexity: ~10-delta is optimal
+            "wing_width": 10,
         }
 
-    def check_entry_conditions(self) -> Tuple[bool, str, float]:
+    def check_entry_conditions(self) -> tuple[bool, str, float]:
         """
         Check if conditions are right for entry using VIX Mean Reversion
         and Perplexity Deep Research Alpha (Tuesdays 18:00).
         """
         now = datetime.now()
-        day = now.weekday() # 0=Mon, 1=Tue...
+        day = now.weekday()  # 0=Mon, 1=Tue...
         hour = now.hour
-        
+
         # PERPLEXITY ALPHA: Tuesday (1) after-hours (18) shows 100% win rate in 491-trade sample
-        is_tuesday_after_hours = (day == 1 and hour >= 18)
-        
+        is_tuesday_after_hours = day == 1 and hour >= 18
+
         try:
             vix_signal = VIXMeanReversionSignal()
             signal = vix_signal.calculate_signal()
@@ -57,7 +59,7 @@ class IronCondorSignal:
                 return True, f"GOOD: {signal.reason}", signal.confidence
             if signal.signal == "AVOID":
                 return False, signal.reason, 0.0
-                
+
             # NEUTRAL: Fall through to legacy check
         except Exception as e:
             logger.warning(f"VIX Signal failed: {e}")
@@ -75,20 +77,20 @@ class IronCondorSignal:
         if days_until_friday == 0 and target_date.weekday() != 4:
             days_until_friday = 7
         expiry_date = target_date + timedelta(days=days_until_friday)
-        
+
         if (expiry_date - datetime.now()).days < 21:
             expiry_date += timedelta(days=7)
-            
+
         return expiry_date.strftime("%Y-%m-%d")
 
-    def generate_signal(self, market_data: Dict[str, Any]) -> SignalResult:
+    def generate_signal(self, market_data: dict[str, Any]) -> SignalResult:
         """
         Main entry point for signal generation.
         """
         should_trade, reason, confidence = self.check_entry_conditions()
-        
+
         expiry = self.calculate_expiry()
-        
+
         return SignalResult(
             should_entry=should_trade,
             confidence=confidence,
@@ -96,6 +98,6 @@ class IronCondorSignal:
             metadata={
                 "expiry": expiry,
                 "underlying": self.config["underlying"],
-                "target_dte": self.config["target_dte"]
-            }
+                "target_dte": self.config["target_dte"],
+            },
         )

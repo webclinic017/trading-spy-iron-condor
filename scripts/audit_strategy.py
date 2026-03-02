@@ -3,17 +3,17 @@ Architectural Auditor Script
 Enforces Vertical Slice and Folder-as-Namespace patterns.
 """
 
-import os
 import sys
 from pathlib import Path
+
 
 def audit_strategy(strategy_dir: str):
     path = Path(strategy_dir)
     print(f"\n🔍 Auditing Vertical Slice: {path.name}")
     print("=" * 60)
-    
+
     violations = []
-    
+
     # 1. Structure Check
     required_files = ["signal.py", "executor.py", "risk.py", "__init__.py"]
     for f in required_files:
@@ -36,8 +36,8 @@ def audit_strategy(strategy_dir: str):
     if executor_file.exists():
         content = executor_file.read_text()
         if "max_risk" in content.lower() or "stop_loss" in content.lower():
-             # Logic for risk should be in risk.py
-             pass 
+            # Logic for risk should be in risk.py
+            pass
         if "safe_submit_order" not in content:
             violations.append("SAFETY VIOLATION: executor.py bypasses safe_submit_order gateway")
         else:
@@ -52,6 +52,7 @@ def audit_strategy(strategy_dir: str):
     else:
         print("\n🏆 PASS: Strategy slice is architecturally compliant.")
         sys.exit(0)
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:

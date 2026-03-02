@@ -724,14 +724,63 @@ def extract_ticker_from_query(query: str) -> str | None:
     known_tickers = {"SPY", "XSP", "SPX", "VOO", "QQQ"}
     # Generic trade keywords that are NOT ticker references
     generic_words = {
-        "trade", "trades", "trading", "bought", "sold", "position", "positions",
-        "pnl", "profit", "loss", "money", "made", "earn", "earned", "today",
-        "gains", "returns", "equity", "balance", "account", "stock", "option",
-        "entry", "exit", "filled", "executed", "order", "recent", "last",
-        "first", "all", "my", "our", "the", "when", "was", "were", "how",
-        "much", "many", "what", "which", "show", "list", "get", "find",
-        "close", "open", "iron", "condor", "condors", "spread", "spreads",
-        "performance", "portfolio", "symbol", "current",
+        "trade",
+        "trades",
+        "trading",
+        "bought",
+        "sold",
+        "position",
+        "positions",
+        "pnl",
+        "profit",
+        "loss",
+        "money",
+        "made",
+        "earn",
+        "earned",
+        "today",
+        "gains",
+        "returns",
+        "equity",
+        "balance",
+        "account",
+        "stock",
+        "option",
+        "entry",
+        "exit",
+        "filled",
+        "executed",
+        "order",
+        "recent",
+        "last",
+        "first",
+        "all",
+        "my",
+        "our",
+        "the",
+        "when",
+        "was",
+        "were",
+        "how",
+        "much",
+        "many",
+        "what",
+        "which",
+        "show",
+        "list",
+        "get",
+        "find",
+        "close",
+        "open",
+        "iron",
+        "condor",
+        "condors",
+        "spread",
+        "spreads",
+        "performance",
+        "portfolio",
+        "symbol",
+        "current",
     }
     words = re.findall(r"\b[a-zA-Z]+\b", query)
     for word in words:
@@ -1638,7 +1687,8 @@ async def webhook(
                 # Filter by mentioned ticker if specified
                 if mentioned_ticker and trades:
                     trades = [
-                        t for t in trades
+                        t
+                        for t in trades
                         if (t.get("metadata", {}).get("symbol") or "").upper() == mentioned_ticker
                         or mentioned_ticker == "SPY"  # SPY options have OCC symbols
                     ]
@@ -1740,7 +1790,9 @@ async def webhook(
                             daily_change = _coerce_float(paper.get("daily_change", 0))
                             positions_count = int(paper.get("positions_count", 0) or 0)
 
-                            drift_label = "mark-to-market" if positions_count > 0 else "equity drift"
+                            drift_label = (
+                                "mark-to-market" if positions_count > 0 else "equity drift"
+                            )
                             drift_line = (
                                 f"Today's {drift_label}: **{_format_signed_dollars(daily_change)}** "
                                 f"(no trades)."

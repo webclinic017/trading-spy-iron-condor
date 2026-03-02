@@ -5,7 +5,9 @@ def test_evaluator_high_groundedness():
     evaluator = ReasoningEvaluator(threshold=0.7)
     proposal = {"strategy": "iron_condor", "side": "BUY"}
     reasoning = "Following Phil Town Rule #1, utilizing a 200% stop-loss, checking VIX, and 15-delta strikes for 50% profit or 7 dte exit."
-    context = ["Rule #1 is to not lose money. Use 15-delta, check VIX, and 200% stop-loss for 50% profit or 7 dte exit."]
+    context = [
+        "Rule #1 is to not lose money. Use 15-delta, check VIX, and 200% stop-loss for 50% profit or 7 dte exit."
+    ]
 
     score = evaluator.evaluate(proposal, reasoning, context)
 

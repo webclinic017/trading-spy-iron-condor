@@ -3,6 +3,7 @@ import pytest
 from unittest.mock import MagicMock, patch, ANY
 from src.orchestrator.main import TradingOrchestrator
 
+
 class TestOrchestratorHardening:
     """Additional unit tests to increase coverage of src/orchestrator/main.py."""
 
@@ -10,16 +11,16 @@ class TestOrchestratorHardening:
     def mock_trader(self):
         """Initialize TradingOrchestrator with mocked dependencies."""
         with (
-            patch('src.orchestrator.main.AlpacaExecutor'),
-            patch('src.orchestrator.main.MomentumAgent'),
-            patch('src.orchestrator.main.MacroeconomicAgent'),
-            patch('src.orchestrator.main.OrchestratorTelemetry'),
-            patch('src.orchestrator.main.OptionsStrategyCoordinator'),
-            patch('src.orchestrator.main.RiskManager'),
-            patch('src.orchestrator.main.TradeGateway'),
-            patch('src.orchestrator.main.BudgetController'),
-            patch('src.orchestrator.main.AnomalyMonitor'),
-            patch('src.orchestrator.main.FailureIsolationManager'),
+            patch("src.orchestrator.main.AlpacaExecutor"),
+            patch("src.orchestrator.main.MomentumAgent"),
+            patch("src.orchestrator.main.MacroeconomicAgent"),
+            patch("src.orchestrator.main.OrchestratorTelemetry"),
+            patch("src.orchestrator.main.OptionsStrategyCoordinator"),
+            patch("src.orchestrator.main.RiskManager"),
+            patch("src.orchestrator.main.TradeGateway"),
+            patch("src.orchestrator.main.BudgetController"),
+            patch("src.orchestrator.main.AnomalyMonitor"),
+            patch("src.orchestrator.main.FailureIsolationManager"),
         ):
             trader = TradingOrchestrator(tickers=["SPY", "QQQ"])
             # Manually inject a mock for mental_coach since it's None by default
@@ -39,7 +40,10 @@ class TestOrchestratorHardening:
     def test_gate_0_blocking_strict_mode(self, mock_trader):
         """Test that Gate 0 (Mental Coach) blocks the session in strict mode."""
         # Setup: Coach returns not ready
-        mock_trader.mental_coach.is_ready_to_trade.return_value = (False, MagicMock(headline="TILT", message="Chill out"))
+        mock_trader.mental_coach.is_ready_to_trade.return_value = (
+            False,
+            MagicMock(headline="TILT", message="Chill out"),
+        )
 
         # Enable strict mode for this test
         with patch.dict(os.environ, {"COACHING_STRICT_MODE": "true"}):
@@ -51,7 +55,7 @@ class TestOrchestratorHardening:
                 event_type="coaching.session_blocked",
                 ticker="SYSTEM",
                 status="blocked",
-                payload=ANY
+                payload=ANY,
             )
 
     def test_adk_decision_summary_telemetry(self, mock_trader):
@@ -67,7 +71,9 @@ class TestOrchestratorHardening:
         mock_trader.adk_adapter.evaluate.return_value = mock_decision
 
         # Act: Run funnel
-        with patch('src.orchestrator.main.summarize_adk_decision', return_value={"summary": "Buy AAPL"}):
+        with patch(
+            "src.orchestrator.main.summarize_adk_decision", return_value={"summary": "Buy AAPL"}
+        ):
             mock_trader.run()
 
             # Assert: Telemetry was recorded
@@ -75,7 +81,7 @@ class TestOrchestratorHardening:
                 event_type="adk.decision",
                 ticker="AAPL",
                 status="info",
-                payload={"summary": "Buy AAPL"}
+                payload={"summary": "Buy AAPL"},
             )
 
     def test_manage_positions_called_first(self, mock_trader):
@@ -101,7 +107,7 @@ class TestOrchestratorHardening:
         # Assert: Telemetry records macro context
         found_profile = False
         for call in mock_trader.telemetry.record.call_args_list:
-            if call[1].get('event_type') == "session.profile":
-                assert call[1]['payload']['macro_context'] == {"regime": "bullish"}
+            if call[1].get("event_type") == "session.profile":
+                assert call[1]["payload"]["macro_context"] == {"regime": "bullish"}
                 found_profile = True
         assert found_profile

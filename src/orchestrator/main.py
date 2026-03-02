@@ -8,6 +8,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+# LLM sentiment handled by Gate 3 with BiasProvider
+from src.agents.billing_guardian_agent import BillingGuardianAgent
 from src.agents.macro_agent import MacroeconomicAgent
 from src.agents.momentum_agent import MomentumAgent, MomentumSignal
 from src.agents.rl_agent import RLFilter
@@ -15,9 +17,6 @@ from src.analyst.bias_store import BiasProvider, BiasSnapshot, BiasStore
 from src.execution.alpaca_executor import AlpacaExecutor
 from src.integrations.playwright_mcp import SentimentScraper, TradeVerifier
 from src.learning.trade_memory import TradeMemory
-
-# LLM sentiment handled by Gate 3 with BiasProvider
-from src.agents.billing_guardian_agent import BillingGuardianAgent
 from src.orchestrator.anomaly_monitor import AnomalyMonitor
 from src.orchestrator.budget import BudgetController
 from src.orchestrator.failure_isolation import FailureIsolationManager
@@ -341,7 +340,10 @@ class TradingOrchestrator:
         # Non-blocking initial check
         try:
             import threading
-            threading.Thread(target=self.billing_guardian.enforce_billing_policies, daemon=True).start()
+
+            threading.Thread(
+                target=self.billing_guardian.enforce_billing_policies, daemon=True
+            ).start()
             logger.info("Billing Guardian initialized and initial check started in background")
         except Exception as e:
             logger.warning(f"Billing Guardian failed to start: {e}")

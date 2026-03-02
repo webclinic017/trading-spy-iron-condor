@@ -1262,22 +1262,26 @@ class Gate3Sentiment:
     def _get_perplexity_sentiment(self, ticker: str) -> float | None:
         """Get real-time sentiment from Perplexity API for the last 15 minutes."""
         import os
+
         api_key = os.getenv("PERPLEXITY_API_KEY")
         if not api_key:
             return None
 
         url = "https://api.perplexity.ai/chat/completions"
-        headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json"
-        }
+        headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
         payload = {
             "model": "sonar-pro",
             "messages": [
-                {"role": "system", "content": "You are a financial analyst. Provide a sentiment score between -1.0 and 1.0 for the requested stock based on news from the last 15 minutes. Output ONLY a valid JSON object like {\"score\": 0.5, \"reason\": \"positive earnings\"}."},
-                {"role": "user", "content": f"Why is {ticker} moving right now? Summarize news from the last 15 minutes and score it."}
+                {
+                    "role": "system",
+                    "content": 'You are a financial analyst. Provide a sentiment score between -1.0 and 1.0 for the requested stock based on news from the last 15 minutes. Output ONLY a valid JSON object like {"score": 0.5, "reason": "positive earnings"}.',
+                },
+                {
+                    "role": "user",
+                    "content": f"Why is {ticker} moving right now? Summarize news from the last 15 minutes and score it.",
+                },
             ],
-            "search_recency_filter": "hour" # closest to 15 mins
+            "search_recency_filter": "hour",  # closest to 15 mins
         }
         try:
             import asyncio
@@ -1302,7 +1306,12 @@ class Gate3Sentiment:
 
                 result = json.loads(content.strip())
                 score = float(result.get("score", 0.0))
-                logger.info("Gate 3 (%s): Perplexity real-time sentiment=%.2f, reason=%s", ticker, score, result.get("reason", ""))
+                logger.info(
+                    "Gate 3 (%s): Perplexity real-time sentiment=%.2f, reason=%s",
+                    ticker,
+                    score,
+                    result.get("reason", ""),
+                )
                 return score
         except Exception as e:
             logger.warning("Gate 3 (%s): Perplexity API failed: %s", ticker, e)
@@ -1450,7 +1459,10 @@ class Gate3Sentiment:
 
         if perplexity_score is not None:
             # Perplexity provides real-time high-quality data. Overrides or blends heavily
-            sentiment_score = perplexity_score * 0.7 + self._blend_llm_playwright_sentiment(llm_score, playwright_score) * 0.3
+            sentiment_score = (
+                perplexity_score * 0.7
+                + self._blend_llm_playwright_sentiment(llm_score, playwright_score) * 0.3
+            )
             logger.info("Gate 3 (%s): Blended with Perplexity score=%.2f", ticker, sentiment_score)
         else:
             # Blend with playwright
