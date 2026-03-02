@@ -252,10 +252,25 @@ def run_guardian():
         # Get entry credit (or estimate from positions)
         entry_key = f"IC_{expiry}"
         if entry_key not in entries:
-            # Estimate: sum of short premiums - sum of long premiums
-            short_premium = sum(p["entry"] for p in ic_data["positions"] if p["qty"] < 0)
-            long_premium = sum(p["entry"] for p in ic_data["positions"] if p["qty"] > 0)
+            # Estimate credit: shorts collected premium, longs paid premium.
+            short_premium = sum(
+                p["entry"] for p in ic_data["positions"] if p["qty"] < 0
+            )
+            long_premium = sum(
+                p["entry"] for p in ic_data["positions"] if p["qty"] > 0
+            )
             entry_credit = short_premium - long_premium
+
+            # IC is a credit trade — entry_credit MUST be positive.
+            # Negative means positions are mis-grouped (multiple ICs with same
+            # expiry but different strikes). Skip to avoid inverted stop-loss.
+            if entry_credit <= 0:
+                logger.warning(
+                    f"  Entry credit ${entry_credit:.2f} is non-positive — "
+                    f"likely mis-grouped positions. Skipping exit checks."
+                )
+                continue
+
             entries[entry_key] = {
                 "credit": entry_credit,
                 "date": datetime.now().isoformat(),

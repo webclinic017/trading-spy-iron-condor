@@ -189,7 +189,92 @@ jobs:
           ))
 
           print(f"✅ Order submitted: {order.id} - {order.status}")
+
+          # Save entry credit for Guardian (prevents mis-estimation bug)
+          expiry_key = f"IC_{opp['expiry'].replace('-', '')[2:]}"
+          entries_file = 'data/ic_entries.json'
+          try:
+              with open(entries_file) as f:
+                  ic_entries = json.load(f)
+          except (FileNotFoundError, json.JSONDecodeError):
+              ic_entries = {}
+          credit = abs(float(order.filled_avg_price)) if order.filled_avg_price else 2.00
+          ic_entries[expiry_key] = {
+              "credit": credit,
+              "order_id": str(order.id),
+              "date": opp.get("timestamp", ""),
+              "strikes": strikes,
+          }
+          with open(entries_file, 'w') as f:
+              json.dump(ic_entries, f, indent=2)
+          print(f"✅ Saved entry credit ${credit:.2f} to {entries_file}")
           PYTHON
+
+      - name: Record trade in session decisions
+        if: steps.market.outputs.is_open == 'true' && steps.scan.outputs.found == 'true'
+        run: |
+          python3 << 'PYTHON'
+          import json, os
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+          decisions_file = Path(f"data/session_decisions_{today}.json")
+          decisions_file.parent.mkdir(parents=True, exist_ok=True)
+
+          opp = {}
+          if Path("opportunity.json").exists():
+              with open("opportunity.json") as f:
+                  opp = json.load(f)
+
+          now = datetime.now(timezone.utc).isoformat()
+          new_decision = {
+              "ticker": "SPY",
+              "timestamp": now,
+              "gate_reached": 5,
+              "decision": "EXECUTED",
+              "rejection_reason": None,
+              "indicators": {
+                  "expiry": opp.get("expiry", ""),
+                  "dte": opp.get("dte", 0),
+                  "vix_status": opp.get("vix_status", ""),
+                  "source": "iron-condor-autonomous-workflow",
+              },
+              "order_details": {
+                  "strikes": opp.get("strikes", {}),
+                  "pricing": opp.get("pricing", {}),
+              },
+          }
+
+          if decisions_file.exists():
+              with open(decisions_file) as f:
+                  payload = json.load(f)
+          else:
+              payload = {
+                  "session": {
+                      "date": today,
+                      "session_id": datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S"),
+                      "session_type": "autonomous_workflow",
+                      "is_market_day": True,
+                  },
+                  "decisions": [],
+              }
+
+          payload["decisions"].append(new_decision)
+          payload["session"]["orders_placed"] = payload["session"].get("orders_placed", 0) + 1
+          with open(decisions_file, "w") as f:
+              json.dump(payload, f, indent=2)
+          print(f"✅ Recorded EXECUTED decision in {decisions_file}")
+          PYTHON
+
+      - name: Commit trade data
+        if: steps.market.outputs.is_open == 'true' && steps.scan.outputs.found == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/session_decisions_*.json data/ic_entries.json
+          git diff --cached --quiet || git commit -m "fix: record autonomous IC trade data"
+          git push || echo "Push failed - data will sync on next workflow"
 
       - name: Log trade
         if: steps.market.outputs.is_open == 'true' && steps.scan.outputs.found == 'true'
