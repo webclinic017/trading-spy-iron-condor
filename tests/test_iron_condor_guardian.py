@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import json
 from datetime import datetime
-from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
@@ -18,6 +17,7 @@ import pytest
 # ---------------------------------------------------------------------------
 # Helpers — build fake Alpaca position objects
 # ---------------------------------------------------------------------------
+
 
 def _pos(symbol: str, qty: int, avg_entry_price: float, current_price: float | None = None):
     """Create a fake Alpaca position object."""
@@ -38,16 +38,17 @@ def _standard_ic_positions(expiry: str = "260410", credit: float = 2.04):
     Default: short_put@6.02 + short_call@1.37 - long_put@4.87 - long_call@0.48 = 2.04
     """
     return [
-        _pos(f"SPY{expiry}P00640000", 2, 4.87, 4.87),    # long put
-        _pos(f"SPY{expiry}P00650000", -2, 6.02, 6.02),   # short put
-        _pos(f"SPY{expiry}C00720000", -2, 1.37, 1.37),   # short call
-        _pos(f"SPY{expiry}C00730000", 2, 0.48, 0.48),    # long call
+        _pos(f"SPY{expiry}P00640000", 2, 4.87, 4.87),  # long put
+        _pos(f"SPY{expiry}P00650000", -2, 6.02, 6.02),  # short put
+        _pos(f"SPY{expiry}C00720000", -2, 1.37, 1.37),  # short call
+        _pos(f"SPY{expiry}C00730000", 2, 0.48, 0.48),  # long call
     ]
 
 
 # ---------------------------------------------------------------------------
 # Import the module under test (skip the top-level credential check)
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture(autouse=True)
 def _patch_env(monkeypatch):
@@ -61,6 +62,7 @@ def guardian():
     """Import guardian module fresh with env vars set."""
     import importlib
     import scripts.iron_condor_guardian as mod
+
     importlib.reload(mod)
     return mod
 
@@ -68,6 +70,7 @@ def guardian():
 # ===========================================================================
 # parse_ic_positions
 # ===========================================================================
+
 
 class TestParseIcPositions:
     def test_groups_by_expiry(self, guardian):
@@ -114,15 +117,18 @@ class TestParseIcPositions:
 # calculate_ic_pnl
 # ===========================================================================
 
+
 class TestCalculateIcPnl:
     def test_breakeven_pnl(self, guardian):
         """When current prices equal entry prices, P/L depends on credit."""
-        ic_data = {"positions": [
-            {"symbol": "SPY260410P00640000", "qty": 2, "entry": 4.87, "current": 4.87},
-            {"symbol": "SPY260410P00650000", "qty": -2, "entry": 6.02, "current": 6.02},
-            {"symbol": "SPY260410C00720000", "qty": -2, "entry": 1.37, "current": 1.37},
-            {"symbol": "SPY260410C00730000", "qty": 2, "entry": 0.48, "current": 0.48},
-        ]}
+        ic_data = {
+            "positions": [
+                {"symbol": "SPY260410P00640000", "qty": 2, "entry": 4.87, "current": 4.87},
+                {"symbol": "SPY260410P00650000", "qty": -2, "entry": 6.02, "current": 6.02},
+                {"symbol": "SPY260410C00720000", "qty": -2, "entry": 1.37, "current": 1.37},
+                {"symbol": "SPY260410C00730000", "qty": 2, "entry": 0.48, "current": 0.48},
+            ]
+        }
         entry_credit = 2.04  # per contract
         _, pnl = guardian.calculate_ic_pnl(ic_data, entry_credit)
         # At entry prices, current_value = longs - shorts (in $)
@@ -143,12 +149,14 @@ class TestCalculateIcPnl:
 
     def test_profit_when_options_decay(self, guardian):
         """When all options decay toward zero, we profit the full credit."""
-        ic_data = {"positions": [
-            {"symbol": "SPY260410P00640000", "qty": 2, "entry": 4.87, "current": 0.01},
-            {"symbol": "SPY260410P00650000", "qty": -2, "entry": 6.02, "current": 0.01},
-            {"symbol": "SPY260410C00720000", "qty": -2, "entry": 1.37, "current": 0.01},
-            {"symbol": "SPY260410C00730000", "qty": 2, "entry": 0.48, "current": 0.01},
-        ]}
+        ic_data = {
+            "positions": [
+                {"symbol": "SPY260410P00640000", "qty": 2, "entry": 4.87, "current": 0.01},
+                {"symbol": "SPY260410P00650000", "qty": -2, "entry": 6.02, "current": 0.01},
+                {"symbol": "SPY260410C00720000", "qty": -2, "entry": 1.37, "current": 0.01},
+                {"symbol": "SPY260410C00730000", "qty": 2, "entry": 0.48, "current": 0.01},
+            ]
+        }
         entry_credit = 2.04
         _, pnl = guardian.calculate_ic_pnl(ic_data, entry_credit)
         # All at 0.01: current_value = (0.01*2*100 + 0.01*2*100) - (0.01*2*100 + 0.01*2*100) = 0
@@ -157,12 +165,14 @@ class TestCalculateIcPnl:
 
     def test_loss_when_short_side_tested(self, guardian):
         """When short put goes deep ITM, we have a large loss."""
-        ic_data = {"positions": [
-            {"symbol": "SPY260410P00640000", "qty": 2, "entry": 4.87, "current": 8.00},
-            {"symbol": "SPY260410P00650000", "qty": -2, "entry": 6.02, "current": 15.00},
-            {"symbol": "SPY260410C00720000", "qty": -2, "entry": 1.37, "current": 0.05},
-            {"symbol": "SPY260410C00730000", "qty": 2, "entry": 0.48, "current": 0.01},
-        ]}
+        ic_data = {
+            "positions": [
+                {"symbol": "SPY260410P00640000", "qty": 2, "entry": 4.87, "current": 8.00},
+                {"symbol": "SPY260410P00650000", "qty": -2, "entry": 6.02, "current": 15.00},
+                {"symbol": "SPY260410C00720000", "qty": -2, "entry": 1.37, "current": 0.05},
+                {"symbol": "SPY260410C00730000", "qty": 2, "entry": 0.48, "current": 0.01},
+            ]
+        }
         entry_credit = 2.04
         _, pnl = guardian.calculate_ic_pnl(ic_data, entry_credit)
         # shorts: -(15*2*100 + 0.05*2*100) = -3010
@@ -175,6 +185,7 @@ class TestCalculateIcPnl:
 # ===========================================================================
 # Entry credit estimation — THE BUG FIX
 # ===========================================================================
+
 
 class TestEntryCreditEstimation:
     """Tests for the critical bug fix: negative entry credit must be skipped."""
@@ -199,15 +210,15 @@ class TestEntryCreditEstimation:
         # Simulate two ICs at same expiry with overlapping strikes
         positions = [
             # IC #1
-            _pos("SPY260410P00640000", 2, 5.93, 5.93),    # long put
-            _pos("SPY260410P00650000", -2, 7.31, 7.31),   # short put
-            _pos("SPY260410C00715000", -2, 1.89, 1.89),   # short call
-            _pos("SPY260410C00725000", 2, 0.70, 0.70),    # long call
+            _pos("SPY260410P00640000", 2, 5.93, 5.93),  # long put
+            _pos("SPY260410P00650000", -2, 7.31, 7.31),  # short put
+            _pos("SPY260410C00715000", -2, 1.89, 1.89),  # short call
+            _pos("SPY260410C00725000", 2, 0.70, 0.70),  # long call
             # IC #3 (same expiry, some different strikes)
-            _pos("SPY260410P00640000", 2, 4.95, 4.95),    # long put (SAME strike, qty adds)
-            _pos("SPY260410P00650000", -2, 6.12, 6.12),   # short put (SAME strike)
-            _pos("SPY260410C00720000", -2, 1.35, 1.35),   # short call (DIFFERENT)
-            _pos("SPY260410C00730000", 2, 0.48, 0.48),    # long call (DIFFERENT)
+            _pos("SPY260410P00640000", 2, 4.95, 4.95),  # long put (SAME strike, qty adds)
+            _pos("SPY260410P00650000", -2, 6.12, 6.12),  # short put (SAME strike)
+            _pos("SPY260410C00720000", -2, 1.35, 1.35),  # short call (DIFFERENT)
+            _pos("SPY260410C00730000", 2, 0.48, 0.48),  # long call (DIFFERENT)
         ]
         ic_data = guardian.parse_ic_positions(positions)["260410"]
         short_premium = sum(p["entry"] for p in ic_data["positions"] if p["qty"] < 0)
@@ -228,12 +239,38 @@ class TestEntryCreditEstimation:
         entries_file.write_text("{}")
 
         # Simulate positions that produce negative credit
-        ic_data = {"positions": [
-            {"symbol": "SPY260410P00640000", "qty": 4, "entry": 5.43, "current": 5.43, "type": "put"},
-            {"symbol": "SPY260410P00650000", "qty": -2, "entry": 3.20, "current": 3.20, "type": "put"},
-            {"symbol": "SPY260410C00720000", "qty": -2, "entry": 1.10, "current": 1.10, "type": "call"},
-            {"symbol": "SPY260410C00730000", "qty": 4, "entry": 0.90, "current": 0.90, "type": "call"},
-        ]}
+        ic_data = {
+            "positions": [
+                {
+                    "symbol": "SPY260410P00640000",
+                    "qty": 4,
+                    "entry": 5.43,
+                    "current": 5.43,
+                    "type": "put",
+                },
+                {
+                    "symbol": "SPY260410P00650000",
+                    "qty": -2,
+                    "entry": 3.20,
+                    "current": 3.20,
+                    "type": "put",
+                },
+                {
+                    "symbol": "SPY260410C00720000",
+                    "qty": -2,
+                    "entry": 1.10,
+                    "current": 1.10,
+                    "type": "call",
+                },
+                {
+                    "symbol": "SPY260410C00730000",
+                    "qty": 4,
+                    "entry": 0.90,
+                    "current": 0.90,
+                    "type": "call",
+                },
+            ]
+        }
         short_premium = sum(p["entry"] for p in ic_data["positions"] if p["qty"] < 0)
         long_premium = sum(p["entry"] for p in ic_data["positions"] if p["qty"] > 0)
         entry_credit = short_premium - long_premium
@@ -245,10 +282,24 @@ class TestEntryCreditEstimation:
 
     def test_zero_credit_also_skipped(self, guardian):
         """Zero credit (exactly balanced) should also be skipped."""
-        ic_data = {"positions": [
-            {"symbol": "SPY260410P00640000", "qty": 2, "entry": 5.00, "current": 5.00, "type": "put"},
-            {"symbol": "SPY260410P00650000", "qty": -2, "entry": 5.00, "current": 5.00, "type": "put"},
-        ]}
+        ic_data = {
+            "positions": [
+                {
+                    "symbol": "SPY260410P00640000",
+                    "qty": 2,
+                    "entry": 5.00,
+                    "current": 5.00,
+                    "type": "put",
+                },
+                {
+                    "symbol": "SPY260410P00650000",
+                    "qty": -2,
+                    "entry": 5.00,
+                    "current": 5.00,
+                    "type": "put",
+                },
+            ]
+        }
         short_premium = sum(p["entry"] for p in ic_data["positions"] if p["qty"] < 0)
         long_premium = sum(p["entry"] for p in ic_data["positions"] if p["qty"] > 0)
         entry_credit = short_premium - long_premium
@@ -258,6 +309,7 @@ class TestEntryCreditEstimation:
 # ===========================================================================
 # Exit condition checks
 # ===========================================================================
+
 
 class TestExitConditions:
     def test_dte_exit_at_7(self, guardian):
@@ -277,9 +329,9 @@ class TestExitConditions:
         entry_credit = 2.04
         stop_loss = entry_credit * guardian.STOP_LOSS_MULTIPLIER * 100  # $204
         # P/L of -$250 should trigger (below -$204)
-        assert -250 < -stop_loss
+        assert -stop_loss > -250
         # P/L of -$100 should NOT trigger (above -$204)
-        assert not (-100 < -stop_loss)
+        assert not (-stop_loss > -100)
 
     def test_profit_target_triggers_correctly(self, guardian):
         """Profit target: when P/L >= (credit * 100 * 0.50)."""
@@ -287,9 +339,9 @@ class TestExitConditions:
         max_profit = entry_credit * 100  # $204
         profit_target = max_profit * guardian.PROFIT_TAKE_PCT  # $102
         # P/L of $120 should trigger (above $102)
-        assert 120 >= profit_target
+        assert profit_target <= 120
         # P/L of $50 should NOT trigger (below $102)
-        assert not (50 >= profit_target)
+        assert not (profit_target <= 50)
 
     def test_no_exit_in_safe_zone(self, guardian):
         """P/L between stop and target with DTE > 7 should not exit."""
@@ -307,6 +359,7 @@ class TestExitConditions:
 # ===========================================================================
 # get_dte
 # ===========================================================================
+
 
 class TestGetDte:
     def test_parses_occ_symbol(self, guardian):
@@ -332,6 +385,7 @@ class TestGetDte:
 # ===========================================================================
 # load/save ic_entries
 # ===========================================================================
+
 
 class TestIcEntries:
     def test_load_missing_file(self, guardian, tmp_path, monkeypatch):
@@ -359,6 +413,7 @@ class TestIcEntries:
 # load/save trade_log
 # ===========================================================================
 
+
 class TestTradeLog:
     def test_load_missing_file(self, guardian, tmp_path, monkeypatch):
         monkeypatch.setattr(guardian, "IC_TRADE_LOG", tmp_path / "missing.json")
@@ -384,6 +439,7 @@ class TestTradeLog:
 # close_iron_condor
 # ===========================================================================
 
+
 class TestCloseIronCondor:
     def test_closes_all_legs(self, guardian):
         """close_iron_condor should submit a close order for each leg."""
@@ -393,12 +449,14 @@ class TestCloseIronCondor:
 
         with patch.object(guardian, "safe_submit_order", return_value=mock_order) as mock_submit:
             with patch.object(guardian, "update_trade_log_on_exit"):
-                ic_data = {"positions": [
-                    {"symbol": "SPY260410P00640000", "qty": 2, "entry": 4.87, "current": 4.87},
-                    {"symbol": "SPY260410P00650000", "qty": -2, "entry": 6.02, "current": 6.02},
-                    {"symbol": "SPY260410C00720000", "qty": -2, "entry": 1.37, "current": 1.37},
-                    {"symbol": "SPY260410C00730000", "qty": 2, "entry": 0.48, "current": 0.48},
-                ]}
+                ic_data = {
+                    "positions": [
+                        {"symbol": "SPY260410P00640000", "qty": 2, "entry": 4.87, "current": 4.87},
+                        {"symbol": "SPY260410P00650000", "qty": -2, "entry": 6.02, "current": 6.02},
+                        {"symbol": "SPY260410C00720000", "qty": -2, "entry": 1.37, "current": 1.37},
+                        {"symbol": "SPY260410C00730000", "qty": 2, "entry": 0.48, "current": 0.48},
+                    ]
+                }
                 guardian.close_iron_condor(mock_client, ic_data, "TEST", "260410", 100.0)
                 assert mock_submit.call_count == 4
 
@@ -410,9 +468,11 @@ class TestCloseIronCondor:
 
         with patch.object(guardian, "safe_submit_order", return_value=mock_order) as mock_submit:
             with patch.object(guardian, "update_trade_log_on_exit"):
-                ic_data = {"positions": [
-                    {"symbol": "SPY260410P00650000", "qty": -2, "entry": 6.02, "current": 6.02},
-                ]}
+                ic_data = {
+                    "positions": [
+                        {"symbol": "SPY260410P00650000", "qty": -2, "entry": 6.02, "current": 6.02},
+                    ]
+                }
                 guardian.close_iron_condor(mock_client, ic_data, "TEST", "260410", 0.0)
                 call_args = mock_submit.call_args[0]
                 order_request = call_args[1]
@@ -426,9 +486,11 @@ class TestCloseIronCondor:
 
         with patch.object(guardian, "safe_submit_order", return_value=mock_order) as mock_submit:
             with patch.object(guardian, "update_trade_log_on_exit"):
-                ic_data = {"positions": [
-                    {"symbol": "SPY260410P00640000", "qty": 2, "entry": 4.87, "current": 4.87},
-                ]}
+                ic_data = {
+                    "positions": [
+                        {"symbol": "SPY260410P00640000", "qty": 2, "entry": 4.87, "current": 4.87},
+                    ]
+                }
                 guardian.close_iron_condor(mock_client, ic_data, "TEST", "260410", 0.0)
                 call_args = mock_submit.call_args[0]
                 order_request = call_args[1]
@@ -449,10 +511,12 @@ class TestCloseIronCondor:
 
         with patch.object(guardian, "safe_submit_order", side_effect=side_effect):
             with patch.object(guardian, "update_trade_log_on_exit"):
-                ic_data = {"positions": [
-                    {"symbol": "SPY260410P00640000", "qty": 2, "entry": 4.87, "current": 4.87},
-                    {"symbol": "SPY260410P00650000", "qty": -2, "entry": 6.02, "current": 6.02},
-                ]}
+                ic_data = {
+                    "positions": [
+                        {"symbol": "SPY260410P00640000", "qty": 2, "entry": 4.87, "current": 4.87},
+                        {"symbol": "SPY260410P00650000", "qty": -2, "entry": 6.02, "current": 6.02},
+                    ]
+                }
                 # Should not raise — handles the error internally
                 guardian.close_iron_condor(mock_client, ic_data, "TEST", "260410", 0.0)
                 assert call_count == 2  # Both legs attempted
@@ -461,6 +525,7 @@ class TestCloseIronCondor:
 # ===========================================================================
 # run_guardian (integration-level)
 # ===========================================================================
+
 
 class TestRunGuardian:
     def test_no_positions_exits_cleanly(self, guardian):
@@ -478,10 +543,10 @@ class TestRunGuardian:
 
         # Positions that produce negative credit estimate
         positions = [
-            _pos("SPY260410P00640000", 4, 5.50, 5.50),   # long: large qty
-            _pos("SPY260410P00650000", -2, 3.00, 3.00),   # short: small premium
-            _pos("SPY260410C00720000", -2, 1.00, 1.00),   # short: small premium
-            _pos("SPY260410C00730000", 4, 0.90, 0.90),    # long: large qty
+            _pos("SPY260410P00640000", 4, 5.50, 5.50),  # long: large qty
+            _pos("SPY260410P00650000", -2, 3.00, 3.00),  # short: small premium
+            _pos("SPY260410C00720000", -2, 1.00, 1.00),  # short: small premium
+            _pos("SPY260410C00730000", 4, 0.90, 0.90),  # long: large qty
         ]
         # short = 3.00 + 1.00 = 4.00, long = 5.50 + 0.90 = 6.40
         # credit = 4.00 - 6.40 = -2.40 (NEGATIVE)
@@ -538,10 +603,10 @@ class TestRunGuardian:
 
         # Positions where short put is deep ITM (large loss)
         positions = [
-            _pos("SPY260410P00640000", 2, 4.87, 8.00),    # long put gained
-            _pos("SPY260410P00650000", -2, 6.02, 15.00),   # short put deep ITM
-            _pos("SPY260410C00720000", -2, 1.37, 0.05),    # short call decayed
-            _pos("SPY260410C00730000", 2, 0.48, 0.01),     # long call decayed
+            _pos("SPY260410P00640000", 2, 4.87, 8.00),  # long put gained
+            _pos("SPY260410P00650000", -2, 6.02, 15.00),  # short put deep ITM
+            _pos("SPY260410C00720000", -2, 1.37, 0.05),  # short call decayed
+            _pos("SPY260410C00730000", 2, 0.48, 0.01),  # long call decayed
         ]
         mock_client = MagicMock()
         mock_client.get_all_positions.return_value = positions
