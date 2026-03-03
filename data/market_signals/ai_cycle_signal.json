@@ -6,22 +6,22 @@
   "blocked": false,
   "watch": true,
   "regime": "transition",
-  "confidence": 0.511,
+  "confidence": 0.458,
   "capex_deceleration_shock": false,
   "reasons": [
-    "Hyperscaler capex proxy 20D drawdown -9.86%",
-    "AI infra basket soft (-7.71% 20D)"
+    "Hyperscaler capex proxy 20D drawdown -9.38%",
+    "AI infra basket soft (-7.38% 20D)"
   ],
   "latest_data_date": "2026-03-03",
   "stale_days": 0,
   "features": {
-    "hyperscaler_capex_proxy_ret_20d": -0.098562,
-    "hyperscaler_capex_proxy_ret_5d": 0.01354,
-    "capex_proxy_momentum_delta": 0.112102,
-    "ai_infra_proxy_ret_20d": -0.077111,
-    "edge_monetization_proxy_ret_20d": -0.094863,
-    "edge_vs_infra_spread_20d": -0.017752,
-    "ai_monetization_proxy_score": 0.003699,
+    "hyperscaler_capex_proxy_ret_20d": -0.093845,
+    "hyperscaler_capex_proxy_ret_5d": 0.006131,
+    "capex_proxy_momentum_delta": 0.099976,
+    "ai_infra_proxy_ret_20d": -0.073831,
+    "edge_monetization_proxy_ret_20d": -0.090327,
+    "edge_vs_infra_spread_20d": -0.016496,
+    "ai_monetization_proxy_score": 0.003518,
     "nvda_gross_margin_pct": 71.07,
     "nvda_gross_margin_trend_bps": 0.0
   },
@@ -55,83 +55,83 @@
   },
   "metrics": {
     "AAPL": {
-      "latest_close": 261.600098,
+      "latest_close": 261.279999,
       "latest_date": "2026-03-03",
-      "ret_5d": -0.03873,
-      "ret_20d": -0.03024,
+      "ret_5d": -0.039906,
+      "ret_20d": -0.031427,
       "point_count": 188
     },
     "AMD": {
-      "latest_close": 191.279999,
+      "latest_close": 191.509506,
       "latest_date": "2026-03-03",
-      "ret_5d": -0.105499,
-      "ret_20d": -0.223292,
+      "ret_5d": -0.104426,
+      "ret_20d": -0.22236,
       "point_count": 188
     },
     "AMZN": {
-      "latest_close": 206.5,
+      "latest_close": 206.821594,
       "latest_date": "2026-03-03",
-      "ret_5d": -0.009877,
-      "ret_20d": -0.150066,
+      "ret_5d": -0.008335,
+      "ret_20d": -0.148742,
       "point_count": 188
     },
     "ANET": {
-      "latest_close": 124.794998,
+      "latest_close": 124.949997,
       "latest_date": "2026-03-03",
-      "ret_5d": -0.030869,
-      "ret_20d": -0.098107,
+      "ret_5d": -0.029665,
+      "ret_20d": -0.096986,
       "point_count": 188
     },
     "AVGO": {
-      "latest_close": 315.380005,
+      "latest_close": 314.260406,
       "latest_date": "2026-03-03",
-      "ret_5d": -0.031061,
-      "ret_20d": -0.047507,
+      "ret_5d": -0.034501,
+      "ret_20d": -0.050888,
       "point_count": 188
     },
     "GOOGL": {
-      "latest_close": 301.299988,
+      "latest_close": 301.11499,
       "latest_date": "2026-03-03",
-      "ret_5d": -0.030878,
-      "ret_20d": -0.123338,
+      "ret_5d": -0.031473,
+      "ret_20d": -0.123876,
       "point_count": 188
     },
     "META": {
-      "latest_close": 651.64502,
+      "latest_close": 650.875,
       "latest_date": "2026-03-03",
-      "ret_5d": 0.01931,
-      "ret_20d": -0.077526,
+      "ret_5d": 0.018106,
+      "ret_20d": -0.078616,
       "point_count": 188
     },
     "MSFT": {
-      "latest_close": 401.820007,
+      "latest_close": 401.700012,
       "latest_date": "2026-03-03",
-      "ret_5d": 0.032956,
-      "ret_20d": -0.048735,
+      "ret_5d": 0.032648,
+      "ret_20d": -0.049019,
       "point_count": 188
     },
     "NVDA": {
-      "latest_close": 182.479996,
-      "latest_date": "2026-03-02",
-      "ret_5d": -0.047351,
-      "ret_20d": -0.045257,
-      "point_count": 187
+      "latest_close": 180.000107,
+      "latest_date": "2026-03-03",
+      "ret_5d": -0.066632,
+      "ret_20d": -0.030224,
+      "point_count": 188
     },
     "ORCL": {
-      "latest_close": 149.25,
-      "latest_date": "2026-03-02",
-      "ret_5d": 0.056189,
-      "ret_20d": -0.093146,
-      "point_count": 187
+      "latest_close": 149.020004,
+      "latest_date": "2026-03-03",
+      "ret_5d": 0.019707,
+      "ret_20d": -0.068974,
+      "point_count": 188
     },
     "SMCI": {
-      "latest_close": 30.559999,
+      "latest_close": 30.639999,
       "latest_date": "2026-03-03",
-      "ret_5d": -0.01831,
-      "ret_20d": 0.02861,
+      "ret_5d": -0.01574,
+      "ret_20d": 0.031303,
       "point_count": 188
     }
   },
   "source": "yfinance_public",
-  "updated_at": "2026-03-03T17:30:22.257955+00:00"
+  "updated_at": "2026-03-03T17:49:42.540828+00:00"
 }
