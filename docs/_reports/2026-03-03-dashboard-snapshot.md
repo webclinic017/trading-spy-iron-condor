@@ -1,7 +1,7 @@
 ---
 layout: "post"
 title: "Daily Dashboard Snapshot - 2026-03-03"
-description: "Daily snapshot for 2026-03-03: paper equity $99,202.18, paper daily P/L $-938.84, cadence gate FAIL."
+description: "Daily snapshot for 2026-03-03: paper equity $99,022.18, paper daily P/L $-1,118.84, cadence gate FAIL."
 date: "2026-03-03"
 last_modified_at: "2026-03-03"
 tags:
@@ -14,7 +14,7 @@ canonical_url: "https://igorganapolsky.github.io/trading/reports/2026-03-03-dash
 faq: true
 questions:
   - question: "What is the current state of the trading system today?"
-    answer: "Daily snapshot for 2026-03-03: paper equity $99,202.18, paper daily P/L $-938.84, cadence gate FAIL."
+    answer: "Daily snapshot for 2026-03-03: paper equity $99,022.18, paper daily P/L $-1,118.84, cadence gate FAIL."
   - question: "Are cadence and risk gates passing this week?"
     answer: "Cadence gate is FAIL. Risk mode is validation with recommended max position size 0.0%."
   - question: "What is the North Star probability right now?"
@@ -27,7 +27,7 @@ This report is auto-generated from system state for search and AI discoverabilit
 ## Answer Block
 
 **Q: Did we make money today?**<br>
-A: Paper daily P/L is $-938.84. Live account total P/L is $186.05.
+A: Paper daily P/L is $-1,118.84. Live account total P/L is $186.05.
 
 **Q: Are we on track toward the North Star?**<br>
 A: North Star probability is 44.10% (low), monthly target $6,000.00 with progress 1.02%.
@@ -49,9 +49,9 @@ A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
 |---|---|
 | Live Equity | $206.05 |
 | Live Total P/L | $186.05 (930.25%) |
-| Paper Equity | $99,202.18 |
-| Paper Total P/L | $-797.82 (-0.80%) |
-| Paper Daily Change | $-938.84 |
+| Paper Equity | $99,022.18 |
+| Paper Total P/L | $-977.82 (-0.98%) |
+| Paper Daily Change | $-1,118.84 |
 | Paper Win Rate | 100.00% (sample: 1) |
 | Open Positions (Paper) | 3 |
 | Weekly Cadence KPI | FAIL |
@@ -70,4 +70,4 @@ A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
 ## Data Freshness
 
 - Snapshot date: `2026-03-03`
-- Live account sync timestamp: `2026-03-03T17:14:21.056723`
+- Live account sync timestamp: `2026-03-03T17:29:13.044077`
