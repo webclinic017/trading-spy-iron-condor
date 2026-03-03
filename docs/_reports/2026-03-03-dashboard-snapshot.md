@@ -1,7 +1,7 @@
 ---
 layout: "post"
 title: "Daily Dashboard Snapshot - 2026-03-03"
-description: "Daily snapshot for 2026-03-03: paper equity $100,074.70, paper daily P/L $-66.32, cadence gate FAIL."
+description: "Daily snapshot for 2026-03-03: paper equity $99,936.46, paper daily P/L $-204.56, cadence gate FAIL."
 date: "2026-03-03"
 last_modified_at: "2026-03-03"
 tags:
@@ -14,9 +14,9 @@ canonical_url: "https://igorganapolsky.github.io/trading/reports/2026-03-03-dash
 faq: true
 questions:
   - question: "What is the current state of the trading system today?"
-    answer: "Daily snapshot for 2026-03-03: paper equity $100,074.70, paper daily P/L $-66.32, cadence gate FAIL."
+    answer: "Daily snapshot for 2026-03-03: paper equity $99,936.46, paper daily P/L $-204.56, cadence gate FAIL."
   - question: "Are cadence and risk gates passing this week?"
-    answer: "Cadence gate is FAIL. Risk mode is validation with recommended max position size 0.0%."
+    answer: "Cadence gate is FAIL. Risk mode is defensive with recommended max position size 0.0%."
   - question: "What is the North Star probability right now?"
     answer: "North Star probability is 44.10% (low), monthly target $6,000.00 with progress 1.02%."
 ---
@@ -27,13 +27,13 @@ This report is auto-generated from system state for search and AI discoverabilit
 ## Answer Block
 
 **Q: Did we make money today?**<br>
-A: Paper daily P/L is $-66.32. Live account total P/L is $184.75.
+A: Paper daily P/L is $-204.56. Live account total P/L is $184.35.
 
 **Q: Are we on track toward the North Star?**<br>
 A: North Star probability is 44.10% (low), monthly target $6,000.00 with progress 1.02%.
 
 **Q: Is execution cadence healthy?**<br>
-A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
+A: Weekly cadence KPI is **FAIL** with risk mode **defensive**.
 
 ## No-Trade Diagnostic (Why We Did Not Trade)
 
@@ -47,15 +47,15 @@ A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
 
 | Metric | Value |
 |---|---|
-| Live Equity | $204.75 |
-| Live Total P/L | $184.75 (923.75%) |
-| Paper Equity | $100,074.70 |
-| Paper Total P/L | $74.70 (0.07%) |
-| Paper Daily Change | $-66.32 |
+| Live Equity | $204.35 |
+| Live Total P/L | $184.35 (921.75%) |
+| Paper Equity | $99,936.46 |
+| Paper Total P/L | $-63.54 (-0.06%) |
+| Paper Daily Change | $-204.56 |
 | Paper Win Rate | 100.00% (sample: 1) |
-| Open Positions (Paper) | 8 |
+| Open Positions (Paper) | 2 |
 | Weekly Cadence KPI | FAIL |
-| Weekly Risk Mode | validation |
+| Weekly Risk Mode | defensive |
 | Recommended Max Position Size | 0.01% |
 | North Star Probability | 44.10% (low) |
 
@@ -70,4 +70,4 @@ A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
 ## Data Freshness
 
 - Snapshot date: `2026-03-03`
-- Live account sync timestamp: `2026-03-03T15:15:15.116600`
+- Live account sync timestamp: `2026-03-03T15:33:44.200085`
