@@ -1998,5 +1998,21 @@
       "positions_count": 0,
       "synced_at": "2026-03-03T15:13:36.339813"
     }
+  },
+  {
+    "captured_at": "2026-03-03T15:33:44.201647+00:00",
+    "sync_mode": "paper+live",
+    "paper": {
+      "equity": 99936.46,
+      "daily_change": -204.56,
+      "positions_count": 2,
+      "synced_at": null
+    },
+    "live": {
+      "equity": 204.35,
+      "daily_change": 0.0,
+      "positions_count": 0,
+      "synced_at": "2026-03-03T15:33:44.200085"
+    }
   }
 ]
