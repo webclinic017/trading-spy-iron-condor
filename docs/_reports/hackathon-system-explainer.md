@@ -7,13 +7,13 @@ hero_image: "/assets/img/agent-loop-diagram.png"
 
 # Hackathon System Explainer
 
-Last Updated (UTC): 2026-03-03T18:29:40Z
+Last Updated (UTC): 2026-03-03T19:15:28Z
 
 ## Current Runtime Snapshot
 - Latest cycle: `n/a`
 - Latest profile: `n/a`
 - Latest loop status timestamp: `n/a`
-- Latest Tetrate latency: `792 ms`
+- Latest Tetrate latency: `1076 ms`
 - Latest Tetrate estimated call cost: `0.00001650`
 
 ## Proof Checklist
