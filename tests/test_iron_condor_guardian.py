@@ -223,7 +223,7 @@ class TestEntryCreditEstimation:
         ic_data = guardian.parse_ic_positions(positions)["260410"]
         short_premium = sum(p["entry"] for p in ic_data["positions"] if p["qty"] < 0)
         long_premium = sum(p["entry"] for p in ic_data["positions"] if p["qty"] > 0)
-        credit = short_premium - long_premium
+        assert short_premium > long_premium
         # With these numbers: short = 7.31+6.12+1.89+1.35 = 16.67
         #                     long  = 5.93+0.70+4.95+0.48 = 12.06
         #                     credit = 16.67 - 12.06 = 4.61 (positive here)
@@ -576,6 +576,7 @@ class TestRunGuardian:
                     guardian.run_guardian()
                     # With DTE=30 and normal prices, should not close
                     # (P/L would be in safe zone with correct credit)
+                    mock_close.assert_not_called()
 
     def test_dte_exit_triggers_close(self, guardian, tmp_path, monkeypatch):
         """IC at 7 DTE should be closed."""
