@@ -6,21 +6,21 @@
   "blocked": false,
   "watch": false,
   "regime": "transition",
-  "confidence": 0.352,
+  "confidence": 0.343,
   "capex_deceleration_shock": false,
   "reasons": [
-    "Hyperscaler capex proxy weakening -5.10%"
+    "Hyperscaler capex proxy weakening -5.13%"
   ],
   "latest_data_date": "2026-03-04",
   "stale_days": 0,
   "features": {
-    "hyperscaler_capex_proxy_ret_20d": -0.050989,
-    "hyperscaler_capex_proxy_ret_5d": 0.013501,
-    "capex_proxy_momentum_delta": 0.06449,
-    "ai_infra_proxy_ret_20d": -0.025268,
-    "edge_monetization_proxy_ret_20d": -0.052245,
-    "edge_vs_infra_spread_20d": -0.026977,
-    "ai_monetization_proxy_score": -0.001256,
+    "hyperscaler_capex_proxy_ret_20d": -0.051299,
+    "hyperscaler_capex_proxy_ret_5d": 0.013192,
+    "capex_proxy_momentum_delta": 0.064491,
+    "ai_infra_proxy_ret_20d": -0.028241,
+    "edge_monetization_proxy_ret_20d": -0.052677,
+    "edge_vs_infra_spread_20d": -0.024436,
+    "ai_monetization_proxy_score": -0.001378,
     "nvda_gross_margin_pct": 71.07,
     "nvda_gross_margin_trend_bps": 0.0
   },
@@ -54,83 +54,83 @@
   },
   "metrics": {
     "AAPL": {
-      "latest_close": 264.165009,
+      "latest_close": 263.829987,
       "latest_date": "2026-03-04",
-      "ret_5d": -0.036703,
-      "ret_20d": -0.018806,
+      "ret_5d": -0.037924,
+      "ret_20d": -0.02005,
       "point_count": 188
     },
     "AMD": {
-      "latest_close": 198.110001,
+      "latest_close": 197.220001,
       "latest_date": "2026-03-04",
-      "ret_5d": -0.060467,
-      "ret_20d": -0.181736,
+      "ret_5d": -0.064687,
+      "ret_20d": -0.185412,
       "point_count": 188
     },
     "AMZN": {
-      "latest_close": 215.759903,
+      "latest_close": 216.089996,
       "latest_date": "2026-03-04",
-      "ret_5d": 0.024306,
-      "ret_20d": -0.095801,
+      "ret_5d": 0.025874,
+      "ret_20d": -0.094418,
       "point_count": 188
     },
     "ANET": {
-      "latest_close": 132.973999,
+      "latest_close": 132.800995,
       "latest_date": "2026-03-04",
-      "ret_5d": 0.000632,
-      "ret_20d": -0.046029,
+      "ret_5d": -0.00067,
+      "ret_20d": -0.04727,
       "point_count": 188
     },
     "AVGO": {
-      "latest_close": 321.815002,
+      "latest_close": 320.154999,
       "latest_date": "2026-03-04",
-      "ret_5d": -0.031582,
-      "ret_20d": 0.004636,
+      "ret_5d": -0.036577,
+      "ret_20d": -0.000546,
       "point_count": 188
     },
     "GOOGL": {
-      "latest_close": 304.73941,
+      "latest_close": 304.179993,
       "latest_date": "2026-03-04",
-      "ret_5d": -0.02608,
-      "ret_20d": -0.102942,
+      "ret_5d": -0.027868,
+      "ret_20d": -0.104589,
       "point_count": 188
     },
     "META": {
-      "latest_close": 671.72998,
+      "latest_close": 672.039978,
       "latest_date": "2026-03-04",
-      "ret_5d": 0.027597,
-      "ret_20d": -0.028871,
+      "ret_5d": 0.028071,
+      "ret_20d": -0.028423,
       "point_count": 188
     },
     "MSFT": {
-      "latest_close": 405.13501,
+      "latest_close": 404.875,
       "latest_date": "2026-03-04",
-      "ret_5d": 0.011321,
-      "ret_20d": -0.012525,
+      "ret_5d": 0.010671,
+      "ret_20d": -0.013158,
       "point_count": 188
     },
     "NVDA": {
-      "latest_close": 182.994995,
+      "latest_close": 182.5298,
       "latest_date": "2026-03-04",
-      "ret_5d": -0.064251,
-      "ret_20d": 0.014722,
+      "ret_5d": -0.06663,
+      "ret_20d": 0.012143,
       "point_count": 188
     },
     "ORCL": {
-      "latest_close": 152.380005,
+      "latest_close": 152.210007,
       "latest_date": "2026-03-04",
-      "ret_5d": 0.03036,
-      "ret_20d": -0.014806,
+      "ret_5d": 0.029211,
+      "ret_20d": -0.015905,
       "point_count": 188
     },
     "SMCI": {
-      "latest_close": 32.105,
+      "latest_close": 32.040001,
       "latest_date": "2026-03-04",
-      "ret_5d": -0.044494,
-      "ret_20d": 0.082069,
+      "ret_5d": -0.046429,
+      "ret_20d": 0.079879,
       "point_count": 188
     }
   },
   "source": "yfinance_public",
-  "updated_at": "2026-03-04T16:01:55.334481+00:00"
+  "updated_at": "2026-03-04T16:09:51.226797+00:00"
 }
