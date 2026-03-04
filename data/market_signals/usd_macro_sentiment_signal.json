@@ -7,7 +7,7 @@
   "watch": false,
   "reasons": [
     "No USD macro data available.",
-    "DEXUSEU: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=15.0)"
+    "DEXUSEU: 502 Server Error: Bad Gateway for url: https://fred.stlouisfed.org/graph/fredgraph.csv?id=DEXUSEU"
   ],
   "latest_data_date": null,
   "stale_days": null,
@@ -34,5 +34,5 @@
     }
   },
   "source": "fred_public",
-  "updated_at": "2026-03-04T18:02:27.604643+00:00"
+  "updated_at": "2026-03-04T18:09:43.546434+00:00"
 }
