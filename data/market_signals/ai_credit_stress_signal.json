@@ -6,7 +6,6 @@
   "watch": false,
   "reasons": [
     "No credit spread data available.",
-    "BAMLH0A0HYM2: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=15.0)",
     "BAA10Y: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=15.0)"
   ],
   "latest_data_date": null,
@@ -28,5 +27,5 @@
     }
   },
   "source": "fred_public",
-  "updated_at": "2026-03-04T17:05:54.559662+00:00"
+  "updated_at": "2026-03-04T17:13:06.620852+00:00"
 }
