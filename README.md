@@ -4,7 +4,7 @@
 [![Ralph Loop](https://github.com/IgorGanapolsky/trading/actions/workflows/ralph-loop-ai.yml/badge.svg)](https://github.com/IgorGanapolsky/trading/actions/workflows/ralph-loop-ai.yml)
 [![Self-Healing Monitor](https://github.com/IgorGanapolsky/trading/actions/workflows/self-healing-monitor.yml/badge.svg)](https://github.com/IgorGanapolsky/trading/actions/workflows/self-healing-monitor.yml)
 [![Lessons](https://img.shields.io/badge/lessons_learned-growing-blue.svg)](https://igorganapolsky.github.io/trading/lessons/)
-[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](requirements.txt)
+[![Python](https://img.shields.io/badge/python-3.11.x-blue.svg)](pyproject.toml)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![GitHub Pages](https://img.shields.io/badge/docs-GitHub_Pages-blue.svg)](https://igorganapolsky.github.io/trading/)
 
@@ -148,6 +148,8 @@ Max risk: $5,000 per position (5% of $100K), max 5 concurrent positions
 ---
 
 ## Quick Start
+
+Runtime requirement: **Python >=3.11,<3.12** (CPython 3.11.x).
 
 ```bash
 git clone https://github.com/IgorGanapolsky/trading.git
