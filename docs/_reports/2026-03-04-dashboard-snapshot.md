@@ -70,4 +70,4 @@ A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
 ## Data Freshness
 
 - Snapshot date: `2026-03-04`
-- Live account sync timestamp: `2026-03-04T20:13:39.488786`
+- Live account sync timestamp: `2026-03-04T20:46:03.121960`
