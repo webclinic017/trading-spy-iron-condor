@@ -14,7 +14,7 @@ Autonomous AI trading system with multi-model routing via [Tetrate Agent Router 
 >
 > **Accounts**: Alpaca Paper ($100K) validates strategy + Alpaca live brokerage opportunistically mirrors qualified setups behind strict risk gates.
 >
-> **Strategy**: SPY-first iron condors (15-20 delta, $10-wide wings, up to 5 concurrent positions). The risk layer uses an index/ETF whitelist that can expand (broker support permitting); current production trading targets SPY options.
+> **Strategy**: SPY-first iron condors (15-20 delta, $10-wide wings, up to 8 open option legs, typically ~2 concurrent condors). The risk layer uses an index/ETF whitelist that can expand (broker support permitting); current production trading targets SPY options.
 >
 > **Status**: [System State](https://github.com/IgorGanapolsky/trading/blob/main/data/system_state.json) | [Progress Dashboard](https://github.com/IgorGanapolsky/trading/wiki/Progress-Dashboard) | [GitHub Pages](https://igorganapolsky.github.io/trading/) | [Judge Demo Evidence](https://igorganapolsky.github.io/trading/lessons/judge-demo.html) | [RAG Query](https://igorganapolsky.github.io/trading/rag-query/)
 
@@ -119,8 +119,8 @@ Ralph is the self-healing loop that keeps the system operational:
 ```
 Sell 15-20 delta put spread + 15-20 delta call spread
 $10-wide wings, 30-45 DTE
-Exit: 50% profit OR 7 DTE | Stop: 200% of credit
-Max risk: $5,000 per position (5% of $100K), max 5 concurrent positions
+Exit: 50% profit OR 7 DTE | Stop: 100% of credit
+Max risk: $5,000 per position (5% of $100K), max 8 open option legs (~2 concurrent condors)
 ```
 
 **Why iron condors**: Defined risk on both sides, ~85% probability of profit at 15-delta, theta decay works daily, profits in sideways markets. Phil Town Rule #1 (don't lose money) enforced at every level.
@@ -174,9 +174,9 @@ ruff check src/                          # Lint
 | Safeguard | Rule |
 |---|---|
 | **Position Limits** | Max 5% per position ($5,000) |
-| **Stop-Loss** | 200% of credit received, no exceptions |
+| **Stop-Loss** | 100% of credit received, no exceptions |
 | **Exit** | 50% profit OR 7 DTE, whichever first |
-| **Max Positions** | 5 concurrent iron condors |
+| **Max Positions** | 8 open option legs (typically ~2 iron condors) |
 | **Paper First** | 90-day validation before live capital |
 
 ---
