@@ -540,7 +540,9 @@ def _compute_no_trade_diagnostic(
         "position_size_multiplier": round(min(1.0, max(0.1, ai_cycle_multiplier)), 4),
         "regime": str(ai_cycle_signal.get("regime") or "unknown"),
         "confidence": _as_float(ai_cycle_signal.get("confidence"), None),
-        "capex_deceleration_shock": _as_bool(ai_cycle_signal.get("capex_deceleration_shock"), default=False),
+        "capex_deceleration_shock": _as_bool(
+            ai_cycle_signal.get("capex_deceleration_shock"), default=False
+        ),
         "signal_date": ai_cycle_signal.get("latest_data_date"),
         "source": ai_cycle_signal.get("source", "none"),
         "detail": ai_cycle_reason_text,

@@ -158,7 +158,9 @@ def main(dry_run: bool = False, trail_pct: float | None = None):
                 # For short options: use entry credit and canonical Rule #1 stop-loss multiplier.
                 # For long options: preserve conservative 50% trailing fallback.
                 if side == "short":
-                    entry_price = float(getattr(pos, "avg_entry_price", current_price) or current_price)
+                    entry_price = float(
+                        getattr(pos, "avg_entry_price", current_price) or current_price
+                    )
                     entry_price = abs(entry_price)
                     stop_price = round(entry_price * (1 + IRON_CONDOR_STOP_LOSS_MULTIPLIER), 2)
                     logger.info(f"    Entry Credit: ${entry_price:.2f}")

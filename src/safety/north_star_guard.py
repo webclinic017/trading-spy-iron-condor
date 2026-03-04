@@ -200,7 +200,9 @@ def get_guard_context(state_path: Path = DEFAULT_STATE_PATH) -> dict[str, Any]:
 
     block_reason = ""
     if block_new_positions:
-        if isinstance(weekly_gate, dict) and _to_bool(weekly_gate.get("block_new_positions"), default=False):
+        if isinstance(weekly_gate, dict) and _to_bool(
+            weekly_gate.get("block_new_positions"), default=False
+        ):
             block_reason = (
                 "North Star guard: weekly operating gate blocked new position openings "
                 f"({weekly_gate.get('mode', 'unknown')})."

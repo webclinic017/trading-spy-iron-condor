@@ -727,7 +727,9 @@ def generate_world_class_dashboard() -> str:
     min_trades_for_decision = int(basic_metrics.get("min_trades_for_decision", 30))
     closed_trades = int(basic_metrics.get("closed_trades", 0))
     has_min_sample = closed_trades >= min_trades_for_decision
-    cadence_passed = parse_bool(basic_metrics.get("weekly_cadence_kpi_passed", False), default=False)
+    cadence_passed = parse_bool(
+        basic_metrics.get("weekly_cadence_kpi_passed", False), default=False
+    )
     north_star_probability_passed = bool(
         north_star_score is not None and float(north_star_score) >= 70.0
     )

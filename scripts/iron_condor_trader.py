@@ -403,7 +403,9 @@ class IronCondorStrategy:
 
                     # Check iron condor count against max_positions config
                     # 1 iron condor = 4 legs (long put, short put, short call, long call)
-                    max_ic = int(self.config.get("max_positions", max(1, int(MAX_OPTION_LEGS) // 4)))
+                    max_ic = int(
+                        self.config.get("max_positions", max(1, int(MAX_OPTION_LEGS) // 4))
+                    )
                     max_contracts = max_ic * 4
                     current_ic_count = total_contracts // 4
 

@@ -314,7 +314,11 @@ def _north_star_probability(
     samples = _as_int(primary_metrics.get("samples"), 0)
     weekly_gate = state.get("north_star_weekly_gate", {}) if isinstance(state, dict) else {}
     cadence_kpi = weekly_gate.get("cadence_kpi") if isinstance(weekly_gate, dict) else {}
-    cadence_passed = _as_bool(cadence_kpi.get("passed"), default=False) if isinstance(cadence_kpi, dict) else False
+    cadence_passed = (
+        _as_bool(cadence_kpi.get("passed"), default=False)
+        if isinstance(cadence_kpi, dict)
+        else False
+    )
     cadence_setups = (
         _as_int(cadence_kpi.get("qualified_setups_observed"), 0)
         if isinstance(cadence_kpi, dict)

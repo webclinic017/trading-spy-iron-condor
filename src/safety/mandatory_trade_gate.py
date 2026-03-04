@@ -640,7 +640,9 @@ def validate_trade_mandatory(
     # =========================================================================
     effective_max_position_pct = MAX_POSITION_PCT
     north_star_guard = context.get("north_star_guard", {}) if context else {}
-    if isinstance(north_star_guard, dict) and _to_bool(north_star_guard.get("enabled"), default=False):
+    if isinstance(north_star_guard, dict) and _to_bool(
+        north_star_guard.get("enabled"), default=False
+    ):
         guard_mode = str(north_star_guard.get("mode", "unknown"))
         guard_limit = north_star_guard.get("max_position_pct")
         if isinstance(guard_limit, (int, float)) and guard_limit > 0:

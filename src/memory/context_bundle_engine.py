@@ -346,9 +346,9 @@ class ContextBundleEngine:
         path = self.project_root / "rag_knowledge" / "lessons_learned"
         if not path.exists():
             return []
-        files = [file_path for file_path in sorted(path.glob("*.md")) if self._is_git_tracked(file_path)][
-            -top_per_source:
-        ]
+        files = [
+            file_path for file_path in sorted(path.glob("*.md")) if self._is_git_tracked(file_path)
+        ][-top_per_source:]
         docs: list[BundleDoc] = []
         for file_path in files:
             text = file_path.read_text(encoding="utf-8", errors="ignore")
@@ -438,9 +438,9 @@ class ContextBundleEngine:
         path = self.project_root / "docs" / "_posts"
         if not path.exists():
             return []
-        files = [file_path for file_path in sorted(path.glob("*.md")) if self._is_git_tracked(file_path)][
-            -top_per_source:
-        ]
+        files = [
+            file_path for file_path in sorted(path.glob("*.md")) if self._is_git_tracked(file_path)
+        ][-top_per_source:]
         docs: list[BundleDoc] = []
         for file_path in files:
             text = file_path.read_text(encoding="utf-8", errors="ignore")

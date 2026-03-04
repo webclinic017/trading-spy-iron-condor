@@ -32,6 +32,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
 def get_option_positions(trader) -> list:
     """Get all SPY option positions from Alpaca."""
     positions = trader.trading_client.get_all_positions()

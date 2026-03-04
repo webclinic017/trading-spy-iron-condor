@@ -119,7 +119,9 @@ def generate_engaging_content(
         max_chars=160,
     )
 
-    questions = _generate_contextual_faq(signal, context, thompson_success_rate, observed_success_rate, total)
+    questions = _generate_contextual_faq(
+        signal, context, thompson_success_rate, observed_success_rate, total
+    )
 
     frontmatter = render_frontmatter(
         {
