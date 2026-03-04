@@ -27,7 +27,7 @@ This report is auto-generated from system state for search and AI discoverabilit
 ## Answer Block
 
 **Q: Did we make money today?**<br>
-A: Paper daily P/L is $-1,056.48. Live account total P/L is $186.05.
+A: Paper daily P/L is $-1,056.48. Live account total P/L is $-20.00.
 
 **Q: Are we on track toward the North Star?**<br>
 A: North Star probability is 44.10% (low), monthly target $6,000.00 with progress 1.02%.
@@ -47,8 +47,8 @@ A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
 
 | Metric | Value |
 |---|---|
-| Live Equity | $206.05 |
-| Live Total P/L | $186.05 (930.25%) |
+| Live Equity | $0.00 |
+| Live Total P/L | $-20.00 (-100.00%) |
 | Paper Equity | $97,735.84 |
 | Paper Total P/L | $-2,264.16 (-2.26%) |
 | Paper Daily Change | $-1,056.48 |
@@ -70,4 +70,4 @@ A: Weekly cadence KPI is **FAIL** with risk mode **validation**.
 ## Data Freshness
 
 - Snapshot date: `2026-03-04`
-- Live account sync timestamp: `2026-03-04T20:46:03.121960`
+- Live account sync timestamp: `2026-03-04T21:06:39.945927`
