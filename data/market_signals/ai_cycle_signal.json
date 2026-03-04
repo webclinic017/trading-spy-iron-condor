@@ -14,12 +14,12 @@
   "latest_data_date": "2026-03-04",
   "stale_days": 0,
   "features": {
-    "hyperscaler_capex_proxy_ret_20d": -0.052166,
-    "hyperscaler_capex_proxy_ret_5d": 0.012294,
+    "hyperscaler_capex_proxy_ret_20d": -0.052186,
+    "hyperscaler_capex_proxy_ret_5d": 0.012274,
     "capex_proxy_momentum_delta": 0.06446,
-    "ai_infra_proxy_ret_20d": -0.018278,
-    "edge_monetization_proxy_ret_20d": -0.054676,
-    "edge_vs_infra_spread_20d": -0.036398,
+    "ai_infra_proxy_ret_20d": -0.018285,
+    "edge_monetization_proxy_ret_20d": -0.054696,
+    "edge_vs_infra_spread_20d": -0.036411,
     "ai_monetization_proxy_score": -0.00251,
     "nvda_gross_margin_pct": 71.07,
     "nvda_gross_margin_trend_bps": 0.0
@@ -75,10 +75,10 @@
       "point_count": 187
     },
     "ANET": {
-      "latest_close": 134.835007,
+      "latest_close": 134.830002,
       "latest_date": "2026-03-04",
-      "ret_5d": 0.014636,
-      "ret_20d": -0.032678,
+      "ret_5d": 0.014599,
+      "ret_20d": -0.032714,
       "point_count": 187
     },
     "AVGO": {
@@ -117,10 +117,10 @@
       "point_count": 187
     },
     "ORCL": {
-      "latest_close": 152.384995,
+      "latest_close": 152.369995,
       "latest_date": "2026-03-04",
-      "ret_5d": 0.030394,
-      "ret_20d": -0.014773,
+      "ret_5d": 0.030293,
+      "ret_20d": -0.01487,
       "point_count": 187
     },
     "SMCI": {
@@ -132,5 +132,5 @@
     }
   },
   "source": "yfinance_public",
-  "updated_at": "2026-03-04T21:06:51.844985+00:00"
+  "updated_at": "2026-03-04T22:05:42.448097+00:00"
 }
