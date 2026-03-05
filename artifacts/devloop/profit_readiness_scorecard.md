@@ -8,7 +8,7 @@
 - Win Rate: 100.00% [PASS] (sample_size=1)
 - Max Drawdown (sync history): 0.26% [PASS] (equity_points=24)
 - Execution Quality (valid trade records): 80.00% [WARN] (valid=80/100)
-- Gateway Latency: 1018 ms [PASS] (from artifacts/tars/smoke_metrics.txt)
+- Gateway Latency: 1441 ms [PASS] (from artifacts/tars/smoke_metrics.txt)
 - Gateway Cost (smoke call): $0.000017 [PASS] (set TARS_INPUT_COST_PER_1M and TARS_OUTPUT_COST_PER_1M for estimate)
 - Profit Factor: Inf [PASS] (wins=1 losses=0 sample=1 source=data/trades.json)
 - Average Winner: $41.00 [PASS] (source=data/trades.json)
@@ -18,8 +18,8 @@
 - AI Credit Stress Gate: unknown (score=0.0) [UNKNOWN] (north_star_weekly_gate.no_trade_diagnostic.gate_status.ai_credit_stress)
 
 ## 7-Day Delta
-- Equity delta (1d): $669.86 (0.69%) [PASS]
-- Monthly run-rate estimate: $20,095.80/month [PASS]
+- Equity delta (1d): $694.18 (0.71%) [PASS]
+- Monthly run-rate estimate: $20,825.40/month [PASS]
 - Data source: sync_health.history
 - North Star target: $6,000/month after tax
 
