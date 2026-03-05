@@ -44,6 +44,11 @@ from src.orchestrator.parallel_processor import (
 )
 from src.orchestrator.run_status import update_run_status
 from src.orchestrator.session_manager import SessionManager
+from src.orchestrator.skill_pipeline import (
+    DeterministicSkillRunner,
+    RunTraceRecorder,
+    build_default_skill_registry,
+)
 from src.orchestrator.smart_dca import SmartDCAAllocator
 from src.orchestrator.telemetry import OrchestratorTelemetry
 from src.risk.capital_efficiency import get_capital_calculator
@@ -219,6 +224,7 @@ class TradingOrchestrator:
         self.microstructure = MicrostructureFeatureExtractor()
         self.regime_detector = RegimeDetector()
         self.smart_dca = SmartDCAAllocator()
+        self.skill_registry = build_default_skill_registry()
 
         # Gate 0.5: Bull/Bear Debate - Multi-perspective analysis (Dec 2025)
         # Based on UCLA/MIT TradingAgents research showing 42% CAGR improvement
@@ -2474,6 +2480,23 @@ class TradingOrchestrator:
             )
             return
 
+        replay_command = f"python scripts/autonomous_trader.py --tickers {ticker} --prediction-only"
+        trace_recorder = RunTraceRecorder(
+            run_id=self.telemetry.run_id or self.telemetry.session_id,
+            session_id=self.telemetry.session_id,
+            ticker=ticker,
+            replay_command=replay_command,
+        )
+        skill_runner = DeterministicSkillRunner(self.skill_registry, trace_recorder)
+        trace_closed = False
+
+        def _close_trace(status: str, metadata: dict[str, Any] | None = None) -> None:
+            nonlocal trace_closed
+            if trace_closed:
+                return
+            trace_recorder.finalize(status=status, metadata=metadata)
+            trace_closed = True
+
         # Run the gate pipeline (Gates 0-4)
         success, ctx, gate_results = self.gate_pipeline.run(
             ticker=ticker,
@@ -2499,7 +2522,29 @@ class TradingOrchestrator:
                 last_result.gate_name if last_result else "unknown",
                 last_result.reason if last_result else "no results",
             )
+            _close_trace(
+                "rejected",
+                metadata={
+                    "rejected_gate": last_result.gate_name if last_result else "unknown",
+                    "reason": last_result.reason if last_result else "no results",
+                },
+            )
             return
+
+        market_analysis = skill_runner.run_stage(
+            skill_name="market_analysis",
+            inputs={
+                "ticker": ticker,
+                "gate_results": [result.to_dict() for result in gate_results],
+            },
+            execute=lambda: {
+                "ticker": ticker,
+                "momentum_strength": ctx.momentum_strength,
+                "rl_confidence": ctx.rl_decision.get("confidence", 0.0),
+                "sentiment_score": ctx.sentiment_score,
+                "pipeline_confidence": ctx.pipeline_confidence,
+            },
+        )
 
         # Re-plan allocation with actual momentum/RL data
         allocation_plan = self.smart_dca.plan_allocation(
@@ -2512,6 +2557,10 @@ class TradingOrchestrator:
 
         if allocation_plan.cap <= 0:
             logger.info("Smart DCA: allocation exhausted post-gates for %s", ticker)
+            _close_trace(
+                "rejected",
+                metadata={"reason": "allocation_cap_exhausted"},
+            )
             return
 
         # ========================================================================
@@ -2622,23 +2671,66 @@ class TradingOrchestrator:
         risk_result = self.gate4.evaluate(ticker, ctx, allocation_plan.cap)
         if not risk_result.passed:
             logger.info("Gate 4 (%s): REJECTED - %s", ticker, risk_result.reason)
+            _close_trace(
+                "rejected",
+                metadata={"reason": risk_result.reason, "stage": "risk_gate"},
+            )
             return
 
         order_size = risk_result.data.get("order_size", 0.0)
+        risk_gate_output = skill_runner.run_stage(
+            skill_name="risk_gate",
+            inputs={"market_analysis": market_analysis, "allocation_cap": allocation_plan.cap},
+            execute=lambda: {
+                "approved": bool(risk_result.passed and order_size > 0),
+                "order_size": float(order_size),
+                "allocation_cap": float(allocation_plan.cap),
+            },
+        )
         if order_size <= 0:
             logger.info("Gate 4 (%s): Order size is 0, skipping", ticker)
+            _close_trace(
+                "rejected",
+                metadata={"reason": "order_size_zero"},
+            )
             return
 
         ctx.order_size = order_size
+        execution_plan = skill_runner.run_stage(
+            skill_name="execution_plan",
+            inputs={"risk_gate": risk_gate_output, "ticker": ticker},
+            execute=lambda: {
+                "ticker": ticker,
+                "side": "buy",
+                "notional": float(order_size),
+                "order_type": "market",
+                "broker": "alpaca",
+            },
+        )
 
         # Gate 5: Execution
         exec_result = self.gate5.execute(ticker, ctx, order_size)
         if not exec_result.passed:
             logger.warning("Gate 5 (%s): Execution failed - %s", ticker, exec_result.reason)
+            _close_trace(
+                "failed",
+                metadata={"reason": exec_result.reason, "stage": "broker_execute"},
+            )
             return
 
         # Record successful execution
         order = exec_result.data.get("order", {})
+        skill_runner.run_stage(
+            skill_name="broker_execute",
+            inputs={"execution_plan": execution_plan},
+            execute=lambda: {
+                "submitted": True,
+                "order_id": str(order.get("id") or "unknown"),
+                "status": str(order.get("status") or "submitted"),
+                "symbol": str(order.get("symbol") or ticker),
+                "broker": "alpaca",
+            },
+        )
         self.telemetry.order_event(
             ticker,
             {
@@ -2762,6 +2854,14 @@ class TradingOrchestrator:
             logger.debug("📝 Trade entry recorded for feedback loop: %s", ticker)
         except Exception as e:
             logger.warning("Failed to record trade entry for feedback: %s", e)
+
+        _close_trace(
+            "completed",
+            metadata={
+                "order_id": order.get("id"),
+                "order_status": order.get("status"),
+            },
+        )
 
     def _deploy_safe_reserve(self) -> None:
         sweep = self.smart_dca.drain_to_safe()

@@ -1950,6 +1950,9 @@ class Gate5Execution:
         self.trade_verifier = trade_verifier
         self.failure_manager = failure_manager
         self.telemetry = telemetry
+        from src.execution.unified_broker import TradeGatewayBrokerAdapter
+
+        self.broker_adapter = TradeGatewayBrokerAdapter(trade_gateway)
 
     def execute(
         self,
@@ -1963,21 +1966,21 @@ class Gate5Execution:
         Returns:
             GateResult with order details if successful
         """
-        from src.risk.trade_gateway import RejectionReason, TradeRequest
+        from src.execution.unified_broker import BrokerExecutionIntent
 
-        trade_request = TradeRequest(
-            symbol=ticker,
-            side="buy",
-            notional=order_size,
-            source="orchestrator",
+        execution_result = self.broker_adapter.submit(
+            BrokerExecutionIntent(
+                symbol=ticker,
+                side="buy",
+                notional=order_size,
+                source="orchestrator",
+            )
         )
 
-        gateway_decision = self.trade_gateway.evaluate(trade_request)
-
-        if not gateway_decision.approved:
-            rejection_reasons = [r.value for r in gateway_decision.rejection_reasons]
+        if not execution_result.approved:
+            rejection_reasons = execution_result.rejection_reasons
             # Release allocation unless it's a batch minimum issue
-            if RejectionReason.MINIMUM_BATCH_NOT_MET not in gateway_decision.rejection_reasons:
+            if "MINIMUM_BATCH_NOT_MET" not in execution_result.rejection_codes:
                 if ctx.allocation_plan:
                     self.smart_dca.release(ctx.allocation_plan.bucket, order_size)
 
@@ -1987,7 +1990,7 @@ class Gate5Execution:
                 ticker,
                 {
                     "rejection_reasons": rejection_reasons,
-                    "risk_score": gateway_decision.risk_score,
+                    "risk_score": execution_result.risk_score,
                 },
             )
             return GateResult(
@@ -1997,26 +2000,7 @@ class Gate5Execution:
                 reason=f"Gateway rejection: {rejection_reasons}",
             )
 
-        # Execute the order
-        order_outcome = self.failure_manager.run(
-            gate="execution.order",
-            ticker=ticker,
-            operation=lambda: self.trade_gateway.execute(gateway_decision),
-            event_type="execution.order",
-        )
-
-        if not order_outcome.ok:
-            if ctx.allocation_plan:
-                self.smart_dca.release(ctx.allocation_plan.bucket, order_size)
-            logger.error("Gate 5 (%s): Execution failed: %s", ticker, order_outcome.failure.error)
-            return GateResult(
-                gate_name="execution",
-                status=GateStatus.ERROR,
-                ticker=ticker,
-                reason=str(order_outcome.failure.error),
-            )
-
-        order = order_outcome.result
+        order = execution_result.order or {}
 
         # Place stop-loss
         self._place_stop_loss(ticker, ctx, order, order_size)
