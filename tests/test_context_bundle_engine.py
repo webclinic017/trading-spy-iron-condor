@@ -114,7 +114,10 @@ def test_rag_query_loader_accepts_event_timestamp_schema(tmp_path: Path, monkeyp
     )
 
     engine = ContextBundleEngine(project_root=project)
-    engine._git_tracked_paths = {"data/rag/lessons_query.json", "rag_knowledge/lessons_learned/ll_001.md"}
+    engine._git_tracked_paths = {
+        "data/rag/lessons_query.json",
+        "rag_knowledge/lessons_learned/ll_001.md",
+    }
     monkeypatch.delenv("RAG_WRITE_PROFILE", raising=False)
     built = engine.build_index(top_per_source=50)
 

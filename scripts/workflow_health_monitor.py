@@ -161,7 +161,9 @@ class WorkflowHealthMonitor:
                 else:
                     exec_time = exec_time.astimezone(ET)
                 if exec_time >= cutoff:
-                    records.append({"timestamp": exec_time, "status": execution.get("status", "unknown")})
+                    records.append(
+                        {"timestamp": exec_time, "status": execution.get("status", "unknown")}
+                    )
             except Exception:
                 continue
 
@@ -188,9 +190,7 @@ class WorkflowHealthMonitor:
             actual = [row["timestamp"] for row in records if row.get("status") != "skipped"]
             success_count = sum(1 for row in records if row.get("status") == "success")
             failed_count = sum(
-                1
-                for row in records
-                if row.get("status") in {"failure", "cancelled", "timed_out"}
+                1 for row in records if row.get("status") in {"failure", "cancelled", "timed_out"}
             )
 
             expected_count = len(expected)
@@ -315,7 +315,15 @@ def main():
         "--status",
         type=str,
         default="success",
-        choices=["success", "failure", "cancelled", "timed_out", "queued", "in_progress", "skipped"],
+        choices=[
+            "success",
+            "failure",
+            "cancelled",
+            "timed_out",
+            "queued",
+            "in_progress",
+            "skipped",
+        ],
         help="Status of recorded execution",
     )
     parser.add_argument(

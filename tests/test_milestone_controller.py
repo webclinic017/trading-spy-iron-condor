@@ -216,9 +216,9 @@ def test_cadence_score_changes_gradually_near_threshold(tmp_path):
         }
     }
     _write_json(state_path, below)
-    score_below = compute_milestone_snapshot(
-        state_path=state_path, trades_path=trades_path
-    )["north_star_probability"]["score"]
+    score_below = compute_milestone_snapshot(state_path=state_path, trades_path=trades_path)[
+        "north_star_probability"
+    ]["score"]
 
     near = dict(base_state)
     near["north_star_weekly_gate"] = {
@@ -231,8 +231,8 @@ def test_cadence_score_changes_gradually_near_threshold(tmp_path):
         }
     }
     _write_json(state_path, near)
-    score_near = compute_milestone_snapshot(
-        state_path=state_path, trades_path=trades_path
-    )["north_star_probability"]["score"]
+    score_near = compute_milestone_snapshot(state_path=state_path, trades_path=trades_path)[
+        "north_star_probability"
+    ]["score"]
 
     assert 0 <= score_near - score_below < 8.0

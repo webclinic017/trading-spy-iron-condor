@@ -420,7 +420,11 @@ class WorkflowIntegrityTests:
         if not workflow_path.exists():
             return False, "ci-stale-run-watchdog.yml missing"
         content = workflow_path.read_text()
-        required_markers = ["listWorkflowRunsForRepo", "cancelWorkflowRun", "\"queued\", \"in_progress\""]
+        required_markers = [
+            "listWorkflowRunsForRepo",
+            "cancelWorkflowRun",
+            '"queued", "in_progress"',
+        ]
         missing = [item for item in required_markers if item not in content]
         if missing:
             return False, f"Watchdog missing required logic markers: {', '.join(missing)}"
