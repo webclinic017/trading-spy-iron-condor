@@ -6,8 +6,7 @@
   "blocked": false,
   "watch": false,
   "reasons": [
-    "No USD macro data available.",
-    "DEXUSEU: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=15.0)"
+    "No USD macro data available."
   ],
   "latest_data_date": null,
   "stale_days": null,
@@ -34,5 +33,5 @@
     }
   },
   "source": "fred_public",
-  "updated_at": "2026-03-05T14:23:33.972637+00:00"
+  "updated_at": "2026-03-05T14:49:37.469686+00:00"
 }
