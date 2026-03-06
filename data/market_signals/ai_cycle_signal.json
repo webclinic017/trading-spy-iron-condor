@@ -12,7 +12,7 @@
     "AI-cycle proxies stable"
   ],
   "latest_data_date": "2026-03-05",
-  "stale_days": 0,
+  "stale_days": 1,
   "features": {
     "hyperscaler_capex_proxy_ret_20d": -0.024061,
     "hyperscaler_capex_proxy_ret_5d": 0.017876,
@@ -132,5 +132,5 @@
     }
   },
   "source": "yfinance_public",
-  "updated_at": "2026-03-05T22:05:44.198663+00:00"
+  "updated_at": "2026-03-06T11:08:51.636484+00:00"
 }
