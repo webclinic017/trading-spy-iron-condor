@@ -16,7 +16,7 @@
 ## Operational Metrics
 - Workflows configured: 89
 - Blog posts indexed: 58
-- Reports indexed: 26
+- Reports indexed: 28
 - Lessons indexed: 169
 
 ## Blog Posts (Newest First)
@@ -80,6 +80,7 @@
 - [The Silent 74 Days: System Reported Success, Did Nothing](https://igorganapolsky.github.io/trading/2026/01/07/the-silent-74-days.html) - 2026-01-07
 
 ## Reports
+- [Daily Dashboard Snapshot - 2026-03-13](https://igorganapolsky.github.io/trading/reports/2026-03-13-dashboard-snapshot/) - 2026-03-13
 - [Daily Dashboard Snapshot - 2026-03-06](https://igorganapolsky.github.io/trading/reports/2026-03-06-dashboard-snapshot/) - 2026-03-06
 - [Daily Dashboard Snapshot - 2026-03-05](https://igorganapolsky.github.io/trading/reports/2026-03-05-dashboard-snapshot/) - 2026-03-05
 - [Daily Dashboard Snapshot - 2026-03-04](https://igorganapolsky.github.io/trading/reports/2026-03-04-dashboard-snapshot/) - 2026-03-04
@@ -103,6 +104,7 @@
 - [Social Positioning Copy (Canonical)](https://igorganapolsky.github.io/trading/reports/2026-02-17-social-positioning-copy/) - 2026-02-17
 - [Daily Dashboard Snapshot - 2026-02-17](https://igorganapolsky.github.io/trading/reports/2026-02-17-dashboard-snapshot/) - 2026-02-17
 - [Daily Dashboard Snapshot - 2026-02-16](https://igorganapolsky.github.io/trading/reports/2026-02-16-dashboard-snapshot/) - 2026-02-16
+- [Automated SQL Analytics Summary](https://igorganapolsky.github.io/trading/reports/sql-analytics-summary/) - undated
 - [Hackathon System Explainer](https://igorganapolsky.github.io/trading/reports/hackathon-system-explainer/) - undated
 - [Google Doc Sync Setup](https://igorganapolsky.github.io/trading/reports/google-doc-sync-setup/) - undated
 - [Beats](https://igorganapolsky.github.io/trading/reports/beats/) - undated
