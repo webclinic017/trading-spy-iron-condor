@@ -106,7 +106,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install yt-dlp youtube-transcript-api pandas numpy requests pytest pytest-timeout scipy
+          pip install -q -r requirements-minimal.txt || pip install -q alpaca-py requests python-dotenv
+          pip install -q yt-dlp youtube-transcript-api pandas numpy pytest pytest-timeout scipy
           python3 -c "import scipy"
 
       - name: "COST CHECK: Verify GCP budget before proceeding"
