@@ -361,9 +361,7 @@ class GRPOTradeLearner:
             if timestamp is None:
                 continue
 
-            pnl = float(
-                trade.get("realized_pnl", trade.get("pnl", trade.get("pl", 0.0))) or 0.0
-            )
+            pnl = float(trade.get("realized_pnl", trade.get("pnl", trade.get("pl", 0.0))) or 0.0)
             outcome = str(trade.get("outcome") or "").lower()
             if outcome not in {"win", "loss", "breakeven"}:
                 outcome = "win" if pnl > 0 else "loss" if pnl < 0 else "breakeven"

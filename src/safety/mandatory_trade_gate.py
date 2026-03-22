@@ -1085,9 +1085,7 @@ def _estimate_opening_max_loss(order_request: Any) -> tuple[float | None, int | 
     return max_loss, dte, underlying
 
 
-def _validate_short_iron_condor_orientation(
-    order_request: Any, strategy: str | None
-) -> str | None:
+def _validate_short_iron_condor_orientation(order_request: Any, strategy: str | None) -> str | None:
     """Ensure opening options-income MLEG orders are short-credit iron condors."""
     strategy_name = str(strategy or "").strip().lower()
     if strategy_name not in {"iron_condor", "options_income"}:
