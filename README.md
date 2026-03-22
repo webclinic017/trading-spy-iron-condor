@@ -52,15 +52,15 @@ python3 scripts/system_health_check.py      # Health check
 
 ---
 
-## Risk Management
+## How We Protect Capital
 
-| Rule | Value |
-|---|---|
-| Max risk per position | 5% ($5,000) |
-| Stop-loss | 100% of credit, no exceptions |
-| Exit | 50% profit OR 7 DTE |
-| Max open legs | 8 (~2 iron condors) |
-| Daily IC open limit | 2 (anti-churn) |
+Every trade has a built-in safety net. The system follows [Phil Town's Rule #1](https://www.ruleoneinvesting.com/): **don't lose money.**
+
+- **No single trade can risk more than 5% of the portfolio** ($5,000 on a $100K account). This means even a worst-case loss on one position won't materially damage the account.
+- **Every iron condor has an automatic stop-loss at 100% of the credit received.** If a trade goes against us, the system closes it before losses exceed the premium collected.
+- **Profits are taken at 50%, or positions close at 7 days to expiration** — whichever comes first. This locks in gains while theta decay is strongest and avoids gamma risk near expiry.
+- **Maximum 2 iron condors open at any time** (8 option legs). This keeps exposure manageable and prevents over-concentration.
+- **The system limits itself to 2 new iron condor opens per day**, preventing the rapid open-close cycling that was eating capital in spread costs.
 
 ---
 
