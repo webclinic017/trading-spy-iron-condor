@@ -7,7 +7,7 @@ layout: null
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trading Dashboard</title>
+    <title>Progress Dashboard</title>
     <meta
       name="description"
       content="Live portfolio dashboard and knowledge base for AI trading system"
@@ -939,7 +939,7 @@ layout: null
   <body>
     <div class="container">
       <header>
-        <h1>Trading Dashboard</h1>
+        <h1>Progress Dashboard</h1>
         <p class="subtitle" id="subtitleText">
           Live portfolio + knowledge base search
         </p>
@@ -2129,23 +2129,9 @@ Tags: ${lesson.tags.join(", ")}`;
             "port-stat-value " +
             (wr >= 80 ? "positive" : wr != null ? "negative" : "");
 
-          const systemAsOfRaw = data.last_updated || data?.meta?.last_updated || "";
-          updateAsOfText(
-            "systemAsOfText",
-            "System sync as of",
-            parseTimestampDetails(systemAsOfRaw),
-          );
-          updateAsOfText(
-            "systemAsOfTextChat",
-            "System sync as of",
-            parseTimestampDetails(systemAsOfRaw),
-          );
-
           bar.classList.remove("loading");
         } catch {
           bar.classList.add("error");
-          updateAsOfText("systemAsOfText", "System sync as of", null);
-          updateAsOfText("systemAsOfTextChat", "System sync as of", null);
         }
       }
 
