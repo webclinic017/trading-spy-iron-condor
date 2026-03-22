@@ -29,11 +29,6 @@ from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, Field
-from src.utils.llm_gateway import (
-    OPENROUTER_BASE_URL,
-    resolve_openrouter_primary_and_fallback_configs,
-)
-from src.utils.model_selector import get_model_selector
 
 logger = logging.getLogger(__name__)
 JSON_BLOCK_RE = re.compile(r"```(?:json)?\s*(\{.*?\})\s*```", re.IGNORECASE | re.DOTALL)
@@ -404,16 +399,18 @@ def get_trade_opinion(
 ) -> TradeOpinion | None:
     """
     Get pre-trade opinion from DeepSeek-R1 via OpenRouter.
-    
+
     [PRUNED MAR 2026]
     This function has been gutted as part of the Simplification Sprint.
     The complex LLM council, Thompson Sampling, and Judge logic was
     causing architectural overhang and obscuring raw risk rules.
-    
+
     Returns a dummy 'Pass' opinion so the hard-coded risk gates
     in mandatory_trade_gate.py take full control.
     """
-    logger.info("Trade opinion: LLM Council bypassed (Simplification Sprint). Falling back to pure Risk Gates.")
+    logger.info(
+        "Trade opinion: LLM Council bypassed (Simplification Sprint). Falling back to pure Risk Gates."
+    )
     return TradeOpinion(
         should_trade=True,
         confidence=1.0,
@@ -423,8 +420,9 @@ def get_trade_opinion(
         reasoning="Bypassed LLM Opinion. Hard-coded risk rules govern.",
         risk_flags=[],
         consensus_samples=1,
-        consensus_agreement=1.0
+        consensus_agreement=1.0,
     )
+
 
 def _system_prompt() -> str:
     """System prompt for the pre-trade research agent."""

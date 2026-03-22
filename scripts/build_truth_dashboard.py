@@ -5,40 +5,41 @@ Strips away the Bayesian/LLM fluff and gives the CEO the hard numbers.
 """
 
 import json
-from pathlib import Path
 from datetime import datetime, timezone
+from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 STATE_FILE = PROJECT_ROOT / "data" / "system_state.json"
 OUT_FILE = PROJECT_ROOT / "docs" / "truth_dashboard.md"
+
 
 def build_dashboard():
     if not STATE_FILE.exists():
         print("ERROR: system_state.json not found.")
         return
 
-    with open(STATE_FILE, "r") as f:
+    with open(STATE_FILE) as f:
         state = json.load(f)
 
     # 1. Equity & P/L
     paper_state = state.get("paper_account", {})
     equity = paper_state.get("equity", "Unknown")
     daily_pnl = paper_state.get("daily_pnl", "Unknown")
-    
+
     # 2. Positions
     positions = state.get("positions", [])
     open_positions = len(positions)
     unrealized_pl = sum(float(p.get("unrealized_pl", 0)) for p in positions)
-    
+
     # 3. Market Signals (The "Eyes")
     signals = state.get("market_signals", {})
     credit_stress = signals.get("ai_credit_stress", {}).get("status", "unknown")
     usd_macro = signals.get("usd_macro_sentiment", {}).get("status", "unknown")
     ai_cycle = signals.get("ai_cycle", {}).get("status", "unknown")
-    
+
     # 4. System Mode
     mode = state.get("mode", "unknown").upper()
-    
+
     def _fmt_money(val):
         try:
             return f"${float(val):,.2f}"
@@ -47,7 +48,7 @@ def build_dashboard():
 
     # Render
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
-    
+
     dashboard = f"""# 📈 TRUTH DASHBOARD
 *Generated: {now}*
 
@@ -65,26 +66,27 @@ def build_dashboard():
 
 ## 🚨 Alerts
 """
-    
+
     # Alert logic
     alerts = []
     if "unknown" in (credit_stress, usd_macro, ai_cycle):
-         alerts.append("CRITICAL: Market signals are UNKNOWN. Data ingestion failure.")
+        alerts.append("CRITICAL: Market signals are UNKNOWN. Data ingestion failure.")
     if float(equity) < 95000:
-         alerts.append("WARNING: Equity below $95k threshold.")
-         
+        alerts.append("WARNING: Equity below $95k threshold.")
+
     if not alerts:
         dashboard += "✅ All systems nominal. Vision clear.\n"
     else:
         for alert in alerts:
             dashboard += f"⚠️ {alert}\n"
-            
+
     OUT_FILE.parent.mkdir(exist_ok=True)
     with open(OUT_FILE, "w") as f:
         f.write(dashboard)
-        
+
     print(f"Truth Dashboard generated at {OUT_FILE}")
     print(dashboard)
+
 
 if __name__ == "__main__":
     build_dashboard()
