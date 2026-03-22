@@ -16,6 +16,22 @@ Autonomous AI trading system: SPY iron condors with defined risk, continuous lea
 
 ---
 
+## System Overview
+
+![System Overview](docs/assets/system_overview.png)
+
+---
+
+## Architecture
+
+![Trading Pipeline](docs/assets/trading_pipeline.png)
+
+![Iron Condor Payoff](docs/assets/iron_condor_payoff.png)
+
+![Theta Decay Curve](docs/assets/theta_decay_curve.png)
+
+---
+
 ## Quick Start
 
 ```bash
@@ -45,12 +61,6 @@ python3 scripts/system_health_check.py      # Health check
 | Exit | 50% profit OR 7 DTE |
 | Max open legs | 8 (~2 iron condors) |
 | Daily IC open limit | 2 (anti-churn) |
-
----
-
-## Disclaimer
-
-**Educational purposes only.** Trading involves significant risk. Past performance does not guarantee future results. Not financial advice.
 
 ---
 

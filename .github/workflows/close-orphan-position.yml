@@ -20,7 +20,7 @@ on:
           - "true"
   push:
     paths:
-      - "CLOSE_ORPHAN.trigger"
+      - "triggers/CLOSE_ORPHAN.trigger"
 
 # CRITICAL: Global trade concurrency - prevents race conditions (LL-281)
 concurrency:
