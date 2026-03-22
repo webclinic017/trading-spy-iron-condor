@@ -12,7 +12,7 @@ Autonomous AI trading system: SPY iron condors with defined risk, continuous lea
 >
 > **Accounts**: Paper ($100K) validates. Live mirrors qualified setups behind risk gates.
 
-**[Progress Dashboard](https://github.com/IgorGanapolsky/trading/wiki/Progress-Dashboard)** | **[RAG Query](https://igorganapolsky.github.io/trading/rag-query/)**
+**[Live Dashboard](https://igorganapolsky.github.io/trading/rag-query/)**
 
 ---
 

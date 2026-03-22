@@ -7,10 +7,10 @@ layout: null
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RAG Knowledge Base Query - Trading System</title>
+    <title>Trading Dashboard</title>
     <meta
       name="description"
-      content="Search and explore the RAG knowledge base of lessons learned from AI trading system development"
+      content="Live portfolio dashboard and knowledge base for AI trading system"
     />
     <style>
       :root {
@@ -939,33 +939,25 @@ layout: null
   <body>
     <div class="container">
       <header>
-        <h1>RAG Knowledge Base</h1>
+        <h1>Trading Dashboard</h1>
         <p class="subtitle" id="subtitleText">
-          Search lessons from building an autonomous AI trading system
+          Live portfolio + knowledge base search
         </p>
-        <p class="subtitle-meta" id="ragAsOfText">Knowledge base as of: --</p>
-        <p class="subtitle-meta" id="systemAsOfText">System sync as of: --</p>
-        <div class="ai-disclosure">
-          AI Disclosure: This interface uses AI to search and summarize internal
-          lessons. Not financial advice. Human review required for any trading
-          decisions.
-        </div>
         <div class="stats-bar">
           <div class="stat">
             <div class="stat-value" id="totalLessons">--</div>
-            <div class="stat-label">Lessons Learned</div>
+            <div class="stat-label">Lessons</div>
           </div>
           <div class="stat">
             <div class="stat-value" id="daysBuilding">--</div>
-            <div class="stat-label">Days Building</div>
+            <div class="stat-label">Days</div>
           </div>
           <div class="stat">
             <div class="stat-value" id="paperAccountStat">--</div>
-            <div class="stat-label">Paper Equity</div>
+            <div class="stat-label">Equity</div>
           </div>
         </div>
-	      </header>
-
+      </header>
 	      <div class="portfolio-bar loading" id="portfolioBar">
 	        <div class="port-stat">
 	          <div class="port-stat-value" id="portEquity">--</div>
@@ -997,10 +989,6 @@ layout: null
 	          <span class="panel-icon">&#128172;</span>
 	          <span>Ask the Knowledge Base</span>
 	        </div>
-          <div class="chat-asof">
-            <div id="ragAsOfTextChat">Knowledge base as of: --</div>
-            <div id="systemAsOfTextChat">System sync as of: --</div>
-          </div>
 	        <div class="chat-container">
 	          <div class="chat-messages" id="chatMessages">
 	            <div class="chat-message assistant">
@@ -1025,24 +1013,6 @@ layout: null
 	          <div class="chat-examples">
 	            <span
 	              class="example-chip"
-	              data-question="Should I close my iron condor?"
-	              >Close iron condor?</span
-	            >
-            <span class="example-chip" data-question="What's my current P/L?"
-              >Current P/L</span
-            >
-            <span
-              class="example-chip"
-              data-question="How much money did we make today and why?"
-              >Money today + why</span
-            >
-            <span
-              class="example-chip"
-              data-question="Am I hitting any exit rules?"
-              >Exit rules check</span
-            >
-	            <span
-	              class="example-chip"
 	              data-question="What's the optimal exit strategy for iron condors?"
 	              >Exit strategy</span
 	            >
@@ -1053,18 +1023,8 @@ layout: null
 	            >
             <span
               class="example-chip"
-              data-question="What's the North Star goal?"
-              >North Star</span
-            >
-            <span
-              class="example-chip"
-              data-question="Give me a working strategy to reach North Star fast with opportunistic brokerage trades."
-              >North Star strategy</span
-            >
-	            <span
-	              class="example-chip"
-	              data-question="What went wrong in the January 2026 crisis?"
-	              >Jan 2026 crisis</span
+              data-question="What are the stop-loss rules?"
+              >Stop-loss rules</span
 	            >
 	          </div>
 	        </div>
@@ -1681,13 +1641,6 @@ layout: null
         const earliest = Math.min(...lessonDates);
         const days = Math.max(1, Math.ceil((Date.now() - earliest) / 86400000));
         daysEl.textContent = days.toLocaleString();
-
-        const asOfLessons = lessons
-          .map((lesson) => lesson.timestampDetails || lesson.dateDetails)
-          .filter((entry) => entry && Number.isFinite(entry.epochMs));
-        asOfLessons.sort((a, b) => (b.epochMs || 0) - (a.epochMs || 0));
-        updateAsOfText("ragAsOfText", "Knowledge base as of", asOfLessons[0] || null);
-        updateAsOfText("ragAsOfTextChat", "Knowledge base as of", asOfLessons[0] || null);
       }
 
       // Initialize
@@ -1814,7 +1767,14 @@ layout: null
             '<div class="no-results">Loading lessons...</div>';
           return;
         }
-        container.innerHTML = lessons
+        // Deduplicate by title (keep first occurrence)
+        const seen = new Set();
+        const unique = lessons.filter((l) => {
+          if (seen.has(l.title)) return false;
+          seen.add(l.title);
+          return true;
+        });
+        container.innerHTML = unique
           .slice(0, 10)
           .map((lesson) => createLessonCard(lesson))
           .join("");
