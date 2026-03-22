@@ -53,6 +53,37 @@ def _seed_system_state(path: Path) -> None:
     path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
 
+def _seed_system_state_debit_round_trip(path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    legs = [
+        "SPY260402P00635000",
+        "SPY260402P00645000",
+        "SPY260402C00715000",
+        "SPY260402C00725000",
+    ]
+    payload = {
+        "trade_history": [
+            {
+                "id": "entry-debit-1",
+                "filled_at": "2026-03-10T15:06:00+00:00",
+                "side": "buy",
+                "qty": 2,
+                "price": 1.31,
+                "legs": legs,
+            },
+            {
+                "id": "exit-credit-1",
+                "filled_at": "2026-03-12T15:06:00+00:00",
+                "side": "sell",
+                "qty": 2,
+                "price": 2.18,
+                "legs": legs,
+            },
+        ]
+    }
+    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+
 def _configure_paths(monkeypatch, project_root: Path) -> tuple[Path, Path]:
     data_dir = project_root / "data"
     system_state_file = data_dir / "system_state.json"
@@ -162,3 +193,27 @@ def test_sync_closed_positions_applies_learning_once_for_new_rows(
 
     stats = _read_json(project_root / "data" / "feedback" / "stats.json")
     assert stats["total"] == 1
+
+
+def test_sync_closed_positions_pairs_debit_entry_credit_exit_round_trip(
+    monkeypatch, tmp_path: Path
+) -> None:
+    project_root = tmp_path / "project"
+    trades_file, _ = _configure_paths(monkeypatch, project_root)
+    _seed_system_state_debit_round_trip(project_root / "data" / "system_state.json")
+
+    result = sync_closed.sync_closed_positions(dry_run=False)
+
+    assert result["success"] is True
+    assert result["new_closed"] == 1
+
+    payload = _read_json(trades_file)
+    assert payload["stats"]["closed_trades"] == 1
+
+    trade = payload["trades"][0]
+    assert trade["entry_style"] == "debit"
+    assert trade["entry_debit"] == 262.0
+    assert trade["exit_style"] == "credit"
+    assert trade["exit_credit"] == 436.0
+    assert trade["realized_pnl"] == 174.0
+    assert trade["outcome"] == "win"

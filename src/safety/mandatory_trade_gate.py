@@ -1166,6 +1166,76 @@ def _estimate_opening_max_loss(order_request: Any) -> tuple[float | None, int | 
     return max_loss, dte, underlying
 
 
+def _validate_short_iron_condor_orientation(order_request: Any, strategy: str | None) -> str | None:
+    """Ensure opening options-income MLEG orders are short-credit iron condors."""
+    strategy_name = str(strategy or "").strip().lower()
+    if strategy_name not in {"iron_condor", "options_income"}:
+        return None
+
+    legs = getattr(order_request, "legs", None)
+    if not legs or len(legs) != 4:
+        return None
+
+    put_buy: list[float] = []
+    put_sell: list[float] = []
+    call_buy: list[float] = []
+    call_sell: list[float] = []
+
+    for leg in legs:
+        symbol = str(getattr(leg, "symbol", "") or "")
+        match = _OCC_OPTION_RE.match(symbol.upper())
+        if not match:
+            return f"OPTIONS-INCOME BLOCKED: invalid option leg symbol {symbol!r}."
+
+        opt_type = symbol.upper()[len(match.group(1)) + 6]
+        strike = int(match.group(3)) / 1000.0
+        side = getattr(leg, "side", None)
+
+        if _side_is_buy(side):
+            if opt_type == "P":
+                put_buy.append(strike)
+            elif opt_type == "C":
+                call_buy.append(strike)
+        elif _side_is_sell(side):
+            if opt_type == "P":
+                put_sell.append(strike)
+            elif opt_type == "C":
+                call_sell.append(strike)
+        else:
+            return "OPTIONS-INCOME BLOCKED: unable to determine MLEG leg sides."
+
+    if not (len(put_buy) == len(put_sell) == len(call_buy) == len(call_sell) == 1):
+        return (
+            "OPTIONS-INCOME BLOCKED: iron condor entry must have exactly "
+            "one long/short put and one long/short call."
+        )
+
+    if put_sell[0] <= put_buy[0]:
+        return (
+            "OPTIONS-INCOME BLOCKED: put spread is long/debit oriented "
+            f"(short put {put_sell[0]:.2f} <= long put {put_buy[0]:.2f})."
+        )
+
+    if call_sell[0] >= call_buy[0]:
+        return (
+            "OPTIONS-INCOME BLOCKED: call spread is long/debit oriented "
+            f"(short call {call_sell[0]:.2f} >= long call {call_buy[0]:.2f})."
+        )
+
+    limit_price = getattr(order_request, "limit_price", None)
+    try:
+        limit_price_val = float(limit_price)
+    except (TypeError, ValueError):
+        limit_price_val = None
+    if limit_price_val is not None and limit_price_val <= 0:
+        return (
+            "OPTIONS-INCOME BLOCKED: opening iron condor limit price must encode "
+            "a positive net credit."
+        )
+
+    return None
+
+
 def safe_submit_order(client, order_request, strategy: str | None = None):
     """Wrapper that enforces validate_ticker() before ANY order submission.
 
@@ -1227,6 +1297,10 @@ def safe_submit_order(client, order_request, strategy: str | None = None):
     try:
         is_closing = _infer_is_closing_order(client, order_request)
         if is_closing is False:
+            orientation_error = _validate_short_iron_condor_orientation(order_request, strategy)
+            if orientation_error:
+                raise ValueError(orientation_error)
+
             # =================================================================
             # TIER 0: MACRO RISK GUARD (Feb 25, 2026 - CNBC/PwC Ingestion)
             # =================================================================

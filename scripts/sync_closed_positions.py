@@ -315,6 +315,8 @@ def _to_closed_trade(entry: dict[str, Any], exit_event: dict[str, Any]) -> dict[
     pnl = round(entry["net_cash"] + exit_event["net_cash"], 2)
     outcome = "win" if pnl > 0 else "loss" if pnl < 0 else "breakeven"
     legs = _signature_to_legs(signature)
+    entry_net_cash = round(_parse_float(entry.get("net_cash"), 0.0), 2)
+    exit_net_cash = round(_parse_float(exit_event.get("net_cash"), 0.0), 2)
 
     return {
         "id": _trade_id(signature, entry_ts, exit_ts),
@@ -326,8 +328,14 @@ def _to_closed_trade(entry: dict[str, Any], exit_event: dict[str, Any]) -> dict[
         "exit_date": exit_ts.date().isoformat(),
         "entry_time": entry_ts.isoformat(),
         "exit_time": exit_ts.isoformat(),
-        "entry_credit": round(max(entry["net_cash"], 0.0), 2),
-        "exit_debit": round(max(-exit_event["net_cash"], 0.0), 2),
+        "entry_net_cash": entry_net_cash,
+        "entry_credit": round(max(entry_net_cash, 0.0), 2),
+        "entry_debit": round(max(-entry_net_cash, 0.0), 2),
+        "entry_style": "credit" if entry_net_cash > 0 else "debit",
+        "exit_net_cash": exit_net_cash,
+        "exit_credit": round(max(exit_net_cash, 0.0), 2),
+        "exit_debit": round(max(-exit_net_cash, 0.0), 2),
+        "exit_style": "credit" if exit_net_cash > 0 else "debit",
         "realized_pnl": pnl,
         "outcome": outcome,
         "signature": signature,
@@ -349,12 +357,20 @@ def _pair_closed_trades(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for signature, signature_events in by_signature.items():
         open_entries: deque[dict[str, Any]] = deque()
         for event in sorted(signature_events, key=lambda item: item["timestamp"]):
-            if event["net_cash"] > 0:
+            if not open_entries:
                 open_entries.append(event)
                 continue
-            if event["net_cash"] < 0 and open_entries:
-                entry = open_entries.popleft()
-                closed.append(_to_closed_trade(entry, event))
+
+            entry = open_entries[0]
+            event_is_credit = _parse_float(event.get("net_cash"), 0.0) > 0
+            entry_is_credit = _parse_float(entry.get("net_cash"), 0.0) > 0
+
+            if event_is_credit == entry_is_credit:
+                open_entries.append(event)
+                continue
+
+            entry = open_entries.popleft()
+            closed.append(_to_closed_trade(entry, event))
 
     closed.sort(key=lambda row: row.get("exit_time") or "")
     return closed
