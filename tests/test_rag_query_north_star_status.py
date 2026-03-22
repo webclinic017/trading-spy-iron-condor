@@ -61,5 +61,5 @@ def test_rag_query_portfolio_bar_cards_are_actionable() -> None:
     assert 'data-action-query="Show nearest expiry and exit pressure."' in html
     assert 'data-action-query="Show current win rate and trade sample size."' in html
     assert "function setupPortfolioActionListeners()" in html
-    assert "function buildOpenPositionsHtml(state, focus = \"positions\")" in html
+    assert 'function buildOpenPositionsHtml(state, focus = "positions")' in html
     assert "function buildWinRateDetailHtml(state)" in html

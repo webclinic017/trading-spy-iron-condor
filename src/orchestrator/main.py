@@ -916,7 +916,9 @@ class TradingOrchestrator:
             logger.warning("Session profile not available, skipping portfolio strategies.")
             return
 
-        logger.info("Portfolio side-strategies archived. Active operating scope is SPY options only.")
+        logger.info(
+            "Portfolio side-strategies archived. Active operating scope is SPY options only."
+        )
 
     def _manage_open_positions(self) -> dict[str, Any]:
         """
