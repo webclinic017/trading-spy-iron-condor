@@ -28,7 +28,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt 2>/dev/null || pip install alpaca-trade-api requests
+          python -m pip install --upgrade pip
+          pip install -e . 2>/dev/null || pip install alpaca-py requests
 
       - name: Run position monitor
         env:

@@ -39,8 +39,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          pip install pytest ruff
+          python -m pip install --upgrade pip
+          pip install -e . pytest ruff
 
       - name: Run Tests
         id: tests
@@ -126,7 +126,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          python -m pip install --upgrade pip
+          pip install -e .
 
       - name: Run Health Check
         run: |
