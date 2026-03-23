@@ -118,6 +118,14 @@ def test_browser_automation_pilot_respects_pr_only_rule():
         assert re.search(pattern, workflow_text) is None, pattern
 
 
+def test_main_ci_concurrency_uses_per_sha_key():
+    """Main CI must not serialize newer main SHAs behind stale runs."""
+    workflow_text = Path(".github/workflows/ci.yml").read_text()
+
+    assert "format('ci-{0}-{1}', github.ref, github.sha)" in workflow_text
+    assert "cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}" in workflow_text
+
+
 if __name__ == "__main__":
     print("=" * 70)
     print("WORKFLOW CONTRACT TESTS")

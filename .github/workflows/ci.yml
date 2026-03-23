@@ -26,9 +26,11 @@ permissions:
 
 # Prevent duplicate CI runs on same branch
 concurrency:
-  group: ci-${{ github.ref }}
+  # Main uses a per-SHA key so newer pushes can start and stale-run-guard can
+  # cancel older main runs. PR refs stay serialized by ref.
+  group: ${{ github.ref == 'refs/heads/main' && format('ci-{0}-{1}', github.ref, github.sha) || format('ci-{0}', github.ref) }}
   # On PR branches, prefer newest commit and cancel superseded runs.
-  # On main, allow run completion; stale-run-guard handles different-SHA cleanup.
+  # On main, allow parallel starts; stale-run-guard handles different-SHA cleanup.
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
