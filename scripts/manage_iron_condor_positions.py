@@ -412,7 +412,31 @@ def main(dry_run: bool = False):
 
     # Group into iron condors
     iron_condors = group_iron_condors(positions)
-    logger.info(f"Grouped into {len(iron_condors)} iron condor(s)")
+    logger.info(f"Grouped into {len(iron_condors)} position group(s)")
+
+    # Detect and close orphan legs (incomplete condors with no short legs)
+    orphan_groups = []
+    valid_condors = []
+    for ic in iron_condors:
+        has_shorts = any(leg["qty"] < 0 for leg in ic["legs"])
+        has_4_legs = len(ic["legs"]) == 4
+        if has_shorts and has_4_legs:
+            valid_condors.append(ic)
+        else:
+            orphan_groups.append(ic)
+
+    if orphan_groups:
+        logger.warning(f"Found {len(orphan_groups)} ORPHAN position group(s) — closing")
+        for orphan in orphan_groups:
+            logger.warning(
+                f"  Orphan: {orphan['expiry_str']} ({len(orphan['legs'])} legs, "
+                f"P/L=${orphan['total_pl']:.2f})"
+            )
+            if close_iron_condor(client, orphan, "ORPHAN_CLEANUP", dry_run):
+                record_trade_outcome(orphan, "ORPHAN_CLEANUP", won=False)
+
+    iron_condors = valid_condors
+    logger.info(f"Valid iron condors: {len(iron_condors)}")
 
     exits_triggered = 0
     exits_executed = 0
