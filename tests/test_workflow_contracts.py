@@ -8,6 +8,7 @@ that cause silent failures in production.
 import subprocess
 import sys
 from pathlib import Path
+import re
 
 try:
     import yaml
@@ -98,6 +99,31 @@ def test_daily_trading_workflow_flags():
             print(f"✅ {job_name}/{step_name}: Uses autonomous_trader.py")
     else:
         print("ℹ️  No autonomous_trader.py commands in daily-trading.yml")
+
+
+def test_browser_automation_pilot_respects_pr_only_rule():
+    """Browser telemetry workflow must not push directly to protected main."""
+    workflow_path = Path(".github/workflows/browser-automation-pilot.yml")
+    workflow_text = workflow_path.read_text()
+
+    assert "pull-requests: write" in workflow_text
+    assert "gh pr create" in workflow_text
+    assert "gh pr merge" in workflow_text
+
+    forbidden_direct_push_patterns = [
+        r"(?m)^\s*git push\s*$",
+        r"(?m)^\s*git push origin main(?:\s|$)",
+    ]
+    for pattern in forbidden_direct_push_patterns:
+        assert re.search(pattern, workflow_text) is None, pattern
+
+
+def test_main_ci_concurrency_uses_per_sha_key():
+    """Main CI must not serialize newer main SHAs behind stale runs."""
+    workflow_text = Path(".github/workflows/ci.yml").read_text()
+
+    assert "format('ci-{0}-{1}', github.ref, github.sha)" in workflow_text
+    assert "cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}" in workflow_text
 
 
 if __name__ == "__main__":
