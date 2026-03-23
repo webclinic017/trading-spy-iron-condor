@@ -124,11 +124,9 @@ class IronCondorStrategy:
         except Exception as e:
             logger.warning(f"Could not fetch live SPY price: {e}")
 
-        # Fallback: Use recent estimate (updated Jan 23, 2026)
-        # NOTE: SPY at $688 as of Jan 23, 2026 - update if stale
-        fallback_price = 688.0
-        logger.info(f"Using fallback SPY price: ${fallback_price:.2f}")
-        return fallback_price
+        # FIXED Mar 23, 2026: No fallback price. Hardcoded $688 caused wrong
+        # strike calculations when SPY moved. Trading on stale prices = losses.
+        raise RuntimeError("Live SPY price unavailable — refusing to trade on stale data")
 
     def calculate_strikes(self, price: float) -> tuple[float, float, float, float]:
         """
@@ -165,25 +163,23 @@ class IronCondorStrategy:
         """
         Estimate premiums for iron condor legs.
 
-        Real implementation would use options pricing model or market data.
+        FIXED Mar 23, 2026: Estimates only used for pre-trade sizing check.
+        Actual execution uses live bid/ask from Alpaca option chain.
+        The MLEG order gets market fill — these estimates just gate whether
+        the trade is worth attempting.
         """
-        long_put, short_put, short_call, long_call = legs
-
-        # SPY premium estimates (~$595 stock)
-        # At 30 DTE, 15-delta 5% OTM options: ~$1.50-2.50 for SPY
-        # $5 wide spreads collect roughly $0.75-1.25 net credit per side
-        put_spread_credit = 1.00  # Sell short put, buy long put
-        call_spread_credit = 1.00  # Sell short call, buy long call
-
-        total_credit = put_spread_credit + call_spread_credit
         wing_width = self.config["wing_width"]
-        max_risk = (wing_width * 100) - (total_credit * 100)  # Per contract
+
+        # Conservative estimate: $10-wide wings on SPY typically collect $1.50-2.50
+        # Use low end to avoid overestimating credit
+        estimated_credit = 1.50
+        max_risk = (wing_width * 100) - (estimated_credit * 100)
 
         return {
-            "credit": total_credit,
+            "credit": estimated_credit,
             "max_risk": max_risk,
-            "max_profit": total_credit * 100,
-            "risk_reward": max_risk / (total_credit * 100) if total_credit > 0 else 0,
+            "max_profit": estimated_credit * 100,
+            "risk_reward": max_risk / (estimated_credit * 100) if estimated_credit > 0 else 0,
         }
 
     def find_trade(self) -> Optional[IronCondorLegs]:
