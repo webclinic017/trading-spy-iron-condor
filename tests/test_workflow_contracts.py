@@ -134,6 +134,21 @@ def test_main_ci_concurrency_uses_per_sha_key():
     assert "cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}" in workflow_text
 
 
+def test_generated_state_pushes_have_main_head_verification():
+    """Generated trading-state commits on main must still be verified."""
+    workflow_text = Path(".github/workflows/main-head-verification.yml").read_text()
+
+    assert "branches: [main]" in workflow_text
+    assert '"data/system_state.json"' in workflow_text
+    assert '"data/trades.json"' in workflow_text
+    assert "scripts/system_health_check.py" in workflow_text
+    assert "tests/test_system_health_check.py" in workflow_text
+    assert "tests/test_sync_alpaca_positions.py" in workflow_text
+    assert "tests/test_mandatory_trade_gate.py" in workflow_text
+    assert "tests/test_north_star_operating_plan.py" in workflow_text
+    assert "tests/test_workflow_integrity.py" in workflow_text
+
+
 if __name__ == "__main__":
     print("=" * 70)
     print("WORKFLOW CONTRACT TESTS")
