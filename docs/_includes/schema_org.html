@@ -1,0 +1,27 @@
+{% if page.schema_type %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "{{ page.schema_type | default: 'BlogPosting' }}",
+  "headline": {{ page.title | jsonify }},
+  "description": {{ page.description | jsonify }},
+  "datePublished": "{{ page.date | date_to_xmlschema }}",
+  "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
+  "author": {
+    "@type": "Person",
+    "name": "Igor Ganapolsky"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Trading Journey",
+    "url": "https://igorganapolsky.github.io/trading/"
+  },
+  "url": "{{ page.canonical_url | default: page.url | absolute_url }}",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ page.canonical_url | default: page.url | absolute_url }}"
+  }{% if page.image %},
+  "image": "{{ page.image | absolute_url }}"{% endif %}
+}
+</script>
+{% endif %}
