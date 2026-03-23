@@ -213,23 +213,48 @@ def close_iron_condor(client, ic: dict, reason: str, dry_run: bool = False) -> b
         return True
 
     try:
-        # Submit as MLeg order - all legs close together or not at all
-        # NOTE: TimeInForce not supported for options MLeg orders (Alpaca constraint)
+        # Try MLeg first (atomic close)
         order_req = MarketOrderRequest(
-            qty=1,  # MLeg uses ratio_qty in legs
+            qty=1,
             order_class=OrderClass.MLEG,
             legs=option_legs,
         )
         result = safe_submit_order(client, order_req)
         logger.info(f"    ✅ MLeg close order submitted: {result.id}")
-        logger.info(f"       Status: {result.status}")
         return True
 
-    except Exception as e:
-        logger.error(f"    ❌ MLeg close order FAILED: {e}")
-        logger.error("       Iron condor NOT closed - all legs preserved")
-        logger.error("       Manual intervention may be required")
-        return False
+    except Exception as mleg_err:
+        # FALLBACK Mar 23, 2026: Alpaca rejects MLEG closes with
+        # "mleg uncovered short contracts not allowed". Fall back to
+        # closing all legs as individual SIMPLE orders simultaneously.
+        logger.warning(f"    ⚠️ MLeg close failed: {mleg_err}")
+        logger.info("    Falling back to individual leg closes...")
+
+        from alpaca.trading.enums import TimeInForce
+
+        failed_legs = []
+        for leg in ic["legs"]:
+            symbol = leg["symbol"]
+            qty = abs(int(leg["qty"]))
+            close_side = OrderSide.BUY if leg["qty"] < 0 else OrderSide.SELL
+
+            try:
+                leg_order = MarketOrderRequest(
+                    symbol=symbol,
+                    qty=qty,
+                    side=close_side,
+                    time_in_force=TimeInForce.DAY,
+                )
+                result = safe_submit_order(client, leg_order)
+                logger.info(f"    ✅ {close_side.name} {qty}x {symbol}: {result.id}")
+            except Exception as leg_err:
+                logger.error(f"    ❌ {symbol} close FAILED: {leg_err}")
+                failed_legs.append(symbol)
+
+        if failed_legs:
+            logger.error(f"    {len(failed_legs)} leg(s) failed to close: {failed_legs}")
+            return False
+        return True
 
 
 def record_trade_outcome(ic: dict, reason: str, won: bool) -> None:

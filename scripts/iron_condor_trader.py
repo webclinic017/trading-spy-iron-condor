@@ -318,9 +318,11 @@ class IronCondorStrategy:
             return True, f"VIX {current_vix:.2f} favorable"
 
         except Exception as e:
-            # If VIX check fails, log warning but allow trade
-            logger.warning(f"VIX check failed: {e} - proceeding with caution")
-            return True, "VIX check failed, proceeding with caution"
+            # FIXED Mar 23, 2026: If VIX check fails, BLOCK the trade.
+            # Previous behavior: allowed trade on VIX failure, which let trades
+            # through during VIX > 30 (tariff crash March 2026).
+            logger.error(f"VIX check failed: {e} - BLOCKING trade (fail-safe)")
+            return False, f"VIX check failed: {e} — refusing to trade blind"
 
     def _build_decision_trace(self, ic: IronCondorLegs, entry_reason: str) -> dict:
         """Build a decision trace capturing market context at entry time (Context Graph pattern)."""
@@ -441,6 +443,24 @@ class IronCondorStrategy:
                         logger.info(
                             f"Position check OK: {current_ic_count}/{max_ic} iron condors - room for new entry"
                         )
+
+                    # ADDED Mar 23, 2026: Check for duplicate expiry
+                    # Prevents opening a new IC at the same expiry as an existing position
+                    target_expiry = ic.expiry.replace("-", "")[2:]  # "2026-04-25" -> "260425"
+                    existing_expiries = set()
+                    for p in spy_option_positions:
+                        if len(p.symbol) > 10:
+                            existing_expiries.add(p.symbol[3:9])
+
+                    if target_expiry in existing_expiries:
+                        logger.warning(f"BLOCKED: Already have positions at expiry {ic.expiry}")
+                        return {
+                            "timestamp": datetime.now().isoformat(),
+                            "strategy": "iron_condor",
+                            "underlying": ic.underlying,
+                            "status": "BLOCKED_DUPLICATE_EXPIRY",
+                            "reason": f"Already holding legs at expiry {ic.expiry}",
+                        }
             except Exception as pos_err:
                 # CRITICAL: If we can't verify positions, BLOCK the trade
                 # This prevents placing duplicate trades when Alpaca API fails
