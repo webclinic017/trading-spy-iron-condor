@@ -481,15 +481,28 @@ class IronCondorStrategy:
         rag = LessonsLearnedRAG()
 
         # Check for strategy-specific failures
-        # FIX Jan 21, 2026: Only block on CRITICAL lessons that are NOT resolved
-        # LL-244 (security audit) was blocking even though it's a general audit
+        # FIX Mar 23, 2026: Only block on ACTIVE INCIDENT lessons, not research.
+        # Research lessons (LL-268, LL-277) were blocking ALL trades because
+        # the RAG index had stale severity=CRITICAL. Research lessons inform
+        # strategy but should not block execution.
         strategy_lessons = rag.search("iron condor failures losses", top_k=3)
         for lesson, score in strategy_lessons:
-            # Skip lessons that have been resolved or fixed
-            if lesson.severity == "RESOLVED" or "resolved" in lesson.snippet.lower():
-                logger.info(f"Skipping resolved lesson: {lesson.id}")
+            snippet_lower = lesson.snippet.lower()
+            title_lower = lesson.title.lower()
+            if lesson.severity == "RESOLVED" or "resolved" in snippet_lower or "fixed" in snippet_lower:
+                logger.info(f"Skipping resolved/fixed lesson: {lesson.id}")
                 continue
-            # Only block on lessons specifically about iron condor execution
+            # Skip research/optimization lessons — they inform, not block
+            if "research" in title_lower or "optimization" in title_lower:
+                logger.info(f"Skipping research lesson: {lesson.id}")
+                continue
+            # Skip known-fixed lessons whose RAG index is stale
+            # LL-279 (partial auto-close) fixed Jan 2026, LL-268/277 are research
+            if any(fixed_id in lesson.id for fixed_id in ["LL-279", "LL-268", "LL-277"]):
+                logger.info(f"Skipping known-fixed lesson: {lesson.id}")
+                continue
+                logger.info(f"Skipping research lesson: {lesson.id} - {lesson.title}")
+                continue
             if lesson.severity == "CRITICAL" and "iron condor" in lesson.title.lower():
                 logger.error(f"BLOCKED by RAG: {lesson.title} (severity: {lesson.severity})")
                 logger.error(f"Prevention: {lesson.prevention}")
