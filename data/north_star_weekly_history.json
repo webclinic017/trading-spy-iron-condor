@@ -69,12 +69,12 @@
   },
   {
     "week_start": "2026-03-23",
-    "sample_size": 2,
+    "sample_size": 4,
     "win_rate_pct": 0.0,
-    "expectancy_per_trade": -5822.5,
+    "expectancy_per_trade": -4531.0,
     "mode": "defensive",
     "qualified_setups": 0,
     "cadence_passed": false,
-    "updated_at": "2026-03-23T14:31:04.878179+00:00"
+    "updated_at": "2026-03-23T15:19:00.175909+00:00"
   }
 ]
