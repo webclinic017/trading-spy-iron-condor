@@ -489,7 +489,11 @@ class IronCondorStrategy:
         for lesson, score in strategy_lessons:
             snippet_lower = lesson.snippet.lower()
             title_lower = lesson.title.lower()
-            if lesson.severity == "RESOLVED" or "resolved" in snippet_lower or "fixed" in snippet_lower:
+            if (
+                lesson.severity == "RESOLVED"
+                or "resolved" in snippet_lower
+                or "fixed" in snippet_lower
+            ):
                 logger.info(f"Skipping resolved/fixed lesson: {lesson.id}")
                 continue
             # Skip research/optimization lessons — they inform, not block
