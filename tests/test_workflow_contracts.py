@@ -101,6 +101,16 @@ def test_daily_trading_workflow_flags():
         print("ℹ️  No autonomous_trader.py commands in daily-trading.yml")
 
 
+def test_daily_trading_workflow_checks_both_halt_sentinels():
+    """Daily trading must honor both current and legacy halt files."""
+    workflow_text = Path(".github/workflows/daily-trading.yml").read_text()
+
+    assert "data/TRADING_HALTED" in workflow_text
+    assert "data/trading_halt.txt" in workflow_text
+    assert "TRADING_HALTED file exists - crisis mode active" in workflow_text
+    assert "manual halt active" in workflow_text
+
+
 def test_browser_automation_pilot_respects_pr_only_rule():
     """Browser telemetry workflow must not push directly to protected main."""
     workflow_path = Path(".github/workflows/browser-automation-pilot.yml")

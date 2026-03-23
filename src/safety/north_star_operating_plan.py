@@ -25,6 +25,7 @@ DEFAULT_TRADES_PATH = Path("data/trades.json")
 DEFAULT_WEEKLY_HISTORY_PATH = Path("data/north_star_weekly_history.json")
 DEFAULT_LOOKBACK_DAYS = 7
 DEFAULT_WEEKLY_MIN_SAMPLES = 5
+DEFAULT_EARLY_EXPECTANCY_BLOCK_SAMPLES = 2
 DEFAULT_HISTORY_WEEKS = 104
 DEFAULT_MIN_QUALIFIED_SETUPS_PER_WEEK = 1
 DEFAULT_MIN_CLOSED_TRADES_PER_WEEK = 1
@@ -786,7 +787,7 @@ def compute_weekly_gate(
     block_new_positions = False
     reason = "Insufficient recent weekly evidence; keep conservative sizing."
 
-    if samples >= DEFAULT_WEEKLY_MIN_SAMPLES and expectancy <= 0:
+    if samples >= DEFAULT_EARLY_EXPECTANCY_BLOCK_SAMPLES and expectancy <= 0:
         mode = "defensive"
         recommended_max = 0.01
         block_new_positions = True

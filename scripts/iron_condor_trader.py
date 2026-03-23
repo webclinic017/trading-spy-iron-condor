@@ -38,6 +38,7 @@ from src.core.trading_constants import MAX_POSITIONS as MAX_OPTION_LEGS
 from src.orchestrator.telemetry import OrchestratorTelemetry
 from src.rag.lessons_learned_rag import LessonsLearnedRAG
 from src.safety.mandatory_trade_gate import safe_submit_order
+from src.safety.trading_halt import get_trading_halt_state
 from src.safety.trade_lock import TradeLockTimeout, acquire_trade_lock
 from src.utils.error_monitoring import init_sentry
 
@@ -764,24 +765,22 @@ def main():
     logger.info(f"Symbol: {args.symbol}")
 
     try:
-        # CHECK TRADING HALT FILE FIRST
-        halt_file = Path("data/trading_halt.txt")
-        if halt_file.exists():
+        halt_state = get_trading_halt_state()
+        if halt_state.active:
             logger.warning("=" * 60)
-            logger.warning("TRADING HALTED - Manual halt in effect")
+            logger.warning("TRADING HALTED - execution blocked")
             logger.warning("=" * 60)
-            with open(halt_file) as f:
-                logger.warning(f.read())
-            logger.warning("Remove data/trading_halt.txt to resume trading")
+            logger.warning(halt_state.reason)
+            logger.warning(f"Active halt file: {halt_state.path}")
             logger.warning("=" * 60)
             telemetry.update_ticker_decision(
                 ticker,
                 gate=0,
                 status="REJECT",
-                rejection_reason="Trading halted - manual halt in effect",
-                indicators={"halt_file": str(halt_file)},
+                rejection_reason=f"Trading halted - {halt_state.kind}",
+                indicators={"halt_file": halt_state.path, "halt_kind": halt_state.kind},
             )
-            return {"success": False, "reason": "Trading halted - manual halt in effect"}
+            return {"success": False, "reason": halt_state.reason}
 
         try:
             # LL-297 FIX (Jan 23, 2026): Daily trade limit to prevent churning

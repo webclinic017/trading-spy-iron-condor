@@ -663,6 +663,21 @@ def validate_trade_mandatory(
     if side == "SELL" and symbol in current_symbols:
         is_opening = False
 
+    if is_opening:
+        try:
+            from src.safety.trading_halt import get_trading_halt_state
+
+            halt_state = get_trading_halt_state()
+        except Exception:
+            halt_state = None
+
+        if halt_state and halt_state.active:
+            return GateResult(
+                approved=False,
+                reason=f"Trading halted: {halt_state.reason}",
+                checks_performed=checks_performed + [f"trading_halt: BLOCKED ({halt_state.kind})"],
+            )
+
     guard_ok, guard_reason = _enforce_intraday_guardrails(
         equity=float(equity or 0.0),
         is_opening=is_opening,

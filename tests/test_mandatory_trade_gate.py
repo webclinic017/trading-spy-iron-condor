@@ -21,7 +21,19 @@ pytestmark = pytest.mark.skipif(
 @pytest.fixture(autouse=True)
 def _fresh_context_and_policy(monkeypatch):
     import src.safety.mandatory_trade_gate as gate_mod
+    import src.safety.trading_halt as halt_mod
 
+    monkeypatch.setattr(
+        gate_mod,
+        "get_trading_halt_state",
+        lambda: SimpleNamespace(active=False, kind="none", path="", reason=""),
+        raising=False,
+    )
+    monkeypatch.setattr(
+        halt_mod,
+        "get_trading_halt_state",
+        lambda: SimpleNamespace(active=False, kind="none", path="", reason=""),
+    )
     monkeypatch.setattr(
         gate_mod,
         "check_context_freshness",
@@ -236,6 +248,34 @@ class TestValidateTradeMandatory:
         )
         assert result.approved is False
         assert "guard blocked" in result.reason.lower()
+
+    def test_trading_halt_blocks_new_openings(self, monkeypatch):
+        """Repo halt sentinel must block new openings regardless of strategy details."""
+        import src.safety.trading_halt as halt_mod
+        from src.safety.mandatory_trade_gate import validate_trade_mandatory
+
+        monkeypatch.setattr(
+            halt_mod,
+            "get_trading_halt_state",
+            lambda: SimpleNamespace(
+                active=True,
+                kind="system_halt",
+                path="data/TRADING_HALTED",
+                reason="System rebuild in progress.",
+            ),
+        )
+
+        result = validate_trade_mandatory(
+            symbol="SPY",
+            amount=50.0,
+            side="BUY",
+            strategy="iron_condor",
+            context={"equity": 5000.0},
+        )
+
+        assert result.approved is False
+        assert "rebuild in progress" in result.reason.lower()
+        assert any("trading_halt: BLOCKED" in check for check in result.checks_performed)
 
     def test_milestone_controller_blocks_paused_strategy_family(self):
         """Test that milestone controller blocks BUY for paused strategy families."""

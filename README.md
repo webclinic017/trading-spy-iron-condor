@@ -10,6 +10,8 @@ This repository runs a paper-traded SPY options system. It is not a validated au
 
 As of **March 21, 2026**:
 
+- **New automated entries are halted** while strategy, ledger, and workflow fixes are in progress (`data/TRADING_HALTED`)
+
 - Paper equity: **$99,600.93** vs. **$100,000.00** starting balance
 - Canonical closed-trade sample: **1** closed iron condor for **+$41.00** realized P/L
 - Current open book is not a clean production short-premium iron-condor book

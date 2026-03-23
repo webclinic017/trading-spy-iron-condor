@@ -60,6 +60,7 @@ jobs:
         with:
           sparse-checkout: |
             data/TRADING_HALTED
+            data/trading_halt.txt
             data/system_state.json
             scripts/auto_clear_stale_trading_halt.py
 
@@ -138,6 +139,16 @@ jobs:
             echo "🚨 TRADING_HALTED file exists - crisis mode active"
             echo "Reason:"
             cat data/TRADING_HALTED
+            echo ""
+            echo "halted=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Check 3: legacy manual halt file
+          if [ -f "data/trading_halt.txt" ]; then
+            echo "🚨 trading_halt.txt exists - manual halt active"
+            echo "Reason:"
+            cat data/trading_halt.txt
             echo ""
             echo "halted=true" >> $GITHUB_OUTPUT
             exit 0
