@@ -47,6 +47,44 @@ def test_weekly_gate_blocks_when_recent_expectancy_negative(tmp_path):
     assert history_path.exists()
 
 
+def test_weekly_gate_blocks_early_when_two_recent_losses_show_negative_expectancy(tmp_path):
+    trades_path = tmp_path / "trades.json"
+    history_path = tmp_path / "weekly_history.json"
+    today = date(2026, 2, 12)
+    _write_json(
+        trades_path,
+        {
+            "trades": [
+                {
+                    "status": "closed",
+                    "strategy": "iron_condor",
+                    "realized_pnl": -150.0,
+                    "outcome": "loss",
+                    "exit_date": today.isoformat(),
+                },
+                {
+                    "status": "closed",
+                    "strategy": "iron_condor",
+                    "realized_pnl": -50.0,
+                    "outcome": "loss",
+                    "exit_date": (today - timedelta(days=1)).isoformat(),
+                },
+            ]
+        },
+    )
+
+    gate, _history = compute_weekly_gate(
+        {"paper_account": {"win_rate": 50.0, "win_rate_sample_size": 2, "total_pl": -200.0}},
+        trades_path=trades_path,
+        weekly_history_path=history_path,
+        today=today,
+    )
+
+    assert gate["mode"] == "defensive"
+    assert gate["block_new_positions"] is True
+    assert "non-positive" in gate["reason"].lower()
+
+
 def test_contribution_plan_tracks_monthly_target_progress():
     plan = compute_contribution_plan(
         {
