@@ -17,6 +17,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from src.safety.mandatory_trade_gate import safe_submit_order
+
 try:
     from dotenv import load_dotenv
 
@@ -102,7 +104,7 @@ def close_orphans(client, orphans, dry_run=False):
                 side=close_side,
                 time_in_force=TimeInForce.DAY,
             )
-            result = client.submit_order(order)
+            result = safe_submit_order(client, order, strategy="orphan_cleanup")
             logger.info(f"    Submitted: {result.id} status={result.status}")
             closed += 1
         except Exception as e:

@@ -23,6 +23,8 @@ Where:
     - pi(a|s) = policy network output
 """
 
+from __future__ import annotations
+
 import json
 import logging
 from dataclasses import dataclass
@@ -70,7 +72,7 @@ class TradeFeatures:
     days_to_expiry: float  # Current option DTE
     put_call_ratio: float  # Market sentiment
 
-    def to_tensor(self) -> "torch.Tensor":
+    def to_tensor(self) -> torch.Tensor:
         """Convert to PyTorch tensor."""
         if not TORCH_AVAILABLE:
             raise RuntimeError("PyTorch not available")

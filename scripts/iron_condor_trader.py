@@ -38,8 +38,8 @@ from src.core.trading_constants import MAX_POSITIONS as MAX_OPTION_LEGS
 from src.orchestrator.telemetry import OrchestratorTelemetry
 from src.rag.lessons_learned_rag import LessonsLearnedRAG
 from src.safety.mandatory_trade_gate import safe_submit_order
-from src.safety.trading_halt import get_trading_halt_state
 from src.safety.trade_lock import TradeLockTimeout, acquire_trade_lock
+from src.safety.trading_halt import get_trading_halt_state
 from src.utils.error_monitoring import init_sentry
 
 try:
