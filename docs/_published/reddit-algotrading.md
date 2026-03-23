@@ -1,5 +1,6 @@
 ---
 target: r/algotrading
+flair_id: 142b0944-2831-11eb-81ba-0e3da97d6a93
 status: draft
 ---
 

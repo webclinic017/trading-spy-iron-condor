@@ -18,6 +18,12 @@ Usage:
 
 import argparse
 import os
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 import re
 import shutil
 import sys
@@ -103,7 +109,11 @@ def post_draft(reddit, draft: dict, dry_run: bool = False) -> str | None:
         return "https://reddit.com/dry-run"
 
     subreddit = reddit.subreddit(target)
-    submission = subreddit.submit(title, selftext=body)
+    flair_id = draft.get("flair_id")
+    kwargs = {"title": title, "selftext": body}
+    if flair_id:
+        kwargs["flair_id"] = flair_id
+    submission = subreddit.submit(**kwargs)
     url = f"https://reddit.com{submission.permalink}"
     print(f"  Posted: {url}")
     return url
