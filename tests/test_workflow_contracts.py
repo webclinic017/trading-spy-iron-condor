@@ -5,7 +5,6 @@ Prevents ll_025-type failures where workflows use deprecated CLI flags
 that cause silent failures in production.
 """
 
-import subprocess
 import sys
 from pathlib import Path
 import re
@@ -49,28 +48,22 @@ def check_workflow_commands(workflow_path: Path):
 
 
 def test_all_cli_flags_exist():
-    """Verify expected CLI flags exist in iron_condor_trader.py (the only trader)."""
-    result = subprocess.run(
-        ["python3", "scripts/iron_condor_trader.py", "--help"],
-        capture_output=True,
-        text=True,
-    )
+    """Verify expected CLI flags are declared in the live trader entrypoint.
 
-    if result.returncode != 0:
-        print("❌ Failed to get iron_condor_trader.py help text")
-        print(result.stderr)
-        sys.exit(1)
-
-    help_text = result.stdout
+    This intentionally inspects the source text instead of executing the script
+    so workflow validation can run in minimal environments that only install
+    test dependencies.
+    """
+    trader_text = Path("scripts/iron_condor_trader.py").read_text()
 
     # Expected CLI flags that workflows depend on
     expected_flags = ["--symbol"]
 
     for flag in expected_flags:
-        if flag in help_text:
+        if f'"{flag}"' in trader_text or f"'{flag}'" in trader_text:
             print(f"✅ Flag '{flag}' exists in CLI")
         else:
-            print(f"❌ Flag '{flag}' not found in CLI help")
+            print(f"❌ Flag '{flag}' not found in iron_condor_trader.py")
             sys.exit(1)
 
 
@@ -132,6 +125,21 @@ def test_main_ci_concurrency_uses_per_sha_key():
 
     assert "format('ci-{0}-{1}', github.ref, github.sha)" in workflow_text
     assert "cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}" in workflow_text
+
+
+def test_generated_state_pushes_have_main_head_verification():
+    """Generated trading-state commits on main must still be verified."""
+    workflow_text = Path(".github/workflows/main-head-verification.yml").read_text()
+
+    assert "branches: [main]" in workflow_text
+    assert '"data/system_state.json"' in workflow_text
+    assert '"data/trades.json"' in workflow_text
+    assert "scripts/system_health_check.py" in workflow_text
+    assert "tests/test_system_health_check.py" in workflow_text
+    assert "tests/test_sync_alpaca_positions.py" in workflow_text
+    assert "tests/test_mandatory_trade_gate.py" in workflow_text
+    assert "tests/test_north_star_operating_plan.py" in workflow_text
+    assert "tests/test_workflow_integrity.py" in workflow_text
 
 
 if __name__ == "__main__":

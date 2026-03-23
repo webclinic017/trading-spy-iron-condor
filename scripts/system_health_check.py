@@ -13,35 +13,86 @@ from pathlib import Path
 # Ensure src is importable
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+PROJECT_ROOT = Path(__file__).parent.parent
+LANCEDB_PATH = PROJECT_ROOT / ".claude" / "memory" / "lancedb"
+
+
+def _list_lancedb_tables(db) -> list[str]:
+    """Return table names across LanceDB API versions without loading embeddings."""
+    if hasattr(db, "table_names"):
+        try:
+            return list(db.table_names())
+        except Exception:
+            return []
+
+    if hasattr(db, "list_tables"):
+        try:
+            tables_response = db.list_tables()
+            if hasattr(tables_response, "tables"):
+                return list(tables_response.tables)
+            return list(tables_response)
+        except Exception:
+            return []
+
+    return []
+
+
+def _probe_vector_index() -> tuple[bool, str]:
+    """Quickly verify the LanceDB table exists and is non-empty.
+
+    This intentionally avoids DocumentAwareRAG model initialization, which can
+    block while loading sentence-transformer weights and makes a readiness check
+    unsuitable for day-of-trading verification.
+    """
+    if not LANCEDB_PATH.exists():
+        return False, f"LanceDB path missing: {LANCEDB_PATH}"
+
+    try:
+        import lancedb
+    except ImportError:
+        return False, "LanceDB not installed"
+
+    try:
+        db = lancedb.connect(str(LANCEDB_PATH))
+    except Exception as exc:
+        return False, f"Failed to connect to LanceDB: {exc}"
+
+    tables = _list_lancedb_tables(db)
+    if "document_aware_rag" not in tables:
+        return False, "document_aware_rag table missing - reindex required"
+
+    try:
+        table = db.open_table("document_aware_rag")
+        if hasattr(table, "count_rows"):
+            row_count = table.count_rows()
+        elif hasattr(table, "count"):
+            row_count = table.count()
+        else:
+            row_count = None
+    except Exception as exc:
+        return False, f"Failed to inspect document_aware_rag table: {exc}"
+
+    if row_count == 0:
+        return False, "document_aware_rag table empty - reindex required"
+
+    if row_count is None:
+        return True, "LanceDB table present"
+
+    return True, f"LanceDB table ready ({row_count} rows)"
+
 
 def check_vector_db():
     """Verify LanceDB index exists and is queryable."""
     results = {"name": "LanceDB Index", "status": "UNKNOWN", "details": []}
 
     try:
-        from src.memory.document_aware_rag import get_document_aware_rag
-
-        rag = get_document_aware_rag()
-        status = rag.ensure_index()
-        if status.get("error"):
-            error_text = str(status["error"])
-            if "already exists" not in error_text.lower():
-                results["status"] = "BROKEN"
-                results["details"].append(f"✗ LanceDB index unavailable: {error_text}")
-                return results
-            results["details"].append(
-                "⚠️ LanceDB ensure_index reported existing table; continuing with direct probe"
-            )
-
-        # Run a simple search to ensure table is non-empty
-        probe = rag.search("trading", limit=1)
-        if not probe:
+        ok, detail = _probe_vector_index()
+        if ok:
+            results["status"] = "OK"
+            results["details"].append(f"✓ {detail}")
+        else:
             results["status"] = "BROKEN"
-            results["details"].append("✗ LanceDB index empty - reindex required")
-            return results
-
-        results["status"] = "OK"
-        results["details"].append("✓ LanceDB index ready")
+            results["details"].append(f"✗ {detail}")
 
     except Exception as e:
         results["status"] = "BROKEN"
