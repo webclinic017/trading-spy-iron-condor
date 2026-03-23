@@ -49,25 +49,23 @@ def check_workflow_commands(workflow_path: Path):
 
 
 def test_all_cli_flags_exist():
-    """Verify expected CLI flags exist in autonomous_trader.py."""
+    """Verify expected CLI flags exist in iron_condor_trader.py (the only trader)."""
     result = subprocess.run(
-        ["python3", "scripts/autonomous_trader.py", "--help"],
+        ["python3", "scripts/iron_condor_trader.py", "--help"],
         capture_output=True,
         text=True,
     )
 
     if result.returncode != 0:
-        print("❌ Failed to get autonomous_trader.py help text")
+        print("❌ Failed to get iron_condor_trader.py help text")
         print(result.stderr)
         sys.exit(1)
 
     help_text = result.stdout
 
     # Expected CLI flags that workflows depend on
-    # Updated Dec 19, 2025: Match actual CLI flags in autonomous_trader.py
-    expected_flags = ["--prediction-only", "--skip-prediction", "--auto-scale"]
+    expected_flags = ["--symbol"]
 
-    # Check expected flags exist in CLI
     for flag in expected_flags:
         if flag in help_text:
             print(f"✅ Flag '{flag}' exists in CLI")
@@ -145,7 +143,7 @@ if __name__ == "__main__":
     print("-" * 70)
     print()
 
-    print("Test 2: All CLI Flags Exist in autonomous_trader.py")
+    print("Test 2: All CLI Flags Exist in iron_condor_trader.py")
     print("-" * 70)
     test_all_cli_flags_exist()
     print()
