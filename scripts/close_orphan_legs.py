@@ -86,7 +86,9 @@ def close_orphans(client, orphans, dry_run=False):
         qty = abs(int(leg["qty"]))
         close_side = OrderSide.SELL if leg["qty"] > 0 else OrderSide.BUY
 
-        logger.info(f"  {close_side.name} {qty}x {sym} (closing orphan {leg['side']} {leg['type']})")
+        logger.info(
+            f"  {close_side.name} {qty}x {sym} (closing orphan {leg['side']} {leg['type']})"
+        )
 
         if dry_run:
             logger.info("    [DRY RUN] Skipped")
