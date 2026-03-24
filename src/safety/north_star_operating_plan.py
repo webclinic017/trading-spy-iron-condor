@@ -791,9 +791,7 @@ def compute_weekly_gate(
         mode = "defensive"
         recommended_max = 0.01
         block_new_positions = True
-        reason = (
-            f"CRITICAL: Negative expectancy ${expectancy:.2f}/trade over {samples} samples. Trading HALTED."
-        )
+        reason = f"CRITICAL: Negative expectancy ${expectancy:.2f}/trade over {samples} samples. Trading HALTED."
     elif samples >= DEFAULT_WEEKLY_MIN_SAMPLES and win_rate_pct < 65.0:
         mode = "defensive"
         recommended_max = 0.01

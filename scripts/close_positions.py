@@ -64,9 +64,11 @@ def get_alpaca_client(paper: bool = True) -> Optional[TradingClient]:
     try:
         if paper:
             from src.utils.alpaca_client import get_alpaca_credentials
+
             api_key, secret_key = get_alpaca_credentials()
         else:
             from src.utils.alpaca_client import get_brokerage_credentials
+
             api_key, secret_key = get_brokerage_credentials()
     except ImportError:
         # Fallback to direct env var lookup

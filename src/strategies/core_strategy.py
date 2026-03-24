@@ -36,10 +36,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from dotenv import load_dotenv
 from src.core.trading_constants import MAX_POSITIONS as MAX_OPTION_LEGS
 from src.orchestrator.telemetry import OrchestratorTelemetry
-from src.rag.lessons_learned_rag import LessonsLearnedRAG
-from src.safety.mandatory_trade_gate import safe_submit_order
-from src.safety.trade_lock import TradeLockTimeout, acquire_trade_lock
-from src.safety.trading_halt import get_trading_halt_state
+from src.safety.trade_lock import acquire_trade_lock
 from src.utils.error_monitoring import init_sentry
 
 try:
@@ -171,12 +168,12 @@ class IronCondorStrategy:
 
             api_key, secret = get_alpaca_credentials()
             data_client = OptionHistoricalDataClient(api_key, secret)
-            
+
             logger.info("Pricing structure from Alpaca live chain...")
             # For simplicity in this recovery fix, we set a high-confidence target credit.
             # Real production logic would loop the 4 symbols and sum the mid-prices.
-            total_credit = 1.85 
-            
+            total_credit = 1.85
+
             wing_width = self.config["wing_width"]
             max_risk = (wing_width * 100) - (total_credit * 100)
 
@@ -205,8 +202,8 @@ class IronCondorStrategy:
         target_date = datetime.now() + timedelta(days=self.config["target_dte"])
         days_until_friday = (4 - target_date.weekday()) % 7
         if days_until_friday == 0 and target_date.weekday() != 4:
-            days_until_friday = 7  
-        if target_date.weekday() > 4:  
+            days_until_friday = 7
+        if target_date.weekday() > 4:
             days_until_friday = (4 - target_date.weekday()) % 7
         expiry_date = target_date + timedelta(days=days_until_friday)
         actual_dte = (expiry_date - datetime.now()).days
@@ -236,9 +233,9 @@ class IronCondorStrategy:
 
     def check_entry_conditions(self) -> tuple[bool, str]:
         """Check if conditions are right for entry."""
-        from src.constants.trading_thresholds import RiskThresholds
         try:
             from src.signals.vix_mean_reversion_signal import VIXMeanReversionSignal
+
             vix_signal = VIXMeanReversionSignal()
             signal = vix_signal.calculate_signal()
             if signal.signal == "AVOID":
@@ -260,8 +257,7 @@ class IronCondorStrategy:
                     positions = client.get_all_positions()
 
                     spy_option_positions = [
-                        p for p in positions
-                        if p.symbol.startswith("SPY") and len(p.symbol) > 5
+                        p for p in positions if p.symbol.startswith("SPY") and len(p.symbol) > 5
                     ]
 
                     total_contracts = sum(abs(int(float(p.qty))) for p in spy_option_positions)
@@ -277,33 +273,41 @@ class IronCondorStrategy:
 
                     # WORLD-CLASS RAG GATE (The Mistake Preventer)
                     from src.rag.trade_verifier import get_trade_verifier
+
                     verifier = get_trade_verifier(threshold=0.70)
-                    
+
                     context = f"delta={self.config['short_delta']} dte={self.config['target_dte']} entry_reason={entry_reason}"
                     is_safe, rag_reason = verifier.verify_entry(
-                        symbol=ic.underlying,
-                        strategy="iron_condor",
-                        setup_context=context
+                        symbol=ic.underlying, strategy="iron_condor", setup_context=context
                     )
-                    
+
                     if not is_safe:
                         logger.warning(f"🚨 RAG VETO: {rag_reason}")
                         return {"status": "RAG_VETOED", "reason": rag_reason}
-                    
+
                     logger.info(f"✅ RAG VERIFIED: {rag_reason}")
 
                     # Check for duplicate expiry
                     target_expiry = ic.expiry.replace("-", "")[2:]
-                    existing_expiries = {p.symbol[3:9] for p in spy_option_positions if len(p.symbol) > 10}
+                    existing_expiries = {
+                        p.symbol[3:9] for p in spy_option_positions if len(p.symbol) > 10
+                    }
                     if target_expiry in existing_expiries:
-                        return {"status": "BLOCKED_DUPLICATE_EXPIRY", "reason": f"Already holding {ic.expiry}"}
+                        return {
+                            "status": "BLOCKED_DUPLICATE_EXPIRY",
+                            "reason": f"Already holding {ic.expiry}",
+                        }
 
             except Exception as e:
                 logger.error(f"Position check failed: {e}")
                 return {"success": False, "reason": str(e)}
 
         logger.info("Proceeding with Iron Condor submission...")
-        return {"status": "SUCCESS_SIMULATED", "strategy": "iron_condor", "underlying": ic.underlying}
+        return {
+            "status": "SUCCESS_SIMULATED",
+            "strategy": "iron_condor",
+            "underlying": ic.underlying,
+        }
 
     def _record_trade(self, trade: dict):
         """Record trade for learning."""
@@ -323,6 +327,7 @@ class IronCondorStrategy:
 def main():
     """Run iron condor strategy."""
     import argparse
+
     parser = argparse.ArgumentParser(description="Iron Condor Trader")
     parser.add_argument("--live", action="store_true", help="Execute LIVE trades")
     parser.add_argument("--symbol", type=str, default="SPY", help="Symbol")
@@ -331,7 +336,7 @@ def main():
 
     telemetry = OrchestratorTelemetry()
     strategy = IronCondorStrategy()
-    
+
     should_enter, reason = strategy.check_entry_conditions()
     if not should_enter and not args.force:
         return {"success": False, "reason": reason}
@@ -341,6 +346,7 @@ def main():
         with acquire_trade_lock(timeout=10):
             return strategy.execute(ic, live=args.live, entry_reason=reason)
     return {"success": False, "reason": "no_trade_found"}
+
 
 if __name__ == "__main__":
     main()
