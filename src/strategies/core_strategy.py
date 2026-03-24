@@ -35,7 +35,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from dotenv import load_dotenv
 from src.core.trading_constants import MAX_POSITIONS as MAX_OPTION_LEGS
-from src.orchestrator.telemetry import OrchestratorTelemetry
 from src.safety.trade_lock import acquire_trade_lock
 from src.utils.error_monitoring import init_sentry
 
@@ -167,7 +166,7 @@ class IronCondorStrategy:
             from src.utils.alpaca_client import get_alpaca_credentials
 
             api_key, secret = get_alpaca_credentials()
-            data_client = OptionHistoricalDataClient(api_key, secret)
+            OptionHistoricalDataClient(api_key, secret)
 
             logger.info("Pricing structure from Alpaca live chain...")
             # For simplicity in this recovery fix, we set a high-confidence target credit.
@@ -334,7 +333,6 @@ def main():
     parser.add_argument("--force", action="store_true", help="Force entry")
     args = parser.parse_args()
 
-    telemetry = OrchestratorTelemetry()
     strategy = IronCondorStrategy()
 
     should_enter, reason = strategy.check_entry_conditions()

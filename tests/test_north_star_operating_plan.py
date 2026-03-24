@@ -82,7 +82,7 @@ def test_weekly_gate_blocks_early_when_two_recent_losses_show_negative_expectanc
 
     assert gate["mode"] == "defensive"
     assert gate["block_new_positions"] is True
-    assert "non-positive" in gate["reason"].lower()
+    assert "negative expectancy" in gate["reason"].lower()
 
 
 def test_contribution_plan_tracks_monthly_target_progress():
