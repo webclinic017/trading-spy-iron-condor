@@ -58,28 +58,35 @@ def get_alpaca_client(paper: bool = True) -> Optional[TradingClient]:
     """
     Get Alpaca trading client using the canonical credential lookup.
 
-    Follows the pattern from src/utils/alpaca_client.py for consistency.
+    Follows the pattern from src/utils.alpaca_client.py for consistency.
     """
     # Try to use the shared utility first
     try:
-        from src.utils.alpaca_client import get_alpaca_credentials
-
-        api_key, secret_key = get_alpaca_credentials()
+        if paper:
+            from src.utils.alpaca_client import get_alpaca_credentials
+            api_key, secret_key = get_alpaca_credentials()
+        else:
+            from src.utils.alpaca_client import get_brokerage_credentials
+            api_key, secret_key = get_brokerage_credentials()
     except ImportError:
         # Fallback to direct env var lookup
-        api_key = (
-            os.getenv("ALPACA_PAPER_TRADING_5K_API_KEY")
-            or os.getenv("ALPACA_API_KEY")
-            or os.getenv("ALPACA_PAPER_TRADING_30K_API_KEY")
-        )
-        secret_key = (
-            os.getenv("ALPACA_PAPER_TRADING_5K_API_SECRET")
-            or os.getenv("ALPACA_SECRET_KEY")
-            or os.getenv("ALPACA_PAPER_TRADING_30K_API_SECRET")
-        )
+        if paper:
+            api_key = (
+                os.getenv("ALPACA_PAPER_TRADING_5K_API_KEY")
+                or os.getenv("ALPACA_API_KEY")
+                or os.getenv("ALPACA_PAPER_TRADING_30K_API_KEY")
+            )
+            secret_key = (
+                os.getenv("ALPACA_PAPER_TRADING_5K_API_SECRET")
+                or os.getenv("ALPACA_SECRET_KEY")
+                or os.getenv("ALPACA_PAPER_TRADING_30K_API_SECRET")
+            )
+        else:
+            api_key = os.getenv("ALPACA_BROKERAGE_TRADING_API_KEY")
+            secret_key = os.getenv("ALPACA_BROKERAGE_TRADING_API_SECRET")
 
     if not api_key or not secret_key:
-        logger.error("Missing Alpaca API credentials")
+        logger.error(f"Missing Alpaca API credentials (paper={paper})")
         return None
 
     return TradingClient(api_key, secret_key, paper=paper)

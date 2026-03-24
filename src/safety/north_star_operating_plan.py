@@ -787,12 +787,12 @@ def compute_weekly_gate(
     block_new_positions = False
     reason = "Insufficient recent weekly evidence; keep conservative sizing."
 
-    if samples >= DEFAULT_EARLY_EXPECTANCY_BLOCK_SAMPLES and expectancy <= 0:
+    if samples >= 2 and expectancy <= 0:
         mode = "defensive"
         recommended_max = 0.01
         block_new_positions = True
         reason = (
-            f"Weekly expectancy ${expectancy:.2f}/trade over {samples} samples is non-positive."
+            f"CRITICAL: Negative expectancy ${expectancy:.2f}/trade over {samples} samples. Trading HALTED."
         )
     elif samples >= DEFAULT_WEEKLY_MIN_SAMPLES and win_rate_pct < 65.0:
         mode = "defensive"

@@ -1249,10 +1249,11 @@ jobs:
               state['options']['last_theta_harvest'] = datetime.utcnow().isoformat() + 'Z'
               state['options']['harvest_source'] = 'daily-trading-workflow'
               state['options']['execution_date'] = datetime.utcnow().strftime('%Y-%m-%d')
-              # Track strategy based on buying power
-              state['options']['selection_method'] = 'adaptive'  # CSPs or spreads based on buying power
-              state['options']['target_tickers'] = ['SPY', 'IWM']  # FIXED Jan 19: SPY/IWM ONLY per CLAUDE.md mandate
-              state['options']['strategy_note'] = 'Uses credit spreads when buying power < $1000, CSPs otherwise'
+              # SINGLE PLAYBOOK: SPY Iron Condors (Quantitative)
+              state['options']['selection_method'] = 'quantitative_delta'
+              state['options']['target_tickers'] = ['SPY']
+              state['options']['strategy'] = 'iron_condor'
+              state['options']['strategy_note'] = '15-Delta targeting on SPY only'
 
               # Count today's options logs to verify execution
               today = datetime.utcnow().strftime('%Y%m%d')
