@@ -16,8 +16,10 @@ from pathlib import Path
 # Ensure src is importable
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from src.utils.git_paths import resolve_shared_repo_root
+
 PROJECT_ROOT = Path(__file__).parent.parent
-LANCEDB_PATH = PROJECT_ROOT / ".claude" / "memory" / "lancedb"
+LANCEDB_PATH = resolve_shared_repo_root(PROJECT_ROOT) / ".claude" / "memory" / "lancedb"
 OPTION_SYMBOL_RE = re.compile(
     r"^(?P<underlying>[A-Z]+)(?P<expiry>\d{6})(?P<option_type>[CP])\d{8}$"
 )

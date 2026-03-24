@@ -412,13 +412,22 @@ class TestRegimeCheck:
         assert any("SPIKE" in w for w in warnings)
 
     def test_volatile_regime_reduces_confidence(self):
-        """Test that volatile regime reduces confidence."""
+        """Test that volatile regime blocks neutral iron condors."""
         from src.safety.mandatory_trade_gate import _check_market_regime
 
         context = {"regime_snapshot": {"label": "volatile"}}
         confidence, warnings = _check_market_regime("iron_condor", context)
-        assert confidence == 0.7  # Reduced confidence
+        assert confidence == 0.0
         assert any("VOLATILE" in w for w in warnings)
+
+    def test_trending_regime_blocks_neutral_iron_condor(self):
+        """Test that trending regime blocks neutral iron condors."""
+        from src.safety.mandatory_trade_gate import _check_market_regime
+
+        context = {"regime_snapshot": {"label": "trending_up"}}
+        confidence, warnings = _check_market_regime("iron_condor", context)
+        assert confidence == 0.0
+        assert any("TRENDING" in w for w in warnings)
 
     def test_calm_regime_maintains_confidence(self):
         """Test that calm regime maintains full confidence."""
