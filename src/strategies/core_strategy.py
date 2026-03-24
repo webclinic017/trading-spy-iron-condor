@@ -168,47 +168,51 @@ class IronCondorStrategy:
 
             api_key, secret = get_alpaca_credentials()
             data_client = OptionHistoricalDataClient(api_key, secret)
-            
+
             # Format YYMMDD for OCC
             exp_formatted = expiry.replace("-", "")[2:]
-            
+
             def build_occ(strike: float, opt_type: str) -> str:
                 strike_str = f"{int(strike * 1000):08d}"
                 return f"SPY{exp_formatted}{opt_type}{strike_str}"
 
             # LP, SP, SC, LC
             symbols = [
-                build_occ(legs[0], "P"), # Long Put
-                build_occ(legs[1], "P"), # Short Put
-                build_occ(legs[2], "C"), # Short Call
-                build_occ(legs[3], "C"), # Long Call
+                build_occ(legs[0], "P"),  # Long Put
+                build_occ(legs[1], "P"),  # Short Put
+                build_occ(legs[2], "C"),  # Short Call
+                build_occ(legs[3], "C"),  # Long Call
             ]
-            
+
             logger.info(f"Pricing structure symbols: {symbols}")
-            
+
             request = OptionLatestQuoteRequest(symbol_or_symbols=symbols)
             quotes = data_client.get_option_latest_quote(request)
-            
+
             total_credit = 0.0
             for i, sym in enumerate(symbols):
                 if sym not in quotes:
                     raise RuntimeError(f"Missing live quote for leg {sym}")
-                
+
                 quote = quotes[sym]
                 if quote.bid_price == 0 or quote.ask_price == 0:
-                    raise RuntimeError(f"Invalid bid/ask for {sym}: {quote.bid_price}/{quote.ask_price}")
-                
+                    raise RuntimeError(
+                        f"Invalid bid/ask for {sym}: {quote.bid_price}/{quote.ask_price}"
+                    )
+
                 mid = (quote.bid_price + quote.ask_price) / 2
                 # Credit Spread Math: Short Mid - Long Mid
-                if i in [1, 2]: # Short legs
+                if i in [1, 2]:  # Short legs
                     total_credit += mid
-                else: # Long legs
+                else:  # Long legs
                     total_credit -= mid
-            
+
             wing_width = self.config["wing_width"]
             max_risk = (wing_width * 100) - (total_credit * 100)
 
-            logger.info(f"Realized Mid-Price Credit: ${total_credit:.2f} (Max Risk: ${max_risk:.2f})")
+            logger.info(
+                f"Realized Mid-Price Credit: ${total_credit:.2f} (Max Risk: ${max_risk:.2f})"
+            )
 
             return {
                 "credit": total_credit,
@@ -248,9 +252,7 @@ class IronCondorStrategy:
 
         # Fetch real mid-prices from the chain
         expiry_str = expiry_date.strftime("%Y-%m-%d")
-        premiums = self.calculate_premiums(
-            (long_put, short_put, short_call, long_call), expiry_str
-        )
+        premiums = self.calculate_premiums((long_put, short_put, short_call, long_call), expiry_str)
 
         return IronCondorLegs(
             underlying=self.config["underlying"],
