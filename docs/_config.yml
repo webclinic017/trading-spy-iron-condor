@@ -1,0 +1,30 @@
+title: "Trading System"
+description: "Operator surfaces, live dashboard entry points, and selected engineering artifacts for the trading repo."
+url: "https://igorganapolsky.github.io"
+baseurl: "/trading"
+lang: en
+
+theme: minima
+permalink: /:year/:month/:day/:title/
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+header_pages:
+  - rag-query.html
+  - blog.html
+
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      author: "Igor Ganapolsky"
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
