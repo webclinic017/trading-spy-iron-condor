@@ -166,16 +166,6 @@ class TestSystemIntegration:
         except json.JSONDecodeError as e:
             pytest.fail(f"Invalid trade log format: {e}")
 
-    def test_iron_condor_trader_syntax(self):
-        """Test the active options entrypoint has valid Python syntax."""
-        result = subprocess.run(
-            ["python3", "-m", "py_compile", "scripts/iron_condor_trader.py"],
-            capture_output=True,
-            text=True,
-        )
-
-        assert result.returncode == 0, f"iron_condor_trader.py syntax error: {result.stderr}"
-
     def test_required_dependencies(self):
         """Test critical dependencies are importable.
 

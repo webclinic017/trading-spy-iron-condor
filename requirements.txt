@@ -13,7 +13,7 @@ alpaca-py==0.43.2
 alpha-vantage==2.3.1
 altair==6.0.0
 annotated-types==0.7.0
-anthropic==0.84.0
+anthropic==0.85.0
 anyio==4.12.0
 attrs==25.4.0
 beautifulsoup4==4.14.3
@@ -44,7 +44,7 @@ frozenlist==1.8.0
 fsspec==2025.12.0
 gitdb==4.0.12
 gitpython==3.1.45
-google-ai-generativelanguage==0.10.0
+google-ai-generativelanguage==0.6.15
 google-api-core==2.30.0
 google-api-python-client==2.192.0
 google-auth==2.49.1
@@ -55,7 +55,7 @@ google-generativeai==0.8.6
 googleapis-common-protos==1.72.0
 greenlet==3.3.0
 grpcio==1.76.0
-grpcio-status==1.78.0
+grpcio-status==1.70.0
 gspread==5.12.4
 gymnasium==0.29.1
 h11==0.16.0
@@ -80,7 +80,7 @@ langchain-classic==1.0.3
 langchain-community==0.4.1
 langchain-core==1.2.19
 langchain-google-genai==4.2.1
-langchain-text-splitters==1.1.0
+langchain-text-splitters==1.1.1
 langgraph==1.1.2
 langgraph-checkpoint==4.0.1
 langgraph-prebuilt==1.0.8
@@ -118,7 +118,7 @@ pyasn1==0.6.3
 pyasn1-modules==0.4.2
 pycparser==2.23
 pydantic==2.12.5
-pydantic-core==2.42.0
+pydantic-core==2.41.5
 pydantic-settings==2.12.0
 pydeck==0.9.1
 pyparsing==3.2.5
