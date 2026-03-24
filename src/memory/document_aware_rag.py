@@ -32,10 +32,14 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
+from src.utils.git_paths import resolve_shared_repo_root
+
 logger = logging.getLogger(__name__)
 
 # Configuration
-LANCEDB_PATH = Path(__file__).parent.parent.parent / ".claude" / "memory" / "lancedb"
+LANCEDB_PATH = (
+    resolve_shared_repo_root(Path(__file__).parent.parent.parent) / ".claude" / "memory" / "lancedb"
+)
 RAG_KNOWLEDGE_DIR = Path(__file__).parent.parent.parent / "rag_knowledge"
 EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 FTS_COLUMNS = ["text", "doc_title", "section_title", "lesson_id"]

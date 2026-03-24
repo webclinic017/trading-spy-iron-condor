@@ -454,9 +454,9 @@ def _check_market_regime(strategy: str, context: dict | None) -> tuple[float, li
     Check market regime for iron condor entry optimization (LL-247 ML-IMP-2).
 
     Regime-based trading rules:
-    - "calm": Ideal for iron condors (80% allocation, high confidence)
-    - "trending": Caution - directional risk (70% allocation)
-    - "volatile": Higher premium but higher risk (40% allocation, reduced confidence)
+    - "calm": Ideal for iron condors (high confidence)
+    - "trending": Block neutral premium structures that can be directionally tested
+    - "volatile": Block neutral premium structures unless specifically adapted
     - "spike": DO NOT TRADE - crisis mode (0% allocation, block trade)
 
     Args:
@@ -504,17 +504,20 @@ def _check_market_regime(strategy: str, context: dict | None) -> tuple[float, li
             return 0.0, warnings  # 0.0 = block trade
 
         elif "volatile" in regime_lower or "vol" in regime_lower:
-            # High volatility - reduce confidence but allow with warning
+            if "iron" in strategy.lower() or "condor" in strategy.lower():
+                warnings.append(
+                    f"⚠️ VOLATILE regime - neutral iron condor blocked (regime={regime_label})"
+                )
+                return 0.0, warnings
             warnings.append(f"⚠️ VOLATILE regime - reduced confidence (regime={regime_label})")
             confidence = 0.7
 
         elif "trending" in regime_lower or "trend" in regime_lower:
-            # Trending market - iron condors at risk of being tested on one side
             if "iron" in strategy.lower() or "condor" in strategy.lower():
                 warnings.append(
-                    f"⚠️ TRENDING regime - iron condor may be directionally tested (regime={regime_label})"
+                    f"⚠️ TRENDING regime - neutral iron condor blocked (regime={regime_label})"
                 )
-                confidence = 0.8
+                return 0.0, warnings
             else:
                 confidence = 0.9
 

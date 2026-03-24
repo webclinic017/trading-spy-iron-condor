@@ -765,27 +765,29 @@ def compute_weekly_gate(
         0,
     )
 
+    unverified_trade_history_diagnostic: dict[str, Any] | None = None
     if samples > 0:
         win_rate_pct = round((wins / samples) * 100.0, 2)
         expectancy = round(total_pnl / samples, 4)
         evidence_source = "trades.json"
     else:
-        # Fallback: compute IC-only win rate from trade_history in system_state.
-        # The blended paper_account.win_rate includes non-IC trades (REITs, stocks,
-        # individual puts) which pollute the iron condor strategy signal.
-        ic_stats = _compute_ic_win_rate_from_history(state)
-        samples = ic_stats["samples"]
-        wins = ic_stats["wins"]
-        win_rate_pct = ic_stats["win_rate_pct"]
-        expectancy = ic_stats["expectancy"]
-        evidence_source = ic_stats["evidence_source"]
-        if lifetime_closed_trades <= 0:
-            lifetime_closed_trades = samples
+        # Do not infer weekly edge from raw fills. Raw trade_history is useful as a
+        # diagnostic, but control decisions must be based on paired closed trades.
+        unverified_trade_history_diagnostic = _compute_ic_win_rate_from_history(state)
+        win_rate_pct = 0.0
+        expectancy = 0.0
+        evidence_source = "insufficient_paired_closed_trades"
 
     mode = "validation"
-    recommended_max = 0.02
+    recommended_max = 0.01 if samples == 0 else 0.02
     block_new_positions = False
-    reason = "Insufficient recent weekly evidence; keep conservative sizing."
+    if samples == 0:
+        reason = (
+            "No recent paired closed trades; do not infer edge from raw fills. "
+            "Keep validation sizing only."
+        )
+    else:
+        reason = "Insufficient recent weekly evidence; keep conservative sizing."
 
     if samples >= 2 and expectancy <= 0:
         mode = "defensive"
@@ -1017,6 +1019,7 @@ def compute_weekly_gate(
         "reason": reason,
         "positive_weeks_streak": positive_streak,
         "evidence_source": evidence_source,
+        "verified_edge_available": samples > 0,
         "cadence_kpi": cadence_kpi,
         "scale_blocked_by_cadence": not cadence_kpi["passed"],
         "ai_credit_stress": ai_credit_gate,
@@ -1031,6 +1034,8 @@ def compute_weekly_gate(
         "no_trade_diagnostic": no_trade_diagnostic,
         "updated_at": datetime.now(timezone.utc).isoformat(),
     }
+    if unverified_trade_history_diagnostic is not None:
+        gate["unverified_trade_history_diagnostic"] = unverified_trade_history_diagnostic
     return gate, weekly_history
 
 

@@ -82,7 +82,7 @@ def test_weekly_gate_blocks_early_when_two_recent_losses_show_negative_expectanc
 
     assert gate["mode"] == "defensive"
     assert gate["block_new_positions"] is True
-    assert "non-positive" in gate["reason"].lower()
+    assert "negative expectancy" in gate["reason"].lower()
 
 
 def test_contribution_plan_tracks_monthly_target_progress():
@@ -276,6 +276,61 @@ def test_weekly_gate_respects_liquidity_floor_override(tmp_path):
     liquidity = diagnostic.get("gate_status", {}).get("liquidity", {})
     assert liquidity.get("threshold_min_volume_ratio") == 0.18
     assert liquidity.get("status") == "pass"
+
+
+def test_weekly_gate_does_not_promote_raw_fill_history_to_verified_edge(tmp_path):
+    trades_path = tmp_path / "trades.json"
+    history_path = tmp_path / "weekly_history.json"
+    today = date(2026, 2, 16)
+    _write_json(trades_path, {"stats": {"closed_trades": 0}, "trades": []})
+
+    state = {
+        "trade_history": [
+            *[
+                {
+                    "symbol": symbol,
+                    "side": "SELL",
+                    "price": 2.0,
+                    "qty": 1,
+                    "filled_at": "2026-02-14T15:00:00Z",
+                }
+                for symbol in (
+                    "SPY260320P00650000",
+                    "SPY260320P00640000",
+                    "SPY260320C00720000",
+                    "SPY260320C00730000",
+                )
+            ],
+            *[
+                {
+                    "symbol": symbol,
+                    "side": "BUY",
+                    "price": 2.5,
+                    "qty": 1,
+                    "filled_at": "2026-02-14T20:00:00Z",
+                }
+                for symbol in (
+                    "SPY260320P00650000",
+                    "SPY260320P00640000",
+                    "SPY260320C00720000",
+                    "SPY260320C00730000",
+                )
+            ],
+        ]
+    }
+
+    gate, _history = compute_weekly_gate(
+        state,
+        trades_path=trades_path,
+        weekly_history_path=history_path,
+        today=today,
+    )
+
+    assert gate["sample_size"] == 0
+    assert gate["evidence_source"] == "insufficient_paired_closed_trades"
+    assert gate["verified_edge_available"] is False
+    assert gate["unverified_trade_history_diagnostic"]["evidence_source"] == "trade_history_ic_only"
+    assert gate["unverified_trade_history_diagnostic"]["samples"] == 1
 
 
 def test_expansion_mode_requires_thirty_closed_trades_for_scaling(tmp_path):

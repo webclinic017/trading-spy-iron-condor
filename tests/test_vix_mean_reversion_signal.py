@@ -137,6 +137,16 @@ class TestVIXMeanReversionSignal:
         assert should_enter is False
         assert "thin" in reason.lower()
 
+    @patch.object(VIXMeanReversionSignal, "get_vix_data")
+    def test_should_enter_trade_neutral_waits_for_better_entry(self, mock_get_vix):
+        """Elevated VIX without mean reversion should not open a new condor."""
+        signal_gen = VIXMeanReversionSignal()
+        mock_get_vix.return_value = np.full(60, 27.0)
+        should_enter, reason = signal_gen.should_enter_trade()
+
+        assert should_enter is False
+        assert "wait" in reason.lower()
+
 
 class TestVIXSignalDataclass:
     """Test the VIXSignal dataclass."""

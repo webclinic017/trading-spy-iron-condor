@@ -234,8 +234,7 @@ class VIXMeanReversionSignal:
         elif signal.signal == "AVOID":
             return False, signal.reason
         else:
-            # NEUTRAL: Allow entry but note it's not optimal
-            return True, f"Neutral conditions: {signal.reason}"
+            return False, f"Wait for better entry: {signal.reason}"
 
 
 def get_vix_entry_signal() -> VIXSignal:
