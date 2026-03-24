@@ -1299,6 +1299,16 @@ layout: null
         window.RAG_WEBHOOK_URL || storedUrl || "",
       );
 
+      function resolvePortfolioStatusUrl(baseUrl) {
+        const sanitized = sanitizeRagWebhookUrl(baseUrl);
+        if (!sanitized) return "";
+        if (sanitized.includes("/portfolio-status")) return sanitized;
+        if (sanitized.includes("/rag-search")) {
+          return sanitized.replace(/\/rag-search$/, "/portfolio-status");
+        }
+        return `${sanitized.replace(/\/$/, "")}/portfolio-status`;
+      }
+
       function parseDateValue(raw) {
         if (!raw) return null;
         const value = String(raw).trim();
@@ -1628,10 +1638,46 @@ layout: null
 
       async function fetchSystemState(forceReload = false) {
         if (!forceReload && latestSystemState) return latestSystemState;
-        const res = await fetch(GITHUB_RAW_URL, { cache: "no-store" });
-        if (!res.ok) throw new Error("fetch failed");
-        latestSystemState = await res.json();
-        return latestSystemState;
+        const sources = [];
+
+        const directPortfolioStatusUrl = resolvePortfolioStatusUrl(DIRECT_RAG_URL);
+        if (directPortfolioStatusUrl) {
+          sources.push(async () => {
+            const res = await fetch(directPortfolioStatusUrl, { cache: "no-store" });
+            if (!res.ok) throw new Error("direct portfolio-status fetch failed");
+            return await res.json();
+          });
+        }
+
+        sources.push(async () => {
+          const res = await fetch(WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mode: "portfolio_status" }),
+          });
+          if (!res.ok) throw new Error("worker portfolio-status fetch failed");
+          return await res.json();
+        });
+
+        sources.push(async () => {
+          const res = await fetch(GITHUB_RAW_URL, { cache: "no-store" });
+          if (!res.ok) throw new Error("github raw fetch failed");
+          return await res.json();
+        });
+
+        for (const source of sources) {
+          try {
+            const data = await source();
+            if (data && typeof data === "object" && (data.paper_account || data.portfolio)) {
+              latestSystemState = data;
+              return latestSystemState;
+            }
+          } catch {
+            // try next source
+          }
+        }
+
+        throw new Error("fetch failed");
       }
 
       async function fetchSnapshotManifest(forceReload = false) {
