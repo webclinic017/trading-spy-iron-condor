@@ -34,6 +34,15 @@ def test_rag_query_surface_has_explicit_as_of_timestamp_labels() -> None:
     assert "function renderTimestampMetric(label, raw)" in html
 
 
+def test_rag_query_fetch_system_state_prefers_live_portfolio_status_path() -> None:
+    html = RAG_QUERY_HTML.read_text(encoding="utf-8")
+
+    assert "function resolvePortfolioStatusUrl(baseUrl)" in html
+    assert 'body: JSON.stringify({ mode: "portfolio_status" })' in html
+    assert "const directPortfolioStatusUrl = resolvePortfolioStatusUrl(DIRECT_RAG_URL);" in html
+    assert "const sources = [];" in html
+
+
 def test_rag_query_chat_fallback_detects_stale_temporal_lesson_queries() -> None:
     html = RAG_QUERY_HTML.read_text(encoding="utf-8")
 

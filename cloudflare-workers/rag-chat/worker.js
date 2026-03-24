@@ -28,7 +28,11 @@ const GITHUB_COMMITS_API_URL =
  * Fetch live portfolio data from GitHub raw (public repo, no auth).
  * Returns parsed JSON or null on failure.
  */
-async function fetchLiveData() {
+async function fetchLiveData(env) {
+  const portfolioStatus = await fetchPortfolioStatus(env);
+  if (portfolioStatus) {
+    return portfolioStatus;
+  }
   try {
     const res = await fetch(GITHUB_RAW_URL, {
       headers: { "User-Agent": "rag-chat-worker" },
@@ -536,6 +540,21 @@ function resolveRagSearchUrl(env) {
   return `${raw.replace(/\/$/, "")}/rag-search`;
 }
 
+function resolvePortfolioStatusUrl(env) {
+  const raw =
+    (env && (env.RAG_WEBHOOK_URL || env.RAG_SEARCH_URL)) ||
+    DEFAULT_RAG_WEBHOOK_URL ||
+    DEFAULT_RAG_SEARCH_URL;
+  if (!raw) return "";
+  if (raw.includes("/portfolio-status")) {
+    return raw;
+  }
+  if (raw.includes("/rag-search")) {
+    return raw.replace(/\/rag-search$/, "/portfolio-status");
+  }
+  return `${raw.replace(/\/$/, "")}/portfolio-status`;
+}
+
 async function fetchRagSearch(query, topK, env) {
   const ragSearchUrl = resolveRagSearchUrl(env);
   if (!ragSearchUrl) return null;
@@ -550,6 +569,24 @@ async function fetchRagSearch(query, topK, env) {
   } catch {
     return null;
   }
+}
+
+async function fetchPortfolioStatus(env) {
+  const portfolioStatusUrl = resolvePortfolioStatusUrl(env);
+  if (!portfolioStatusUrl) return null;
+  try {
+    const res = await fetch(portfolioStatusUrl, {
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data && typeof data === "object" && (data.paper_account || data.portfolio)) {
+      return data;
+    }
+  } catch {
+    // fallback to raw state
+  }
+  return null;
 }
 
 async function getLessonsForQuery(query, topK, env) {
@@ -845,6 +882,16 @@ export default {
         });
       }
 
+      if (mode === "portfolio_status") {
+        const liveData = await fetchLiveData(env);
+        return new Response(JSON.stringify(liveData || {}), {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        });
+      }
+
       const { message, history } = payload;
 
       if (!message || typeof message !== "string") {
@@ -874,7 +921,7 @@ export default {
       messages.push({ role: "user", content: message });
 
       // Fetch live portfolio data.
-      const liveData = await fetchLiveData();
+      const liveData = await fetchLiveData(env);
 
       if (isNorthStarQuestion(message)) {
         const deterministicReply = buildNorthStarDeterministicReply(liveData);

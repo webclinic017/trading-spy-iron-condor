@@ -3,7 +3,7 @@
 Paper-trading SPY iron condors to validate a quantitative options strategy before committing real capital.
 
 > **North Star**: $6K/month after-tax options income.
-> **Current Reality**: $95,324 paper equity (started $100K). Proving the edge on 30 trades.
+> **Current Reality**: Still validating the edge in paper. Broker/runtime status wins over README snapshots for intraday P&L or equity.
 > **Strategy**: 15-delta SPY iron condors, $10-wide wings, 30-45 DTE.
 
 **[Progress Dashboard](https://igorganapolsky.github.io/trading/rag-query/)**
