@@ -375,7 +375,9 @@ def _load_cached_system_state() -> dict:
         return state
 
     try:
-        github_url = "https://api.github.com/repos/IgorGanapolsky/trading/contents/data/system_state.json"
+        github_url = (
+            "https://api.github.com/repos/IgorGanapolsky/trading/contents/data/system_state.json"
+        )
         req = urllib.request.Request(
             github_url,
             headers={
@@ -396,7 +398,9 @@ def _load_cached_system_state() -> dict:
     return state or {}
 
 
-def _map_alpaca_positions_to_state_shapes(raw_positions: list[dict]) -> tuple[list[dict], list[dict], float]:
+def _map_alpaca_positions_to_state_shapes(
+    raw_positions: list[dict],
+) -> tuple[list[dict], list[dict], float]:
     """Normalize Alpaca REST position payloads into dashboard/state shapes."""
     top_level_positions: list[dict] = []
     performance_positions: list[dict] = []
@@ -453,9 +457,7 @@ def _calculate_challenge_day(start_date_raw: str | None = None) -> int:
 
     try:
         start_date = (
-            date.fromisoformat(str(start_date_raw))
-            if start_date_raw
-            else date(2026, 1, 30)
+            date.fromisoformat(str(start_date_raw)) if start_date_raw else date(2026, 1, 30)
         )
     except ValueError:
         start_date = date(2026, 1, 30)
@@ -484,6 +486,7 @@ def build_live_system_state_snapshot() -> dict:
         today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     cached_state = _load_cached_system_state()
+    has_cached_state = bool(cached_state)
     if not cached_state:
         cached_state = {}
 
@@ -501,6 +504,8 @@ def build_live_system_state_snapshot() -> dict:
 
     alpaca_data = query_alpaca_api_direct()
     if not alpaca_data:
+        if not has_cached_state:
+            return {}
         state["actual_today"] = today_str
         state["status_source"] = "cached_system_state"
         state["meta"]["portfolio_status_source"] = "cached_system_state"

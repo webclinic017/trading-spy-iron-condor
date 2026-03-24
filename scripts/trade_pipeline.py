@@ -32,6 +32,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 try:
     from dotenv import load_dotenv
+
     load_dotenv(dotenv_path=PROJECT_ROOT / ".env", override=False)
 except ImportError:
     pass
@@ -48,7 +49,9 @@ def get_client():
     from alpaca.trading.client import TradingClient
 
     key = os.environ.get("ALPACA_PAPER_TRADING_API_KEY") or os.environ.get("ALPACA_API_KEY")
-    secret = os.environ.get("ALPACA_PAPER_TRADING_API_SECRET") or os.environ.get("ALPACA_SECRET_KEY")
+    secret = os.environ.get("ALPACA_PAPER_TRADING_API_SECRET") or os.environ.get(
+        "ALPACA_SECRET_KEY"
+    )
     if not key or not secret:
         logger.error("Alpaca credentials not found")
         sys.exit(1)
@@ -92,6 +95,7 @@ def stage_vix(dry_run=False) -> dict:
 
     try:
         from src.options.vix_monitor import VIXMonitor
+
         vix_monitor = VIXMonitor()
         vix = vix_monitor.get_current_vix()
     except Exception as e:
@@ -155,7 +159,9 @@ def stage_positions(client, dry_run=False) -> dict:
             valid_ics += 1
             total_pl = sum(float(leg.unrealized_pl) for leg in legs)
             exp_date = f"20{exp[:2]}-{exp[2:4]}-{exp[4:6]}"
-            dte = (datetime(int(f"20{exp[:2]}"), int(exp[2:4]), int(exp[4:6])) - datetime.now()).days
+            dte = (
+                datetime(int(f"20{exp[:2]}"), int(exp[2:4]), int(exp[4:6])) - datetime.now()
+            ).days
             logger.info(f"  IC {exp_date}: {dte} DTE, P/L=${total_pl:,.2f}")
 
     logger.info(f"  Valid iron condors: {valid_ics}")
@@ -179,11 +185,14 @@ def stage_find(state: dict, dry_run=False) -> dict:
     # Use the existing iron_condor_trader to find a trade
     try:
         from scripts.iron_condor_trader import IronCondorStrategy
+
         strategy = IronCondorStrategy()
         ic = strategy.find_trade()
         if ic:
             logger.info(f"  Found: {ic.underlying} {ic.expiry}")
-            logger.info(f"  Strikes: LP={ic.long_put} SP={ic.short_put} SC={ic.short_call} LC={ic.long_call}")
+            logger.info(
+                f"  Strikes: LP={ic.long_put} SP={ic.short_put} SC={ic.short_call} LC={ic.long_call}"
+            )
             return {"should_trade": True, "ic": ic}
     except Exception as e:
         logger.error(f"  Find trade failed: {e}")
@@ -212,6 +221,7 @@ def stage_execute(client, state: dict, dry_run=False) -> dict:
 
     try:
         from scripts.iron_condor_trader import IronCondorStrategy
+
         strategy = IronCondorStrategy()
         result = strategy.execute(ic, live=True)
         logger.info(f"  Result: {result.get('status', 'unknown')}")
