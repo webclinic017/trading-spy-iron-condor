@@ -156,25 +156,59 @@ class IronCondorStrategy:
 
         return long_put, short_put, short_call, long_call
 
-    def calculate_premiums(self, legs: tuple[float, float, float, float], dte: int) -> dict:
+    def calculate_premiums(self, legs: tuple[float, float, float, float], expiry: str) -> dict:
         """
-        Fetch mandatory live mid-prices for the iron condor structure.
+        Fetch mandatory live mid-prices for all 4 legs from the Alpaca chain.
         Refuses to trade if live bid/ask data is unavailable.
         """
         try:
             from alpaca.data.historical.option import OptionHistoricalDataClient
+            from alpaca.data.requests import OptionLatestQuoteRequest
             from src.utils.alpaca_client import get_alpaca_credentials
 
             api_key, secret = get_alpaca_credentials()
-            OptionHistoricalDataClient(api_key, secret)
+            data_client = OptionHistoricalDataClient(api_key, secret)
+            
+            # Format YYMMDD for OCC
+            exp_formatted = expiry.replace("-", "")[2:]
+            
+            def build_occ(strike: float, opt_type: str) -> str:
+                strike_str = f"{int(strike * 1000):08d}"
+                return f"SPY{exp_formatted}{opt_type}{strike_str}"
 
-            logger.info("Pricing structure from Alpaca live chain...")
-            # For simplicity in this recovery fix, we set a high-confidence target credit.
-            # Real production logic would loop the 4 symbols and sum the mid-prices.
-            total_credit = 1.85
-
+            # LP, SP, SC, LC
+            symbols = [
+                build_occ(legs[0], "P"), # Long Put
+                build_occ(legs[1], "P"), # Short Put
+                build_occ(legs[2], "C"), # Short Call
+                build_occ(legs[3], "C"), # Long Call
+            ]
+            
+            logger.info(f"Pricing structure symbols: {symbols}")
+            
+            request = OptionLatestQuoteRequest(symbol_or_symbols=symbols)
+            quotes = data_client.get_option_latest_quote(request)
+            
+            total_credit = 0.0
+            for i, sym in enumerate(symbols):
+                if sym not in quotes:
+                    raise RuntimeError(f"Missing live quote for leg {sym}")
+                
+                quote = quotes[sym]
+                if quote.bid_price == 0 or quote.ask_price == 0:
+                    raise RuntimeError(f"Invalid bid/ask for {sym}: {quote.bid_price}/{quote.ask_price}")
+                
+                mid = (quote.bid_price + quote.ask_price) / 2
+                # Credit Spread Math: Short Mid - Long Mid
+                if i in [1, 2]: # Short legs
+                    total_credit += mid
+                else: # Long legs
+                    total_credit -= mid
+            
             wing_width = self.config["wing_width"]
             max_risk = (wing_width * 100) - (total_credit * 100)
+
+            logger.info(f"Realized Mid-Price Credit: ${total_credit:.2f} (Max Risk: ${max_risk:.2f})")
 
             return {
                 "credit": total_credit,
@@ -183,8 +217,8 @@ class IronCondorStrategy:
                 "risk_reward": max_risk / (total_credit * 100) if total_credit > 0 else 0,
             }
         except Exception as e:
-            logger.error(f"PRICING FAILURE: {e}")
-            raise RuntimeError("Live pricing unavailable — halting trade entry.")
+            logger.error(f"PRICING ENGINE FAILURE: {e}")
+            raise RuntimeError(f"Quantitative pricing failed: {e} — halting.")
 
     def find_trade(self) -> Optional[IronCondorLegs]:
         """
@@ -212,14 +246,15 @@ class IronCondorStrategy:
             f"Expiry: {expiry_date.strftime('%Y-%m-%d')} ({expiry_date.strftime('%A')}) - {(expiry_date - datetime.now()).days} DTE"
         )
 
-        # Estimate premiums
+        # Fetch real mid-prices from the chain
+        expiry_str = expiry_date.strftime("%Y-%m-%d")
         premiums = self.calculate_premiums(
-            (long_put, short_put, short_call, long_call), self.config["target_dte"]
+            (long_put, short_put, short_call, long_call), expiry_str
         )
 
         return IronCondorLegs(
             underlying=self.config["underlying"],
-            expiry=expiry_date.strftime("%Y-%m-%d"),
+            expiry=expiry_str,
             dte=self.config["target_dte"],
             short_put=short_put,
             long_put=long_put,
