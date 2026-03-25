@@ -84,7 +84,9 @@ class TestCalculateStrikes:
     def _strikes(self, price):
         """Calculate strikes with chain mocked to force heuristic."""
         strategy = IronCondorStrategy()
-        with patch("src.markets.option_chain._select_from_live_chain", side_effect=ValueError("test")):
+        with patch(
+            "src.markets.option_chain._select_from_live_chain", side_effect=ValueError("test")
+        ):
             return strategy.calculate_strikes(price)
 
     def test_strikes_for_spy_at_690(self):
