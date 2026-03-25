@@ -43,4 +43,8 @@ def extract_underlying(symbol: str) -> str:
     match = _OCC_PATTERN.match(symbol)
     if match:
         return match.group(1)
+    if len(symbol) >= 15:
+        potential_underlying = symbol[:-15]
+        if potential_underlying and potential_underlying.isalpha():
+            return potential_underlying
     return symbol
