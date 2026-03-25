@@ -153,14 +153,18 @@ def _count_structures_today_from_alpaca() -> int:
 
         client = TradingClient(api_key, api_secret, paper=is_paper)
         today_str = _today_et_str()
-        orders = client.get_orders(GetOrdersRequest(
-            status=QueryOrderStatus.FILLED,
-            after=f"{today_str}T00:00:00Z",
-            limit=100,
-        ))
+        orders = client.get_orders(
+            GetOrdersRequest(
+                status=QueryOrderStatus.FILLED,
+                after=f"{today_str}T00:00:00Z",
+                limit=100,
+            )
+        )
         # Count multi-leg orders (iron condors) filled today
         structures = sum(1 for o in orders if o.legs and len(o.legs) >= 4)
-        logger.info(f"Alpaca structure count today: {structures} (from {len(orders)} filled orders)")
+        logger.info(
+            f"Alpaca structure count today: {structures} (from {len(orders)} filled orders)"
+        )
         return structures
     except Exception as exc:
         logger.warning("Alpaca structure count failed (%s), falling back to trade file", exc)
