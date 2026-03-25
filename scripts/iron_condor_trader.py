@@ -34,6 +34,7 @@ from typing import Optional
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from dotenv import load_dotenv
+from src.core.trading_constants import IC_PROFIT_TARGET_PCT
 from src.core.trading_constants import MAX_POSITIONS as MAX_OPTION_LEGS
 from src.orchestrator.telemetry import OrchestratorTelemetry
 from src.rag.lessons_learned_rag import LessonsLearnedRAG
@@ -92,9 +93,9 @@ class IronCondorStrategy:
             "max_dte": 45,
             "short_delta": 0.15,  # 15 delta = ~85% POP (research-backed)
             "wing_width": 10,  # $10 wide spreads per CLAUDE.md
-            # EV math: 75% profit / 100% stop → EV = 0.85*0.75 - 0.15*1.0 = +0.49
-            # Legacy asymmetric take-profit/stop profile was EV-neutral and has been deprecated.
-            "take_profit_pct": 0.75,  # Close at 75% profit
+            # EV math: 50% profit / 100% stop → EV = 0.85*0.50 - 0.15*1.0 = +0.275
+            # 50% target = faster cycle, lower tail risk, aligned across all components.
+            "take_profit_pct": IC_PROFIT_TARGET_PCT,  # Close at 50% profit (canonical constant)
             "stop_loss_pct": 1.0,  # Close at 100% loss
             "exit_dte": 7,  # Exit at 7 DTE per LL-268 research (80%+ win rate)
             "max_positions": max(
@@ -131,34 +132,33 @@ class IronCondorStrategy:
 
     def calculate_strikes(self, price: float) -> tuple[float, float, float, float]:
         """
-        Calculate iron condor strikes based on delta targeting.
+        Calculate iron condor strikes using live delta from Alpaca option chain.
 
-        For 15 delta on SPY (~$690):
-        - Short put: ~5% below price (~$655)
-        - Short call: ~5% above price (~$725)
-        - Wing width: $5 (appropriate for SPY)
-
-        CRITICAL FIX Jan 23, 2026:
-        SPY options have $5 strike increments for OTM options.
-        Must round to nearest $5 multiple or orders will fail!
-        ROOT CAUSE: $724/$729 strikes don't exist, only $725/$730
+        Falls back to 5% OTM heuristic if chain data is unavailable.
+        Stores the selection result on self._last_strike_selection for tracing.
         """
-        # 15 delta is roughly 1.5 standard deviation move
-        # For 30 DTE on SPY, use ~5% OTM for 15-delta equivalent
+        from src.markets.option_chain import select_strikes_by_delta
 
-        wing = self.config["wing_width"]
+        selection = select_strikes_by_delta(
+            underlying_price=price,
+            wing_width=self.config["wing_width"],
+            target_delta=self.config["short_delta"],
+            target_dte=self.config["target_dte"],
+            min_dte=self.config["min_dte"],
+            max_dte=self.config["max_dte"],
+        )
 
-        # FIX: Round to nearest $5 increment (SPY OTM options only exist at $5 intervals)
-        def round_to_5(x: float) -> float:
-            return round(x / 5) * 5
+        self._last_strike_selection = selection
 
-        short_put = round_to_5(price * 0.95)  # 5% OTM for puts, rounded to $5
-        long_put = short_put - wing
+        if selection.method == "live_delta":
+            logger.info(
+                f"LIVE DELTA strikes: put delta={selection.put_delta:.3f}, "
+                f"call delta={selection.call_delta:.3f}"
+            )
+        else:
+            logger.warning("Using HEURISTIC fallback — not true 15-delta")
 
-        short_call = round_to_5(price * 1.05)  # 5% OTM for calls, rounded to $5
-        long_call = short_call + wing
-
-        return long_put, short_put, short_call, long_call
+        return selection.long_put, selection.short_put, selection.short_call, selection.long_call
 
     def calculate_premiums(self, legs: tuple[float, float, float, float], dte: int) -> dict:
         """
@@ -171,9 +171,17 @@ class IronCondorStrategy:
         """
         wing_width = self.config["wing_width"]
 
-        # Conservative estimate: $10-wide wings on SPY typically collect $1.50-2.50
-        # Use low end to avoid overestimating credit
-        estimated_credit = 1.50
+        # Use live bids from chain if available
+        selection = getattr(self, "_last_strike_selection", None)
+        if selection and selection.method == "live_delta" and selection.put_bid > 0:
+            estimated_credit = round(selection.put_bid + selection.call_bid, 2)
+            logger.info(
+                f"Live credit estimate: ${estimated_credit:.2f} "
+                f"(put ${selection.put_bid:.2f} + call ${selection.call_bid:.2f})"
+            )
+        else:
+            # Conservative fallback: $10-wide wings on SPY typically collect $1.50-2.50
+            estimated_credit = 1.50
         max_risk = (wing_width * 100) - (estimated_credit * 100)
 
         return {
@@ -321,6 +329,85 @@ class IronCondorStrategy:
             logger.error(f"VIX check failed: {e} - BLOCKING trade (fail-safe)")
             return False, f"VIX check failed: {e} — refusing to trade blind"
 
+    def check_iv_vs_rv(self) -> tuple[bool, str]:
+        """Check if implied volatility exceeds realized volatility.
+
+        We only sell premium when IV > RV (market pricing in more risk than
+        realized). Soft gate: allows trade if data unavailable.
+        """
+        try:
+            from src.data.iv_data_provider import IVDataProvider
+
+            provider = IVDataProvider()
+            current_iv = provider.get_current_iv("SPY")
+            rv = self._compute_realized_vol()
+
+            if rv is None or rv <= 0:
+                logger.warning("Could not compute realized vol — allowing trade (soft gate)")
+                return True, "RV unavailable — IV check skipped"
+
+            iv_rv_ratio = current_iv / rv if rv > 0 else 999.0
+
+            logger.info("=" * 50)
+            logger.info("IV vs RV PREMIUM CHECK")
+            logger.info("=" * 50)
+            logger.info(f"  SPY IV (annualized): {current_iv:.1%}")
+            logger.info(f"  SPY 20d RV:          {rv:.1%}")
+            logger.info(f"  IV/RV ratio:         {iv_rv_ratio:.2f}")
+            logger.info("=" * 50)
+
+            if iv_rv_ratio < 0.90:
+                reason = (
+                    f"IV ({current_iv:.1%}) < RV ({rv:.1%}), ratio={iv_rv_ratio:.2f} — "
+                    f"premium too cheap to sell"
+                )
+                logger.warning(f"BLOCKED: {reason}")
+                return False, reason
+
+            logger.info(f"IV/RV={iv_rv_ratio:.2f} — premium is rich, good to sell")
+            return True, f"IV/RV={iv_rv_ratio:.2f} favorable"
+
+        except Exception as e:
+            logger.warning(f"IV/RV check failed ({e}) — allowing trade (soft gate)")
+            return True, f"IV/RV check unavailable: {e}"
+
+    def _compute_realized_vol(self, lookback_days: int = 20) -> float | None:
+        """Compute annualized realized volatility from SPY daily closes."""
+        try:
+            import numpy as np
+            from alpaca.data.historical import StockHistoricalDataClient
+            from alpaca.data.requests import StockBarsRequest
+            from alpaca.data.timeframe import TimeFrame
+            from src.utils.alpaca_client import get_alpaca_credentials
+
+            api_key, secret = get_alpaca_credentials()
+            if not api_key or not secret:
+                return None
+
+            client = StockHistoricalDataClient(api_key, secret)
+            request = StockBarsRequest(
+                symbol_or_symbols="SPY",
+                timeframe=TimeFrame.Day,
+                start=datetime.now() - timedelta(days=lookback_days + 10),
+                end=datetime.now(),
+            )
+            bars = client.get_stock_bars(request)
+
+            if "SPY" not in bars.data or len(bars.data["SPY"]) < lookback_days:
+                return None
+
+            closes = [float(bar.close) for bar in bars.data["SPY"]]
+            if len(closes) < 2:
+                return None
+
+            returns = np.diff(np.log(closes))
+            rv = float(np.std(returns[-lookback_days:]) * np.sqrt(252))
+            return rv
+
+        except Exception as e:
+            logger.warning(f"Failed to compute realized vol: {e}")
+            return None
+
     def _build_decision_trace(self, ic: IronCondorLegs, entry_reason: str) -> dict:
         """Build a decision trace capturing market context at entry time (Context Graph pattern)."""
         trace: dict = {
@@ -329,9 +416,17 @@ class IronCondorStrategy:
             "market_context": {},
             "signals_checked": [],
             "strike_selection": {
-                "method": "15_delta_5pct_otm",
+                "method": getattr(
+                    getattr(self, "_last_strike_selection", None), "method", "unknown"
+                ),
                 "short_put": ic.short_put,
                 "short_call": ic.short_call,
+                "put_delta": getattr(
+                    getattr(self, "_last_strike_selection", None), "put_delta", 0.0
+                ),
+                "call_delta": getattr(
+                    getattr(self, "_last_strike_selection", None), "call_delta", 0.0
+                ),
                 "wing_width": ic.long_call - ic.short_call,
             },
             "precedent_query": f"{ic.underlying} iron_condor {ic.dte}DTE",
@@ -884,6 +979,15 @@ def main():
         else:
             should_enter, reason = strategy.check_entry_conditions()
             logger.info(f"Entry conditions: {should_enter} ({reason})")
+            if should_enter:
+                # Secondary gate: IV vs RV premium check
+                iv_ok, iv_reason = strategy.check_iv_vs_rv()
+                if not iv_ok:
+                    should_enter = False
+                    reason = iv_reason
+                else:
+                    reason = f"{reason} | {iv_reason}"
+
             if should_enter:
                 telemetry.update_ticker_decision(
                     ticker,

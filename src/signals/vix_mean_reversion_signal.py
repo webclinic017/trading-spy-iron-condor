@@ -123,7 +123,7 @@ class VIXMeanReversionSignal:
             VIXSignal with entry recommendation
         """
         vix_data = self.get_vix_data()
-        
+
         if vix_data is None:
             return VIXSignal(
                 signal="NEUTRAL",
@@ -148,7 +148,7 @@ class VIXMeanReversionSignal:
         iv_metrics = self.iv_provider.get_full_metrics("SPY")
         current_iv = iv_metrics.current_iv
         realized_vol = self.get_spy_realized_vol(20)
-        
+
         iv_rv_spread = current_iv - realized_vol
         if iv_rv_spread < self.IV_RV_PREMIUM_THRESHOLD:
              return VIXSignal(

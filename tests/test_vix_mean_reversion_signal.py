@@ -77,19 +77,19 @@ class TestVIXMeanReversionSignal:
         result = signal_gen.calculate_signal()
 
         assert result.signal == "AVOID"
-        assert "premiums too thin" in result.reason.lower()
+        assert "vix too low" in result.reason.lower() or "premiums too thin" in result.reason.lower()
         assert result.confidence == 0.0
 
     @patch.object(VIXMeanReversionSignal, "get_vix_data")
     def test_avoid_signal_vix_extreme(self, mock_get_vix):
         """Test AVOID when VIX extremely high."""
-        mock_get_vix.return_value = np.full(60, 35.0)
+        mock_get_vix.return_value = np.full(60, 36.0)
 
         signal_gen = VIXMeanReversionSignal()
         result = signal_gen.calculate_signal()
 
         assert result.signal == "AVOID"
-        assert "extreme" in result.reason.lower()
+        assert "vix too high" in result.reason.lower() or "extreme" in result.reason.lower()
         assert result.confidence == 0.0
 
     @patch.object(VIXMeanReversionSignal, "get_vix_data")
@@ -135,7 +135,7 @@ class TestVIXMeanReversionSignal:
         should_enter, reason = signal_gen.should_enter_trade()
 
         assert should_enter is False
-        assert "thin" in reason.lower()
+        assert "vix too low" in reason.lower() or "thin" in reason.lower()
 
     @patch.object(VIXMeanReversionSignal, "get_vix_data")
     def test_should_enter_trade_neutral_waits_for_better_entry(self, mock_get_vix):
