@@ -133,18 +133,18 @@
     "cash": 95751.39
   },
   "paper_account": {
-    "equity": 95440.39,
-    "cash": 95751.39,
+    "equity": 95442.18,
+    "cash": 95442.18,
     "buying_power": 189502.78,
     "total_pl": -4559.610000000001,
     "total_pl_pct": -4.559610000000001,
     "positions_count": 4,
-    "daily_change": 184.92,
+    "daily_change": -10.08,
     "win_rate": 100.0,
     "win_rate_sample_size": 1,
     "starting_balance": 100000.0,
-    "current_equity": 95440.39,
-    "last_equity": 95255.47
+    "current_equity": 95442.18,
+    "last_equity": 95452.26
   },
   "positions": [
     {
@@ -2540,10 +2540,14 @@
   ],
   "trades_loaded": 196,
   "trades": {
-    "last_trade_date": "2026-03-24",
-    "today_trades": 2,
-    "total_trades_today": 2,
-    "last_trade_symbol": "SPY260430C00700000"
+    "last_trade_date": "2026-03-25",
+    "today_trades": 4,
+    "total_trades_today": 4,
+    "last_trade_symbol": "SYNCED",
+    "metrics_date": "2026-03-25",
+    "orders_today": 4,
+    "structures_today": 0,
+    "fills_today": 4
   },
   "risk": {
     "status": "WARNING - NEGATIVE P/L",
@@ -2573,14 +2577,14 @@
     "buying_power": 189502.78
   },
   "meta": {
-    "last_updated": "2026-03-24T21:41:31.759530+00:00",
+    "last_updated": "2026-03-25T14:06:00.990604+00:00",
     "trade_sync": "alpaca_api",
     "sync_frequency_minutes": 5,
     "last_sync_attempt": "2026-03-24T21:41:31.759530+00:00",
     "alpaca_keys_present": true,
     "last_sync": "2026-03-24T21:41:31.758601",
     "sync_mode": "paper",
-    "last_daily_verification_at": "2026-02-27T14:56:48.028928+00:00"
+    "last_daily_verification_at": "2026-03-25T14:06:01.649026+00:00"
   },
   "paper_trading": {
     "start_date": "2026-01-30",
