@@ -131,11 +131,42 @@ def _today_et_str() -> str:
         return datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
 
-def _count_structures_today_from_trade_file(date_str: str) -> int:
-    # Unit tests should not depend on local repo trade files.
+def _count_structures_today_from_alpaca() -> int:
+    """Count today's IC entries from Alpaca order history (works in CI and local).
+
+    Counts multi-leg orders filled today as 1 structure each.
+    Falls back to local trade file if Alpaca is unavailable.
+    """
     if os.environ.get("PYTEST_CURRENT_TEST"):
         return 0
 
+    try:
+        from src.utils.alpaca_client import get_alpaca_credentials
+
+        api_key, api_secret, is_paper = get_alpaca_credentials()
+        if not api_key or not api_secret:
+            raise ValueError("No Alpaca credentials")
+
+        from alpaca.trading.client import TradingClient
+        from alpaca.trading.enums import QueryOrderStatus
+        from alpaca.trading.requests import GetOrdersRequest
+
+        client = TradingClient(api_key, api_secret, paper=is_paper)
+        today_str = _today_et_str()
+        orders = client.get_orders(GetOrdersRequest(
+            status=QueryOrderStatus.FILLED,
+            after=f"{today_str}T00:00:00Z",
+            limit=100,
+        ))
+        # Count multi-leg orders (iron condors) filled today
+        structures = sum(1 for o in orders if o.legs and len(o.legs) >= 4)
+        logger.info(f"Alpaca structure count today: {structures} (from {len(orders)} filled orders)")
+        return structures
+    except Exception as exc:
+        logger.warning("Alpaca structure count failed (%s), falling back to trade file", exc)
+
+    # Fallback: local trade file
+    date_str = _today_et_str()
     trades_path = Path(__file__).parent.parent.parent / "data" / f"trades_{date_str}.json"
     if not trades_path.exists():
         return 0
@@ -208,7 +239,7 @@ def _load_intraday_metrics(context: dict[str, Any] | None = None) -> dict[str, f
 
     fills_today = 0
     orders_today = 0
-    structures_today = _count_structures_today_from_trade_file(today)
+    structures_today = _count_structures_today_from_alpaca()
     daily_pnl: float | None = None
 
     if _SYSTEM_STATE_PATH.exists():
