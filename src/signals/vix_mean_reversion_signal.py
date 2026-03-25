@@ -77,6 +77,7 @@ class VIXMeanReversionSignal:
         logger.info("VIXMeanReversionSignal initialized")
         self._cache: dict = {}
         from src.data.iv_data_provider import get_iv_data_provider
+
         self.iv_provider = get_iv_data_provider()
 
     def get_vix_data(self, lookback_days: int = 60) -> Optional[np.ndarray]:
@@ -107,13 +108,13 @@ class VIXMeanReversionSignal:
         """Calculate 20-day annualized realized volatility for SPY."""
         try:
             spy = yf.Ticker("SPY")
-            hist = spy.history(period=f"{lookback+5}d")
+            hist = spy.history(period=f"{lookback + 5}d")
             returns = np.log(hist["Close"] / hist["Close"].shift(1)).dropna()
             realized_vol = returns.std() * np.sqrt(252)
             return float(realized_vol)
         except Exception as e:
             logger.warning(f"Failed to calculate RV: {e}")
-            return 0.20 # Fallback
+            return 0.20  # Fallback
 
     def calculate_signal(self) -> VIXSignal:
         """
@@ -151,14 +152,14 @@ class VIXMeanReversionSignal:
 
         iv_rv_spread = current_iv - realized_vol
         if iv_rv_spread < self.IV_RV_PREMIUM_THRESHOLD:
-             return VIXSignal(
+            return VIXSignal(
                 signal="AVOID",
                 current_vix=current_vix,
                 vix_3day_ma=0.0,
                 recent_high=0.0,
                 threshold=0.0,
                 reason=f"Insufficient risk premium: IV({current_iv:.1%}) - RV({realized_vol:.1%}) = {iv_rv_spread:.1%} < {self.IV_RV_PREMIUM_THRESHOLD:.1%}",
-                confidence=0.0
+                confidence=0.0,
             )
 
         # 3-day moving average (smooths noise)

@@ -77,7 +77,9 @@ class TestVIXMeanReversionSignal:
         result = signal_gen.calculate_signal()
 
         assert result.signal == "AVOID"
-        assert "vix too low" in result.reason.lower() or "premiums too thin" in result.reason.lower()
+        assert (
+            "vix too low" in result.reason.lower() or "premiums too thin" in result.reason.lower()
+        )
         assert result.confidence == 0.0
 
     @patch.object(VIXMeanReversionSignal, "get_vix_data")
