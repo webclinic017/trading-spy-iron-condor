@@ -347,7 +347,10 @@ def _calculate_mid(bid: float | None, ask: float | None, snapshot: object) -> fl
 
 
 def _extract_delta(
-    snapshot: object, parsed: _ParsedOcc, mid: float | None, iv: float | None,
+    snapshot: object,
+    parsed: _ParsedOcc,
+    mid: float | None,
+    iv: float | None,
     underlying_price: float | None = None,
 ) -> float | None:
     greeks = getattr(snapshot, "greeks", None)
