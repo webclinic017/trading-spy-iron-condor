@@ -79,27 +79,27 @@ class TestIronCondorLegs:
 
 
 class TestCalculateStrikes:
-    """Test strike calculation logic."""
+    """Test strike calculation logic (heuristic fallback path)."""
+
+    def _strikes(self, price):
+        """Calculate strikes with chain mocked to force heuristic."""
+        strategy = IronCondorStrategy()
+        with patch("src.markets.option_chain._select_from_live_chain", side_effect=ValueError("test")):
+            return strategy.calculate_strikes(price)
 
     def test_strikes_for_spy_at_690(self):
-        """Strike calculation at SPY ~690."""
-        strategy = IronCondorStrategy()
-        long_put, short_put, short_call, long_call = strategy.calculate_strikes(690.0)
+        """Strike calculation at SPY ~690 (heuristic)."""
+        long_put, short_put, short_call, long_call = self._strikes(690.0)
 
-        # Short put should be ~5% below price, rounded to $5
         assert short_put == round(690.0 * 0.95 / 5) * 5  # 655.5 -> 655
         assert long_put == short_put - 10  # $10 wing width
-
-        # Short call should be ~5% above price, rounded to $5
         assert short_call == round(690.0 * 1.05 / 5) * 5  # 724.5 -> 725
         assert long_call == short_call + 10
 
     def test_strikes_rounded_to_5_dollar_increments(self):
         """SPY options only exist at $5 increments for OTM options."""
-        strategy = IronCondorStrategy()
-        long_put, short_put, short_call, long_call = strategy.calculate_strikes(593.0)
+        long_put, short_put, short_call, long_call = self._strikes(593.0)
 
-        # All strikes must be multiples of $5
         assert short_put % 5 == 0, f"Short put {short_put} is not a $5 multiple"
         assert long_put % 5 == 0, f"Long put {long_put} is not a $5 multiple"
         assert short_call % 5 == 0, f"Short call {short_call} is not a $5 multiple"
@@ -107,17 +107,13 @@ class TestCalculateStrikes:
 
     def test_wing_width_matches_config(self):
         """Wing width should match config (default $10)."""
-        strategy = IronCondorStrategy()
-        long_put, short_put, short_call, long_call = strategy.calculate_strikes(700.0)
-
-        assert short_put - long_put == strategy.config["wing_width"]
-        assert long_call - short_call == strategy.config["wing_width"]
+        long_put, short_put, short_call, long_call = self._strikes(700.0)
+        assert short_put - long_put == 10
+        assert long_call - short_call == 10
 
     def test_strike_ordering(self):
         """Strikes must be ordered: LP < SP < SC < LC."""
-        strategy = IronCondorStrategy()
-        long_put, short_put, short_call, long_call = strategy.calculate_strikes(700.0)
-
+        long_put, short_put, short_call, long_call = self._strikes(700.0)
         assert long_put < short_put < short_call < long_call
 
 

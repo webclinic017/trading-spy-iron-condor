@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 DELTA_TARGET = 0.15
 DELTA_MIN = 0.10
 DELTA_MAX = 0.22
-MIN_OPEN_INTEREST = 50
+MIN_OPEN_INTEREST = 0  # OI=0 normal for newer expiries
 MIN_BID = 0.05
 
 

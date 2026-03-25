@@ -225,6 +225,23 @@ class IronCondorStrategy:
             (long_put, short_put, short_call, long_call), self.config["target_dte"]
         )
 
+        # GUARD: Never enter a net-debit iron condor (Phil Town Rule #1)
+        if premiums["credit"] <= 0:
+            logger.error(
+                f"BLOCKED: Net-debit IC (credit=${premiums['credit']:.2f}). "
+                f"This would lose money from the start."
+            )
+            return None
+
+        # GUARD: Minimum credit threshold ($0.50 per IC)
+        min_credit = 0.50
+        if premiums["credit"] < min_credit:
+            logger.warning(
+                f"BLOCKED: Credit ${premiums['credit']:.2f} < ${min_credit:.2f} minimum. "
+                f"Not enough premium to justify the risk."
+            )
+            return None
+
         return IronCondorLegs(
             underlying=self.config["underlying"],
             expiry=expiry_date.strftime("%Y-%m-%d"),
