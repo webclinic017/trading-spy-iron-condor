@@ -146,6 +146,19 @@ def check_exit_conditions(ic: dict) -> tuple[bool, str, str]:
     Check if iron condor meets exit conditions.
     Returns: (should_exit, reason, details)
     """
+    # Minimum holding period: 4 hours (prevent same-day churn)
+    entry_date = ic.get("entry_date")
+    if entry_date:
+        from datetime import datetime
+
+        try:
+            entry_dt = datetime.fromisoformat(entry_date)
+            hours_held = (datetime.now() - entry_dt).total_seconds() / 3600
+            if hours_held < 4:
+                return False, "HOLD", f"Held {hours_held:.1f}h < 4h minimum"
+        except (ValueError, TypeError):
+            pass
+
     dte = calculate_dte(ic["expiry"])
     pl = ic["total_pl"]
     credit = ic["credit_received"]

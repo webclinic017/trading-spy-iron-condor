@@ -764,6 +764,32 @@ class IronCondorStrategy:
                         logger.info(f"   Status: {order.status}")
                         status = "LIVE_SUBMITTED"
 
+                        # Save entry credit so Guardian knows the real entry price
+                        try:
+                            ic_entries_file = Path("data/ic_entries.json")
+                            ic_entries = {}
+                            if ic_entries_file.exists():
+                                ic_entries = json.loads(ic_entries_file.read_text())
+                            entry_key = f"IC_{ic.expiry.replace('-', '')}"
+                            ic_entries[entry_key] = {
+                                "credit": ic.credit_received,
+                                "date": datetime.now().isoformat(),
+                                "order_id": str(order.id),
+                                "strikes": {
+                                    "short_put": ic.short_put,
+                                    "short_call": ic.short_call,
+                                    "long_put": ic.long_put,
+                                    "long_call": ic.long_call,
+                                },
+                            }
+                            ic_entries_file.write_text(json.dumps(ic_entries, indent=2))
+                            logger.info(
+                                f"   Saved entry credit ${ic.credit_received:.2f} "
+                                f"to ic_entries.json (key={entry_key})"
+                            )
+                        except Exception as e:
+                            logger.warning(f"   Failed to save entry credit: {e}")
+
                     except Exception as mleg_error:
                         logger.error(f"❌ MLeg order failed: {mleg_error}")
                         logger.error("   Iron condor NOT placed - no partial fills")

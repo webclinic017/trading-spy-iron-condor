@@ -282,6 +282,24 @@ def run_guardian():
         max_profit = entry_credit * 100
         logger.info(f"  Current P/L: ${pnl:.2f} (max profit: ${max_profit:.2f})")
 
+        # CHECK 0: Minimum holding period (prevent same-day churn)
+        # Entry date from ic_entries.json or default to now (skip if unknown)
+        entry_date_str = entries.get(entry_key, {}).get("date")
+        if entry_date_str:
+            from datetime import datetime as dt
+
+            try:
+                entry_dt = dt.fromisoformat(entry_date_str)
+                hours_held = (dt.now() - entry_dt).total_seconds() / 3600
+                if hours_held < 4:
+                    logger.info(
+                        f"  ⏳ Position held {hours_held:.1f}h < 4h minimum. "
+                        f"Skipping exit checks (let theta work)."
+                    )
+                    continue
+            except (ValueError, TypeError):
+                pass  # If date is unparseable, proceed with checks
+
         # CHECK 1: DTE Exit (7 days)
         if dte <= MIN_DTE:
             close_iron_condor(client, ic_data, f"DTE={dte} <= {MIN_DTE} (gamma risk)", expiry, pnl)
