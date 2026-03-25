@@ -160,8 +160,8 @@ class TestCalculateIcPnl:
         entry_credit = 2.04
         _, pnl = guardian.calculate_ic_pnl(ic_data, entry_credit)
         # All at 0.01: current_value = (0.01*2*100 + 0.01*2*100) - (0.01*2*100 + 0.01*2*100) = 0
-        # pnl = 204 + 0 = 204 (full credit captured)
-        assert pnl == pytest.approx(204.0, abs=1.0)
+        # pnl = 2.04 * 2 * 100 + 0 = 408 (full credit captured, 2 contracts)
+        assert pnl == pytest.approx(408.0, abs=1.0)
 
     def test_loss_when_short_side_tested(self, guardian):
         """When short put goes deep ITM, we have a large loss."""
@@ -178,8 +178,8 @@ class TestCalculateIcPnl:
         # shorts: -(15*2*100 + 0.05*2*100) = -3010
         # longs: +(8*2*100 + 0.01*2*100) = 1602
         # current_value = -3010 + 1602 = -1408
-        # pnl = 204 + (-1408) = -1204
-        assert pnl < -1000
+        # pnl = 2.04*2*100 + (-1408) = 408 - 1408 = -1000
+        assert pnl <= -1000
 
 
 # ===========================================================================
