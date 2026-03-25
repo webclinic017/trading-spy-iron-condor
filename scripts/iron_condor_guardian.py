@@ -109,19 +109,29 @@ def calculate_ic_pnl(ic_data: dict, entry_credit: float) -> tuple[float, float]:
     """Calculate current P/L for an iron condor.
 
     Returns: (current_value, pnl)
+
+    Note: entry_credit is per-share, but current_value sums across all contracts.
+    We must scale entry_credit by the total contract count to match dimensions.
     """
     current_value = 0
+    contract_count = 0
     for pos in ic_data["positions"]:
         # Short positions: we received premium, now we'd pay to close
         # Long positions: we paid premium, now we'd receive to close
         if pos["qty"] < 0:  # Short
             current_value -= pos["current"] * abs(pos["qty"]) * 100
+            contract_count = max(contract_count, abs(pos["qty"]))
         else:  # Long
             current_value += pos["current"] * abs(pos["qty"]) * 100
+            contract_count = max(contract_count, abs(pos["qty"]))
+
+    # Scale entry_credit by contract count (entry_credit is per-share, current_value is total)
+    if contract_count == 0:
+        contract_count = 1
 
     # P/L = entry_credit - current_value_to_close
     # If current_value is negative (costs to close), we profit
-    pnl = entry_credit * 100 + current_value
+    pnl = entry_credit * contract_count * 100 + current_value
     return current_value, pnl
 
 
