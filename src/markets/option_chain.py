@@ -275,9 +275,7 @@ def _select_from_live_chain(
 # ---------------------------------------------------------------------------
 
 
-def _heuristic_fallback(
-    price: float, wing_width: float, expiry_date: datetime
-) -> StrikeSelection:
+def _heuristic_fallback(price: float, wing_width: float, expiry_date: datetime) -> StrikeSelection:
     """Fallback: 5% OTM rounded to $5 increments (SPY OTM strike spacing)."""
 
     def round_to_5(x: float) -> float:
@@ -339,9 +337,7 @@ def _get_quote_prices(snapshot: object) -> tuple[float | None, float | None]:
     return None, None
 
 
-def _calculate_mid(
-    bid: float | None, ask: float | None, snapshot: object
-) -> float | None:
+def _calculate_mid(bid: float | None, ask: float | None, snapshot: object) -> float | None:
     if bid and ask:
         return (bid + ask) / 2
     trade = getattr(snapshot, "latest_trade", None)
@@ -364,14 +360,21 @@ def _extract_delta(
     if t_years <= 0:
         return None
     return _black_scholes_delta(
-        spot=mid, strike=parsed.strike, t_years=t_years, iv=iv,
+        spot=mid,
+        strike=parsed.strike,
+        t_years=t_years,
+        iv=iv,
         option_type=parsed.option_type,
     )
 
 
 def _black_scholes_delta(
-    spot: float, strike: float, t_years: float, iv: float,
-    option_type: str, r: float = 0.05,
+    spot: float,
+    strike: float,
+    t_years: float,
+    iv: float,
+    option_type: str,
+    r: float = 0.05,
 ) -> float:
     if iv <= 0 or t_years <= 0 or spot <= 0:
         return 0.0

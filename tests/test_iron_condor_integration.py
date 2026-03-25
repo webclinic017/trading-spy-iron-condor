@@ -70,7 +70,11 @@ class TestIronCondorSuccessfulEntry:
         trace = trade["decision_trace"]
         assert "captured_at" in trace
         assert "strike_selection" in trace
-        assert trace["strike_selection"]["method"] in ("live_delta", "heuristic_fallback", "unknown")
+        assert trace["strike_selection"]["method"] in (
+            "live_delta",
+            "heuristic_fallback",
+            "unknown",
+        )
 
     @patch("scripts.iron_condor_trader.acquire_trade_lock")
     @patch("scripts.iron_condor_trader.LessonsLearnedRAG")
