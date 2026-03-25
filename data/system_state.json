@@ -2505,7 +2505,11 @@
     "last_trade_date": "2026-03-25",
     "today_trades": 4,
     "total_trades_today": 4,
-    "last_trade_symbol": "SPY260424P00625000"
+    "last_trade_symbol": "SYNCED",
+    "metrics_date": "2026-03-25",
+    "orders_today": 4,
+    "structures_today": 0,
+    "fills_today": 4
   },
   "risk": {
     "status": "WARNING - NEGATIVE P/L",
@@ -2535,14 +2539,14 @@
     "buying_power": 190884.36
   },
   "meta": {
-    "last_updated": "2026-03-25T14:47:20.714468+00:00",
+    "last_updated": "2026-03-25T14:58:31.905391+00:00",
     "trade_sync": "alpaca_api",
     "sync_frequency_minutes": 5,
     "last_sync_attempt": "2026-03-25T14:47:20.714468+00:00",
     "alpaca_keys_present": true,
     "last_sync": "2026-03-25T14:47:20.713366",
     "sync_mode": "paper",
-    "last_daily_verification_at": "2026-03-25T14:06:01.649026+00:00"
+    "last_daily_verification_at": "2026-03-25T14:58:32.591868+00:00"
   },
   "paper_trading": {
     "start_date": "2026-01-30",
