@@ -1,8 +1,8 @@
 """Trading Constants - Single Source of Truth."""
 
 from __future__ import annotations
+
 import re
-from datetime import date
 
 ALLOWED_TICKERS: set[str] = {"SPY", "SPX", "XSP", "QQQ", "IWM"}
 MAX_POSITION_PCT: float = 0.05
@@ -21,7 +21,7 @@ IC_PROFIT_TARGET_PCT: float = 0.50
 MAX_EXPIRY_CONCENTRATION_PCT: float = 0.40
 FOMO_INTRADAY_MOVE_PCT: float = 0.02
 STOP_LOSS_COOLING_HOURS: int = 24
-MAX_DAILY_STRUCTURES: int = 1
+MAX_DAILY_STRUCTURES: int = 2  # Raised from 1 to reach 30-trade validation
 MAX_DAILY_FILLS: int = 20
 MIN_DTE: int = 30
 MAX_DTE: int = 45
@@ -38,7 +38,9 @@ _OCC_PATTERN = re.compile(r"^([A-Z]{1,6})(\d{6})[PC](\d{8})$")
 
 def extract_underlying(symbol: str) -> str:
     symbol = symbol.strip().upper()
-    if len(symbol) <= 6: return symbol
+    if len(symbol) <= 6:
+        return symbol
     match = _OCC_PATTERN.match(symbol)
-    if match: return match.group(1)
+    if match:
+        return match.group(1)
     return symbol

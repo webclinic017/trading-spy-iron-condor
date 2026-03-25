@@ -34,8 +34,7 @@ from typing import Optional
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from dotenv import load_dotenv
-from src.core.trading_constants import IC_PROFIT_TARGET_PCT
-from src.core.trading_constants import MAX_POSITIONS as MAX_OPTION_LEGS
+from src.core.trading_constants import IC_PROFIT_TARGET_PCT, MAX_POSITIONS as MAX_OPTION_LEGS
 from src.orchestrator.telemetry import OrchestratorTelemetry
 from src.rag.lessons_learned_rag import LessonsLearnedRAG
 from src.safety.mandatory_trade_gate import safe_submit_order
