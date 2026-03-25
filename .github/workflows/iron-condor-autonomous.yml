@@ -112,19 +112,48 @@ jobs:
           import sys
           sys.path.insert(0, '.')
 
-          from scripts.iron_condor_scanner import scan_for_opportunity
-          result = scan_for_opportunity(dry_run=False)
+          # Use real delta-based strike selection (replaces scanner heuristic)
+          from src.markets.option_chain import select_strikes_by_delta
+          from alpaca.data.historical import StockHistoricalDataClient
+          from alpaca.data.requests import StockLatestQuoteRequest
 
-          if result:
-              print(f"✅ Opportunity found: {result['expiry']}")
+          api_key = os.environ.get('ALPACA_PAPER_TRADING_API_KEY')
+          secret = os.environ.get('ALPACA_PAPER_TRADING_API_SECRET')
+
+          data_client = StockHistoricalDataClient(api_key, secret)
+          quote = data_client.get_stock_latest_quote(StockLatestQuoteRequest(symbol_or_symbols=["SPY"]))
+          spy_price = (quote["SPY"].ask_price + quote["SPY"].bid_price) / 2
+          print(f"SPY price: ${spy_price:.2f}")
+
+          selection = select_strikes_by_delta(
+              underlying_price=spy_price, wing_width=10.0,
+              target_delta=0.15, target_dte=30, min_dte=21, max_dte=45,
+          )
+          print(f"Method: {selection.method} | SP={selection.short_put} SC={selection.short_call}")
+
+          est_credit = selection.put_bid + selection.call_bid
+          if selection.method == "heuristic_fallback":
+              est_credit = 1.50
+
+          if est_credit < 0.50:
+              print(f"Credit ${est_credit:.2f} too thin. Skipping.")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write('found=false\n')
+          else:
+              result = {
+                  "expiry": selection.expiry,
+                  "strikes": {
+                      "long_put": selection.long_put, "short_put": selection.short_put,
+                      "short_call": selection.short_call, "long_call": selection.long_call,
+                  },
+                  "method": selection.method,
+                  "est_credit": est_credit,
+              }
+              print(f"✅ Opportunity: {selection.expiry} credit=${est_credit:.2f}")
               with open('opportunity.json', 'w') as f:
                   json.dump(result, f)
               with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
                   f.write('found=true\n')
-          else:
-              print("No opportunity found")
-              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-                  f.write('found=false\n')
           PYTHON
 
       - name: Execute trade (AUTONOMOUS)

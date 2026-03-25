@@ -130,13 +130,27 @@ def group_iron_condors(positions: list[dict]) -> list[dict]:
         by_expiry[expiry_key]["legs"].append(pos)
         by_expiry[expiry_key]["total_pl"] += pos["unrealized_pl"]
 
-    # Calculate credit received (sum of entry prices for short legs)
+    # Calculate credit received and populate entry_date from ic_entries.json
+    ic_entries = {}
+    ic_entries_path = Path(__file__).parent.parent / "data" / "ic_entries.json"
+    try:
+        if ic_entries_path.exists():
+            ic_entries = json.loads(ic_entries_path.read_text())
+    except Exception:
+        pass
+
     for ic in by_expiry.values():
         credit = 0
         for leg in ic["legs"]:
             if leg["qty"] < 0:  # Short leg
                 credit += abs(leg["avg_entry_price"] * leg["qty"] * 100)
         ic["credit_received"] = credit
+
+        # Populate entry_date so 4-hour holding period works
+        expiry_yymmdd = ic["expiry_str"].replace("-", "")[2:]
+        entry_key = f"IC_{expiry_yymmdd}"
+        if entry_key in ic_entries:
+            ic["entry_date"] = ic_entries[entry_key].get("date")
 
     return list(by_expiry.values())
 

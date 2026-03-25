@@ -347,20 +347,22 @@ def _calculate_mid(bid: float | None, ask: float | None, snapshot: object) -> fl
 
 
 def _extract_delta(
-    snapshot: object, parsed: _ParsedOcc, mid: float | None, iv: float | None
+    snapshot: object, parsed: _ParsedOcc, mid: float | None, iv: float | None,
+    underlying_price: float | None = None,
 ) -> float | None:
     greeks = getattr(snapshot, "greeks", None)
     delta = getattr(greeks, "delta", None) if greeks else None
     if delta is not None:
         return float(delta)
-    # Black-Scholes fallback if broker didn't provide greeks
-    if mid is None or iv is None or iv <= 0:
+    # Black-Scholes fallback — needs underlying price, NOT option mid
+    # If underlying_price not available, skip BS (wrong spot = wrong delta)
+    if underlying_price is None or iv is None or iv <= 0:
         return None
     t_years = max((parsed.expiry - datetime.now().date()).days, 0) / 365
     if t_years <= 0:
         return None
     return _black_scholes_delta(
-        spot=mid,
+        spot=underlying_price,
         strike=parsed.strike,
         t_years=t_years,
         iv=iv,

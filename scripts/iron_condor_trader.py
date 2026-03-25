@@ -770,7 +770,7 @@ class IronCondorStrategy:
                             ic_entries = {}
                             if ic_entries_file.exists():
                                 ic_entries = json.loads(ic_entries_file.read_text())
-                            entry_key = f"IC_{ic.expiry.replace('-', '')}"
+                            entry_key = f"IC_{ic.expiry.replace('-', '')[2:]}"  # YYMMDD to match Guardian
                             ic_entries[entry_key] = {
                                 "credit": ic.credit_received,
                                 "date": datetime.now().isoformat(),
