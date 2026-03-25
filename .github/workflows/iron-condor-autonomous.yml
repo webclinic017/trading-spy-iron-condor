@@ -230,11 +230,15 @@ jobs:
                   ic_entries = json.load(f)
           except (FileNotFoundError, json.JSONDecodeError):
               ic_entries = {}
-          credit = abs(float(order.filled_avg_price)) if order.filled_avg_price else 2.00
+          from datetime import datetime as dt
+          fill_price = float(order.filled_avg_price) if order.filled_avg_price else None
+          if fill_price is not None and fill_price > 0:
+              print(f"WARNING: MLEG filled at DEBIT ${fill_price:.2f}")
+          credit = abs(fill_price) if fill_price else 0.0
           ic_entries[expiry_key] = {
               "credit": credit,
               "order_id": str(order.id),
-              "date": opp.get("timestamp", ""),
+              "date": dt.now().isoformat(),
               "strikes": strikes,
           }
           with open(entries_file, 'w') as f:
