@@ -2,12 +2,14 @@ name: IC Simple
 
 on:
   schedule:
-    # Entry scan: 10:00 AM ET (14:00 UTC winter, 14:00 covers both)
+    # Entry + exit: 10:00 AM ET (14:00 UTC)
     - cron: "0 14 * * 1-5"
     # Exit check: 2:00 PM ET (18:00 UTC)
     - cron: "0 18 * * 1-5"
     # EOD exit check: 3:30 PM ET (19:30 UTC)
     - cron: "30 19 * * 1-5"
+    # Weekend learning: Saturday 10:00 AM ET (14:00 UTC)
+    - cron: "0 14 * * 6"
   workflow_dispatch:
     inputs:
       mode:
@@ -45,13 +47,16 @@ jobs:
           MODE="${{ github.event.inputs.mode || 'both' }}"
           DRY="${{ github.event.inputs.dry_run || 'false' }}"
 
-          # On schedule: 14:00=entry+exit, 18:00=exit, 19:30=exit
+          # On schedule: determine mode by time and day
           HOUR=$(date -u +%H)
+          DOW=$(date -u +%u)  # 1=Mon, 6=Sat, 7=Sun
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            if [ "$HOUR" = "14" ]; then
-              MODE="both"
+            if [ "$DOW" = "6" ]; then
+              MODE="learn"  # Saturday = weekend learning
+            elif [ "$HOUR" = "14" ]; then
+              MODE="both"   # 10 AM ET = entry + exit
             else
-              MODE="exit"
+              MODE="exit"   # 2 PM / 3:30 PM = exit only
             fi
           fi
 

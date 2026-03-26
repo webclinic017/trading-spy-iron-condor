@@ -254,6 +254,7 @@ def check_exits(client):
         if reason:
             logger.warning(f"EXIT IC {expiry}: {reason}")
             _close_ic(client, legs, contract_count)
+            _record_lesson(expiry, entry_credit, pnl, reason, dte, contract_count)
         else:
             logger.info(
                 f"IC {expiry}: HOLD. Target=${max_profit * PROFIT_TARGET:.2f} Stop=-${max_profit * STOP_LOSS:.2f}"
@@ -306,6 +307,222 @@ def _close_ic(client, legs: list[dict], qty: int):
                 logger.error(f"Failed to close {leg['symbol']}: {le}")
 
 
+# ── Learning: RAG + Trade Journal + Stats ────────────────────────────────────
+
+JOURNAL_FILE = Path(__file__).parent.parent / "data" / "trade_journal.jsonl"
+LESSONS_DIR = Path(__file__).parent.parent / "data" / "rag_knowledge" / "lessons_learned"
+
+
+def _record_lesson(expiry: str, credit: float, pnl: float, reason: str, dte: int, qty: int):
+    """Record trade outcome to journal + RAG after every close."""
+    outcome = "WIN" if pnl > 0 else "LOSS"
+    pnl_pct = (pnl / (credit * qty * 100)) * 100 if credit > 0 else 0
+
+    # 1. Trade journal (append-only JSONL)
+    entry = {
+        "timestamp": datetime.now().isoformat(),
+        "expiry": expiry,
+        "credit_per_share": credit,
+        "qty": qty,
+        "pnl": round(pnl, 2),
+        "pnl_pct": round(pnl_pct, 1),
+        "outcome": outcome,
+        "exit_reason": reason,
+        "dte_at_exit": dte,
+    }
+    try:
+        JOURNAL_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(JOURNAL_FILE, "a") as f:
+            f.write(json.dumps(entry) + "\n")
+        logger.info(f"Journal: {outcome} ${pnl:+.2f} ({pnl_pct:+.1f}%) | {reason}")
+    except Exception as e:
+        logger.warning(f"Failed to write journal: {e}")
+
+    # 2. RAG lesson (one markdown file per trade)
+    lesson_id = f"IC_{expiry}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+    lesson = f"""# Trade Exit: {outcome} ${pnl:+.2f}
+
+- **Expiry**: {expiry}
+- **Credit**: ${credit:.2f}/share x {qty} contracts
+- **P/L**: ${pnl:+.2f} ({pnl_pct:+.1f}%)
+- **Exit Reason**: {reason}
+- **DTE at Exit**: {dte}
+- **Date**: {datetime.now().strftime('%Y-%m-%d %H:%M')}
+
+## Lesson
+{"Position hit profit target — theta decay worked as expected." if "PROFIT" in reason else ""}{"Position hit stop loss — market moved against us." if "STOP" in reason else ""}{"Exited at DTE threshold to avoid gamma risk." if "DTE" in reason else ""}
+"""
+    try:
+        LESSONS_DIR.mkdir(parents=True, exist_ok=True)
+        (LESSONS_DIR / f"{lesson_id}.md").write_text(lesson)
+        logger.info(f"RAG lesson saved: {lesson_id}")
+    except Exception as e:
+        logger.warning(f"Failed to write RAG lesson: {e}")
+
+    # 3. Update cumulative stats
+    _update_stats(entry)
+
+
+def _update_stats(trade: dict):
+    """Update running win rate and P/L stats."""
+    stats_file = Path(__file__).parent.parent / "data" / "ic_stats.json"
+    try:
+        stats = json.loads(stats_file.read_text()) if stats_file.exists() else {
+            "total": 0, "wins": 0, "losses": 0,
+            "total_pnl": 0, "avg_win": 0, "avg_loss": 0,
+            "win_pnls": [], "loss_pnls": [],
+        }
+    except Exception:
+        stats = {"total": 0, "wins": 0, "losses": 0, "total_pnl": 0,
+                 "avg_win": 0, "avg_loss": 0, "win_pnls": [], "loss_pnls": []}
+
+    stats["total"] += 1
+    stats["total_pnl"] = round(stats["total_pnl"] + trade["pnl"], 2)
+
+    if trade["pnl"] > 0:
+        stats["wins"] += 1
+        stats["win_pnls"].append(trade["pnl"])
+        stats["avg_win"] = round(sum(stats["win_pnls"]) / len(stats["win_pnls"]), 2)
+    else:
+        stats["losses"] += 1
+        stats["loss_pnls"].append(trade["pnl"])
+        stats["avg_loss"] = round(sum(stats["loss_pnls"]) / len(stats["loss_pnls"]), 2)
+
+    stats["win_rate"] = round(stats["wins"] / stats["total"] * 100, 1) if stats["total"] > 0 else 0
+    stats["profit_factor"] = round(
+        abs(sum(stats["win_pnls"])) / abs(sum(stats["loss_pnls"])), 2
+    ) if stats["loss_pnls"] and sum(stats["loss_pnls"]) != 0 else 999.0
+
+    stats_file.write_text(json.dumps(stats, indent=2))
+    logger.info(
+        f"Stats: {stats['total']} trades | {stats['win_rate']}% win rate | "
+        f"PF={stats['profit_factor']} | Total P/L=${stats['total_pnl']:+.2f}"
+    )
+
+
+# ── Report + Weekend Learning ────────────────────────────────────────────────
+
+def _print_report():
+    """Print full performance report from trade journal."""
+    stats_file = Path(__file__).parent.parent / "data" / "ic_stats.json"
+    if not stats_file.exists():
+        logger.info("No stats yet. Complete trades to build data.")
+        return
+
+    stats = json.loads(stats_file.read_text())
+    logger.info("=" * 60)
+    logger.info("PERFORMANCE REPORT")
+    logger.info("=" * 60)
+    logger.info(f"Total trades:   {stats.get('total', 0)}")
+    logger.info(f"Wins:           {stats.get('wins', 0)}")
+    logger.info(f"Losses:         {stats.get('losses', 0)}")
+    logger.info(f"Win rate:       {stats.get('win_rate', 0):.1f}%")
+    logger.info(f"Profit factor:  {stats.get('profit_factor', 0):.2f}")
+    logger.info(f"Total P/L:      ${stats.get('total_pnl', 0):+,.2f}")
+    logger.info(f"Avg win:        ${stats.get('avg_win', 0):+,.2f}")
+    logger.info(f"Avg loss:       ${stats.get('avg_loss', 0):+,.2f}")
+
+    needed = 30 - stats.get("total", 0)
+    if needed > 0:
+        logger.info(f"\nNeed {needed} more trades for statistical significance.")
+    else:
+        wr = stats.get("win_rate", 0)
+        if wr >= 80:
+            logger.info("\n80%+ win rate VALIDATED. Strategy is working.")
+        elif wr >= 70:
+            logger.info("\n70-80% win rate. Marginal — review delta selection.")
+        else:
+            logger.info(f"\n{wr}% win rate. Below target. Reassess strategy.")
+
+    # Print recent trades from journal
+    if JOURNAL_FILE.exists():
+        lines = JOURNAL_FILE.read_text().strip().split("\n")
+        logger.info("\nLast 5 trades:")
+        for line in lines[-5:]:
+            trade = json.loads(line)
+            logger.info(
+                f"  {trade['expiry']} | {trade['outcome']} ${trade['pnl']:+.2f} "
+                f"({trade['pnl_pct']:+.1f}%) | {trade['exit_reason']}"
+            )
+
+
+def _weekend_learn():
+    """Weekend learning: analyze all closed trades, extract patterns, update strategy.
+
+    Run this on Saturday/Sunday to review the week's performance.
+    """
+    logger.info("=" * 60)
+    logger.info("WEEKEND LEARNING SESSION")
+    logger.info("=" * 60)
+
+    if not JOURNAL_FILE.exists():
+        logger.info("No trade journal yet. Nothing to learn from.")
+        return
+
+    lines = JOURNAL_FILE.read_text().strip().split("\n")
+    trades = [json.loads(line) for line in lines if line.strip()]
+
+    if not trades:
+        logger.info("No trades to analyze.")
+        return
+
+    # Analyze patterns
+    wins = [t for t in trades if t["pnl"] > 0]
+    losses = [t for t in trades if t["pnl"] <= 0]
+
+    logger.info(f"Total trades: {len(trades)}")
+    logger.info(f"Wins: {len(wins)} | Losses: {len(losses)}")
+
+    # Exit reason analysis
+    exit_reasons = {}
+    for trade in trades:
+        reason_type = "PROFIT" if "PROFIT" in trade["exit_reason"] else \
+                      "STOP" if "STOP" in trade["exit_reason"] else \
+                      "DTE" if "DTE" in trade["exit_reason"] else "OTHER"
+        if reason_type not in exit_reasons:
+            exit_reasons[reason_type] = {"count": 0, "total_pnl": 0}
+        exit_reasons[reason_type]["count"] += 1
+        exit_reasons[reason_type]["total_pnl"] += trade["pnl"]
+
+    logger.info("\nExit reason analysis:")
+    for reason, data in exit_reasons.items():
+        avg = data["total_pnl"] / data["count"] if data["count"] > 0 else 0
+        logger.info(f"  {reason}: {data['count']} trades, avg P/L=${avg:+.2f}")
+
+    # DTE analysis
+    if trades:
+        avg_dte = sum(t.get("dte_at_exit", 0) for t in trades) / len(trades)
+        logger.info(f"\nAvg DTE at exit: {avg_dte:.1f}")
+
+    # Generate weekly lesson
+    lesson_file = LESSONS_DIR / f"weekly_{datetime.now().strftime('%Y%m%d')}.md"
+    LESSONS_DIR.mkdir(parents=True, exist_ok=True)
+
+    total_pnl = sum(t["pnl"] for t in trades)
+    win_rate = len(wins) / len(trades) * 100 if trades else 0
+
+    lesson = f"""# Weekly Review — {datetime.now().strftime('%Y-%m-%d')}
+
+## Performance
+- Trades: {len(trades)} ({len(wins)}W / {len(losses)}L)
+- Win rate: {win_rate:.1f}%
+- Total P/L: ${total_pnl:+.2f}
+
+## Exit Analysis
+"""
+    for reason, data in exit_reasons.items():
+        avg = data["total_pnl"] / data["count"] if data["count"] > 0 else 0
+        lesson += f"- {reason}: {data['count']} trades, avg ${avg:+.2f}\n"
+
+    lesson += f"""
+## Recommendations
+{"- Strategy validated at {win_rate:.0f}% win rate" if win_rate >= 80 else ""}{"- Win rate {win_rate:.0f}% below 80% target — consider widening delta or tightening stops" if win_rate < 80 and trades else ""}
+{"- Need more data — only {len(trades)} trades so far" if len(trades) < 30 else ""}
+"""
+    lesson_file.write_text(lesson)
+    logger.info(f"\nWeekly lesson saved: {lesson_file.name}")
+
+
 # ── Helpers ──────────────────────────────────────────────────────────────────
 def _load_entries() -> dict:
     try:
@@ -332,7 +549,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Simple IC system")
-    parser.add_argument("--mode", choices=["entry", "exit", "both", "status"], default="both")
+    parser.add_argument("--mode", choices=["entry", "exit", "both", "status", "report", "learn"], default="both")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -400,6 +617,12 @@ def main():
         logger.info(f"Equity: ${float(account.equity):,.2f}")
         logger.info(f"Open ICs: {ic_count}/{MAX_IC}")
         logger.info(f"Today P/L: ${float(account.equity) - float(account.last_equity):+,.2f}")
+
+    if args.mode == "report":
+        _print_report()
+
+    if args.mode == "learn":
+        _weekend_learn()
 
     logger.info("\nDone.")
 
