@@ -102,7 +102,23 @@ def parse_ic_positions(positions) -> dict:
         else:
             ics[expiry]["calls"].append(pos_data)
 
-    return ics
+    # Validate IC completeness: must have balanced puts and calls
+    valid_ics = {}
+    for expiry, ic_data in ics.items():
+        n_puts = len(ic_data["puts"])
+        n_calls = len(ic_data["calls"])
+        n_short = sum(1 for p in ic_data["positions"] if p["qty"] < 0)
+        n_long = sum(1 for p in ic_data["positions"] if p["qty"] > 0)
+
+        if n_puts == 2 and n_calls == 2 and n_short == 2 and n_long == 2:
+            valid_ics[expiry] = ic_data
+        else:
+            logger.warning(
+                f"  ORPHAN legs for {expiry}: {n_puts}P {n_calls}C "
+                f"({n_short} short, {n_long} long) — skipping (not a complete IC)"
+            )
+
+    return valid_ics
 
 
 def calculate_ic_pnl(ic_data: dict, entry_credit: float) -> tuple[float, float]:
@@ -209,9 +225,47 @@ def update_trade_log_on_exit(expiry: str, reason: str, pnl: float):
 
 
 def close_iron_condor(client, ic_data: dict, reason: str, expiry: str, pnl: float):
-    """Close all legs of an iron condor."""
+    """Close all legs of an iron condor atomically via MLEG order.
+
+    Falls back to individual leg closes only if MLEG fails.
+    """
     logger.warning(f"🚨 CLOSING IRON CONDOR: {reason}")
 
+    # Try atomic MLEG close first (single fill, no legging risk)
+    try:
+        from alpaca.trading.enums import OrderClass as OC
+        from alpaca.trading.enums import OrderSide as OS
+        from alpaca.trading.requests import MarketOrderRequest as MktReq
+
+        # Build closing legs
+        option_legs = []
+        close_qty = 0
+        for pos in ic_data["positions"]:
+            side = OS.BUY if pos["qty"] < 0 else OS.SELL
+            close_qty = max(close_qty, abs(pos["qty"]))
+            option_legs.append({
+                "symbol": pos["symbol"],
+                "side": side,
+                "ratio_qty": 1,
+            })
+
+        if len(option_legs) == 4:
+            mleg_order = MktReq(
+                qty=close_qty,
+                order_class=OC.MLEG,
+                legs=option_legs,
+                time_in_force=TimeInForce.DAY,
+            )
+            order = safe_submit_order(client, mleg_order)
+            logger.info(f"  MLEG close submitted: {order.id} status={order.status}")
+            update_trade_log_on_exit(expiry, reason, pnl)
+            return
+        else:
+            logger.warning(f"  Cannot MLEG close: {len(option_legs)} legs (need 4)")
+    except Exception as e:
+        logger.warning(f"  MLEG close failed ({e}), falling back to individual legs")
+
+    # Fallback: individual leg closes (last resort)
     for pos in ic_data["positions"]:
         side = OrderSide.BUY if pos["qty"] < 0 else OrderSide.SELL
         qty = abs(pos["qty"])
@@ -300,15 +354,20 @@ def run_guardian():
 
             try:
                 entry_dt = dt.fromisoformat(entry_date_str)
-                hours_held = (dt.now() - entry_dt).total_seconds() / 3600
+                # Normalize both to naive UTC to avoid naive/aware comparison
+                if entry_dt.tzinfo is not None:
+                    entry_dt = entry_dt.replace(tzinfo=None)
+                now = dt.now()
+                hours_held = (now - entry_dt).total_seconds() / 3600
                 if hours_held < 4:
                     logger.info(
-                        f"  ⏳ Position held {hours_held:.1f}h < 4h minimum. "
+                        f"  Position held {hours_held:.1f}h < 4h minimum. "
                         f"Skipping exit checks (let theta work)."
                     )
                     continue
-            except (ValueError, TypeError):
-                pass  # If date is unparseable, proceed with checks
+            except (ValueError, TypeError) as e:
+                logger.warning(f"  Could not parse entry date '{entry_date_str}': {e}")
+                # Don't silently skip — log and proceed with checks
 
         # CHECK 1: DTE Exit (7 days)
         if dte <= MIN_DTE:
