@@ -594,11 +594,13 @@ def _check_recent_fills(client):
     updated = False
 
     try:
-        orders = client.get_orders(filter=GetOrdersRequest(
-            status=QueryOrderStatus.CLOSED,
-            after=(datetime.now() - timedelta(days=2)).isoformat(),
-            limit=20,
-        ))
+        orders = client.get_orders(
+            filter=GetOrdersRequest(
+                status=QueryOrderStatus.CLOSED,
+                after=(datetime.now() - timedelta(days=2)).isoformat(),
+                limit=20,
+            )
+        )
         for order in orders:
             if order.filled_avg_price and str(order.order_class) == "OrderClass.MLEG":
                 fill_credit = abs(float(order.filled_avg_price))
@@ -608,7 +610,9 @@ def _check_recent_fills(client):
                         entry["credit"] = fill_credit
                         entry["fill_confirmed"] = True
                         updated = True
-                        logger.info(f"Fill confirmed {key}: est ${old:.2f} → actual ${fill_credit:.2f}")
+                        logger.info(
+                            f"Fill confirmed {key}: est ${old:.2f} → actual ${fill_credit:.2f}"
+                        )
     except Exception as e:
         logger.debug(f"Fill check: {e}")
 
@@ -625,7 +629,9 @@ def _cancel_stale_orders(client):
         orders = client.get_orders(filter=GetOrdersRequest(status=QueryOrderStatus.OPEN))
         for order in orders:
             if order.created_at:
-                age_hours = (datetime.now(order.created_at.tzinfo) - order.created_at).total_seconds() / 3600
+                age_hours = (
+                    datetime.now(order.created_at.tzinfo) - order.created_at
+                ).total_seconds() / 3600
                 if age_hours > 2:
                     client.cancel_order_by_id(order.id)
                     logger.info(f"Cancelled stale order {order.id} ({age_hours:.1f}h old)")
