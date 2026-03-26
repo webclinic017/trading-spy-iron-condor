@@ -550,6 +550,24 @@ def _weekend_learn():
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
+def _thumbgate_matches(rule: dict) -> bool:
+    """Check if a ThumbGate rule matches current conditions."""
+    condition = rule.get("condition", {})
+    # Example rule: {"condition": {"vix_above": 30}, "reason": "Don't enter when VIX > 30"}
+    if "vix_above" in condition:
+        try:
+            from src.options.vix_monitor import VIXMonitor
+            vix = VIXMonitor().get_current_vix()
+            if vix > condition["vix_above"]:
+                return True
+        except Exception:
+            pass
+    if "day_of_week" in condition:
+        if datetime.now().strftime("%A").lower() == condition["day_of_week"].lower():
+            return True
+    return False
+
+
 def _load_entries() -> dict:
     try:
         if ENTRIES_FILE.exists():
@@ -619,9 +637,55 @@ def main():
                 fomc_blocked = True
                 break
 
+        # ThumbGate pre-entry check: block patterns from past losses
+        thumbgate_blocked = False
+        try:
+            gate_file = Path(__file__).parent.parent / "data" / "thumbgate_rules.json"
+            if gate_file.exists():
+                rules = json.loads(gate_file.read_text())
+                for rule in rules:
+                    if rule.get("active") and _thumbgate_matches(rule):
+                        logger.warning(f"ThumbGate BLOCKED: {rule.get('reason', 'learned rule')}")
+                        thumbgate_blocked = True
+                        break
+        except Exception as e:
+            logger.debug(f"ThumbGate check skipped: {e}")
+
+        # IV vs RV check: only sell premium when IV > RV
+        iv_rv_blocked = False
+        try:
+            from src.data.iv_data_provider import IVDataProvider
+            provider = IVDataProvider()
+            current_iv = provider.get_current_iv("SPY")
+            # Compute 20-day realized vol
+            import numpy as np
+            from alpaca.data.historical import StockHistoricalDataClient
+            from alpaca.data.requests import StockBarsRequest
+            from alpaca.data.timeframe import TimeFrame
+            from src.utils.alpaca_client import get_alpaca_credentials
+            api_key, secret = get_alpaca_credentials()
+            dc = StockHistoricalDataClient(api_key, secret)
+            bars = dc.get_stock_bars(StockBarsRequest(
+                symbol_or_symbols="SPY", timeframe=TimeFrame.Day,
+                start=datetime.now() - timedelta(days=30), end=datetime.now(),
+            ))
+            closes = [float(b.close) for b in bars.data.get("SPY", [])]
+            if len(closes) >= 10:
+                rv = float(np.std(np.diff(np.log(closes))) * np.sqrt(252))
+                iv_rv_ratio = current_iv / rv if rv > 0 else 999
+                logger.info(f"IV={current_iv:.1%} RV={rv:.1%} ratio={iv_rv_ratio:.2f}")
+                if iv_rv_ratio < 0.90:
+                    logger.warning(f"IV/RV={iv_rv_ratio:.2f} < 0.90 — premium too cheap")
+                    iv_rv_blocked = True
+        except Exception as e:
+            logger.debug(f"IV/RV check skipped: {e}")
+
+        # Cancel stale unfilled orders before checking entry
+        _cancel_stale_orders(client)
+
         # Position limit
         ic_count = _count_open_ics(client)
-        if fomc_blocked:
+        if fomc_blocked or thumbgate_blocked or iv_rv_blocked:
             pass  # Skip entry
         elif ic_count >= MAX_IC:
             logger.info(f"Position limit: {ic_count}/{MAX_IC} ICs. No new entry.")
