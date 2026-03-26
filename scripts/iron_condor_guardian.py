@@ -243,11 +243,13 @@ def close_iron_condor(client, ic_data: dict, reason: str, expiry: str, pnl: floa
         for pos in ic_data["positions"]:
             side = OS.BUY if pos["qty"] < 0 else OS.SELL
             close_qty = max(close_qty, abs(pos["qty"]))
-            option_legs.append({
-                "symbol": pos["symbol"],
-                "side": side,
-                "ratio_qty": 1,
-            })
+            option_legs.append(
+                {
+                    "symbol": pos["symbol"],
+                    "side": side,
+                    "ratio_qty": 1,
+                }
+            )
 
         if len(option_legs) == 4:
             mleg_order = MktReq(
