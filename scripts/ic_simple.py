@@ -557,6 +557,7 @@ def _thumbgate_matches(rule: dict) -> bool:
     if "vix_above" in condition:
         try:
             from src.options.vix_monitor import VIXMonitor
+
             vix = VIXMonitor().get_current_vix()
             if vix > condition["vix_above"]:
                 return True
@@ -655,6 +656,7 @@ def main():
         iv_rv_blocked = False
         try:
             from src.data.iv_data_provider import IVDataProvider
+
             provider = IVDataProvider()
             current_iv = provider.get_current_iv("SPY")
             # Compute 20-day realized vol
@@ -663,12 +665,17 @@ def main():
             from alpaca.data.requests import StockBarsRequest
             from alpaca.data.timeframe import TimeFrame
             from src.utils.alpaca_client import get_alpaca_credentials
+
             api_key, secret = get_alpaca_credentials()
             dc = StockHistoricalDataClient(api_key, secret)
-            bars = dc.get_stock_bars(StockBarsRequest(
-                symbol_or_symbols="SPY", timeframe=TimeFrame.Day,
-                start=datetime.now() - timedelta(days=30), end=datetime.now(),
-            ))
+            bars = dc.get_stock_bars(
+                StockBarsRequest(
+                    symbol_or_symbols="SPY",
+                    timeframe=TimeFrame.Day,
+                    start=datetime.now() - timedelta(days=30),
+                    end=datetime.now(),
+                )
+            )
             closes = [float(b.close) for b in bars.data.get("SPY", [])]
             if len(closes) >= 10:
                 rv = float(np.std(np.diff(np.log(closes))) * np.sqrt(252))
