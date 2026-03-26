@@ -1,0 +1,71 @@
+name: IC Simple
+
+on:
+  schedule:
+    # Entry scan: 10:00 AM ET (14:00 UTC winter, 14:00 covers both)
+    - cron: "0 14 * * 1-5"
+    # Exit check: 2:00 PM ET (18:00 UTC)
+    - cron: "0 18 * * 1-5"
+    # EOD exit check: 3:30 PM ET (19:30 UTC)
+    - cron: "30 19 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "entry, exit, both, or status"
+        required: false
+        default: "both"
+      dry_run:
+        description: "Dry run (no orders)"
+        required: false
+        default: "false"
+
+concurrency:
+  group: ic-simple-execution
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]" 2>/dev/null || pip install alpaca-py python-dotenv scipy numpy
+
+      - name: Determine mode
+        id: mode
+        run: |
+          # Dispatch overrides schedule
+          MODE="${{ github.event.inputs.mode || 'both' }}"
+          DRY="${{ github.event.inputs.dry_run || 'false' }}"
+
+          # On schedule: 14:00=entry+exit, 18:00=exit, 19:30=exit
+          HOUR=$(date -u +%H)
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            if [ "$HOUR" = "14" ]; then
+              MODE="both"
+            else
+              MODE="exit"
+            fi
+          fi
+
+          echo "mode=$MODE" >> $GITHUB_OUTPUT
+          echo "dry_run=$DRY" >> $GITHUB_OUTPUT
+          echo "Mode: $MODE, Dry run: $DRY"
+
+      - name: Run IC Simple
+        env:
+          ALPACA_PAPER_TRADING_API_KEY: ${{ secrets.ALPACA_PAPER_TRADING_API_KEY }}
+          ALPACA_PAPER_TRADING_API_SECRET: ${{ secrets.ALPACA_PAPER_TRADING_API_SECRET }}
+        run: |
+          FLAGS="--mode ${{ steps.mode.outputs.mode }}"
+          if [ "${{ steps.mode.outputs.dry_run }}" = "true" ]; then
+            FLAGS="$FLAGS --dry-run"
+          fi
+          python3 scripts/ic_simple.py $FLAGS
