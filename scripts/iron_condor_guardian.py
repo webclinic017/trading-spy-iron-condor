@@ -254,10 +254,9 @@ def close_iron_condor(client, ic_data: dict, reason: str, expiry: str, pnl: floa
             from alpaca.trading.requests import LimitOrderRequest as LmtReq
 
             # Calculate debit limit for close: current value + $0.10 concession
-            current_debit = abs(sum(
-                pos["current"] * (1 if pos["qty"] < 0 else -1)
-                for pos in ic_data["positions"]
-            ))
+            current_debit = abs(
+                sum(pos["current"] * (1 if pos["qty"] < 0 else -1) for pos in ic_data["positions"])
+            )
             limit_debit = round(current_debit + 0.10, 2)
             logger.info(f"  Close limit: ${limit_debit:.2f} debit (mid + $0.10 concession)")
 
