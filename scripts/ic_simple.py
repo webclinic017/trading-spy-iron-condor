@@ -51,9 +51,7 @@ def get_spy_price(client):
 
     api_key, secret = get_alpaca_credentials()
     data_client = StockHistoricalDataClient(api_key, secret)
-    quote = data_client.get_stock_latest_quote(
-        StockLatestQuoteRequest(symbol_or_symbols=["SPY"])
-    )
+    quote = data_client.get_stock_latest_quote(StockLatestQuoteRequest(symbol_or_symbols=["SPY"]))
     return (quote["SPY"].ask_price + quote["SPY"].bid_price) / 2
 
 
@@ -167,13 +165,17 @@ def check_exits(client):
         expiry = sym[3:9]
         if expiry not in ics:
             ics[expiry] = []
-        ics[expiry].append({
-            "symbol": sym,
-            "qty": int(float(pos.qty)),
-            "entry": float(pos.avg_entry_price),
-            "current": float(pos.current_price) if hasattr(pos, "current_price") else float(pos.avg_entry_price),
-            "type": "put" if "P" in sym[9:10] else "call",
-        })
+        ics[expiry].append(
+            {
+                "symbol": sym,
+                "qty": int(float(pos.qty)),
+                "entry": float(pos.avg_entry_price),
+                "current": float(pos.current_price)
+                if hasattr(pos, "current_price")
+                else float(pos.avg_entry_price),
+                "type": "put" if "P" in sym[9:10] else "call",
+            }
+        )
 
     entries = _load_entries()
 
@@ -185,7 +187,9 @@ def check_exits(client):
         n_long = sum(1 for leg in legs if leg["qty"] > 0)
 
         if not (n_puts == 2 and n_calls == 2 and n_short == 2 and n_long == 2):
-            logger.warning(f"IC {expiry}: incomplete ({n_puts}P {n_calls}C {n_short}S {n_long}L). Skip.")
+            logger.warning(
+                f"IC {expiry}: incomplete ({n_puts}P {n_calls}C {n_short}S {n_long}L). Skip."
+            )
             continue
 
         # Get entry credit
@@ -227,6 +231,7 @@ def check_exits(client):
 
         # DTE
         from datetime import date as date_type
+
         exp_date = date_type(2000 + int(expiry[:2]), int(expiry[2:4]), int(expiry[4:6]))
         dte = (exp_date - date_type.today()).days
 
@@ -248,7 +253,9 @@ def check_exits(client):
             logger.warning(f"EXIT IC {expiry}: {reason}")
             _close_ic(client, legs, contract_count)
         else:
-            logger.info(f"IC {expiry}: HOLD. Target=${max_profit * PROFIT_TARGET:.2f} Stop=-${max_profit * STOP_LOSS:.2f}")
+            logger.info(
+                f"IC {expiry}: HOLD. Target=${max_profit * PROFIT_TARGET:.2f} Stop=-${max_profit * STOP_LOSS:.2f}"
+            )
 
 
 def _close_ic(client, legs: list[dict], qty: int):
@@ -257,9 +264,7 @@ def _close_ic(client, legs: list[dict], qty: int):
     from alpaca.trading.requests import LimitOrderRequest, MarketOrderRequest, OptionLegRequest
 
     # Calculate current debit
-    current_debit = abs(sum(
-        leg["current"] * (1 if leg["qty"] < 0 else -1) for leg in legs
-    ))
+    current_debit = abs(sum(leg["current"] * (1 if leg["qty"] < 0 else -1) for leg in legs))
     limit_debit = round(current_debit + 0.10, 2)
 
     option_legs = [
