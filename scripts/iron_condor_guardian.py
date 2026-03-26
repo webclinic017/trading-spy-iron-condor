@@ -324,6 +324,13 @@ def run_guardian():
         dte = get_dte(sample_symbol)
         logger.info(f"  DTE: {dte}")
 
+        # FAILSAFE: DTE <= 1 = force close regardless of anything else
+        # If Guardian misses the 7 DTE exit, this catches expiring positions
+        if dte <= 1:
+            logger.warning(f"  FAILSAFE: DTE={dte} — force closing to avoid assignment/pin risk")
+            close_iron_condor(client, ic_data, f"FAILSAFE: DTE={dte} (expiring)", expiry, 0)
+            continue
+
         # Get entry credit (or estimate from positions)
         entry_key = f"IC_{expiry}"
         if entry_key not in entries:

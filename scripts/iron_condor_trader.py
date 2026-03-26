@@ -859,8 +859,8 @@ class IronCondorStrategy:
                     "symbol": trade["underlying"],
                     "strategy": "iron_condor",
                     "entry_reason": "high_iv_environment",
-                    "won": True,  # Will update when closed
-                    "pnl": 0,  # Will update when closed
+                    "won": None,  # Unknown until closed — do not pollute learning data
+                    "pnl": None,  # Set by sync_closed_positions.py on exit
                     "lesson": f"Opened IC at {trade['credit']:.2f} credit, {trade['dte']} DTE",
                 }
             )
