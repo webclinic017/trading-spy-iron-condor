@@ -727,21 +727,25 @@ class IronCondorStrategy:
                     logger.info(f"   Short Call: {short_call_sym} (SELL)")
                     logger.info(f"   Long Call:  {long_call_sym} (BUY)")
 
-                    # For iron condor, we receive net credit (negative limit price)
-                    # Conservative: accept any credit >= $0.50 per contract
-                    # The actual credit will depend on market conditions
-                    # Using market order (no limit_price) lets the market determine credit
+                    # Use LIMIT order to control entry credit (market orders lose $12-40/trade in slippage)
+                    # The executor supports LimitOrderRequest with net_credit as limit_price.
+                    # Alpaca MLEG limit: negative limit_price = minimum credit we'll accept.
                     try:
                         from alpaca.trading.enums import TimeInForce
-                        from alpaca.trading.requests import MarketOrderRequest
+                        from alpaca.trading.requests import LimitOrderRequest
 
-                        # Submit as market MLeg order - all 4 legs fill together or not at all
-                        # time_in_force is REQUIRED by SDK even for options (DAY is standard)
-                        order_req = MarketOrderRequest(
+                        # Calculate limit price: use estimated credit with $0.05 concession
+                        limit_credit = round(ic.credit_received - 0.05, 2)
+                        if limit_credit < 0.50:
+                            limit_credit = 0.50  # Floor: never accept less than $0.50
+                        logger.info(f"   Limit price: -${limit_credit:.2f} (credit)")
+
+                        order_req = LimitOrderRequest(
                             qty=1,
                             order_class=OrderClass.MLEG,
                             legs=option_legs,
                             time_in_force=TimeInForce.DAY,
+                            limit_price=round(-limit_credit, 2),  # Negative = credit
                         )
 
                         logger.info("🚀 Submitting MLeg iron condor order...")

@@ -235,7 +235,6 @@ def close_iron_condor(client, ic_data: dict, reason: str, expiry: str, pnl: floa
     try:
         from alpaca.trading.enums import OrderClass as OC
         from alpaca.trading.enums import OrderSide as OS
-        from alpaca.trading.requests import MarketOrderRequest as MktReq
 
         # Build closing legs
         option_legs = []
@@ -252,11 +251,22 @@ def close_iron_condor(client, ic_data: dict, reason: str, expiry: str, pnl: floa
             )
 
         if len(option_legs) == 4:
-            mleg_order = MktReq(
+            from alpaca.trading.requests import LimitOrderRequest as LmtReq
+
+            # Calculate debit limit for close: current value + $0.10 concession
+            current_debit = abs(sum(
+                pos["current"] * (1 if pos["qty"] < 0 else -1)
+                for pos in ic_data["positions"]
+            ))
+            limit_debit = round(current_debit + 0.10, 2)
+            logger.info(f"  Close limit: ${limit_debit:.2f} debit (mid + $0.10 concession)")
+
+            mleg_order = LmtReq(
                 qty=close_qty,
                 order_class=OC.MLEG,
                 legs=option_legs,
                 time_in_force=TimeInForce.DAY,
+                limit_price=round(limit_debit, 2),
             )
             order = safe_submit_order(client, mleg_order)
             logger.info(f"  MLEG close submitted: {order.id} status={order.status}")
