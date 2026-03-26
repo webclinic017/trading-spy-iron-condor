@@ -327,7 +327,11 @@ class LessonsLearnedRAG:
             from datetime import datetime as _dt
 
             current_month = _dt.now().strftime("%b").lower()[:3]  # e.g. "mar"
-            prev_month = (_dt.now().replace(day=1) - __import__("datetime").timedelta(days=1)).strftime("%b").lower()[:3]
+            prev_month = (
+                (_dt.now().replace(day=1) - __import__("datetime").timedelta(days=1))
+                .strftime("%b")
+                .lower()[:3]
+            )
             if current_month in lesson_id or prev_month in lesson_id:
                 score *= 1.5  # Boost recent lessons
             if "trading_rules" in lesson_id:

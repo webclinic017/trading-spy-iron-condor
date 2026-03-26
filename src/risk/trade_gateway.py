@@ -253,8 +253,14 @@ class TradeGateway:
     # FOMC dates are the real risk for SPY ICs.
     # 2026 FOMC meeting dates (announcement day):
     FOMC_DATES = [
-        "2026-01-28", "2026-03-18", "2026-05-06", "2026-06-17",
-        "2026-07-29", "2026-09-16", "2026-11-04", "2026-12-16",
+        "2026-01-28",
+        "2026-03-18",
+        "2026-05-06",
+        "2026-06-17",
+        "2026-07-29",
+        "2026-09-16",
+        "2026-11-04",
+        "2026-12-16",
     ]
     # Block new IC entries 2 days before FOMC through 1 day after
     FOMC_BLACKOUT_DAYS_BEFORE = 2
@@ -366,8 +372,7 @@ class TradeGateway:
             if blackout_start <= today <= blackout_end:
                 return (
                     True,
-                    f"FOMC blackout {blackout_start} to {blackout_end} "
-                    f"(announcement: {fomc_str})",
+                    f"FOMC blackout {blackout_start} to {blackout_end} (announcement: {fomc_str})",
                 )
 
         return False, ""
