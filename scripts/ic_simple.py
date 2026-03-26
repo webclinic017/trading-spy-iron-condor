@@ -347,7 +347,7 @@ def _record_lesson(expiry: str, credit: float, pnl: float, reason: str, dte: int
 - **P/L**: ${pnl:+.2f} ({pnl_pct:+.1f}%)
 - **Exit Reason**: {reason}
 - **DTE at Exit**: {dte}
-- **Date**: {datetime.now().strftime('%Y-%m-%d %H:%M')}
+- **Date**: {datetime.now().strftime("%Y-%m-%d %H:%M")}
 
 ## Lesson
 {"Position hit profit target — theta decay worked as expected." if "PROFIT" in reason else ""}{"Position hit stop loss — market moved against us." if "STOP" in reason else ""}{"Exited at DTE threshold to avoid gamma risk." if "DTE" in reason else ""}
@@ -367,14 +367,31 @@ def _update_stats(trade: dict):
     """Update running win rate and P/L stats."""
     stats_file = Path(__file__).parent.parent / "data" / "ic_stats.json"
     try:
-        stats = json.loads(stats_file.read_text()) if stats_file.exists() else {
-            "total": 0, "wins": 0, "losses": 0,
-            "total_pnl": 0, "avg_win": 0, "avg_loss": 0,
-            "win_pnls": [], "loss_pnls": [],
-        }
+        stats = (
+            json.loads(stats_file.read_text())
+            if stats_file.exists()
+            else {
+                "total": 0,
+                "wins": 0,
+                "losses": 0,
+                "total_pnl": 0,
+                "avg_win": 0,
+                "avg_loss": 0,
+                "win_pnls": [],
+                "loss_pnls": [],
+            }
+        )
     except Exception:
-        stats = {"total": 0, "wins": 0, "losses": 0, "total_pnl": 0,
-                 "avg_win": 0, "avg_loss": 0, "win_pnls": [], "loss_pnls": []}
+        stats = {
+            "total": 0,
+            "wins": 0,
+            "losses": 0,
+            "total_pnl": 0,
+            "avg_win": 0,
+            "avg_loss": 0,
+            "win_pnls": [],
+            "loss_pnls": [],
+        }
 
     stats["total"] += 1
     stats["total_pnl"] = round(stats["total_pnl"] + trade["pnl"], 2)
@@ -389,9 +406,11 @@ def _update_stats(trade: dict):
         stats["avg_loss"] = round(sum(stats["loss_pnls"]) / len(stats["loss_pnls"]), 2)
 
     stats["win_rate"] = round(stats["wins"] / stats["total"] * 100, 1) if stats["total"] > 0 else 0
-    stats["profit_factor"] = round(
-        abs(sum(stats["win_pnls"])) / abs(sum(stats["loss_pnls"])), 2
-    ) if stats["loss_pnls"] and sum(stats["loss_pnls"]) != 0 else 999.0
+    stats["profit_factor"] = (
+        round(abs(sum(stats["win_pnls"])) / abs(sum(stats["loss_pnls"])), 2)
+        if stats["loss_pnls"] and sum(stats["loss_pnls"]) != 0
+        else 999.0
+    )
 
     stats_file.write_text(json.dumps(stats, indent=2))
     logger.info(
@@ -401,6 +420,7 @@ def _update_stats(trade: dict):
 
 
 # ── Report + Weekend Learning ────────────────────────────────────────────────
+
 
 def _print_report():
     """Print full performance report from trade journal."""
@@ -476,9 +496,15 @@ def _weekend_learn():
     # Exit reason analysis
     exit_reasons = {}
     for trade in trades:
-        reason_type = "PROFIT" if "PROFIT" in trade["exit_reason"] else \
-                      "STOP" if "STOP" in trade["exit_reason"] else \
-                      "DTE" if "DTE" in trade["exit_reason"] else "OTHER"
+        reason_type = (
+            "PROFIT"
+            if "PROFIT" in trade["exit_reason"]
+            else "STOP"
+            if "STOP" in trade["exit_reason"]
+            else "DTE"
+            if "DTE" in trade["exit_reason"]
+            else "OTHER"
+        )
         if reason_type not in exit_reasons:
             exit_reasons[reason_type] = {"count": 0, "total_pnl": 0}
         exit_reasons[reason_type]["count"] += 1
@@ -501,7 +527,7 @@ def _weekend_learn():
     total_pnl = sum(t["pnl"] for t in trades)
     win_rate = len(wins) / len(trades) * 100 if trades else 0
 
-    lesson = f"""# Weekly Review — {datetime.now().strftime('%Y-%m-%d')}
+    lesson = f"""# Weekly Review — {datetime.now().strftime("%Y-%m-%d")}
 
 ## Performance
 - Trades: {len(trades)} ({len(wins)}W / {len(losses)}L)
@@ -549,7 +575,9 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Simple IC system")
-    parser.add_argument("--mode", choices=["entry", "exit", "both", "status", "report", "learn"], default="both")
+    parser.add_argument(
+        "--mode", choices=["entry", "exit", "both", "status", "report", "learn"], default="both"
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
