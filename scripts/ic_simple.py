@@ -240,9 +240,11 @@ def check_exits(client):
             f"(credit=${entry_credit:.2f}x{contract_count} max=${max_profit:.2f})"
         )
 
-        # Exit checks
+        # Exit checks (DTE failsafe first — always close expiring positions)
         reason = None
-        if dte <= EXIT_DTE:
+        if dte <= 1:
+            reason = f"FAILSAFE: DTE={dte} (expiring — assignment/pin risk)"
+        elif dte <= EXIT_DTE:
             reason = f"DTE={dte} <= {EXIT_DTE}"
         elif pnl >= max_profit * PROFIT_TARGET:
             reason = f"PROFIT: ${pnl:.2f} >= ${max_profit * PROFIT_TARGET:.2f}"
@@ -350,9 +352,27 @@ def main():
     if args.mode in ("entry", "both"):
         logger.info("\n--- ENTRY CHECK ---")
 
+        # FOMC blackout check (2 days before through 1 day after)
+        from datetime import timedelta
+
+        FOMC_DATES = [
+            "2026-01-28", "2026-03-18", "2026-05-06", "2026-06-17",
+            "2026-07-29", "2026-09-16", "2026-11-04", "2026-12-16",
+        ]
+        today = datetime.now().date()
+        fomc_blocked = False
+        for fomc_str in FOMC_DATES:
+            fomc_date = datetime.strptime(fomc_str, "%Y-%m-%d").date()
+            if (fomc_date - timedelta(days=2)) <= today <= (fomc_date + timedelta(days=1)):
+                logger.warning(f"FOMC blackout: {fomc_str}. No entry.")
+                fomc_blocked = True
+                break
+
         # Position limit
         ic_count = _count_open_ics(client)
-        if ic_count >= MAX_IC:
+        if fomc_blocked:
+            pass  # Skip entry
+        elif ic_count >= MAX_IC:
             logger.info(f"Position limit: {ic_count}/{MAX_IC} ICs. No new entry.")
         else:
             spy_price = get_spy_price(client)
