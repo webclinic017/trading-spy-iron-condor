@@ -583,6 +583,56 @@ def _save_entries(entries: dict):
     ENTRIES_FILE.write_text(json.dumps(entries, indent=2))
 
 
+def _check_recent_fills(client):
+    """Check if pending MLEG orders filled. Update ic_entries with actual credit."""
+    from datetime import timedelta
+
+    from alpaca.trading.enums import QueryOrderStatus
+    from alpaca.trading.requests import GetOrdersRequest
+
+    entries = _load_entries()
+    updated = False
+
+    try:
+        orders = client.get_orders(filter=GetOrdersRequest(
+            status=QueryOrderStatus.CLOSED,
+            after=(datetime.now() - timedelta(days=2)).isoformat(),
+            limit=20,
+        ))
+        for order in orders:
+            if order.filled_avg_price and str(order.order_class) == "OrderClass.MLEG":
+                fill_credit = abs(float(order.filled_avg_price))
+                for key, entry in entries.items():
+                    if entry.get("order_id") == str(order.id) and not entry.get("fill_confirmed"):
+                        old = entry["credit"]
+                        entry["credit"] = fill_credit
+                        entry["fill_confirmed"] = True
+                        updated = True
+                        logger.info(f"Fill confirmed {key}: est ${old:.2f} → actual ${fill_credit:.2f}")
+    except Exception as e:
+        logger.debug(f"Fill check: {e}")
+
+    if updated:
+        _save_entries(entries)
+
+
+def _cancel_stale_orders(client):
+    """Cancel open limit orders older than 2 hours. Stale orders block new entries."""
+    from alpaca.trading.enums import QueryOrderStatus
+    from alpaca.trading.requests import GetOrdersRequest
+
+    try:
+        orders = client.get_orders(filter=GetOrdersRequest(status=QueryOrderStatus.OPEN))
+        for order in orders:
+            if order.created_at:
+                age_hours = (datetime.now(order.created_at.tzinfo) - order.created_at).total_seconds() / 3600
+                if age_hours > 2:
+                    client.cancel_order_by_id(order.id)
+                    logger.info(f"Cancelled stale order {order.id} ({age_hours:.1f}h old)")
+    except Exception as e:
+        logger.warning(f"Stale order cleanup failed: {e}")
+
+
 def _count_open_ics(client) -> int:
     positions = client.get_all_positions()
     spy_options = [p for p in positions if p.symbol.startswith("SPY") and len(p.symbol) > 10]
@@ -607,6 +657,9 @@ def main():
     client = get_client()
 
     if args.mode in ("exit", "both"):
+        logger.info("\n--- FILL CHECK ---")
+        _check_recent_fills(client)
+
         logger.info("\n--- EXIT CHECK ---")
         if args.dry_run:
             logger.info("(dry run — would check exits)")
