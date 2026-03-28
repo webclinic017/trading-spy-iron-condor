@@ -15,7 +15,7 @@
       "min_trades_for_decision": 30
     },
     "notes": "CLEANED Jan 27, 2026 - Removed pre-Jan-22 garbage (SOFI trades, stock DCA). Fresh start per $30K account reset.",
-    "last_sync": "2026-03-27T20:48:09.385748+00:00",
+    "last_sync": "2026-03-28T15:10:26.198918+00:00",
     "sync_source": "sync_closed_positions.py"
   },
   "stats": {
@@ -32,8 +32,8 @@
     "total_pnl": 41.0,
     "total_realized_pnl": 41.0,
     "paper_phase_start": "2026-01-22",
-    "paper_phase_days": 64,
-    "last_updated": "2026-03-27T20:48:09.385717+00:00"
+    "paper_phase_days": 65,
+    "last_updated": "2026-03-28T15:10:26.198913+00:00"
   },
   "trades": [
     {
