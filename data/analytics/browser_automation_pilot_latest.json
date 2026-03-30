@@ -1,6 +1,6 @@
 {
-  "run_id": "pilot-20260223T033628Z",
-  "generated_at_utc": "2026-02-23T03:36:30.185201Z",
+  "run_id": "pilot-20260330T181105Z",
+  "generated_at_utc": "2026-03-30T18:11:06.548168Z",
   "tasks": [
     {
       "task_id": "gh_pages_home",
@@ -62,10 +62,10 @@
       "provider": "local",
       "task_id": "gh_pages_home",
       "run_index": 1,
-      "status": "success",
-      "detail": "HTTP fetch check passed.",
-      "started_at_utc": "2026-02-23T03:36:28.456345Z",
-      "latency_ms": 613.664,
+      "status": "failed",
+      "detail": "Expected text not found.",
+      "started_at_utc": "2026-03-30T18:11:05.833280Z",
+      "latency_ms": 116.796,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -74,12 +74,12 @@
       "provider": "local",
       "task_id": "rag_query_page",
       "run_index": 1,
-      "status": "success",
-      "detail": "HTTP fetch check passed.",
-      "started_at_utc": "2026-02-23T03:36:29.070447Z",
-      "latency_ms": 100.956,
+      "status": "failed",
+      "detail": "HTTP 404",
+      "started_at_utc": "2026-03-30T18:11:05.950698Z",
+      "latency_ms": 58.953,
       "retries": 0,
-      "http_status": 200,
+      "http_status": 404,
       "cost_usd": 0.0
     },
     {
@@ -88,8 +88,8 @@
       "run_index": 1,
       "status": "success",
       "detail": "HTTP fetch check passed.",
-      "started_at_utc": "2026-02-23T03:36:29.171790Z",
-      "latency_ms": 78.249,
+      "started_at_utc": "2026-03-30T18:11:06.010444Z",
+      "latency_ms": 45.6,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -100,8 +100,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "Expected text not found.",
-      "started_at_utc": "2026-02-23T03:36:29.250452Z",
-      "latency_ms": 156.684,
+      "started_at_utc": "2026-03-30T18:11:06.056691Z",
+      "latency_ms": 214.374,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -112,8 +112,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "HTTP 999",
-      "started_at_utc": "2026-02-23T03:36:29.407545Z",
-      "latency_ms": 777.276,
+      "started_at_utc": "2026-03-30T18:11:06.272114Z",
+      "latency_ms": 275.212,
       "retries": 0,
       "http_status": 999,
       "cost_usd": 0.0
@@ -123,11 +123,11 @@
     "local": {
       "runs_total": 5,
       "attempted": 5,
-      "success": 3,
-      "failed": 2,
+      "success": 1,
+      "failed": 4,
       "skipped": 0,
-      "success_rate": 0.6,
-      "avg_latency_ms": 345.3658,
+      "success_rate": 0.2,
+      "avg_latency_ms": 142.18699999999998,
       "avg_retries": 0.0,
       "cost_usd_total": 0.0,
       "cost_per_success_usd": 0.0
