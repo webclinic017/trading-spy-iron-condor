@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-30T17:16:30.429952+00:00",
+  "last_updated": "2026-03-31T15:42:12.469481+00:00",
   "sync_health": {
     "last_successful_sync": "2026-03-30T17:16:30.429952+00:00",
     "sync_source": "sync_alpaca_state.py",
@@ -126,7 +126,7 @@
         "success": true
       }
     ],
-    "last_attempt": "2026-03-30T17:16:30.429952+00:00"
+    "last_attempt": "2026-03-31T15:42:12.469481+00:00"
   },
   "portfolio": {
     "equity": 95334.55,
@@ -2546,13 +2546,13 @@
     "buying_power": 187335.1
   },
   "meta": {
-    "last_updated": "2026-03-30T17:16:30.429952+00:00",
+    "last_updated": "2026-03-31T15:42:12.469481+00:00",
     "trade_sync": "alpaca_api",
     "sync_frequency_minutes": 5,
-    "last_sync_attempt": "2026-03-30T17:16:30.429952+00:00",
-    "alpaca_keys_present": true,
-    "last_sync": "2026-03-30T17:16:30.325092",
-    "sync_mode": "paper+live",
+    "last_sync_attempt": "2026-03-31T15:42:12.469481+00:00",
+    "alpaca_keys_present": false,
+    "last_sync": "2026-03-31T15:42:12.469481+00:00",
+    "sync_mode": "skipped_no_keys",
     "last_daily_verification_at": "2026-03-25T14:58:32.591868+00:00"
   },
   "paper_trading": {
@@ -2619,7 +2619,7 @@
   },
   "strategy_milestones": {
     "enabled": true,
-    "generated_at": "2026-03-30T17:16:30.435052Z",
+    "generated_at": "2026-03-31T15:42:12.493431Z",
     "primary_family": "options_income",
     "rolling_window": 50,
     "paused_families": [
@@ -2717,7 +2717,7 @@
     "estimated_cagr_from_expectancy": 0.0155,
     "target_capital": 300000.0,
     "target_date": null,
-    "updated_at": "2026-03-30T17:16:30.435052Z",
+    "updated_at": "2026-03-31T15:42:12.493431Z",
     "target_mode": "asap_monthly_income",
     "monthly_after_tax_target": 6000.0,
     "estimated_monthly_after_tax_from_expectancy": 123.0,
@@ -2854,9 +2854,9 @@
       "gate_block_counts": {},
       "top_rejection_reasons": [],
       "summary": "No qualified setups captured in lookback window. Focus on setup generation cadence before adjusting execution.",
-      "updated_at": "2026-03-30T17:16:30.925331+00:00"
+      "updated_at": "2026-03-31T15:42:12.503366+00:00"
     },
-    "updated_at": "2026-03-30T17:16:30.925613+00:00",
+    "updated_at": "2026-03-31T15:42:12.503639+00:00",
     "unverified_trade_history_diagnostic": {
       "samples": 6,
       "wins": 0,
@@ -2883,17 +2883,17 @@
     "equity_change_this_month": -4828.34,
     "monthly_target_progress_pct": 0.0,
     "remaining_to_monthly_target": 10828.34,
-    "days_elapsed_this_month": 30,
-    "days_remaining_this_month": 1,
-    "required_daily_after_tax_from_now": 10828.34,
-    "projected_month_end_after_tax_pnl": -4989.28,
-    "projected_gap_to_monthly_target": 10989.28,
+    "days_elapsed_this_month": 31,
+    "days_remaining_this_month": 0,
+    "required_daily_after_tax_from_now": 0.0,
+    "projected_month_end_after_tax_pnl": -4828.34,
+    "projected_gap_to_monthly_target": 10828.34,
     "live_month_start_equity": 208.85,
     "live_equity_change_this_month": -208.85,
     "estimated_live_contribution_this_month": 0.0,
     "contribution_estimate_confidence": "medium",
     "inference_note": "Live account has no open positions; live equity change is treated as estimated contribution.",
-    "updated_at": "2026-03-30T17:16:30.925654+00:00"
+    "updated_at": "2026-03-31T15:42:12.503676+00:00"
   },
   "ic_position_management": {
     "last_run": "2026-03-30T17:16:32.568585",
