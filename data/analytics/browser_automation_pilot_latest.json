@@ -1,6 +1,6 @@
 {
-  "run_id": "pilot-20260408T111720Z",
-  "generated_at_utc": "2026-04-08T11:17:20.926433Z",
+  "run_id": "pilot-20260408T140528Z",
+  "generated_at_utc": "2026-04-08T14:05:33.169807Z",
   "tasks": [
     {
       "task_id": "gh_pages_home",
@@ -64,8 +64,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "Expected text not found.",
-      "started_at_utc": "2026-04-08T11:17:20.068056Z",
-      "latency_ms": 210.432,
+      "started_at_utc": "2026-04-08T14:05:28.017063Z",
+      "latency_ms": 285.947,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -76,8 +76,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "HTTP 404",
-      "started_at_utc": "2026-04-08T11:17:20.279532Z",
-      "latency_ms": 75.1,
+      "started_at_utc": "2026-04-08T14:05:28.303990Z",
+      "latency_ms": 160.711,
       "retries": 0,
       "http_status": 404,
       "cost_usd": 0.0
@@ -88,8 +88,8 @@
       "run_index": 1,
       "status": "success",
       "detail": "HTTP fetch check passed.",
-      "started_at_utc": "2026-04-08T11:17:20.355416Z",
-      "latency_ms": 95.044,
+      "started_at_utc": "2026-04-08T14:05:28.465519Z",
+      "latency_ms": 95.659,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -99,11 +99,11 @@
       "task_id": "x_profile",
       "run_index": 1,
       "status": "failed",
-      "detail": "Expected text not found.",
-      "started_at_utc": "2026-04-08T11:17:20.451167Z",
-      "latency_ms": 220.179,
+      "detail": "Local HTTP exception: (\"Connection broken: InvalidChunkLength(got length b'\\\\r\\\\n', 0 bytes read)\", InvalidChunkLength(got length b'\\r\\n', 0 bytes read))",
+      "started_at_utc": "2026-04-08T14:05:28.561839Z",
+      "latency_ms": 4314.652,
       "retries": 0,
-      "http_status": 200,
+      "http_status": null,
       "cost_usd": 0.0
     },
     {
@@ -111,11 +111,11 @@
       "task_id": "linkedin_profile",
       "run_index": 1,
       "status": "failed",
-      "detail": "HTTP 999",
-      "started_at_utc": "2026-04-08T11:17:20.672435Z",
-      "latency_ms": 253.076,
+      "detail": "HTTP 404",
+      "started_at_utc": "2026-04-08T14:05:32.876763Z",
+      "latency_ms": 292.014,
       "retries": 0,
-      "http_status": 999,
+      "http_status": 404,
       "cost_usd": 0.0
     }
   ],
@@ -127,7 +127,7 @@
       "failed": 4,
       "skipped": 0,
       "success_rate": 0.2,
-      "avg_latency_ms": 170.7662,
+      "avg_latency_ms": 1029.7966000000001,
       "avg_retries": 0.0,
       "cost_usd_total": 0.0,
       "cost_per_success_usd": 0.0
