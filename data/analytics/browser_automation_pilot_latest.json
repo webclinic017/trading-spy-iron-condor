@@ -1,6 +1,6 @@
 {
-  "run_id": "pilot-20260417T153300Z",
-  "generated_at_utc": "2026-04-17T15:33:04.534370Z",
+  "run_id": "pilot-20260417T210550Z",
+  "generated_at_utc": "2026-04-17T21:05:52.165325Z",
   "tasks": [
     {
       "task_id": "gh_pages_home",
@@ -64,8 +64,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "Expected text not found.",
-      "started_at_utc": "2026-04-17T15:33:00.768114Z",
-      "latency_ms": 171.625,
+      "started_at_utc": "2026-04-17T21:05:50.505711Z",
+      "latency_ms": 68.301,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -76,8 +76,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "HTTP 404",
-      "started_at_utc": "2026-04-17T15:33:00.940822Z",
-      "latency_ms": 184.573,
+      "started_at_utc": "2026-04-17T21:05:50.574979Z",
+      "latency_ms": 50.422,
       "retries": 0,
       "http_status": 404,
       "cost_usd": 0.0
@@ -88,8 +88,8 @@
       "run_index": 1,
       "status": "success",
       "detail": "HTTP fetch check passed.",
-      "started_at_utc": "2026-04-17T15:33:01.126294Z",
-      "latency_ms": 197.895,
+      "started_at_utc": "2026-04-17T21:05:50.626233Z",
+      "latency_ms": 97.091,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -98,10 +98,10 @@
       "provider": "local",
       "task_id": "x_profile",
       "run_index": 1,
-      "status": "success",
-      "detail": "HTTP fetch check passed.",
-      "started_at_utc": "2026-04-17T15:33:01.325276Z",
-      "latency_ms": 2907.572,
+      "status": "failed",
+      "detail": "Expected text not found.",
+      "started_at_utc": "2026-04-17T21:05:50.724213Z",
+      "latency_ms": 1249.746,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -111,11 +111,11 @@
       "task_id": "linkedin_profile",
       "run_index": 1,
       "status": "failed",
-      "detail": "HTTP 404",
-      "started_at_utc": "2026-04-17T15:33:04.233951Z",
-      "latency_ms": 299.243,
+      "detail": "HTTP 999",
+      "started_at_utc": "2026-04-17T21:05:51.975079Z",
+      "latency_ms": 189.302,
       "retries": 0,
-      "http_status": 404,
+      "http_status": 999,
       "cost_usd": 0.0
     }
   ],
@@ -123,11 +123,11 @@
     "local": {
       "runs_total": 5,
       "attempted": 5,
-      "success": 2,
-      "failed": 3,
+      "success": 1,
+      "failed": 4,
       "skipped": 0,
-      "success_rate": 0.4,
-      "avg_latency_ms": 752.1816,
+      "success_rate": 0.2,
+      "avg_latency_ms": 330.9724,
       "avg_retries": 0.0,
       "cost_usd_total": 0.0,
       "cost_per_success_usd": 0.0
