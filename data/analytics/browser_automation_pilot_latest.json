@@ -1,6 +1,6 @@
 {
-  "run_id": "pilot-20260421T154728Z",
-  "generated_at_utc": "2026-04-21T15:47:29.476988Z",
+  "run_id": "pilot-20260421T173108Z",
+  "generated_at_utc": "2026-04-21T17:31:08.831425Z",
   "tasks": [
     {
       "task_id": "gh_pages_home",
@@ -64,8 +64,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "Expected text not found.",
-      "started_at_utc": "2026-04-21T15:47:28.466287Z",
-      "latency_ms": 113.58,
+      "started_at_utc": "2026-04-21T17:31:08.075284Z",
+      "latency_ms": 94.717,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -76,8 +76,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "HTTP 404",
-      "started_at_utc": "2026-04-21T15:47:28.580867Z",
-      "latency_ms": 113.843,
+      "started_at_utc": "2026-04-21T17:31:08.171204Z",
+      "latency_ms": 132.187,
       "retries": 0,
       "http_status": 404,
       "cost_usd": 0.0
@@ -88,8 +88,8 @@
       "run_index": 1,
       "status": "success",
       "detail": "HTTP fetch check passed.",
-      "started_at_utc": "2026-04-21T15:47:28.695571Z",
-      "latency_ms": 142.28,
+      "started_at_utc": "2026-04-21T17:31:08.304361Z",
+      "latency_ms": 65.098,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -100,8 +100,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "Expected text not found.",
-      "started_at_utc": "2026-04-21T15:47:28.838861Z",
-      "latency_ms": 358.531,
+      "started_at_utc": "2026-04-21T17:31:08.370458Z",
+      "latency_ms": 204.21,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -112,8 +112,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "HTTP 999",
-      "started_at_utc": "2026-04-21T15:47:29.198432Z",
-      "latency_ms": 277.724,
+      "started_at_utc": "2026-04-21T17:31:08.575824Z",
+      "latency_ms": 254.48,
       "retries": 0,
       "http_status": 999,
       "cost_usd": 0.0
@@ -127,7 +127,7 @@
       "failed": 4,
       "skipped": 0,
       "success_rate": 0.2,
-      "avg_latency_ms": 201.19159999999997,
+      "avg_latency_ms": 150.1384,
       "avg_retries": 0.0,
       "cost_usd_total": 0.0,
       "cost_per_success_usd": 0.0
