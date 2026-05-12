@@ -1,6 +1,6 @@
 {
-  "run_id": "pilot-20260511T181211Z",
-  "generated_at_utc": "2026-05-11T18:12:15.848314Z",
+  "run_id": "pilot-20260512T201158Z",
+  "generated_at_utc": "2026-05-12T20:12:00.886534Z",
   "tasks": [
     {
       "task_id": "gh_pages_home",
@@ -64,8 +64,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "Expected text not found.",
-      "started_at_utc": "2026-05-11T18:12:11.359871Z",
-      "latency_ms": 151.408,
+      "started_at_utc": "2026-05-12T20:11:58.693139Z",
+      "latency_ms": 181.09,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -76,8 +76,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "HTTP 404",
-      "started_at_utc": "2026-05-11T18:12:11.512121Z",
-      "latency_ms": 131.225,
+      "started_at_utc": "2026-05-12T20:11:58.874751Z",
+      "latency_ms": 158.917,
       "retries": 0,
       "http_status": 404,
       "cost_usd": 0.0
@@ -88,8 +88,8 @@
       "run_index": 1,
       "status": "success",
       "detail": "HTTP fetch check passed.",
-      "started_at_utc": "2026-05-11T18:12:11.644266Z",
-      "latency_ms": 74.553,
+      "started_at_utc": "2026-05-12T20:11:59.034241Z",
+      "latency_ms": 113.07,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -100,8 +100,8 @@
       "run_index": 1,
       "status": "success",
       "detail": "HTTP fetch check passed.",
-      "started_at_utc": "2026-05-11T18:12:11.719750Z",
-      "latency_ms": 3965.078,
+      "started_at_utc": "2026-05-12T20:11:59.147826Z",
+      "latency_ms": 1536.956,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -111,11 +111,11 @@
       "task_id": "linkedin_profile",
       "run_index": 1,
       "status": "failed",
-      "detail": "HTTP 404",
-      "started_at_utc": "2026-05-11T18:12:15.685882Z",
-      "latency_ms": 161.54,
+      "detail": "HTTP 999",
+      "started_at_utc": "2026-05-12T20:12:00.685682Z",
+      "latency_ms": 200.206,
       "retries": 0,
-      "http_status": 404,
+      "http_status": 999,
       "cost_usd": 0.0
     }
   ],
@@ -127,7 +127,7 @@
       "failed": 3,
       "skipped": 0,
       "success_rate": 0.4,
-      "avg_latency_ms": 896.7608,
+      "avg_latency_ms": 438.0478,
       "avg_retries": 0.0,
       "cost_usd_total": 0.0,
       "cost_per_success_usd": 0.0
