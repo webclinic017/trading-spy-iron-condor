@@ -3,30 +3,30 @@
     "name": "Kimi K2",
     "input_cost_per_1m": 0.6,
     "output_cost_per_1m": 2.5,
-    "fetched_at": "2026-06-19T13:58:16.207987"
+    "fetched_at": "2026-06-20T12:24:04.288569"
   },
   "mistralai/mistral-medium-3": {
     "name": "Mistral Medium 3",
     "input_cost_per_1m": 0.4,
     "output_cost_per_1m": 2.0,
-    "fetched_at": "2026-06-19T13:58:16.208111"
+    "fetched_at": "2026-06-20T12:24:04.288652"
   },
   "qwen/qwen3-235b-a22b": {
     "name": "Qwen3 235B",
     "input_cost_per_1m": 0.455,
     "output_cost_per_1m": 1.82,
-    "fetched_at": "2026-06-19T13:58:16.208183"
+    "fetched_at": "2026-06-20T12:24:04.288714"
   },
   "deepseek/deepseek-r1": {
     "name": "DeepSeek-R1 (reasoning)",
     "input_cost_per_1m": 0.7,
     "output_cost_per_1m": 2.5,
-    "fetched_at": "2026-06-19T13:58:16.208272"
+    "fetched_at": "2026-06-20T12:24:04.288810"
   },
   "deepseek/deepseek-chat": {
     "name": "DeepSeek V3 (chat)",
     "input_cost_per_1m": 0.2002,
     "output_cost_per_1m": 0.8001,
-    "fetched_at": "2026-06-19T13:58:16.208314"
+    "fetched_at": "2026-06-20T12:24:04.288873"
   }
 }
