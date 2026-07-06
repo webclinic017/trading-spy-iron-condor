@@ -1,0 +1,13 @@
+{
+  "date": "2026-07-06",
+  "time": "16:51 UTC",
+  "risk_score": 0.0,
+  "recommendation": "CLEAR",
+  "reason": "No major market-moving events",
+  "intel": {
+    "fed_speakers": "API key not configured",
+    "economic_data": "API key not configured",
+    "spy_earnings": "API key not configured",
+    "options_flow": "API key not configured"
+  }
+}
