@@ -1,6 +1,6 @@
 {
-  "run_id": "pilot-20260718T193605Z",
-  "generated_at_utc": "2026-07-18T19:36:37.262556Z",
+  "run_id": "pilot-20260719T172819Z",
+  "generated_at_utc": "2026-07-19T17:28:21.090887Z",
   "tasks": [
     {
       "task_id": "gh_pages_home",
@@ -63,11 +63,11 @@
       "task_id": "gh_pages_home",
       "run_index": 1,
       "status": "failed",
-      "detail": "HTTP 503",
-      "started_at_utc": "2026-07-18T19:36:05.127898Z",
-      "latency_ms": 15444.153,
+      "detail": "Expected text not found.",
+      "started_at_utc": "2026-07-19T17:28:19.307924Z",
+      "latency_ms": 406.125,
       "retries": 0,
-      "http_status": 503,
+      "http_status": 200,
       "cost_usd": 0.0
     },
     {
@@ -75,11 +75,11 @@
       "task_id": "rag_query_page",
       "run_index": 1,
       "status": "failed",
-      "detail": "HTTP 503",
-      "started_at_utc": "2026-07-18T19:36:20.572921Z",
-      "latency_ms": 15446.574,
+      "detail": "HTTP 404",
+      "started_at_utc": "2026-07-19T17:28:19.715889Z",
+      "latency_ms": 176.197,
       "retries": 0,
-      "http_status": 503,
+      "http_status": 404,
       "cost_usd": 0.0
     },
     {
@@ -88,8 +88,8 @@
       "run_index": 1,
       "status": "success",
       "detail": "HTTP fetch check passed.",
-      "started_at_utc": "2026-07-18T19:36:36.020384Z",
-      "latency_ms": 66.541,
+      "started_at_utc": "2026-07-19T17:28:19.894029Z",
+      "latency_ms": 56.908,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -100,8 +100,8 @@
       "run_index": 1,
       "status": "success",
       "detail": "HTTP fetch check passed.",
-      "started_at_utc": "2026-07-18T19:36:36.087837Z",
-      "latency_ms": 914.259,
+      "started_at_utc": "2026-07-19T17:28:19.951974Z",
+      "latency_ms": 954.013,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -112,8 +112,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "HTTP 999",
-      "started_at_utc": "2026-07-18T19:36:37.003067Z",
-      "latency_ms": 258.691,
+      "started_at_utc": "2026-07-19T17:28:20.907003Z",
+      "latency_ms": 182.894,
       "retries": 0,
       "http_status": 999,
       "cost_usd": 0.0
@@ -127,7 +127,7 @@
       "failed": 3,
       "skipped": 0,
       "success_rate": 0.4,
-      "avg_latency_ms": 6426.0436,
+      "avg_latency_ms": 355.2274,
       "avg_retries": 0.0,
       "cost_usd_total": 0.0,
       "cost_per_success_usd": 0.0
