@@ -4,7 +4,7 @@
 **URL**: https://www.youtube.com/watch?v=8pPnLzZmKKY
 **Upload Date**: curated
 **Channel**: Phil Town - Rule #1 Investing
-**Ingested**: 2026-07-25T14:48:38.016882
+**Ingested**: 2026-07-26T14:50:15.754658
 
 ## Key Concepts
 4 Ms, Moat, Options Strategy, Value Investing
