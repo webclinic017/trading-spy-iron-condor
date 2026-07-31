@@ -1,6 +1,6 @@
 {
-  "run_id": "pilot-20260729T211530Z",
-  "generated_at_utc": "2026-07-29T21:15:52.529610Z",
+  "run_id": "pilot-20260731T044747Z",
+  "generated_at_utc": "2026-07-31T04:48:08.398150Z",
   "tasks": [
     {
       "task_id": "gh_pages_home",
@@ -64,8 +64,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "Local HTTP exception: HTTPSConnectionPool(host='igorganapolsky.com', port=443): Max retries exceeded with url: /trading/ (Caused by NameResolutionError(\"HTTPSConnection(host='igorganapolsky.com', port=443): Failed to resolve 'igorganapolsky.com' ([Errno -3] Temporary failure in name resolution)\"))",
-      "started_at_utc": "2026-07-29T21:15:30.245279Z",
-      "latency_ms": 10300.458,
+      "started_at_utc": "2026-07-31T04:47:47.253639Z",
+      "latency_ms": 10153.402,
       "retries": 0,
       "http_status": null,
       "cost_usd": 0.0
@@ -76,8 +76,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "Local HTTP exception: HTTPSConnectionPool(host='igorganapolsky.com', port=443): Max retries exceeded with url: /trading/rag-query/ (Caused by NameResolutionError(\"HTTPSConnection(host='igorganapolsky.com', port=443): Failed to resolve 'igorganapolsky.com' ([Errno -3] Temporary failure in name resolution)\"))",
-      "started_at_utc": "2026-07-29T21:15:40.545779Z",
-      "latency_ms": 10183.001,
+      "started_at_utc": "2026-07-31T04:47:57.407079Z",
+      "latency_ms": 10138.646,
       "retries": 0,
       "http_status": null,
       "cost_usd": 0.0
@@ -88,8 +88,8 @@
       "run_index": 1,
       "status": "success",
       "detail": "HTTP fetch check passed.",
-      "started_at_utc": "2026-07-29T21:15:50.728822Z",
-      "latency_ms": 128.487,
+      "started_at_utc": "2026-07-31T04:48:07.545762Z",
+      "latency_ms": 140.731,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -100,8 +100,8 @@
       "run_index": 1,
       "status": "success",
       "detail": "HTTP fetch check passed.",
-      "started_at_utc": "2026-07-29T21:15:50.858043Z",
-      "latency_ms": 1172.178,
+      "started_at_utc": "2026-07-31T04:48:07.687053Z",
+      "latency_ms": 435.865,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -112,8 +112,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "HTTP 999",
-      "started_at_utc": "2026-07-29T21:15:52.031170Z",
-      "latency_ms": 497.654,
+      "started_at_utc": "2026-07-31T04:48:08.123796Z",
+      "latency_ms": 273.786,
       "retries": 0,
       "http_status": 999,
       "cost_usd": 0.0
@@ -127,7 +127,7 @@
       "failed": 3,
       "skipped": 0,
       "success_rate": 0.4,
-      "avg_latency_ms": 4456.355600000001,
+      "avg_latency_ms": 4228.486000000001,
       "avg_retries": 0.0,
       "cost_usd_total": 0.0,
       "cost_per_success_usd": 0.0
