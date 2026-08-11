@@ -1,6 +1,6 @@
 {
-  "run_id": "pilot-20260811T162238Z",
-  "generated_at_utc": "2026-08-11T16:23:40.454045Z",
+  "run_id": "pilot-20260811T172721Z",
+  "generated_at_utc": "2026-08-11T17:27:23.825161Z",
   "tasks": [
     {
       "task_id": "gh_pages_home",
@@ -63,9 +63,9 @@
       "task_id": "gh_pages_home",
       "run_index": 1,
       "status": "failed",
-      "detail": "Local HTTP exception: HTTPSConnectionPool(host='igorganapolsky.com', port=443): Max retries exceeded with url: /trading/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='igorganapolsky.com', port=443) at 0x7fed7d048b10>, 'Connection to igorganapolsky.com timed out. (connect timeout=30)'))",
-      "started_at_utc": "2026-08-11T16:22:38.364068Z",
-      "latency_ms": 30204.498,
+      "detail": "Local HTTP exception: HTTPSConnectionPool(host='igorganapolsky.com', port=443): Max retries exceeded with url: /trading/ (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'igorganapolsky.com'. (_ssl.c:1016)\")))",
+      "started_at_utc": "2026-08-11T17:27:21.774404Z",
+      "latency_ms": 348.875,
       "retries": 0,
       "http_status": null,
       "cost_usd": 0.0
@@ -75,9 +75,9 @@
       "task_id": "rag_query_page",
       "run_index": 1,
       "status": "failed",
-      "detail": "Local HTTP exception: HTTPSConnectionPool(host='igorganapolsky.com', port=443): Max retries exceeded with url: /trading/rag-query/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='igorganapolsky.com', port=443) at 0x7fed7d064350>, 'Connection to igorganapolsky.com timed out. (connect timeout=30)'))",
-      "started_at_utc": "2026-08-11T16:23:08.568612Z",
-      "latency_ms": 30129.592,
+      "detail": "Local HTTP exception: HTTPSConnectionPool(host='igorganapolsky.com', port=443): Max retries exceeded with url: /trading/rag-query/ (Caused by SSLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'igorganapolsky.com'. (_ssl.c:1016)\")))",
+      "started_at_utc": "2026-08-11T17:27:22.123314Z",
+      "latency_ms": 187.291,
       "retries": 0,
       "http_status": null,
       "cost_usd": 0.0
@@ -88,8 +88,8 @@
       "run_index": 1,
       "status": "success",
       "detail": "HTTP fetch check passed.",
-      "started_at_utc": "2026-08-11T16:23:38.698250Z",
-      "latency_ms": 132.935,
+      "started_at_utc": "2026-08-11T17:27:22.310635Z",
+      "latency_ms": 160.386,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -100,8 +100,8 @@
       "run_index": 1,
       "status": "success",
       "detail": "HTTP fetch check passed.",
-      "started_at_utc": "2026-08-11T16:23:38.832179Z",
-      "latency_ms": 1414.416,
+      "started_at_utc": "2026-08-11T17:27:22.471831Z",
+      "latency_ms": 1131.436,
       "retries": 0,
       "http_status": 200,
       "cost_usd": 0.0
@@ -112,8 +112,8 @@
       "run_index": 1,
       "status": "failed",
       "detail": "HTTP 999",
-      "started_at_utc": "2026-08-11T16:23:40.247612Z",
-      "latency_ms": 205.416,
+      "started_at_utc": "2026-08-11T17:27:23.604152Z",
+      "latency_ms": 220.243,
       "retries": 0,
       "http_status": 999,
       "cost_usd": 0.0
@@ -127,7 +127,7 @@
       "failed": 3,
       "skipped": 0,
       "success_rate": 0.4,
-      "avg_latency_ms": 12417.371399999998,
+      "avg_latency_ms": 409.64619999999996,
       "avg_retries": 0.0,
       "cost_usd_total": 0.0,
       "cost_per_success_usd": 0.0
