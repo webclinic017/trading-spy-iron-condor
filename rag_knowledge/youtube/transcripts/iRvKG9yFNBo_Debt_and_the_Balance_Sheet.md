@@ -4,7 +4,7 @@
 **URL**: https://www.youtube.com/watch?v=iRvKG9yFNBo
 **Upload Date**: curated
 **Channel**: Phil Town - Rule #1 Investing
-**Ingested**: 2026-09-05T16:06:08.961039
+**Ingested**: 2026-09-06T16:19:19.371513
 
 ## Key Concepts
 Rule #1
