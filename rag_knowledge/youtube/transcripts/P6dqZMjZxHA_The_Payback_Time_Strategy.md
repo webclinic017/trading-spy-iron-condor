@@ -4,7 +4,7 @@
 **URL**: https://www.youtube.com/watch?v=P6dqZMjZxHA
 **Upload Date**: curated
 **Channel**: Phil Town - Rule #1 Investing
-**Ingested**: 2026-10-03T17:20:12.271435
+**Ingested**: 2026-10-04T17:35:48.690367
 
 ## Key Concepts
 Rule #1, Options Strategy

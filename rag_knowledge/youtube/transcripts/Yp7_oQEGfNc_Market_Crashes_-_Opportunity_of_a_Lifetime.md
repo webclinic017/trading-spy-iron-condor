@@ -4,7 +4,7 @@
 **URL**: https://www.youtube.com/watch?v=Yp7_oQEGfNc
 **Upload Date**: curated
 **Channel**: Phil Town - Rule #1 Investing
-**Ingested**: 2026-10-03T17:20:37.962477
+**Ingested**: 2026-10-04T17:36:13.392108
 
 ## Key Concepts
 Margin of Safety, Rule #1
