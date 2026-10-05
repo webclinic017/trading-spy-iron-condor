@@ -11,6 +11,6 @@
   },
   "preferred_provider": "local",
   "reason": "no eligible provider; fallback to default",
-  "selected_at_utc": "2026-10-05T01:02:41.556856Z",
-  "source_run_id": "pilot-20261005T010240Z"
+  "selected_at_utc": "2026-10-05T22:45:52.804339Z",
+  "source_run_id": "pilot-20261005T224551Z"
 }
