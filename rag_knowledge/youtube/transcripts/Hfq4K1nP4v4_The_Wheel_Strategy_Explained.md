@@ -4,7 +4,7 @@
 **URL**: https://www.youtube.com/watch?v=Hfq4K1nP4v4
 **Upload Date**: curated
 **Channel**: Phil Town - Rule #1 Investing
-**Ingested**: 2026-10-24T16:41:14.433422
+**Ingested**: 2026-10-31T17:45:30.823123
 
 ## Key Concepts
 4 Ms, Margin of Safety, Options Strategy
