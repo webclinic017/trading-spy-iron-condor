@@ -3,18 +3,18 @@
     "name": "Kimi K2",
     "input_cost_per_1m": 0.6,
     "output_cost_per_1m": 2.5,
-    "fetched_at": "2026-11-12T18:39:11.802706"
+    "fetched_at": "2026-11-13T18:18:34.741403"
   },
   "mistralai/mistral-medium-3": {
     "name": "Mistral Medium 3",
     "input_cost_per_1m": 0.4,
     "output_cost_per_1m": 2.0,
-    "fetched_at": "2026-11-12T18:39:11.802763"
+    "fetched_at": "2026-11-13T18:18:34.741481"
   },
   "deepseek/deepseek-chat": {
     "name": "DeepSeek V3 (chat)",
     "input_cost_per_1m": 0.32,
     "output_cost_per_1m": 0.89,
-    "fetched_at": "2026-11-12T18:39:11.802799"
+    "fetched_at": "2026-11-13T18:18:34.741560"
   }
 }
