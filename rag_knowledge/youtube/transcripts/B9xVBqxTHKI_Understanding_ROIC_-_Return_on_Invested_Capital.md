@@ -4,7 +4,7 @@
 **URL**: https://www.youtube.com/watch?v=B9xVBqxTHKI
 **Upload Date**: curated
 **Channel**: Phil Town - Rule #1 Investing
-**Ingested**: 2026-11-15T19:28:36.111170
+**Ingested**: 2026-11-22T20:24:59.352377
 
 ## Key Concepts
 4 Ms, Moat, Big Five Numbers, Rule #1, Wonderful Company
