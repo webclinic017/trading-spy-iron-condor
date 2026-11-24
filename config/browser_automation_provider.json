@@ -1,5 +1,5 @@
 {
-  "confidence": 0.1,
+  "confidence": 0.2,
   "policy": {
     "cost_weight": 2.0,
     "default_provider": "local",
@@ -11,6 +11,6 @@
   },
   "preferred_provider": "local",
   "reason": "no eligible provider; fallback to default",
-  "selected_at_utc": "2026-11-22T08:11:43.997870Z",
-  "source_run_id": "pilot-20261122T081143Z"
+  "selected_at_utc": "2026-11-24T12:40:51.409512Z",
+  "source_run_id": "pilot-20261124T124050Z"
 }
