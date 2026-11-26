@@ -1,8 +1,14 @@
 {
+  "moonshotai/kimi-k2-0905": {
+    "name": "Kimi K2",
+    "input_cost_per_1m": 0.6,
+    "output_cost_per_1m": 2.5,
+    "fetched_at": "2026-11-26T19:55:48.909934"
+  },
   "deepseek/deepseek-chat": {
     "name": "DeepSeek V3 (chat)",
     "input_cost_per_1m": 0.2574,
     "output_cost_per_1m": 1.0287,
-    "fetched_at": "2026-11-25T20:19:07.283561"
+    "fetched_at": "2026-11-26T19:55:48.910027"
   }
 }
