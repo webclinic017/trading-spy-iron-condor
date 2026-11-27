@@ -3,12 +3,12 @@
     "name": "Kimi K2",
     "input_cost_per_1m": 0.6,
     "output_cost_per_1m": 2.5,
-    "fetched_at": "2026-11-26T19:55:48.909934"
+    "fetched_at": "2026-11-27T19:44:46.133645"
   },
   "deepseek/deepseek-chat": {
     "name": "DeepSeek V3 (chat)",
     "input_cost_per_1m": 0.2574,
     "output_cost_per_1m": 1.0287,
-    "fetched_at": "2026-11-26T19:55:48.910027"
+    "fetched_at": "2026-11-27T19:44:46.133693"
   }
 }
